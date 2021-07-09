@@ -1,0 +1,379 @@
+.form-control,.form-select{
+    background-color:$white;
+    border-color: $muted;
+    border-radius:$border-radius-lg;
+    box-shadow: $box-shadow; 
+    &:focus{
+        border-color: $danger; 
+    }
+}
+.form-check {
+    padding-left: 0;
+    position: relative;
+}
+.form-check label {
+    padding-left: 25px;
+    cursor: pointer;
+}
+
+.form-check label:before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba($black, .2);
+    background-color: $info;
+    -webkit-transition: all 0.3s linear;
+    transition: all 0.3s linear;
+    position: absolute;
+    top: 3px;
+    left: 0;
+}
+
+.form-check label:after {
+    content: '\f00c';
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    width: 18px;
+    height: 18px;
+    border: 1px solid $success;
+    background-color: $success;
+    color: $light;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    -webkit-transition: all 0.3s linear;
+    transition: all 0.3s linear;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    position: absolute;
+    top: 3px;
+    left: 0;
+    font-size: 10px;
+}
+
+.form-check input {
+    display: none;
+}
+
+.form-check input:checked~label:before {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.form-check input:checked~label:after {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+.radio-form-check{
+    .form-check label{
+        padding-left: 15px; 
+     }
+    .form-check label:before{ 
+        width: 8px;
+        height: 8px;
+        border-radius: 100%; 
+        border: 0.7px solid #B5B5B5;
+        top: 7px; 
+    }
+    .form-check label:after{
+        content: " ";
+        width: 6px;
+        height: 6px;
+        border-radius: 100%; 
+        background-color: $danger; 
+        top: 8px; 
+        left: 1px;
+     
+    }
+    .form-check input:checked~label:before{
+        border: 0.7px solid $danger; 
+        opacity: 1; 
+        visibility: visible; 
+    }
+}
+.select2-dropdown{
+    border: 0 !important; 
+    box-shadow: $box-shadow;  
+}
+.select2-container{
+    width: 100% !important;
+    max-width: 440px;  
+    .select2-search__field{
+        outline: 0;
+    }
+   .select2-selection__rendered{
+       color: $input-placeholder-color!important; 
+   }
+    .select2-selection--single{
+        border-color: $input-border;
+        outline: 0;
+        padding: 10px 10px;
+        height: auto;
+    }
+    .select2-selection__arrow{
+        background:url(../images/arrow-icon.png) no-repeat center; 
+        width: 35px !important;
+        height: 100% !important;
+        b{
+            display: none;
+        }
+    }
+}
+@keyframes load-circle {
+    0% {
+        stroke-dashoffset: 100;
+    }
+}
+.progress-circle {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    height: auto;
+    &-fill {
+        position: relative;
+        circle {
+          fill: none;
+          stroke-width: 4px;
+          stroke:$info;
+          &:nth-child(2) {
+              animation: load-circle 1s;
+              stroke:$link ;
+              stroke-dasharray: 100;
+            }
+          }        
+          .percentile-content {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            height:100%;
+            width: 100%;
+            text-align: center;
+        }
+    }
+    &-rounded {
+      circle {
+            &:nth-child(2) {
+            stroke-linecap : round;
+          }
+        }
+    }
+} 
+.range-item{
+    [id*=slider-snap]{
+        height: 3px;
+        background: #e9ebec;
+        box-shadow: none;
+        border: 0;
+    }
+    .noUi-connect{
+        background:$secondary;
+    }
+    .noUi-handle{
+        border-radius:100%;
+        width:12px;
+        height: 12px;
+        box-shadow:none;
+        border:0;
+        background:$secondary;
+        top: -5px;
+        &:before,&:after{
+            display: none;
+        }
+        &.noUi-handle-lower{
+            right: -12px; 
+        }
+        &.noUi-handle-upper{
+            right: 0;
+        }
+    }
+    .slider-value{
+        display: flex;
+        justify-content: space-between;
+         align-items: center;
+    }
+}
+.watchlist-item{
+    .watchlist{
+        width:32px;
+        height: 24px;
+        border-radius:$border-radius-lg;
+        margin: auto;
+    }
+    .watchlist-1{
+        background:$danger;
+    }
+    .watchlist-2{
+        background:$unactve;
+    }
+    .watchlist-3{
+        background:$default;
+    }
+}
+.form-container{
+    height: 80vh;
+    .form-wrapper{
+        background-color: $white;
+        padding:30px; 
+        max-width: 600px;
+        margin: auto;
+        width:100%;
+        .title-success{
+            color: $active;
+        }
+    }
+    .signup-wrapper{ 
+        background-color: $white;
+        border-radius: 22.033px;
+        box-shadow:1px 1px 5px rgba(0, 0, 0, 0.1);
+    }
+    .signup-message-logo{ 
+        img{
+            width: 275px;
+            margin-bottom: 20px; 
+        }
+    }
+}
+.sign-up-form{
+    input,select{
+        border: 1px solid #9C9C9C; 
+        border-radius: 15px;  
+        padding: 20px 30px; 
+        &:invalid{ 
+            border-color: $danger;
+        } 
+    }
+    button{
+        border-radius: 15px;   
+        padding: 20px 30px;  
+        font-weight: 700; 
+        font-size: 16px;
+    }
+    .password-input{
+        position: relative;
+        &::before{
+            content: url(../images/combined-eye.png);
+            position: absolute;
+            right: 24px;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            height: 16px; 
+        }
+    }
+    .signup-login-with{
+        .btn{
+            border: 1px solid #EFEFEF;
+            border-radius: 15px; 
+            padding: 20px 30px;  
+            width: 100%; 
+            font-size: 16px;
+            img{
+                width: 31px;
+                height: 31px; 
+                object-fit: contain;  
+                margin-right: 5px;
+            }
+        }
+    }
+}
+.sign-up-robot{
+    background-image: url(../images/sign-up-robot.png);
+    background-size: 100% 100%;
+    padding: 30px 80px 50px 40px;
+    max-width: 395px; 
+    position: relative; 
+    &::before{
+        content: "";
+        background-image: url(../images/sign-up-robman.png); 
+        background-size: contain; 
+        background-repeat: no-repeat; 
+        width: 183px;
+        height: 331px; 
+        position: absolute;
+        right: -190px;
+    
+    }
+}
+.contact-form{
+    .form-control{
+        background-color:$white;
+        border-color: $muted;
+        border-radius:$border-radius-lg;
+        box-shadow: $box-shadow;
+        padding: 15px 30px;
+        &:focus{
+            border-color: $danger; 
+        }
+    }
+}
+.file-upload-wrapper {
+    background-color: $input-border;  
+    position: relative;
+    width: 100%;  
+    height: 50px; 
+    border-radius: $border-radius-lg;
+    overflow: hidden; 
+    &:after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0; 
+      padding: 15px 20px;
+      display: block; 
+      width: calc(100% - 40px);
+      pointer-events: none;
+      z-index: 20;
+      border-radius: $border-radius-lg;
+      color: #8A8A8A; 
+    }
+    &:before {
+      content: 'Upload CSV';
+      position: absolute;
+      top: 0;
+      bottom: 0; 
+      right: 0;
+      display: inline-block;
+      background: $danger;
+      color: $white;
+      z-index: 25;
+      padding: 14px 40px;  
+      pointer-events: none;
+      border-radius: $border-radius-lg; 
+    }
+    
+    &:hover {
+      &:before {
+        background: darken($danger, 10%);
+      }
+    }
+     input {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 99;
+      margin: 0;
+      padding: 0;
+      display: block;
+      cursor: pointer;
+      width: 100%; 
+    }
+  }

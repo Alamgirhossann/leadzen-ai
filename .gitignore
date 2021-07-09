@@ -6,7 +6,10 @@
 # Node artifact files
 node_modules/
 dist/
-
+# download folder
+download/
+# upload folder
+upload/
 # Compiled Java class files
 *.class
 

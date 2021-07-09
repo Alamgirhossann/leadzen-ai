@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+    react:
+        image: "analystt/people_react:latest"
+        build:
+            context: react
+            dockerfile: Dockerfile
+        container_name: "people_react" 
+        command: npm start     
+        ports: 
+          - 3000:3000

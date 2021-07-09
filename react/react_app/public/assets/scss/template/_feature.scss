@@ -1,0 +1,219 @@
+.text-link{
+    color: $link;
+}
+.update-logo {
+    width: 96px;
+    display: block;
+    padding: 0;
+    img {
+        object-fit: contain;
+    }
+}
+.update-content {
+    max-width: 300px;
+}
+.update-more-link{
+    width:70px;
+    a{ width: 20px;}
+}
+.revenue-logo {
+    width: 48px;
+    height: 48px;
+    display: block;
+    padding: 12px 4px;
+    text-align: center;
+}
+
+.side-avada {
+    width: 56px;
+    height: 56px;
+    display: block;
+    border-right: 100%;
+    overflow: hidden;
+    padding: 0;
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius:100%;
+    }
+}
+.side-author-more{
+    display: inline-block;
+    .side-avada{
+        float: left;
+    }
+    .side-author-content{
+        width: calc(100% - 56px);
+        float:left;
+    }
+}
+.side-logo{
+    width: 72px;
+    height: 72px;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        
+    }
+}
+.timeline-break-line{
+    position:relative;
+    &:before{
+    content: "";
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    background-color:$timeline-color;
+    left: 0;
+    right: 0;
+    margin-top: 9px;
+    z-index: 1;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+    transform: translate(0px, 21px);
+    }
+    &.highlighted{
+    &:before{
+        background-color:$link; 
+    }
+    }
+}
+.timeline-side-item{
+    .side-avada{
+        margin-bottom: 15px !important;
+    }
+    .side-round{
+      &:after{
+        content: "";
+          width: 20px;
+    height: 20px;
+    display: block;
+    border: 6px solid #D8E5FA;
+    border-radius: 100%;
+    z-index: 3;
+    position:relative;
+    margin: auto;
+      }
+    &:before{
+    content: "";
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    background-color:rgba($timeline-color,0.6);
+    left: 0;
+    right: 0;
+    margin-top: 9px;
+    z-index: 1;
+    }
+    }
+    &.highlighted{
+        .side-round{
+            &:before{
+                background-color:$link; 
+            }
+        }
+    }
+}
+.navbar-bottom-menu{
+    flex-direction: row;
+        flex-wrap: wrap;
+   li{
+      a{
+         padding:15px 45px !important;
+         color: $primary;
+         &.active,&:hover{
+           color: $danger;
+           background-color:rgba($danger,0.2);
+           text-decoration: none;
+         }
+      }
+   }
+}
+.navbar-name-menu{
+     flex-direction: row;
+         flex-wrap: wrap;
+   li{
+    margin: 4px 0;
+      a{
+        background-color:$white;
+         padding:5px 25px !important;
+         color: $primary;
+         border-radius:$border-radius-lg;
+         &.active,&:hover{
+           color: $danger;
+           background-color:rgba($danger,0.2);
+           text-decoration: none;
+         }
+      }
+   }
+}
+.arrow-collapse{
+    position: absolute;
+    right: 17px;
+    top: 14px;
+}
+[aria-expanded="true"]{
+    .arrow-collapse{
+        transform: rotate(180deg);
+    }
+} 
+
+.social-share{
+    li{
+        a{
+            width: 48px;
+            height: 48px;
+            color: $secondary;
+            background-color: $white;
+            border-radius:100%; 
+            display: block;
+            box-shadow: $box-shadow;
+            padding: 10px 0;
+            text-align: center;
+            font-size:$h5-font-size;
+        }
+    }
+}
+.balance-style1,.balance-style2{
+   height: 125px;
+   background-color:$balance1;
+   border-radius:4px;
+   display: flex;
+      justify-content: center;
+          align-items: center;
+}
+.balance-style2{
+   background-color:$balance2;
+   height: 100%;
+}
+.tag-list-menu{
+    list-style: none;
+    padding: 0; 
+    li{
+        display: inline-block; 
+        a{
+            background-color: $warning; 
+            color: $primary; 
+            padding:3px 10px; 
+            margin-right: 10px; 
+            margin-bottom: 10px;   
+            display: block;
+        }
+    }
+}
+.main-profile{
+    display: flex;
+    align-items: center; 
+    .word-wrap{ 
+        word-break: break-all;
+    }
+    img{
+       width: 95px;
+       height: 95px;
+       border-radius: 100%; 
+       object-fit: cover;
+    }
+}

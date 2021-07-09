@@ -1,0 +1,198 @@
+.sidebar-widget{
+    background: $white;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    text-align: center;
+    .search-for-title{ 
+        display: inline-block;
+        img{
+            height: 11px; 
+        }
+    }  
+    .search-for-button{
+        flex-wrap: wrap; 
+        width: 100%;
+        .btn-check{
+            display: none; 
+        }
+        .btn{
+            border-radius: $border-radius-lg !important;    
+            width: 50%; 
+            min-width: 100px; 
+            border-color: transparent !important;  
+            font-weight: $font-weight-bold;
+            color: $secondary; 
+            padding: 10px;  
+            min-width: 120px; 
+        }
+        .btn-check:active+.btn-outline-danger, 
+        .btn-check:checked+.btn-outline-danger{
+            color: $white;    
+            img{
+                filter: brightness(0) invert(1); 
+            } 
+        }
+    } 
+    .btn{
+        img{
+            height: 11px;
+            margin-right: 5px; 
+        }
+    }
+    .sidebar-accordion{
+        .accordion-item{
+            text-align: left; 
+            .accordion-header{
+                button{
+                    background-color: transparent; 
+                    border: 0;
+                    border-radius: 0;
+                    text-align: left; 
+                    padding-right: 0; 
+                    padding-left: 0;
+                    img{
+                        height: 15px;
+                        margin-right: 10px; 
+                    }
+                    &::after{
+                        background-image: url(../images/accord-plus.png);
+                        background-position: center;
+                        background-size: contain; 
+                        width: 12px;  
+                    }
+                }
+            }
+            .accordion-collapse{ 
+                border: 0;
+            }
+            .accordion-body{ 
+                padding: 0;   
+                padding-bottom: 10px;
+               .select2-container .select2-selection--single{
+                   background-color: rgba(8, 8, 8, 0.1); 
+                   border-radius: 25px; 
+                   padding:5px 10px;  
+                   font-size: 12px;
+               }
+               .select2-selection__arrow{
+                   display: none;  
+               }
+            }
+        }
+    }
+    .learn-link{
+        color: #858585;
+        text-decoration: underline; 
+    }
+    .sidebar-social{
+        li{
+            margin-bottom: 10px;  
+            a{
+                transition: $transition-base; 
+                img{
+                    width: 31px;
+                    height: 31px;
+                    object-fit: contain;  
+                }
+                &:hover{
+                    opacity: 0.8; 
+                }
+            }
+        }
+    }
+
+} 
+.dashboardcode-bsmultiselect{
+   width: 100%; 
+   position: relative; 
+   .dropdown-menu{
+       width: 100%; 
+       left: -26px!important; 
+       li{
+        background-color:#FFF2F2 !important;  
+        padding: 8px 0!important; 
+        margin-bottom: 5px;  
+       }
+       .form-check label:before{
+           left: auto;
+           right: 15px; 
+           background-color: $danger;
+           border-radius: 20px;
+           visibility: hidden; 
+           opacity: 0;
+           border-color: $danger; 
+       }
+       .form-check label:after{
+          left: auto;  
+          right: 15px;
+          background-color: $danger;
+          border-radius: 20px;
+          visibility: hidden;
+          opacity: 0; 
+          border-color: $danger;
+       }
+       .form-check input:checked~label:before {
+        opacity: 0;
+        visibility: hidden;
+    }
+    
+    .form-check input:checked~label:after {
+        opacity: 1;
+        visibility: visible;
+    }
+   }
+}
+#bulkmodal{
+    padding: 30px; 
+    z-index: 999999; 
+    #mydrop{
+        border: 1px dashed $danger; 
+        padding: 40px 22px; 
+        border-radius: 15px; 
+    }
+    .btn-close{
+        float: right; 
+        margin-bottom: 20px;
+        cursor: pointer;
+        z-index: 22222;  
+        position: relative;
+        filter: brightness(0) invert(1);  
+    } 
+    .modal-dialog{ 
+        margin-top: 20vh;     
+        pointer-events: unset;
+        .modal-header{  
+            position: relative;
+            flex-wrap: wrap;
+            justify-content: center; 
+            padding: 20px;   
+            border-radius: 15px;
+            border: 0;
+            box-shadow: $box-shadow;  
+            background-color: $white;
+            margin-bottom: 10px; 
+            z-index: 999999;  
+        }
+        .modal-content{
+            padding: 20px;  
+            border-radius: 15px;
+            border: 0;
+            box-shadow: $box-shadow;  
+            .dz-message{
+                text-align: center;
+            }
+            .dz-button{
+                color: $secondary;
+                margin-bottom: 15px; 
+            }
+            .note{
+                background-color: $danger;
+                padding: 5px 20px; 
+                border-radius: 5px;
+                color: $light; 
+                margin-top: 5px; 
+                display: inline-block;
+            }
+        }
+    }
+}

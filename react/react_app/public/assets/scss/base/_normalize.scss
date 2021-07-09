@@ -1,0 +1,99 @@
+/*
+==========================================
+    Normalize Css
+==========================================
+*/
+html {
+    scroll-behavior: smooth;
+}
+
+body::-webkit-scrollbar {
+    width: .3rem;
+}
+
+body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 0;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: $secondary;
+    border-radius: 0;
+    color: $light;
+}
+
+::-moz-selection {
+    background-color: $success;
+    color: $light;
+}
+
+::selection {
+    background-color: $success;
+    color: $light;
+}
+
+.btn,
+.badge,
+button {
+    &:focus,
+    &:active,
+    &:hover {
+        box-shadow: none !important;
+    }
+}
+.btn-outline-danger,.btn-outline-link{
+    &:hover,&:focus{
+        color:$white;
+    }
+}
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
+    color: $link;
+}
+
+img {
+    max-width: 100%;
+}
+
+figure {
+    img {
+        width: 100%;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: $link;
+    &:hover{
+        text-decoration: underline;
+        color:$link;
+    }
+}
+
+.page-link:focus {
+    box-shadow: none;
+}
+
+.input-group>.form-control:focus,
+.input-group>.form-select:focus {
+    z-index: 1;
+}
+
+.form-control,
+.custom-select {
+    height: auto;
+    &:focus,
+    &:active,
+    &:hover {
+        box-shadow: none;
+        border-color: $primary;
+        z-index: 2;
+    }
+}
+.table>tbody>*>*{
+    padding-right: 0!important;  
+}
