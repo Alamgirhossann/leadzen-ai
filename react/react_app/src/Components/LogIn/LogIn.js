@@ -12,7 +12,7 @@ const LogIn = (props) => {
       });
     
     const [isValid, setValid] = useState(false);
-    const [response, setResponse] = useState({'ok' : false});
+    const [response, setResponse] = useState({'ok' : null, 'response' : null});
     
     const handleBlur = (e) => {
         setForm({...form, email : e.target.value });
@@ -21,6 +21,27 @@ const LogIn = (props) => {
     const handleBlurPass = (e) =>{
         setForm({...form, password : e.target.value});
     }
+
+    const Robot = () => {
+        if(response.response === "user not found"){
+            return(<div className="col-md-6 order-md-1">
+            <div className="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
+                <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />
+                <p className="fw-bold">Hey Buddy, time to take <br /> the ‘lead’. User not found. <br /> <Link to='/signUp' className='text-danger text-decoration-none'>Sign up</Link>  to begin. </p>
+            </div>
+        </div>);
+        }
+        
+        return (
+            <div className="col-md-6 order-md-1">
+                <div className="sign-up-robot ps-4 pe-7 pt-2 pb-7 mb-4">
+                <h3>Hi</h3>
+                <p className="fw-bold">I am <span className="text-danger">Jarv!</span> <br />
+                    Are you ready to unlock opportunities with the <span className="text-danger">most intelligent AI based platform? </span></p>
+            </div>
+        </div>
+            );
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -31,6 +52,11 @@ const LogIn = (props) => {
         else {
             setValid(true);
             setForm({...form, error:""});
+        }
+        if(!validator.isEmail(form.email)){
+            setForm({...form, error:"Invalid Email"});
+            setValid(false);
+            alert("Invalid Email");
         }
         if(!validator.isStrongPassword(form.password, {
             minLength: 8,
@@ -73,22 +99,7 @@ const LogIn = (props) => {
                         <div className="form-container" >
                             <div className="signup-wrapper py-2 px-md-6">
                                 <div className="row align-items-center">
-                                    {
-                                        response.ok || Cookies.get('user_email') ?
-                                            <div className="col-md-6 order-md-1">
-                                                <div className="sign-up-robot ps-4 pe-7 pt-2 pb-7 mb-4">
-                                                    <h3>Hi</h3>
-                                                    <p className="fw-bold">I am <span className="text-danger">Jarv</span> <br />
-                                                        Are you ready to unlock opportunities with the <span className="text-danger">most intelligent AI based platform? </span></p>
-                                                </div>
-                                            </div>
-                                            : <div className="col-md-6 order-md-1">
-                                                <div className="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
-                                                    <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />
-                                                    <p className="fw-bold">Hey Chris, time to take <br /> the ‘lead’. User not found. <br /> <Link to='/signUp' className='text-danger text-decoration-none'>Sign up</Link>  to begin. </p>
-                                                </div>
-                                            </div>
-                                    }
+                                    <Robot />
                                     {response.ok ? <Redirect to="/profile"/> : null}
                                     <div className="col-md-6 order-md-12">
                                         <div className="sign-up-form">
