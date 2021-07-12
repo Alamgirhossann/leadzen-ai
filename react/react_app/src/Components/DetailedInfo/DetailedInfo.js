@@ -16,6 +16,7 @@ const DetailedInfo = () => {
     }, []);
     return (
         <div>
+            <p>hello</p>
             <header class="header-area">
                 <nav class="header-navbar navbar navbar-expand-xl bg-light">
                     <div class="container-fluid">
