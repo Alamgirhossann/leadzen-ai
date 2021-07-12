@@ -1,9 +1,11 @@
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import SavedList from '../SavedList/SavedList';
+import History from '../History/History'
 
-const UserGuide = () => {
+const RepeatedUser = () => {
     useEffect(() => {
         const script = document.createElement('script');
         script.src = "assets/js/app.js";
@@ -100,6 +102,7 @@ const UserGuide = () => {
 
             <div class="main-content-area pb-6 pt-2">
                 <div class="main-wrapper container-fluid">
+
                     <div class="row">
                         <div class="col-md-4 col-lg-3">
                             <div class="sidebar-search-for sidebar-widget p-4 my-3">
@@ -233,65 +236,70 @@ const UserGuide = () => {
 
                                 </div>
                             </div>
+
+                            <div style={{ background: "white", borderRadius: "20px" }}>
+                                <History />
+                            </div>
+
                             <div class="user-widget-box text-center p-4 my-3">
-                                <div class="user-widget-title">
-                                    <p class="small text-danger"><u>Hide</u> <img src="assets/images/user-eye-off.png" alt="title" /></p>
-                                    <h5>Getting Started</h5>
-                                    <h6 class="text-muted mb-4">Check out some example queries to get familiar with Analystt’s search !</h6>
-                                    <p class="text-dark">Try this examples</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 m-auto">
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3"><img src="assets/images/user-guide-icon1.png" alt="title" /> https://www.linkedin.c...</div>
-                                                    <p class="text-dark mb-4">Search by LinkedIn Profile URL</p>
-                                                    <a href="#" class="btn try-it-btn">Try it!</a>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3"><img src="assets/images/user-guide-icon2.png" alt="title" /> John Smith</div>
-                                                    <p class="text-dark mb-4">Search Specific contact by Name</p>
-                                                    <a href="#" class="btn try-it-btn">Try it!</a>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white mb-3"><img src="assets/images/user-guide-icon3.png" alt="title" /> Designer</div>
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white mb-3"><img src="assets/images/user-guide-icon4.png" alt="title" /> New York</div>
-                                                    <p class="text-dark mb-4">Search for Designer in New York</p>
-                                                    <a href="#" class="btn try-it-btn">Try it!</a>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3">Give me list of employee in Amazon</div>
-                                                    <p class="text-dark mb-4">Search asper you requirement</p>
-                                                    <a href="#" class="btn try-it-btn">Try it!</a>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3">I want contact numbers of my list of customers</div>
-                                                    <p class="text-dark mb-4">Search using csv format</p>
-                                                    <a href="#" class="btn try-it-btn">Try it!</a>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="user-guide-box p-3 my-3">
-                                                    <span style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3 px-5">Give me contact numbers of people who are following Dunzo on Instagram</span>
-                                                    <p class="text-dark mb-4">Just type your requirement</p>
-                                                    <a href="#" class="btn try-it-btn">Try it!</a>
-                                                </div>
-                                            </div>
+                                <h6 class="user-magic-title"> <img src="assets/images/start-user-magic.png" alt="title" /> Magic
+                                    Recommendations</h6>
+                                <p class="text-muted mb-3"> Hey, Based on your latest search intrest, these are best magic recommendation
+                                    for you !! <span class="text-danger">~Jarvis</span></p>
+                                <div class="px-5 pxlg-7 mb-3 row">
+                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                        <div class="user-author-item my-2">
+                                            <img src="assets/images/user-athor-pic.png" alt="title" />
+                                            <h6 class="small m-0">Robert Brown</h6>
+                                            <small>Product Manager</small>
+                                            <small> Flipkart</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                        <div class="user-author-item my-2">
+                                            <img src="assets/images/user-athor-pic.png" alt="title" />
+                                            <h6 class="small m-0">Lan Bey</h6>
+                                            <small>Product Manager</small>
+                                            <small> Amazon</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                        <div class="user-author-item my-2">
+                                            <img src="assets/images/user-athor-pic.png" alt="title" />
+                                            <h6 class="small m-0">Robert Brown</h6>
+                                            <small>Product Manager</small>
+                                            <small> Hexagon AB</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                        <div class="user-author-item my-2">
+                                            <img src="assets/images/user-athor-pic.png" alt="title" />
+                                            <h6 class="small m-0">John Smith</h6>
+                                            <small>Product Manager</small>
+                                            <small> Flipkart</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                        <div class="user-author-item my-2">
+                                            <img src="assets/images/user-athor-pic.png" alt="title" />
+                                            <h6 class="small m-0">Stan Joseph</h6>
+                                            <small>Product Manager</small>
+                                            <small> Amazon</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                                        <div class="user-author-item my-2">
+                                            <img src="assets/images/user-athor-pic.png" alt="title" />
+                                            <h6 class="small m-0">Lanre Bey</h6>
+                                            <small>Product Manager</small>
+                                            <small> Hexagon AB</small>
                                         </div>
                                     </div>
                                 </div>
-                                <a href="#" class="text-danger"><u>Take a Demo</u></a>
-                                <img class="user-author-shape2" src="assets/images/user-robot-icon.png" alt="title" />
+                                <img src="assets/images/user-robot-icon.png" alt="#" class="user-author-shape" />
+                                <a href="#" class="text-danger">View List</a>
                             </div>
+
                             <div class="user-widget-box text-center p-4 my-3">
                                 <div class="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
                                 <div class="user-promote-slider">
@@ -396,15 +404,16 @@ const UserGuide = () => {
                                 <button style={{ background: "#FB3E3E" }} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                 <p class="m-0 mt-2"><a href="#" class="text-danger">Learn More  </a></p>
                             </div>
-
+                            <div style={{ background: "white", borderRadius: "20px" }}>
+                                <SavedList />
+                            </div>
                         </div>
                     </div>
 
                 </div>
             </div>
         </div>
-
     );
 };
 
-export default UserGuide;
+export default RepeatedUser;

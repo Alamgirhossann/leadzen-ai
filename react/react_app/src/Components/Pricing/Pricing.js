@@ -23,7 +23,7 @@ const Pricing = () => {
                             </li>
                             <li class="nav-item me-md-4 me-3">
                                 <li class="nav-item dropdown">
-                                <a class="credit-btn btn btn-outline-danger nav-link" href="#">5 Credits Left</a>
+                                    <a class="credit-btn btn btn-outline-danger nav-link" href="#">5 Credits Left</a>
                                     <ul class="dropdown-menu">
                                         <li><p class="dropdown-item"><img src="assets/images/pro-codesandbox.png" alt="title" /> My Credits</p></li>
                                         <li>
@@ -72,25 +72,22 @@ const Pricing = () => {
                 </nav>
             </header>
 
-            <div class="text-center px-4 py-3 my-0 container">
+            <div class="text-center px-4 py-3 my-0 container" >
                 <div class="user-lead-top mb-3 user-widget-box">
                     <h5 class="m-3"><img src="assets/images/back-union.png" alt="" /> Subscription</h5>
                 </div>
-                <div class="lead-accordion accordion">
-                    <div class="accordion-item">
-                        <div class="accordion-header user-widget-box">
-                            <div className="py-2 px-4 text-center">
-                                <p>Make your next client the best customer you've ever had. <br />
-                                    <span className='text-danger fw-bold'>Get started with your most intelligent analystt</span>
-                                </p>
-                            </div>
-                        </div>
+                <div class="accordion-header user-widget-box">
+                    <div className="pt-2 pb-1 px-4 text-center">
+                        <p>Make your next client the best customer you've ever had. <br />
+                            <span className='text-danger fw-bold'>Get started with your most intelligent analystt</span>
+                        </p>
                     </div>
                 </div>
             </div>
+
             <div className="container">
                 <div className="row">
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3 mt-1">
                         <div class="card card-height">
                             <div class='card-body'>
                                 <h5 class="text-danger">Free Analyst</h5>
@@ -104,7 +101,7 @@ const Pricing = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3 mt-1">
                         <div class="card card-height">
                             <div class="card-body">
                                 <h5 class="card-title text-danger">Free Analyst</h5>
@@ -118,7 +115,7 @@ const Pricing = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3 mt-1">
                         <div class="card card-height">
                             <div class="card-body">
                                 <h5 class="card-title text-danger">Free Analyst</h5>
@@ -134,7 +131,7 @@ const Pricing = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-3 mt-2">
+                    <div className="col-md-3 mt-1">
                         <div class="card card-height">
                             <div class="card-body">
                                 <h5 class="card-title text-danger">Free Analyst</h5>

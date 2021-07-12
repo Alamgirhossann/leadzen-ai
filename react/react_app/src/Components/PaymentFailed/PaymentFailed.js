@@ -14,11 +14,11 @@ const PaymentFailed = () => {
                 <div className="main-wrapper">
                     <div className='w-100 pt-6 h-100 d-flex justify-content-center '>
                         <div className='payment-container-align'>
-                            <div className='text-center'>
+                            <div className='text-center py-4'>
                                 <img className='pt-3' src="assets/images/Group 2237.png" alt="" />
-                                <p className="text-danger pt-2">Opps</p>
+                                <p className="text-danger pt-2">Oops</p>
                                 <p>Looks like there's a problem here. <br /> We were unable to process your payment. </p>
-                                <p className="pt-5"><a href="#" className='text-danger'>Try Again</a></p>
+                                <p className="pt-4"><a href="#" className='text-danger'>Try Again</a></p>
                             </div>
                         </div>
                     </div>

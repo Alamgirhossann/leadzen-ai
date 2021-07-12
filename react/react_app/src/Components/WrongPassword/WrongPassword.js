@@ -1,4 +1,5 @@
 import React from 'react';
+import './WrongPassword.css';
 import { Link } from 'react-router-dom';
 
 const WrongPassword = () => {
@@ -15,19 +16,19 @@ const WrongPassword = () => {
                 <div class="main-wrapper">
                     <div class="container-fluid">
                         <div class="form-container" >
-                            <div class="signup-wrapper py-2 px-md-6">
+                            <div class="signup-wrapper py-4 px-md-6">
                                 <div class="row align-items-center">
-                                    <div class="col-md-6 order-md-1">
-                                        <div class="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
+                                    <div class="col-md-6 robot-container order-md-12">
+                                        <div class="password-page-robot">
                                             <p class="fw-bold">
                                                 <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />
-                                                <span className='text-danger'>Hey buddy, </span> <br />
-                                                looks like you've typed <br /> in the wrong information. <br />
-                                                It happens to the best of us. <br /> Take a minute and try again
+                                                <span className='text-danger'>Hey buddy, <br /> </span> 
+                                                looks like you've typed in the wrong information. 
+                                                It happens to the best of us. Take a minute and try again
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 order-md-12">
+                                    <div class="col-md-6 order-md-1">
                                         <div class="sign-up-form">
                                             <div class="text-center">
                                                 <h3 className='fw-bolder'>Welcome to Analystt.ai</h3>
@@ -35,10 +36,10 @@ const WrongPassword = () => {
                                             </div>
                                             <form class="sign-up-form" class="#">
                                                 <div class="mb-3">
-                                                    <input type="email" class="form-control" placeholder="Chris007@hexagon.in" id="email" />
+                                                    <input type="email" class="w-100" placeholder="Chris007@hexagon.in" id="email" />
                                                 </div>
                                                 <div class="mb-3 password-input">
-                                                    <input type="password" name='password' class="form-control" placeholder="xxxxxxxxxxxx" id="password" />
+                                                    <input type="password" name='password' class="w-100" placeholder="xxxxxxxxxxxx" id="password" />
                                                 </div>
                                                 <div class="mb-1 d-block d-md-flex justify-content-end">
                                                     <p><a href="#" class="small text-secondary">Forgot your password?</a></p>
@@ -66,8 +67,13 @@ const WrongPassword = () => {
                         </div>
                     </div>
                 </div>
-                <div className="d-flex justify-content-end ">
-                    <img className='jarv-robot' src="assets/images/user-robot-icon.png" alt="" />
+                <div className="cookie px-4 mt-2">
+                    <div className="cookie-message">
+                        <p className='text-center mt-3'>We use cookies to improve your browsing experience. By accepting this, you agree to our privacy policy <button className='cookie-btn'>Cookies</button></p>
+                    </div>
+                    <div className="jarv-position">
+                        <img className='jarv-robot' src="assets/images/user-robot-icon.png" alt="" />
+                    </div>
                 </div>
             </div>
         </div>

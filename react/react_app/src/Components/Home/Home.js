@@ -14,10 +14,18 @@ const Home = () => {
                 <Link to='/pricing'>Pricing</Link>
                 <Link to='/profile'>Profile</Link>
                 <Link to='/howToUse'>How to Use</Link>
-                <Link to='/paymentFailed'>Payment Failed</Link>
+                <Link to='/paymentFaild'>Payment Faild</Link>
                 <Link to='/userGuide'>User Guide</Link>
                 <Link to='/saveList'>Save List</Link>
                 <Link to='/resetPassword'>Reset Password</Link>
+                <Link to='/firstTimeUser'>First Time User</Link>
+                <Link to='/history'>History</Link>
+                <Link to='/repeatedUser'>Repeated User</Link>
+                <Link to='/detailedInfo'>Detailed Info</Link>
+                <Link to='/specificUser'>Specific User</Link>
+                <Link to='/searchResult'>Search Result</Link>
+                <Link to='/searchResult2'>Search Result 2</Link>
+                {/* <Link to='/searchResult3'>Search Result 3</Link> */}
             </div>
         </div>
     );

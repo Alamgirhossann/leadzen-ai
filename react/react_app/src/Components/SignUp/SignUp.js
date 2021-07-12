@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './SignUp.css';
 import { Link } from 'react-router-dom';
 
 const SignUp = () => {
@@ -34,28 +35,28 @@ const SignUp = () => {
                 <div class="main-wrapper">
                     <div class="container-fluid">
                         <div class="form-container">
-                            <div class="signup-wrapper py-2 px-md-6">
+                            <div class="signup-wrapper py-3 px-md-6">
                                 <div class="row align-items-center">
                                     {
                                         email !== input.email ?
-                                            <div class="col-md-6 order-md-1">
-                                                <div class="sign-up-robot ps-4 pe-7 pt-4 pb-8 mb-2">
+                                            <div class="col-md-6 robot-container order-md-12">
+                                                <div class="sign-up-page-robot">
                                                     <h3>Hi</h3>
                                                     <p class="fw-bold">I am
                                                         <span class="text-danger"> Jarv</span>
-                                                        <br />  & I will give you a sneak peek into the most intelligent AI Powered lead generation platform with
+                                                        <br /> & I will give you a sneak peek into the most intelligent AI Powered lead generation platform with
                                                         <span class="text-danger"> 5 free credits</span>
                                                     </p>
                                                     <div class="text-center">
-                                                        <span class="small text-danger"><u>Learn how to use credits</u></span>
+                                                        <Link to='/howToUse'><span class="small text-danger text-decoration-underline">Learn how to use credits</span></Link>
                                                     </div>
                                                 </div>
                                             </div>
-                                            : <div class="col-md-6 order-md-1">
-                                                <div class="sign-up-robot ps-4 pe-7 pt-4 pb-6 mb-2">
+                                            : <div class="col-md-6 order-md-12">
+                                                <div class="sign-up-page-robot">
                                                     <p class="fw-bold">
                                                         <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />
-                                                        Hey Chris, <br />
+                                                        Hey [User], <br />
                                                         looks like you’ve been taking the ‘lead’ already. The username already exists. Try <Link to='/login' className='text-danger'>logging in</Link> in instead
                                                     </p>
                                                 </div>
@@ -63,21 +64,21 @@ const SignUp = () => {
                                     }
 
 
-                                    <div class="col-md-6 order-md-12">
+                                    <div class="col-md-6 order-md-1">
                                         <div class="sign-up-form">
-                                            <div class="text-center">
+                                            <div class="text-center pt-1">
                                                 <h2>Create a free account</h2>
-                                                <h5 class="text-danger mb-3">Get 5 Free Credits for leads Now !</h5>
+                                                <h5 class="text-danger mb-3">Get 5 Free Credits for Leads Now !</h5>
                                             </div>
                                             <form class="sign-up-form" class="#">
                                                 <div class="mb-3">
-                                                    <input type="text" class="form-control" placeholder="Enter your name" id="username" />
+                                                    <input type="text" class="w-100" placeholder="Enter your name" id="username" />
                                                 </div>
                                                 <div class="mb-3">
-                                                    <input type="email" name='email' onBlur={handleBlur} class="form-control" placeholder="Enter your email" id="email" />
+                                                    <input type="email" name='email' onBlur={handleBlur} class="w-100" placeholder="Enter your email" id="email" />
                                                 </div>
                                                 <div class="mb-3 password-input">
-                                                    <input type="password" class="form-control" placeholder="Enter your Password" id="password" />
+                                                    <input type="password" class="w-100" placeholder="Enter your password" id="password" />
                                                 </div>
                                                 <button onClick={handleSubmit} type="submit" class="btn text-white w-100 px-1">Grab Your 5 Free Credits Now</button>
                                                 <div class="text-center mt-2"><span>Sign Up using: </span></div>
@@ -102,7 +103,7 @@ const SignUp = () => {
                         </div>
                     </div>
                 </div>
-               <div className="cookie">
+               <div className="cookie px-4 mt-2">
                     <div className="cookie-message">
                         <p className='text-center mt-3'>We use cookies to improve your browsing experience. By accepting this, you agree to our privacy policy <button className='cookie-btn'>Cookies</button></p>
                     </div>

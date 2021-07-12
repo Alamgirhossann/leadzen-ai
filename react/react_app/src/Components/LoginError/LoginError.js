@@ -1,4 +1,5 @@
 import React from 'react';
+import './LoginError.css';
 import { Link } from 'react-router-dom';
 
 const LoginError = () => {
@@ -15,15 +16,15 @@ const LoginError = () => {
                 <div class="main-wrapper">
                     <div class="container-fluid">
                         <div class="form-container" >
-                            <div class="signup-wrapper py-2 px-md-6">
+                            <div class="signup-wrapper py-4 px-md-6">
                                 <div class="row align-items-center">
-                                    <div class="col-md-6 order-md-1">
-                                        <div class="sign-up-robot text-center pt-md-1 pl-md-5 pb-6 mb-4">
+                                    <div class="col-md-6 robot-container order-md-12">
+                                        <div class="login-error-robot">
                                             <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />    
-                                            <p class="fw-bold">Hey Chris, time to take <br /> the ‘lead’. User not found. <br /> <span className='text-danger'>Sign up</span>  to begin. </p>
+                                            <p class="fw-bold">Hey [User], time to take <br /> the ‘lead’. User not found. <br /> <span className='text-danger'>Sign up</span>  to begin. </p>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 order-md-12">
+                                    <div class="col-md-6 order-md-1">
                                         <div class="sign-up-form">
                                             <div class="text-center">
                                                 <h3 className='fw-bolder'>Welcome to Analystt.ai</h3>
@@ -31,10 +32,10 @@ const LoginError = () => {
                                             </div>
                                             <form class="sign-up-form">
                                                 <div class="mb-3">
-                                                    <input type="email" class="form-control" placeholder="Enter your email" id="email" />
+                                                    <input type="email" class="w-100" placeholder="Enter your email" id="email" />
                                                 </div>
                                                 <div class="mb-3 password-input">
-                                                    <input type="password" name='password' class="form-control" placeholder="Enter your password" id="password" />
+                                                    <input type="password" name='password' class="w-100" placeholder="Enter your password" id="password" />
                                                 </div>
                                                 <div class="mb-1 d-block d-md-flex justify-content-end">
                                                     <p><a href="#" class="small text-secondary">Forgot your password?</a></p>
@@ -62,8 +63,13 @@ const LoginError = () => {
                         </div>
                     </div>
                 </div>
-                <div className="d-flex justify-content-end ">
-                    <img className='jarv-robot' src="assets/images/user-robot-icon.png" alt="" />
+                <div className="cookie px-4 mt-2">
+                    <div className="cookie-message">
+                        <p className='text-center mt-3'>We use cookies to improve your browsing experience. By accepting this, you agree to our privacy policy <button className='cookie-btn'>Cookies</button></p>
+                    </div>
+                    <div className="jarv-position">
+                        <img className='jarv-robot' src="assets/images/user-robot-icon.png" alt="" />
+                    </div>
                 </div>
             </div>
         </div>
