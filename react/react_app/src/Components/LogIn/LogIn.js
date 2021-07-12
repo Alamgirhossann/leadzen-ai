@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import './LogIn.css';
 import { Link, Redirect } from 'react-router-dom';
 import Cookies from "js-cookie";
 import validator from "validator";
 
-const LogIn = (props) => {
+const LogIn = () => {
 
     const [form, setForm] = useState({
         email: "",
@@ -47,7 +48,7 @@ const LogIn = (props) => {
         e.preventDefault();
         if(!form.email || !form.password){
             setForm({...form, error : "Email and Password cannot be blank!"})
-            alert("Invalid Email and Password");
+            alert("Email and Password cannot be blank!");
         }
         else {
             setValid(true);
@@ -97,11 +98,11 @@ const LogIn = (props) => {
                 <div className="main-wrapper">
                     <div className="container-fluid">
                         <div className="form-container" >
-                            <div className="signup-wrapper py-2 px-md-6">
+                            <div className="signup-wrapper py-4 px-md-6">
                                 <div className="row align-items-center">
-                                    <Robot />
-                                    {response.ok ? <Redirect to="/profile"/> : null}
-                                    <div className="col-md-6 order-md-12">
+                                    <Robot />     
+                                    {response.ok ? <Redirect to="/repeatedUser"/> : null}
+                                    <div className="col-md-6 order-md-1">
                                         <div className="sign-up-form">
                                             <div className="text-center">
                                                 <h3 className='fw-bolder'>Welcome to Analystt.ai</h3>
@@ -109,15 +110,15 @@ const LogIn = (props) => {
                                             </div>
                                             <form className="sign-up-form">
                                                 <div className="mb-3">
-                                                    <input type="email" name='email' onBlur={handleBlur} className="form-control" placeholder="Enter your email" id="email" />
+                                                    <input type="email" name='email'  className="w-100" placeholder="Enter your email" id="email" onBlur={handleBlur} />
                                                 </div>
                                                 <div className="mb-3 password-input">
-                                                    <input type="password" name='password' className="form-control" placeholder="Enter your password" id="password" onBlur={handleBlurPass} />
+                                                    <input type="password" name='password' className="w-100" placeholder="Enter your password" id="password" onBlur={handleBlurPass} />
                                                 </div>
                                                 <div className="mb-1 d-block d-md-flex justify-content-end">
                                                     <p><Link to='/resetPassword' className="small text-secondary">Forgot your password?</Link></p>
                                                 </div>
-                                                <button onClick={handleSubmit} type="submit" className="btn text-white w-100">Sign In</button>
+                                                <button type="submit" onClick={handleSubmit} className="btn text-white w-100">Sign In</button>
                                                 <div className="text-center mt-2"><span>Sign In using: </span></div>
                                                 <div className="signup-login-with mt-3">
                                                     <div className="row">
@@ -140,8 +141,13 @@ const LogIn = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="d-flex justify-content-end ">
-                    <img className='jarv-robot' src="assets/images/user-robot-icon.png" alt="" />
+                <div className="cookie px-5 mt-2">
+                    <div className="cookie-message">
+                        <p className='text-center mt-3'>We use cookies to improve your browsing experience. By accepting this, you agree to our privacy policy <button className='cookie-btn'>Cookies</button></p>
+                    </div>
+                    <div className="jarv-position">
+                        <img className='jarv-robot' src="assets/images/user-robot-icon.png" alt="" />
+                    </div>
                 </div>
             </div>
         </div>

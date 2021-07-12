@@ -46,14 +46,14 @@ $("form").on("change", ".file-upload-field", function(){
   ]
 });
 $('.related-slider').slick({
-  slidesToShow: 3,
+  slidesToShow: 4,
   arrows: true,
   dots: false,
   responsive: [ 
     {
       breakpoint: 991,
       settings: {
-        slidesToShow: 3
+        slidesToShow: 2
       }
      },
     {

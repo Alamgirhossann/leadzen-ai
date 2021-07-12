@@ -1,4 +1,5 @@
 import React from 'react';
+import './SignUpError.css';
 import { Link } from 'react-router-dom';
 
 const SignUpError = () => {
@@ -16,22 +17,22 @@ const SignUpError = () => {
                 <div class="main-wrapper">
                     <div class="container-fluid">
                         <div class="form-container">
-                            <div class="signup-wrapper py-2 px-md-6">
+                            <div class="signup-wrapper py-3 px-md-6">
                                 <div class="row align-items-center">
-                                    <div class="col-md-6 order-md-1">
-                                        <div class="sign-up-robot ps-4 pe-7 pt-4 pb-6 mb-2">
+                                    <div class="col-md-6 robot-container order-md-12">
+                                        <div class="sign-up-error-page">
                                             <p class="fw-bold">
                                                 <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />
-                                                 Hey Chris, <br />
+                                                 Hey [User], <br />
                                                 looks like you’ve been taking the ‘lead’ already. The username already exists. Try <Link to='/login' className='text-danger'>logging in</Link> in instead
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 order-md-12">
+                                    <div class="col-md-6 order-md-1">
                                         <div class="sign-up-form">
-                                            <div class="text-center">
+                                            <div class="text-center pt-1">
                                                 <h2>Create a free account</h2>
-                                                <h5 class="text-danger mb-3">Get 5 Free Credits for leads Now !</h5>
+                                                <h5 class="text-danger mb-3">Get 5 Free Credits for Leads Now !</h5>
                                             </div>
                                             <form class="sign-up-form" class="#">
                                                 <div class="mb-3">
@@ -66,7 +67,7 @@ const SignUpError = () => {
                         </div>
                     </div>
                 </div>
-                <div className="cookie">
+                <div className="cookie px-4 mt-2">
                     <div className="cookie-message">
                         <p className='text-center mt-3'>We use cookies to improve your browsing experience. By accepting this, you agree to our privacy policy <button className='cookie-btn'>Cookies</button></p>
                     </div>

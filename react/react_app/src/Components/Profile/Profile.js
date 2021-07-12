@@ -20,7 +20,7 @@ const Profile = () => {
                             </li>
                             <li class="nav-item me-md-4 me-3">
                                 <li class="nav-item dropdown">
-                                <a class="credit-btn btn btn-outline-danger nav-link" href="#">4 Credits Left</a>
+                                    <a class="credit-btn btn btn-outline-danger nav-link" href="#">4 Credits Left</a>
                                     <ul class="dropdown-menu">
                                         <li><p class="dropdown-item"><img src="assets/images/pro-codesandbox.png" alt="title" /> My Credits</p></li>
                                         <li>
@@ -94,7 +94,7 @@ const Profile = () => {
                                         <div class="ms-4 ms-md-5">
                                             <h6>John Smith</h6>
                                             <span class="word-wrap">Johnsmith087@hexagon.in</span>
-                                            <button type="submit" class="btn btn-sign-out d-block py-1 px-3">Sign Out</button>
+                                            <button type="submit" class="btn btn-sign-out mt-3 d-block py-1 px-3">Sign Out</button>
                                         </div>
                                     </div>
                                 </div>
@@ -107,24 +107,26 @@ const Profile = () => {
 
 
                             <div class="table-responsive pb-4">
-                                <table class="table table-product m-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="fw-bold fs-5">Subscription</th>
-                                            <th class="text-white">this is not showing</th>
-                                            <th class="text-end"><span class="text-muted">Date of last renewal: </span>01/02/2020</th>
-                                            <th class="text-center"> <span class="text-muted">Plan till date:</span>29/01/2021</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-center"><p>Product</p> <span class="text-color">Free Analystt</span></td>
-                                            <td class="text-center"><p>Price</p> <span class="text-color">INR 0.00</span></td>
-                                            <td class="text-center"><p>Period</p> <span class="text-color">Monthly</span></td>
-                                            <td class="text-center"><p>Status</p> <span class="text-active">Active</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div className='container-bg p-2'>
+                                    <table class="table table-product">
+                                        <thead>
+                                            <tr>
+                                                <th class="fw-bold fs-5">Subscription</th>
+                                                <th class="text-white">this is not showing</th>
+                                                <th class="text-end"><span class="text-muted">Date of last renewal: </span>01/02/2020</th>
+                                                <th class="text-center"> <span class="text-muted">Plan till date:</span>29/01/2021</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center"><p>Product</p> <span class="text-color">Free Analystt</span></td>
+                                                <td class="text-center"><p>Price</p> <span class="text-color">INR 0.00</span></td>
+                                                <td class="text-center"><p>Period</p> <span class="text-color">Monthly</span></td>
+                                                <td class="text-center"><p>Status</p> <span class="text-active">Active</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
 

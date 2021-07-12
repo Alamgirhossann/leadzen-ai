@@ -1,0 +1,84 @@
+.login-error-robot {
+    background-image: url('../../images/sign-up-robot.png');
+    background-repeat: no-repeat;
+    background-size: 65% 95%;
+    padding: 20px 80px 40px 30px;
+    line-height: 28.8px;
+    letter-spacing: 3%;
+    margin-top: 0px;
+    max-width: 395px;
+    position: relative; 
+}
+.login-error-robot::before {
+    content: "";
+    background-image: url('../../images/sign-up-robman.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 163px;
+    height: 231px;
+    margin-top: 30px;
+    position: absolute;
+    right: -40px; 
+}
+.robot-container{
+    padding-left: 50px;
+}
+@media only screen and (max-width: 991px){
+    .login-error-robot::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 80px;
+        right: -60px; }
+    .login-error-robot{
+        background-size: 90% 85%;
+        padding: 30px 60px 70px 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 767px){
+    .login-error-robot::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 50px;
+        margin-bottom: 10px;
+        right: -0px; }
+    .login-error-robot{
+        background-size: 78% 85%;
+        padding: 30px 80px 70px 30px;
+        margin-bottom: 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 380px){
+    .login-error-robot::before {
+        width: 81px;
+        height: 165px;
+        margin-top: 60px;
+        right: -0px; }
+    .login-error-robot{
+        background-size: 75% 85%;
+        padding: 30px 80px 70px 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 320px){
+    .login-error-robot::before {
+        width: 65px;
+        height: 145px;
+        margin-top: 100px;
+        right: -5px; }
+        .login-error-robot{
+            background-size: 80% 85%;
+            padding: 10px 60px 70px 15px;
+        }
+}
+    

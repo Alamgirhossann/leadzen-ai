@@ -15,17 +15,13 @@ import WrongPassword from './Components/WrongPassword/WrongPassword';
 import SavedList from './Components/SavedList/SavedList';
 import Profile from './Components/Profile/Profile';
 import UserGuide from './Components/UserGuide/UserGuide';
-import PaymentFailed from './Components/PaymentFailed/PaymentFailed';
+import PaymentFaild from './Components/PaymentFaild/PaymentFaild';
 import Pricing from './Components/Pricing/Pricing';
 import HowToUse from './Components/HowToUse/HowToUse';
 import FirstTimeUser from './Components/FirstTimeUser/FirstTimeUser';
 import History from './Components/History/History';
 import RepeatedUser from './Components/RepeatedUser/RepeatedUser';
 import DetailedInfo from './Components/DetailedInfo/DetailedInfo';
-import SpecificUser from './Components/SpecificUser/SpecificUser';
-import SearchResult from './Components/SearchResult/SearchResult';
-import SearchResult2 from './Components/SearchResult2/SearchResult2';
-import SearchResult3 from './Components/SearchResult3/SearchResult3';
 
 const App = () => {
   useEffect(() => {
@@ -50,8 +46,8 @@ const App = () => {
         <Route path='/pricing'>
           <Pricing />
         </Route>
-        <Route path='/PaymentFailed'>
-          <PaymentFailed />
+        <Route path='/PaymentFaild'>
+          <PaymentFaild />
         </Route>
         <Route path='/howToUse'>
           <HowToUse />
@@ -91,18 +87,6 @@ const App = () => {
         </Route>
         <Route path='/detailedInfo'>
           <DetailedInfo />
-        </Route>
-        <Route path='/specificUser'>
-          <SpecificUser />
-        </Route>
-        <Route path='/searchResult'>
-          <SearchResult />
-        </Route>
-        <Route path='/searchResult2'>
-          <SearchResult2 />
-        </Route>
-        <Route path='/searchResult3'>
-          <SearchResult3 />
         </Route>
       </Switch>
     </Router>
