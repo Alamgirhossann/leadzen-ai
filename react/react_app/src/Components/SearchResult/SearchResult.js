@@ -253,7 +253,7 @@ const SearchResult = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -270,7 +270,7 @@ const SearchResult = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -287,7 +287,7 @@ const SearchResult = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -304,7 +304,7 @@ const SearchResult = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -321,7 +321,7 @@ const SearchResult = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -338,7 +338,7 @@ const SearchResult = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>

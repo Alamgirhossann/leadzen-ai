@@ -212,9 +212,10 @@ Primary use:  html template
 
 body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Poppins";
   font-size: 0.875rem;
   font-weight: 400;
+  letter-spacing: 3%;
   line-height: 1.6;
   color: #232323;
   background-color: #F4F7FC;
@@ -11018,4 +11019,11 @@ a {
 }
 .link-style img{
   color: #000;
+}
+.user-btn{
+  border-radius: 30px;
+  padding: 5px 8px;
+  background: #FB3E3E;
+  border: none;
+  outline: none;
 }

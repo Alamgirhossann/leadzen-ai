@@ -1,73 +1,77 @@
 .ask-jarv{
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-areas: 'r r r r r r r r r r j j';
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-areas: 'r r r r r r r r r r j j';
 }
 .related-slider{
-    grid-area: r;
+  grid-area: r;
 }
 .jarv{
-    grid-area: j;
-    height: 180px;
-    width: 125px;
-    padding: 10px;
-    margin-left: 20px;
+  grid-area: j;
+  height: 180px;
+  width: 125px;
+  padding: 10px;
+  margin-left: 20px;
 }
 .unlock-btn{
-    background: #F1F1F1;
-    border-radius: 8px;
-    margin: 0px 5px;
-    padding: 8px 20px;
+  background: #F1F1F1;
+  border-radius: 8px;
+  margin: 0px 5px;
+  padding: 8px 20px;
 }
 .export-btn{
-    background: #FFE3E3;
-    border-radius: 8px;
-    margin: 0px 5px;
-    padding: 8px 20px;
+  background: #FFE3E3;
+  border-radius: 8px;
+  margin: 0px 5px;
+  padding: 8px 20px;
 }
 .user-container{
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-areas: 'b a u u u u e e e v v c';
-    align-items: center;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-areas: 'b a u u u u e e e v v c';
+  align-items: center;
+}
+.box{
+    grid-area: b;
+}
+.search-author{
+  grid-area: a;
+}
+.search-user{
+  grid-area: u;
+}
+.search-email{
+  grid-area: e;
+}
+.search-view-btn{
+  grid-area: v;
+}
+.search-close-btn{
+  grid-area: c;
+  display: flex;
+  justify-content: center;
+  padding-right: 5px;
+  align-items: center;
+}
+.search-user p{
+  font-size: 18px;
+  margin: 0px;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+}
+.search-user small{
+    font-size: 12;
+}
+.blur {
+  color: transparent;
+  text-shadow: 0 0 8px #000;
+}
+@media only screen and (max-width: 991px){
+  .jarv{
+    height: 170px;
+    width: 95px;
+    padding-right: 10px;
   }
-  .box{
-      grid-area: b;
-  }
-  .search-author{
-    grid-area: a;
-  }
-  .search-user{
-    grid-area: u;
-  }
-  .search-email{
-    grid-area: e;
-  }
-  .search-view-btn{
-    grid-area: v;
-  }
-  .search-close-btn{
-    grid-area: c;
-    display: flex;
-    justify-content: center;
-    padding-right: 5px;
-    align-items: center;
-  }
-  .search-user p{
-    font-size: 18px;
-    margin: 0px;
-    font-family: 'Poppins';
-    font-style: normal;
-    font-weight: 500;
-  }
-  .search-user small{
-      font-size: 12;
-  }
-  @media only screen and (max-width: 991px){
-    .jarv{
-      height: 170px;
-      width: 95px;
-      padding-right: 10px;
-    }
-  }
+}
 

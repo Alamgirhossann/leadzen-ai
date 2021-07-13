@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import './DetailedInfo.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -217,9 +218,9 @@ const DetailedInfo = () => {
                             <div class="user-search-wrapper">
                                 <div className="detailed-search">
                                     <div class="search-promote-content">
-                                        <form class="form-inline d-flex my-2 my-lg-0">
+                                        <form class=" d-flex my-2 my-lg-0">
                                             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
-                                            <button class="btn text-white d-flex ms-3" style={{ background: "#FB3E3E" }} type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
+                                            <button class="btn text-white w-auto d-flex ms-3" style={{ background: "#FB3E3E" }} type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                         </form>
                                     </div>
                                     <div>
@@ -243,21 +244,23 @@ const DetailedInfo = () => {
                             </div>
 
                             <div class="user-widget-box  my-3">
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='search-user'>
+                                <div className='info-container'>
+                                    <div className="user-info-container">
+                                        <input className='info-box ms-3 me-3' type="checkbox" id='checkbox' />
+                                        <p className='ingo-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                        <div className='info-user'>
                                             <p>John Smith</p>
+                                        </div>
+                                        <div className='info-location'>
                                             <small className='d-block'>Works at Hexagon AB</small>
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
+                                        <div className='info-email text-center'>
+                                            <small className='d-block'>Chris07@XXXX.com</small>
                                         </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
+                                        <p className='info-download-btn'><img src="assets/images/Group 1899.png" alt="" /></p>
+                                        <p className='info-up-btn'><img src="assets/images/Group 1900.png" alt="" /></p>
+                                        <p className='info-plus-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
                                 </div>
                              </div>
@@ -276,7 +279,7 @@ const DetailedInfo = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -293,7 +296,7 @@ const DetailedInfo = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -310,7 +313,7 @@ const DetailedInfo = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -327,7 +330,7 @@ const DetailedInfo = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -344,7 +347,7 @@ const DetailedInfo = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
@@ -361,11 +364,12 @@ const DetailedInfo = () => {
                                             <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className='d-block'>alamgirhossann</small>
+                                            <small className='d-block blur'>alamgirhossann</small>
                                             <small className='d-block text-danger'>Unlock</small>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
                                         <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
+                                        {/* <p style={{display:"flex" }}><img src="assets/images/Group 1863.png" alt="" /></p> */}
                                     </div>
                                 </div>
                             </div>
