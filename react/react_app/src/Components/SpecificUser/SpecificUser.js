@@ -14,7 +14,7 @@ const SpecificUser = () => {
     return (
         <div>
 
-            <section className="phone-num-section">
+            <section className="item-section">
                 <div className="phone-child-div">
                     <div className=''>
                         <h6>Probable Phone Number Associated</h6>
@@ -179,145 +179,145 @@ const SpecificUser = () => {
                     </div>
                 </div>
             </section>
-            <section>
-                <h4>Probable Jobs and Companies  Associated</h4>
-                <div className='table-alignment container-fluid'>
-                    <td>Hexagon AB</td>
-                    <td>Software Engineer</td>
-                    <td>Since 201X-XX-XX</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-                <div className='table-alignment container-fluid'>
-                    <td>Catavolt, Part of Hexagon</td>
-                    <td>Software Engineer</td>
-                    <td>Since 201X-XX-XX</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-                <div className='table-alignment container-fluid'>
-                    <td>Infor- Atlanta, GA, USA</td>
-                    <td>Software Engineer</td>
-                    <td>Since 201X-XX-XX</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-                <div className='table-alignment container-fluid'>
-                    <td>MAPICS, Inc.- Atlanta, GA, USA</td>
-                    <td>Software Engineer</td>
-                    <td>Since 2019-07-02</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-                <div className='table-alignment container-fluid'>
-                    <td>MAPICS, Inc.- Eindhoven, NL</td>
-                    <td>Software Engineer</td>
-                    <td>Since 2019-07-02</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-                <div className='table-alignment container-fluid'>
-                    <td>MMarcam Benelux BV- Best, NL</td>
-                    <td>Software Engineer</td>
-                    <td>Since 2014-01-26</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div><div className='table-alignment container-fluid'>
-                    <td>IBM- Brussels, Belgium</td>
-                    <td>Software Engineer</td>
-                    <td>Since 2010-12-23</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-                <div className='table-alignment container-fluid'>
-                    <td>SFP Solutions, INC.</td>
-                    <td>Software Engineer</td>
-                    <td>None</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div><div className='table-alignment container-fluid'>
-                    <td>System Group INC</td>
-                    <td>Software Engineer</td>
-                    <td>None</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div>
-            </section>
-            <section>
-                <h4>Probable Education Associated</h4>
-                <div className='table-alignment container-fluid'>
-                    <td>APICS- Association for Operation Management</td>
-                    <td>2013 - 2011</td>
-                    <td>Texas, USA</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div><div className='table-alignment container-fluid'>
-                    <td>Ghent University</td>
-                    <td>2011 - 2009</td>
-                    <td>New York, USA</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>Ghentuniversity.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
-                </div><div className='table-alignment container-fluid'>
-                    <td>St.Jozef Institute</td>
-                    <td>2009 - 2005</td>
-                    <td>Texas, USA</td>
-                    <td>
-                        <div className='d-flex justify-content-between'>
-                            <p>apicsassociation.com</p>
-                            <img className='d-flex justify-content-center' style={{ height: "12px" }} src="assets/images/Union.png" alt="" />
-                        </div>
-                    </td>
+            <section className='item-section'>
+                <div style={{ width: "900px" }}>
+                    <h4>Probable Jobs and Companies  Associated</h4>
+                    <div className='table-alignment container-fluid'>
+                        <td>Hexagon AB</td>
+                        <td>Software Engineer</td>
+                        <td>Since 201X-XX-XX</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
+                    <div className='table-alignment container-fluid'>
+                        <td>Catavolt, Part of Hexagon</td>
+                        <td>Software Engineer</td>
+                        <td>Since 201X-XX-XX</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
+                    <div className='table-alignment container-fluid'>
+                        <td>Infor- Atlanta, GA, USA</td>
+                        <td>Software Engineer</td>
+                        <td>Since 201X-XX-XX</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
+                    <div className='table-alignment container-fluid'>
+                        <td>MAPICS, Inc.- Atlanta, GA, USA</td>
+                        <td>Software Engineer</td>
+                        <td>Since 2019-07-02</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
+                    <div className='table-alignment container-fluid'>
+                        <td>MAPICS, Inc.- Eindhoven, NL</td>
+                        <td>Software Engineer</td>
+                        <td>Since 2019-07-02</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
+                    <div className='table-alignment container-fluid'>
+                        <td>MMarcam Benelux BV- Best, NL</td>
+                        <td>Software Engineer</td>
+                        <td>Since 2014-01-26</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div><div className='table-alignment container-fluid'>
+                        <td>IBM- Brussels, Belgium</td>
+                        <td>Software Engineer</td>
+                        <td>Since 2010-12-23</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
+                    <div className='table-alignment container-fluid'>
+                        <td>SFP Solutions, INC.</td>
+                        <td>Software Engineer</td>
+                        <td>None</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div><div className='table-alignment container-fluid'>
+                        <td>System Group INC</td>
+                        <td>Software Engineer</td>
+                        <td>None</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
                 </div>
             </section>
-            <section>
-                <div className='d-flex justify-content-end'>
-                    <p>Get Keyword</p>
-                    <img style={{ height: "20px", width: "20px" }} src="assets/images/Group 1911.png" alt="" />
+            <section className='item-section'>
+                <div style={{ width: "900px" }}>
+                    <h4>Probable Education Associated</h4>
+                    <div className='table-alignment container-fluid'>
+                        <td>APICS- Association for Operation Management</td>
+                        <td>2013 - 2011</td>
+                        <td>Texas, USA</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div><div className='table-alignment container-fluid'>
+                        <td>Ghent University</td>
+                        <td>2011 - 2009</td>
+                        <td>New York, USA</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>Ghentuniversity.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div><div className='table-alignment container-fluid'>
+                        <td>St.Jozef Institute</td>
+                        <td>2009 - 2005</td>
+                        <td>Texas, USA</td>
+                        <td>
+                            <div className='d-flex justify-content-between'>
+                                <p>apicsassociation.com</p>
+                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            </div>
+                        </td>
+                    </div>
                 </div>
+            </section>
+            <section className='item-section'>
                 <div className="row">
                     <div className="col-md-6">
                         <h4>Probable Location Associated</h4>
@@ -384,7 +384,7 @@ const SpecificUser = () => {
 
                 </div>
             </section>
-            <div>
+            <div className='item-section'>
                 <p className='fw-bold'>Lead Rating</p>
                 <img src="assets/images/Group 1908.png" alt="" />
                 <p>3.5 Rating</p>

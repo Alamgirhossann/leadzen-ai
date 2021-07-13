@@ -1,0 +1,44 @@
+.info-container{
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    padding: 15px 10px ;
+  }
+  .user-info-container{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: 'b a u u l l l e e d p k';
+    align-items: center;
+    width: 900px;
+  }
+  .info-box{
+      grid-area: b;
+  }
+  .info-author{
+    grid-area: a;
+  }
+  .info-user{
+    grid-area: u;
+  }
+  .info-location{
+   grid-area: l;
+  }
+  .info-email{
+    grid-area: e;
+  }
+  .info-download-btn{
+    grid-area: d;
+    display: flex;
+    justify-content: center;
+  }
+  .info-up-btn{
+    grid-area: p;
+    display: flex;
+    justify-content: center;
+  }
+  .info-plus-btn{
+    grid-area: k;
+    display: flex;
+    justify-content: center;
+  }
+  

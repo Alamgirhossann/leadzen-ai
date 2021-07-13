@@ -245,43 +245,43 @@ const UserGuide = () => {
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3"><img src="assets/images/user-guide-icon1.png" alt="title" /> https://www.linkedin.c...</div>
+                                                    <button class="user-btn text-white mb-3"><img src="assets/images/user-guide-icon1.png" alt="title" /> https://www.linkedin.c...</button>
                                                     <p class="text-dark mb-4">Search by LinkedIn Profile URL</p>
                                                     <a href="#" class="btn try-it-btn">Try it!</a>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3"><img src="assets/images/user-guide-icon2.png" alt="title" /> John Smith</div>
+                                                    <button class="user-btn text-white  mb-3"><img src="assets/images/user-guide-icon2.png" alt="title" /> John Smith</button>
                                                     <p class="text-dark mb-4">Search Specific contact by Name</p>
                                                     <a href="#" class="btn try-it-btn">Try it!</a>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white mb-3"><img src="assets/images/user-guide-icon3.png" alt="title" /> Designer</div>
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white mb-3"><img src="assets/images/user-guide-icon4.png" alt="title" /> New York</div>
+                                                    <button class="user-btn text-white mb-3"><img src="assets/images/user-guide-icon3.png" alt="title" /> Designer</button>
+                                                    <button class="user-btn text-white mb-3"><img src="assets/images/user-guide-icon4.png" alt="title" /> New York</button>
                                                     <p class="text-dark mb-4">Search for Designer in New York</p>
                                                     <a href="#" class="btn try-it-btn">Try it!</a>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3">Give me list of employee in Amazon</div>
+                                                    <button class="user-btn text-white  mb-3">Give me list of employee in Amazon</button>
                                                     <p class="text-dark mb-4">Search asper you requirement</p>
                                                     <a href="#" class="btn try-it-btn">Try it!</a>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="user-guide-box p-3 my-3">
-                                                    <div style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3">I want contact numbers of my list of customers</div>
+                                                    <button class="user-btn text-white  mb-3">I want contact numbers of my list of customers</button>
                                                     <p class="text-dark mb-4">Search using csv format</p>
                                                     <a href="#" class="btn try-it-btn">Try it!</a>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6">
                                                 <div class="user-guide-box p-3 my-3">
-                                                    <span style={{ background: "#FB3E3E" }} class="btn text-white w-100 mb-3 px-5">Give me contact numbers of people who are following Dunzo on Instagram</span>
+                                                    <button class="user-btn text-white mb-3">Give me contact numbers of people who are following Dunzo on Instagram</button>
                                                     <p class="text-dark mb-4">Just type your requirement</p>
                                                     <a href="#" class="btn try-it-btn">Try it!</a>
                                                 </div>
