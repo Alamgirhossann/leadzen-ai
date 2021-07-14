@@ -16,6 +16,7 @@ const SignUp = () => {
 
     const [isValid, setValid] = useState(false);
     const [response, setResponse] = useState({'ok' : null, 'message' : null});
+    const [showPass, setShowPass] = useState(false);
 
     const handleBlur = (e) => {
         setForm({...form, email:e.target.value});
@@ -25,6 +26,14 @@ const SignUp = () => {
     }
     const handleBlurName = (e) => {
         setForm({...form, name:e.target.value});
+    }
+
+    const handlePassClick = (e) =>{
+        e.preventDefault();
+        if(showPass === true)
+            setShowPass(false);
+        else
+            setShowPass(true);
     }
 
     const Robot = () => {
@@ -139,7 +148,8 @@ const SignUp = () => {
                                                     <input type="email" name='email' onBlur={handleBlur} className="w-100" placeholder="Enter your email" id="email" />
                                                 </div>
                                                 <div className="mb-3 password-input">
-                                                    <input type="password" className="w-100" placeholder="Enter your password" id="password" onBlur={handleBlurPass}/>
+                                                <input type={showPass ? "text" : "password"} name='password' className="w-100" placeholder="Enter your password" id="password" onBlur={handleBlurPass} />
+                                                <a href ="" onClick={handlePassClick}><img src='assets/images/combined-eye.png' style={{position: 'absolute', top: '13px', right: '10px'}}/></a>
                                                 </div>
                                                 <button onClick={handleSubmit} type="submit" className="btn text-white w-100 px-1">Grab Your 5 Free Credits Now</button>
                                                 <div className="text-center mt-2"><span>Sign Up using: </span></div>

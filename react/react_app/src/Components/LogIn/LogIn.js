@@ -14,6 +14,7 @@ const LogIn = () => {
     
     const [isValid, setValid] = useState(false);
     const [response, setResponse] = useState({'ok' : null, 'message' : null});
+    const [showPass, setShowPass] = useState(false);
     
     const handleBlur = (e) => {
         setForm({...form, email : e.target.value });
@@ -21,6 +22,14 @@ const LogIn = () => {
 
     const handleBlurPass = (e) =>{
         setForm({...form, password : e.target.value});
+    }
+
+    const handlePassClick = (e) =>{
+        e.preventDefault();
+        if(showPass === true)
+            setShowPass(false);
+        else
+            setShowPass(true);
     }
 
     const Robot = () => {
@@ -112,7 +121,8 @@ const LogIn = () => {
                                                     <input type="email" name='email'  className="w-100" placeholder="Enter your email" id="email" onBlur={handleBlur} />
                                                 </div>
                                                 <div className="mb-3 password-input">
-                                                    <input type="password" name='password' className="w-100" placeholder="Enter your password" id="password" onBlur={handleBlurPass} />
+                                                    <input type={showPass ? "text" : "password"} name='password' className="w-100" placeholder="Enter your password" id="password" onBlur={handleBlurPass} />
+                                                    <a href ="" onClick={handlePassClick}><img src='assets/images/combined-eye.png' style={{position: 'absolute', top: '13px', right: '10px'}}/></a>
                                                 </div>
                                                 <div className="mb-1 d-block d-md-flex justify-content-end">
                                                     <p><Link to='/resetPassword' className="small text-secondary">Forgot your password?</Link></p>
