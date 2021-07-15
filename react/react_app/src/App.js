@@ -10,6 +10,7 @@ import Home from './Components/Home/Home';
 import LogIn from './Components/LogIn/LogIn';
 import SignUp from './Components/SignUp/SignUp';
 import SignUpError from './Components/SignUpError/SignUpError';
+import SignUpEmailError from './Components/SignUpEmailError/SignUpEmailError';
 import LoginError from './Components/LoginError/LoginError';
 import WrongPassword from './Components/WrongPassword/WrongPassword';
 import SavedList from './Components/SavedList/SavedList';
@@ -22,10 +23,15 @@ import FirstTimeUser from './Components/FirstTimeUser/FirstTimeUser';
 import History from './Components/History/History';
 import RepeatedUser from './Components/RepeatedUser/RepeatedUser';
 import DetailedInfo from './Components/DetailedInfo/DetailedInfo';
-import SpecificUser from './Components/SpecificUser/SpecificUser';
 import SearchResult from './Components/SearchResult/SearchResult';
 import SearchResult2 from './Components/SearchResult2/SearchResult2';
 import SearchResult3 from './Components/SearchResult3/SearchResult3';
+import LoginEmailError from './Components/LoginEmailError/LoginEmailError';
+import PasswordInstruction from './Components/PasswordInstruction/PasswordInstruction';
+import ResetLink from './Components/ResetLink/ResetLink';
+import ChromeSignIn from './Components/ChromeSignIn/ChromeSignIn';
+import ChromeWrongPassword from './Components/ChromeWrongPassword/ChromeWrongPassword';
+import ChromeSearch from './Components/ChromeSearch/ChromeSearch';
 
 const App = () => {
   useEffect(() => {
@@ -37,11 +43,11 @@ const App = () => {
       document.body.removeChild(script);
     }
   }, []);
-  
+
   return (
     <Router>
       <Switch>
-      <Route exact path='/'>
+        <Route exact path='/'>
           <Home />
         </Route>
         <Route path='/resetPassword'>
@@ -49,9 +55,6 @@ const App = () => {
         </Route>
         <Route path='/pricing'>
           <Pricing />
-        </Route>
-        <Route path='/PaymentFailed'>
-          <PaymentFailed />
         </Route>
         <Route path='/howToUse'>
           <HowToUse />
@@ -92,8 +95,8 @@ const App = () => {
         <Route path='/detailedInfo'>
           <DetailedInfo />
         </Route>
-        <Route path='/specificUser'>
-          <SpecificUser />
+        <Route path='/signUpEmailError'>
+          <SignUpEmailError />
         </Route>
         <Route path='/searchResult'>
           <SearchResult />
@@ -103,6 +106,27 @@ const App = () => {
         </Route>
         <Route path='/searchResult3'>
           <SearchResult3 />
+        </Route>
+        <Route path='/loginEmailError'>
+          <LoginEmailError />
+        </Route>
+        <Route path='/passwordInstruction'>
+            <PasswordInstruction />
+        </Route>
+        <Route path='/paymentFailed'>
+            <PaymentFailed />
+        </Route>
+        <Route path='/resetLink'>
+            <ResetLink />
+        </Route>
+        <Route path='/chromeSignin'>
+            <ChromeSignIn />
+        </Route>
+        <Route path='/chromeWrongPassword'>
+            <ChromeWrongPassword />
+        </Route>
+        <Route path='/chromeSearch'>
+            <ChromeSearch />
         </Route>
       </Switch>
     </Router>

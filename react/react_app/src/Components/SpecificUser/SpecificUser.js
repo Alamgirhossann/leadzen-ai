@@ -342,8 +342,8 @@ const SpecificUser = () => {
             </section>
             <section>
                 <div class="user-widget-box text-center p-4 my-3">
-                    <div class="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
-                    <div class="user-promote-slider">
+                    <h4 className='text-left'>Probable People Associated</h4>
+                    <div class="feature-slider">
                         <div>
                             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <img className='' src="assets/images/user-athor-pic.png" alt="" />
@@ -360,7 +360,19 @@ const SpecificUser = () => {
                             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <img className='' src="assets/images/user-athor-pic.png" alt="" />
                             </div>
+                            <p className='d-block mt-3'>Robert Brown</p>
+                        </div>
+                        <div>
+                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
+                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
+                            </div>
                             <p className='d-block mt-3'>Lan Bey</p>
+                        </div>
+                        <div>
+                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
+                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
+                            </div>
+                            <p className='d-block mt-3'>Robert Brown</p>
                         </div>
                         <div>
                             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>

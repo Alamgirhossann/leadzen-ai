@@ -101,11 +101,18 @@ const SearchResult = () => {
 
             <div class="main-content-area pb-6 pt-2">
                 <div class="main-wrapper container-fluid">
-
                     <div class="row">
                         <div class="col-md-4 col-lg-3">
                             <div class="sidebar-search-for sidebar-widget p-4 my-3">
                                 <h6 class="text-danger mb-3">Customize your search </h6>
+                                <div>
+                                    <p className='text-left top-search' style={{width:"100px"}}><img style={{width:"10px", marginRight:"5px"}} src="assets/images/cil_location-pin.png" alt="" />USA<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
+                                    <p className='text-left top-search' style={{width:"130px"}}><img style={{width:"8px", marginRight:"5px"}} src="assets/images/pro-profile.png" alt="" />Designer<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
+                                    <div className='d-flex justify-content-between'>
+                                        <p><img style={{width:"10px", marginRight:"5px"}} src="assets/images/combined-eye.png" alt="" />Hide</p>
+                                        <p className='text-danger'>Clear All</p>
+                                    </div>
+                                </div>
                                 <div class="sidebar-accordion accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -198,15 +205,36 @@ const SearchResult = () => {
                                     <div class="mb-3">
                                         <input type="text" class="form-control" placeholder="Enter Social media URL" />
                                     </div>
-                                    <div class="mb-3">
-                                        <select name="states" id="jobs-select" class="form-control">
-                                            <option value="O1">All</option>
-                                            <option value="O2">Followers</option>
-                                            <option value="O3">Likers</option>
-                                            <option value="O4">Commentors </option>
-                                            <option value="O5">Job seekers</option>
-                                            <option value="O6">Group Members</option>
-                                        </select>
+                                    <div class="dropdown mb-3">
+                                        <input class="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <div className="dropdown-wraper">
+                                                <div className='radio-bg'>
+                                                    <span>All</span>
+                                                    <input type="radio" id='All' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Follower</span>
+                                                    <input type="radio" id='Follower' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span >Likers</span>
+                                                    <input type="radio" id='Likers' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Comentetors</span>
+                                                    <input type="radio" id='Comentetors' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Job Seaker</span>
+                                                    <input type="radio" id='Job Seaker' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Group Members</span>
+                                                    <input type="radio" id='Group Members' />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button style={{ background: "#FB3E3E" }} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                     <p class="m-0"><a href="#" class="learn-link">Learn More</a></p>
@@ -217,7 +245,7 @@ const SearchResult = () => {
                             <div class="user-search-wrapper">
                                 <div className="detailed-search">
                                     <div class="search-promote-content">
-                                        <form class="form-inline d-flex my-2 my-lg-0">
+                                        <form class="d-flex my-2 my-lg-0">
                                             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
                                             <button class="btn text-white d-flex ms-3" style={{ background: "#FB3E3E" }} type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                         </form>
@@ -243,116 +271,119 @@ const SearchResult = () => {
                             </div>
 
                             <div class="user-widget-box  my-3">
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>John Smith</p>
-                                            <small className='d-block'>Works at Hexagon AB</small>
-                                            <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                <div className="user-info-wraper">
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                            <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                            <div className='search-user'>
+                                                <p>John Smith</p>
+                                                <small className='d-block'>Works at Hexagon AB</small>
+                                                <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className='d-block blur'>alamgirhossann</small>
+                                                <small className='d-block text-danger'>Unlock</small>
+                                            </div>
+                                            <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                            <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block blur'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
-                                </div>
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/Group 1862.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>John Smith</p>
-                                            <small className='d-block'>Works at Hexagon AB</small>
-                                            <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                            <p className='search-author text-danger'><img src="assets/images/Group 1862.png" alt="" /></p>
+                                            <div className='search-user'>
+                                                <p>John Smith</p>
+                                                <small className='d-block'>Works at Hexagon AB</small>
+                                                <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className='d-block blur'>alamgirhossann</small>
+                                                <small className='d-block text-danger'>Unlock</small>
+                                            </div>
+                                            <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                            <p className='search-close-btn'><img src="assets/images/Frame 543.png" alt="" /></p>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block blur'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
-                                </div>
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/Group 1852.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>John Smith</p>
-                                            <small className='d-block'>Works at Hexagon AB</small>
-                                            <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                            <p className='search-author text-danger'><img src="assets/images/Group 1852.png" alt="" /></p>
+                                            <div className='search-user'>
+                                                <p>John Smith</p>
+                                                <small className='d-block'>Works at Hexagon AB</small>
+                                                <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className='d-block blur'>alamgirhossann</small>
+                                                <small className='d-block text-danger'>Unlock</small>
+                                            </div>
+                                            <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                            <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block blur'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
-                                </div>
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/Group 1852.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>John Smith</p>
-                                            <small className='d-block'>Works at Hexagon AB</small>
-                                            <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                            <p className='search-author text-danger'><img src="assets/images/Group 1852.png" alt="" /></p>
+                                            <div className='search-user'>
+                                                <p>John Smith</p>
+                                                <small className='d-block'>Works at Hexagon AB</small>
+                                                <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className='d-block blur'>alamgirhossann</small>
+                                                <small className='d-block text-danger'>Unlock</small>
+                                            </div>
+                                            <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                            <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block blur'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
-                                </div>
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/Group 1862.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>John Smith</p>
-                                            <small className='d-block'>Works at Hexagon AB</small>
-                                            <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                            <p className='search-author text-danger'><img src="assets/images/Group 1862.png" alt="" /></p>
+                                            <div className='search-user'>
+                                                <p>John Smith</p>
+                                                <small className='d-block'>Works at Hexagon AB</small>
+                                                <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className='d-block blur'>alamgirhossann</small>
+                                                <small className='d-block text-danger'>Unlock</small>
+                                            </div>
+                                            <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                            <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block blur'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
-                                </div>
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>John Smith</p>
-                                            <small className='d-block'>Works at Hexagon AB</small>
-                                            <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                            <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                            <div className='search-user'>
+                                                <p>John Smith</p>
+                                                <small className='d-block'>Works at Hexagon AB</small>
+                                                <small className='d-block'>6720 Ulster Court, Alpharetta, Georgia</small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className='d-block blur'>alamgirhossann</small>
+                                                <small className='d-block text-danger'>Unlock</small>
+                                            </div>
+                                            <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                            <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                         </div>
-                                        <div className='search-email text-center'>
-                                            <small className='d-block blur'>alamgirhossann</small>
-                                            <small className='d-block text-danger'>Unlock</small>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
                                     </div>
                                 </div>
                             </div>
                             <div className='d-flex justify-content-center'>
-                                <div style={{ borderRadius: "50%", background: "#FB3E3E", height: "30px", width: "30px" }}><p className=' d-flex text-white justify-content-center align-items-center'>1</p></div>
-                                <p className='pe-4'>2</p>
-                                <p className='pe-4'>3</p>
-                                <p className='pe-4'>4</p>
-                                <p className='pe-4'>5</p>
-                                <p className='pe-4'>Next</p>
+                                <div className='number-align'> 1 </div>
+                                <div className='ps-3 d-flex align-items-center'> 2 </div>
+                                <div className='ps-3 d-flex align-items-center'> 3 </div>
+                                <div className='ps-3 d-flex align-items-center'> 4 </div>
+                                <div className='ps-3 d-flex align-items-center'> 5 </div>
+                                <div className='ps-3 d-flex align-items-center'> 6 </div>
+                                <div className='ps-3 d-flex align-items-center'> Next </div>
                             </div>
 
                             <div class="user-widget-box p-4 my-3">

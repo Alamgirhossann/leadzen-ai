@@ -2953,7 +2953,7 @@ textarea.form-control-lg {
   left: 0;
   z-index: 1000;
   display: none;
-  min-width: 10rem;
+  min-width: 13rem;
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 0.875rem;
@@ -2963,7 +2963,7 @@ textarea.form-control-lg {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.3rem; }
+  border-radius: 1rem; }
   .dropdown-menu[style] {
     right: auto !important; }
 
@@ -11027,3 +11027,6 @@ a {
   border: none;
   outline: none;
 }
+/* .radio-bg{
+  background: #FFF2F2;
+} */

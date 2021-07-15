@@ -17,7 +17,7 @@ const SignUpError = () => {
                 <div class="main-wrapper">
                     <div class="container-fluid">
                         <div class="form-container">
-                            <div class="signup-wrapper py-3 px-md-6">
+                            <div class="signup-wrapper py-4 px-md-6">
                                 <div class="row align-items-center">
                                     <div class="col-md-6 robot-container order-md-12">
                                         <div class="sign-up-error-page">
@@ -30,7 +30,7 @@ const SignUpError = () => {
                                     </div>
                                     <div class="col-md-6 order-md-1">
                                         <div class="sign-up-form">
-                                            <div class="text-center pt-1">
+                                            <div class="text-center">
                                                 <h2>Create a free account</h2>
                                                 <h5 class="text-danger mb-3">Get 5 Free Credits for Leads Now !</h5>
                                             </div>
