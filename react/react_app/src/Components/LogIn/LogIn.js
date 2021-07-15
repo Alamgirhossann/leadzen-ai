@@ -125,7 +125,7 @@ const LogIn = () => {
                                                     <a href ="" onClick={handlePassClick}><img src='assets/images/combined-eye.png' style={{position: 'absolute', top: '13px', right: '10px'}}/></a>
                                                 </div>
                                                 <div className="mb-1 d-block d-md-flex justify-content-end">
-                                                    <p><Link to='/resetPassword' className="small text-secondary">Forgot your password?</Link></p>
+                                                    <p><Link to='/resetPassword' onClick={()=>Cookies.set('forgot_email',form.email)} className="small text-secondary">Forgot your password?</Link></p>
                                                 </div>
                                                 <button type="submit" onClick={handleSubmit} className="btn text-white w-100">Sign In</button>
                                                 <div className="text-center mt-2"><span>Sign In using: </span></div>

@@ -64,6 +64,8 @@ const FirstTimeUser = () => {
     }
     const handleTypeSubmit = (e) => {
         e.preventDefault();
+        console.log(searchText);
+        console.log(customSearch);
         console.log(socialMediaType);
     }
 
