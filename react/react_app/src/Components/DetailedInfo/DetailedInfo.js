@@ -176,7 +176,7 @@ const DetailedInfo = () => {
                                             </div>
                                         </li>
                                         <li><a className="dropdown-item active" href="#">Upgrade to premium</a></li>
-                                        <li><a className="dropdown-item" href="#">Buy Credits</a></li>
+                                        <li><a className="dropdown-item" href="/pricing">Buy Credits</a></li>
                                         <li><a className="dropdown-item" href="/profile">Profile Settings</a></li>
                                         <li><a className="dropdown-item" href="/history">Export History</a></li>
                                         <li><a className="dropdown-item" href="/logIn"><span className="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>

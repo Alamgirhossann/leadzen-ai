@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './SpecificUser.css';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
 const SpecificUser = (props) => {
