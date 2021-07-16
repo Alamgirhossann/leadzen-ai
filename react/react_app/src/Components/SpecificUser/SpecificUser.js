@@ -401,6 +401,9 @@ const SpecificUser = () => {
                 <img src="assets/images/Group 1908.png" alt="" />
                 <p>3.5 Rating</p>
             </div>
+            <div className='text-center'>
+                <button className='less-btn'>See Less</button>
+            </div>
         </div>
     );
 };

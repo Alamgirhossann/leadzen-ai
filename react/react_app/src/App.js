@@ -32,6 +32,8 @@ import ResetLink from './Components/ResetLink/ResetLink';
 import ChromeSignIn from './Components/ChromeSignIn/ChromeSignIn';
 import ChromeWrongPassword from './Components/ChromeWrongPassword/ChromeWrongPassword';
 import ChromeSearch from './Components/ChromeSearch/ChromeSearch';
+import AllUsers from './Components/AllUsers/AllUsers';
+import DashboardOne from './Components/DashboardOne/DashboardOne';
 
 const App = () => {
   useEffect(() => {
@@ -127,6 +129,12 @@ const App = () => {
         </Route>
         <Route path='/chromeSearch'>
             <ChromeSearch />
+        </Route>
+        <Route path='/allUsers'>
+            <AllUsers />
+        </Route>
+        <Route path='/dashboardOne'>
+            <DashboardOne />
         </Route>
       </Switch>
     </Router>
