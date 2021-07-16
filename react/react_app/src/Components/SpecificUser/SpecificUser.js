@@ -192,7 +192,7 @@ const SpecificUser = (props) => {
         </div>
     );
 };
-export default SpecificUser;
-// export default GoogleApiWrapper({
-//     apiKey: "API_KEY",
-//   })(SpecificUser);
+//export default SpecificUser;
+export default GoogleApiWrapper({
+    apiKey: "API_KEY",
+  })(SpecificUser);
