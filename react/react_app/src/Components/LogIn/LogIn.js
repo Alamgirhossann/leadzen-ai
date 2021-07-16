@@ -13,7 +13,7 @@ const LogIn = () => {
       });
     
     const [isValid, setValid] = useState(false);
-    const [response, setResponse] = useState({'ok' : null, 'response' : null});
+    const [response, setResponse] = useState({'ok' : null, 'message' : null});
     
     const handleBlur = (e) => {
         setForm({...form, email : e.target.value });
@@ -24,8 +24,8 @@ const LogIn = () => {
     }
 
     const Robot = () => {
-        if(response.response === "user not found"){
-            return(<div className="col-md-6 order-md-1">
+        if(response.message === "user not found"){
+            return(<div className="col-md-6 robot-container order-md-12">
             <div className="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
                 <img style={{width:"20px"}} src="assets/images/Group 2221.png" alt="" />
                 <p className="fw-bold">Hey Buddy, time to take <br /> the ‘lead’. User not found. <br /> <Link to='/signUp' className='text-danger text-decoration-none'>Sign up</Link>  to begin. </p>
@@ -34,7 +34,7 @@ const LogIn = () => {
         }
         
         return (
-            <div className="col-md-6 order-md-1">
+            <div className="col-md-6 robot-container order-md-12">
                 <div className="sign-up-robot ps-4 pe-7 pt-2 pb-7 mb-4">
                 <h3>Hi</h3>
                 <p className="fw-bold">I am <span className="text-danger">Jarv!</span> <br />
@@ -74,7 +74,7 @@ const LogIn = () => {
           }
         const fetchData = async() => {
             // const apiHost = ;
-            // TODO: Add code to use the form to check login credentials using api
+            // TODO: Complete async function to use the form to check login credentials using api
             setResponse({...response, ok: true});
             if(response.ok === true){
                 Cookies.set('user_email', form.email);
@@ -99,8 +99,7 @@ const LogIn = () => {
                     <div className="container-fluid">
                         <div className="form-container" >
                             <div className="signup-wrapper py-4 px-md-6">
-                                <div className="row align-items-center">
-                                    <Robot />     
+                                <div className="row align-items-center">  
                                     {response.ok ? <Redirect to="/repeatedUser"/> : null}
                                     <div className="col-md-6 order-md-1">
                                         <div className="sign-up-form">
@@ -135,7 +134,7 @@ const LogIn = () => {
                                             </form>
                                         </div>
                                     </div>
-
+                                    <Robot />   
                                 </div>
                             </div>
                         </div>

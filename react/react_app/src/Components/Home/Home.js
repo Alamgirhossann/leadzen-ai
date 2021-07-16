@@ -21,7 +21,7 @@ const Home = () => {
                 <Link to='/pricing'>Pricing</Link>
                 <Link to='/profile'>Profile</Link>
                 <Link to='/howToUse'>How to Use</Link>
-                <Link to='/paymentFaild'>Payment Faild</Link>
+                <Link to='/paymentFailed'>Payment Failed</Link>
                 <Link to='/userGuide'>User Guide</Link>
                 <Link to='/saveList'>Save List</Link>
                 <Link to='/resetPassword'>Reset Password</Link>
