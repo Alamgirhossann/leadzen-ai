@@ -118,9 +118,10 @@ const History = () => {
                         </div>
                     </form>
                 </div>
+                
                 <div className="accordion-body">
                     {myLeads.map( data => (
-                    <div className='container-style'>
+                    <div className='container-style mt-3'>
                         <div className="history-container">
                             <p className='Profile text-danger'>Profile:</p>
                             <p className='name'>{data.name}</p>
@@ -133,13 +134,13 @@ const History = () => {
                             <div className='credit'>
                                 <div className='d-flex justify-content-end'>
                                     <p className='d-flex align-items-center me-2 text-danger'>Credits used:</p>
-                                    <div>
+                                    <div align="right">
                                         <small className='d-block'>Profile: {data.profile_used}</small>
-                                        <small className='d-block m-0'>Mail: {data.mail_used}</small>
+                                        <small className='d-block'>Mail: {data.mail_used}</small>
                                     </div>
                                 </div>
                             </div>
-                            <p className='view-btn'><a href="/detailedInfo" className='button'>View Profile</a></p>
+                            <p className='view-btn' align="right"><a href="/detailedInfo" className='button'>View Profile</a></p>
                             <a href="/history" onClick={name => handleDelete(data.name)} ><p className='close-btn'><img src="assets/images/close-user.png" alt="" /></p></a>
                         </div>
                     </div>
@@ -164,13 +165,13 @@ const History = () => {
                             <div className='credit'>
                                 <div className='d-flex justify-content-end'>
                                     <p className='d-flex align-items-center me-1 text-danger'>Credits used:</p>
-                                    <div>
+                                    <div align="right">
                                         <small className='d-block'>Profile: {data.profile_used}</small>
                                         <small className='d-block'>Mail: {data.mail_used}</small>
                                     </div>
                                 </div>
                             </div>
-                            <p className='view-btn'><a href="/detailedInfo" className='button'>View Profile</a></p>
+                            <p className='view-btn' align="right"><a href="/detailedInfo" className='button'>View Profile</a></p>
                             <p className='close-btn'><img src="assets/images/close-user.png" alt="" /></p>
                         </div>
                     </div>

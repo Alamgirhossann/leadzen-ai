@@ -45,7 +45,7 @@ const FirstTimeUser = () => {
         setCustomSearch({...customSearch, keywords:e.target.value});
     }
     const handleCustomSubmit = (e) => {
-        console.log(customSearch.csv_file);
+        console.log(customSearch);
     }
     const handleCSVFile = (e) => {
         setCustomSearch({...customSearch, csv_file:e.target.files[0]});
@@ -341,7 +341,7 @@ const FirstTimeUser = () => {
                                             <p className="">Need a detailed list of all the people working for Flipkart?</p>
 
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResultt" className="small m-0">Try This</a>
+                                                <a href="/searchResult" className="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>

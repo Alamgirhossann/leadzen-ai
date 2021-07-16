@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './SpecificUser.css';
-
-const SpecificUser = () => {
+import { Map, GoogleApiWrapper } from 'google-maps-react';
+const SpecificUser = (props) => {
     useEffect(() => {
         const script = document.createElement('script');
         script.src = "assets/js/app.js";
@@ -13,135 +13,70 @@ const SpecificUser = () => {
     }, []);
     return (
         <div>
-
             <section className="item-section">
                 <div className="phone-child-div">
                     <div className=''>
-                        <h6>Probable Phone Number Associated</h6>
+                        <h6>Associated Phone Numbers</h6>
+                        {props.details.phone_num.map(number => (
                         <div className='ms-2 d-flex align-items-center mb-3'>
                             <div className="d-flex align-items-center">
                                 <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
+                                <small className='ms-2'>{number.number}</small>
                             </div>
                             <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
+                                <small className='me-2 ms-2'>{number.type}</small>
+                                <a href="#" onClick={(e) => {e.preventDefault();navigator.clipboard.writeText(number.number);alert('Phone Number Copied!');}}><img style={{ height: "10px" }} src="assets/images/Union.png" alt="" /></a>
                             </div>
                         </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
+                        ))}
                     </div>
                     <div>
-                        <h6>Probable Email Associated</h6>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
+                        <h6>Associated Email Addresses</h6>
+                        {props.details.email.map(data => (
+                        <div className='ms-2 d-flex align-items-center mb-3' align="left">
                             <div className="d-flex align-items-center">
-                                <small className='ms-2'>Chris07@XXXX.com</small>
+                                <small className='ms-2'>{data}</small>
                                 <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
                             </div>
                             <div className="d-flex align-items-center">
                                 <img className='ms-2' src="assets/images/Vector.png" alt="" />
                             </div>
                         </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
+                            ))}
+                        <h6>Associated Usernames</h6>
+                        {props.details.username.map(data => (
+                        <div className='ms-2 d-flex align-items-center mb-3' align="left">
                             <div className="d-flex align-items-center">
-                                <small className='ms-2'>Chris07@XXXX.com</small>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <img className='ms-2' src="assets/images/Vector.png" alt="" />
-                            </div>
-                        </div>
-                        <h6>Probable Username Associated</h6>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <small className='ms-2'>christophe.heyman</small>
-                                <small className='me-2 ms-2'>Since 2010-12-23</small>
+                                <small className='ms-2'>{data.name}</small>
+                                <small className='me-2 ms-2'>Since {data.since}</small>
                             </div>
                         </div>
+                        ))}
                         <h6>Probable URLs Associated</h6>
+                        {props.details.urls.map(url => (
                         <div className='ms-2 d-flex align-items-center mb-3'>
                             <div className="d-flex align-items-center">
-                                <small className='ms-2'>Prizmgoogle.net</small>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                                <small className='ms-2'>{url}</small>
+                                <a href={url} target="_blank"><img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" /></a>
                             </div>
                         </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <small className='ms-2'>Prizmgoogle.net</small>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <small className='ms-2'>Prizmgoogle.net</small>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </div>
+                        ))}
                     </div>
                     <div>
                         <h6>Gender</h6>
                         <div className='ms-2 d-flex align-items-center mb-3'>
-                            <small>Male</small>
+                            <small>{props.details.gender}</small>
                         </div>
-                        <h6>Age Approx</h6>
+                        <h6>Age</h6>
                         <div className='ms-2 d-flex align-items-center mb-3'>
-                            <small>35 Years  xx month  xx days</small>
+                            <small>{props.details.age} Years</small>
                         </div>
-                        <h6>Language</h6>
+                        <h6>Languages Known</h6>
+                        {props.details.languages.map(language => (
                         <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div>
-                                <small>English</small>
-                                <small>French</small>
-                            </div>
+                                <small>{language}</small>
                         </div>
+                        ))}
                         <h6>Probable Social platforms Associated</h6>
                         <div className='ms-2 mb-3'>
                             <div className="d-flex">
@@ -181,162 +116,55 @@ const SpecificUser = () => {
             </section>
             <section className='item-section'>
                 <div style={{ width: "900px" }}>
-                    <h4>Probable Jobs and Companies  Associated</h4>
+                    <h4>Associated Jobs and Companies</h4>
+                    {props.details.companies.map(comp => (
                     <div className='table-alignment container-fluid'>
-                        <td>Hexagon AB</td>
-                        <td>Software Engineer</td>
-                        <td>Since 201X-XX-XX</td>
+                        <td>{comp.name}</td>
+                        <td>{comp.role}</td>
+                        <td>Since {comp.since}</td>
                         <td>
                             <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                                <p>{comp.url}</p>
+                                <a href={comp.url}><img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" /></a>
                             </div>
                         </td>
                     </div>
-                    <div className='table-alignment container-fluid'>
-                        <td>Catavolt, Part of Hexagon</td>
-                        <td>Software Engineer</td>
-                        <td>Since 201X-XX-XX</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div>
-                    <div className='table-alignment container-fluid'>
-                        <td>Infor- Atlanta, GA, USA</td>
-                        <td>Software Engineer</td>
-                        <td>Since 201X-XX-XX</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div>
-                    <div className='table-alignment container-fluid'>
-                        <td>MAPICS, Inc.- Atlanta, GA, USA</td>
-                        <td>Software Engineer</td>
-                        <td>Since 2019-07-02</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div>
-                    <div className='table-alignment container-fluid'>
-                        <td>MAPICS, Inc.- Eindhoven, NL</td>
-                        <td>Software Engineer</td>
-                        <td>Since 2019-07-02</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div>
-                    <div className='table-alignment container-fluid'>
-                        <td>MMarcam Benelux BV- Best, NL</td>
-                        <td>Software Engineer</td>
-                        <td>Since 2014-01-26</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div><div className='table-alignment container-fluid'>
-                        <td>IBM- Brussels, Belgium</td>
-                        <td>Software Engineer</td>
-                        <td>Since 2010-12-23</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div>
-                    <div className='table-alignment container-fluid'>
-                        <td>SFP Solutions, INC.</td>
-                        <td>Software Engineer</td>
-                        <td>None</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div><div className='table-alignment container-fluid'>
-                        <td>System Group INC</td>
-                        <td>Software Engineer</td>
-                        <td>None</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div>
+                    ))}
                 </div>
             </section>
             <section className='item-section'>
                 <div style={{ width: "900px" }}>
                     <h4>Probable Education Associated</h4>
+                    {props.details.education.map(edu => (
                     <div className='table-alignment container-fluid'>
-                        <td>APICS- Association for Operation Management</td>
-                        <td>2013 - 2011</td>
-                        <td>Texas, USA</td>
+                        <td>{edu.name}</td>
+                        <td>{edu.since}</td>
+                        <td>{edu.location}</td>
                         <td>
                             <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div><div className='table-alignment container-fluid'>
-                        <td>Ghent University</td>
-                        <td>2011 - 2009</td>
-                        <td>New York, USA</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>Ghentuniversity.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
-                            </div>
-                        </td>
-                    </div><div className='table-alignment container-fluid'>
-                        <td>St.Jozef Institute</td>
-                        <td>2009 - 2005</td>
-                        <td>Texas, USA</td>
-                        <td>
-                            <div className='d-flex justify-content-between'>
-                                <p>apicsassociation.com</p>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                                <p>{edu.url}</p>
+                                <a href={edu.url}><img className='ms-2' style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" /></a>
                             </div>
                         </td>
                     </div>
+                    ))}
                 </div>
             </section>
             <section className='item-section'>
                 <div className="row">
                     <div className="col-md-6">
-                        <h4>Probable Location Associated</h4>
+                        <h4>Associated Locations</h4>
                         <div>
-                            <img style={{ height: "264px", width: "391" }} src="assets/images/map.png" alt="" />
+                            <Map google={props.google} zoom={15} style={{width:'80%',height:'80%'}} initialCenter={{ lat: 9.761927, lng: 79.95244 }} />
                         </div>
                     </div>
                     <div className="col-md-6">
-                        <h4>List of Location Associated</h4>
+                        <h4>List of Locations</h4>
+                        {props.details.locations.map(location => (
                         <div>
-                            <p>Texas, USA</p>
-                            <p>New York, USA</p>
-                            <p>Tbilisi, Georgia</p>
-                            <p>London, UK</p>
-                            <p>Dubai, UAE</p>
-                            <p>Atlanta, Georgia</p>
-                            <p>Atlanta, Georgia</p>
-                            <p>Atlanta, Georgia</p>
+                            <p>{location}</p>
                         </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -344,53 +172,27 @@ const SpecificUser = () => {
                 <div class="user-widget-box text-center p-4 my-3">
                     <div class="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
                     <div class="user-promote-slider">
+                        {props.details.related_profiles.map(profile => (
                         <div>
                             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
+                                <a href={profile.url}><img className='' src="assets/images/user-athor-pic.png" alt="" /></a>
                             </div>
-                            <p className='d-block mt-3'>Robert Brown</p>
+                            <p className='d-block mt-3'>{profile.name}</p>
                         </div>
-                        <div>
-                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
-                            </div>
-                            <p className='d-block mt-3'>Dan Schmitt</p>
-                        </div>
-                        <div>
-                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
-                            </div>
-                            <p className='d-block mt-3'>Lan Bey</p>
-                        </div>
-                        <div>
-                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
-                            </div>
-                            <p className='d-block mt-3'>Jogn Smith</p>
-                        </div>
-                        <div>
-                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
-                            </div>
-                            <p className='d-block mt-3'>Stan Joseph</p>
-                        </div>
-                        <div>
-                            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <img className='' src="assets/images/user-athor-pic.png" alt="" />
-                            </div>
-                            <p className='d-block mt-3'>Lanre Bey</p>
-                        </div>
+                        ))}
                     </div>
 
                 </div>
             </section>
-            <div className='item-section'>
+            <div className='item-section' align="center">
                 <p className='fw-bold'>Lead Rating</p>
                 <img src="assets/images/Group 1908.png" alt="" />
-                <p>3.5 Rating</p>
+                <p>{props.details.rating} Rating</p>
             </div>
         </div>
     );
 };
-
 export default SpecificUser;
+// export default GoogleApiWrapper({
+//     apiKey: "API_KEY",
+//   })(SpecificUser);
