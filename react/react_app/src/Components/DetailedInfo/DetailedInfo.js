@@ -70,7 +70,14 @@ const DetailedInfo = () => {
         e.preventDefault();
         console.log(socialMediaSearch);
     }
-
+    const [show,setShow] = useState(false);
+    const showClick = (e) => {
+        e.preventDefault();
+        if(!show)
+            setShow(true);
+    }
+    const [perPage,setPerPage] = useState(5);
+    const [currentPage,setCurrentPage] = useState(0);
     const user = { name:'John Smith', 
                    email:'Johnsmith087@hexagon.in',
                    subscription:{ product:'Free Analystt',
@@ -386,8 +393,10 @@ const DetailedInfo = () => {
                                             <small className='d-block'>{data.address}</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            <small className={data.show ? 'd-block':'d-block blur'}>alamgirhossann</small>
-                                            <a href="#" onClick={(e)=>{e.preventDefault();data.show=true}}><small className='d-block text-danger'>Unlock</small></a>
+                                            {/* <small className={data.show ? 'd-block':'d-block blur'}>alamgirhossann</small>
+                                            <a href="#" onClick={(e)=>{e.preventDefault();data.show=true}}><small className='d-block text-danger'>Unlock</small></a> */}
+                                            <small className={show ? 'd-block':'d-block blur'}>alamgirhossann</small>
+                                            <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
                                         </div>
                                         <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
                                         <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
