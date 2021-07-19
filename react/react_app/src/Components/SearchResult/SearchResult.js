@@ -198,12 +198,12 @@ const SearchResult = () => {
                 </div>
             </div>
 
-            <div class="main-content-area pb-6 pt-2">
-                <div class="main-wrapper container-fluid">
-                    <div class="row">
-                        <div class="col-md-4 col-lg-3">
-                            <div class="sidebar-search-for sidebar-widget p-4 my-3">
-                                <h6 class="text-danger mb-3">Customize your search </h6>
+            <div className="main-content-area pb-6 pt-2">
+                <div className="main-wrapper container-fluid">
+                    <div className="row">
+                        <div className="col-md-4 col-lg-3">
+                            <div className="sidebar-search-for sidebar-widget p-4 my-3">
+                                <h6 className="text-danger mb-3">Customize your search </h6>
                                 <div>
                                     <p className='text-left top-search' style={{width:"100px"}}><img style={{width:"10px", marginRight:"5px"}} src="assets/images/cil_location-pin.png" alt="" />USA<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
                                     <p className='text-left top-search' style={{width:"130px"}}><img style={{width:"8px", marginRight:"5px"}} src="assets/images/pro-profile.png" alt="" />Designer<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
@@ -212,10 +212,10 @@ const SearchResult = () => {
                                         <p className='text-danger'>Clear All</p>
                                     </div>
                                 </div>
-                                <div class="sidebar-accordion accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#one">
+                                <div className="sidebar-accordion accordion" id="accordionExample">
+                                    <div className="accordion-item">
+                                        <h2 className="accordion-header">
+                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#one">
                                                 <img src="assets/images/accord-map-pin.png" alt="title" /> Location
                                             </button>
                                         </h2>
@@ -304,9 +304,9 @@ const SearchResult = () => {
                                     <div className="mb-3">
                                         <input type="text" className="form-control" onBlur={handleSocialMedia} placeholder="Enter Social media URL" />
                                     </div>
-                                    <div class="dropdown mb-3">
-                                        <input class="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <div className="dropdown mb-3">
+                                        <input className="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <div className="dropdown-wraper">
                                                 <div className='radio-bg'>
                                                     <span>All</span>
