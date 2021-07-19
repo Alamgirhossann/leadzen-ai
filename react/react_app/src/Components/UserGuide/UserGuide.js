@@ -13,6 +13,17 @@ const UserGuide = () => {
             document.body.removeChild(script);
         }
     }, []);
+    const user = { name:'John Smith', 
+    email:'Johnsmith087@hexagon.in',
+    subscription:{ product:'Free Analystt',
+                   price:'100 INR',
+                   period:'Yearly',
+                   status:'Active',
+                   last_renewal:'01/02/2020',
+                   expiry_date:'02/08/2021',
+                   profile_credits:500, 
+                   mail_credits:1000 }
+ };
     return (
         <div>
             <header class="header-area">
@@ -22,13 +33,13 @@ const UserGuide = () => {
 
                         <ul class="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li class="nav-item me-md-4 me-3">
-                                <a class="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-home.png" alt="home here" /><span class="text-danger">Home</span></a>
+                                <a class="nav-icon-menu nav-link" href="/"><img src="assets/images/menu-home.png" alt="home here" /><span class="text-danger">Home</span></a>
                             </li>
                             <li class="nav-item me-md-4 me-3">
-                                <a class="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved lists</a>
+                                <a class="nav-icon-menu nav-link" href="/savedList"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved lists</a>
                             </li>
                             <li class="nav-item me-md-4 me-3">
-                                <a class="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-history.png" alt="history here" />History</a>
+                                <a class="nav-icon-menu nav-link" href="/history"><img src="assets/images/menu-history.png" alt="history here" />History</a>
                             </li>
                             <li class="nav-item me-md-4 me-3">
                                 <li class="nav-item dropdown">
@@ -37,7 +48,7 @@ const UserGuide = () => {
                                         <li><p class="dropdown-item"><img src="assets/images/pro-codesandbox.png" alt="title" /> My Credits</p></li>
                                         <li>
                                             <div class="dropdown-progress">
-                                                <p class="small">Profile credits used: 300 / 1000</p>
+                                                <p class="small">Profile credits used: {user.subscription.profile_credits} / 1000</p>
                                                 <div class="progress mb-2">
                                                     <div class="progress-bar" style={{ width: "45%" }} role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
@@ -45,7 +56,7 @@ const UserGuide = () => {
                                         </li>
                                         <li>
                                             <div class="dropdown-progress">
-                                                <p class="small"> Mail credits used: 1200 / 2000</p>
+                                                <p class="small"> Mail credits used: {user.subscription.mail_credits} / 2000</p>
                                                 <div class="progress mb-2">
                                                     <div class="progress-bar" role="progressbar" style={{ width: "65%" }} aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
@@ -62,15 +73,15 @@ const UserGuide = () => {
                                     <ul class="dropdown-menu">
                                         <li>
                                             <div class="dropdown-credit">
-                                                <span class="fw-bold">2500 credits <br /> pending</span>
+                                                <span class="fw-bold">{user.subscription.profile_credits + user.subscription.mail_credits} credits <br /> pending</span>
                                                 <img src="assets/images/credit-icon.png" alt="title" />
                                             </div>
                                         </li>
                                         <li><a class="dropdown-item active" href="#">Upgrade to premium</a></li>
-                                        <li><a class="dropdown-item" href="#">Buy Credits</a></li>
-                                        <li><a class="dropdown-item" href="#">Profile Settings</a></li>
-                                        <li><a class="dropdown-item" href="#">Export History</a></li>
-                                        <li><a class="dropdown-item" href="#"><span class="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
+                                        <li><a class="dropdown-item" href="/pricing">Buy Credits</a></li>
+                                        <li><a class="dropdown-item" href="#/profile">Profile Settings</a></li>
+                                        <li><a class="dropdown-item" href="/history">Export History</a></li>
+                                        <li><a class="dropdown-item" href="/logIn"><span class="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
                                     </ul>
                                 </li>
                             </li>

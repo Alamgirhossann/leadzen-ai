@@ -68,6 +68,17 @@ const FirstTimeUser = () => {
         console.log(customSearch);
         console.log(socialMediaType);
     }
+    const user = { name:'John Smith', 
+    email:'Johnsmith087@hexagon.in',
+    subscription:{ product:'Free Analystt',
+                   price:'100 INR',
+                   period:'Yearly',
+                   status:'Active',
+                   last_renewal:'01/02/2020',
+                   expiry_date:'02/08/2021',
+                   profile_credits:500, 
+                   mail_credits:1000 }
+ };
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -87,7 +98,7 @@ const FirstTimeUser = () => {
 
                         <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-home.png" alt="home here" /><span className="text-danger">Home</span></a>
+                                <a className="nav-icon-menu nav-link" href="/"><img src="assets/images/menu-home.png" alt="home here" /><span className="text-danger">Home</span></a>
                             </li>
                             <li className="nav-item me-md-4 me-3">
                                 <a className="nav-icon-menu nav-link" href="/savedList"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved Lists</a>
@@ -102,7 +113,7 @@ const FirstTimeUser = () => {
                                         <li><p className="dropdown-item"><img src="assets/images/pro-codesandbox.png" alt="title" /> My Credits</p></li>
                                         <li>
                                             <div className="dropdown-progress">
-                                                <p className="small">Profile credits used: 300 / 1000</p>
+                                                <p className="small">Profile credits used: {user.subscription.profile_credits} / 1000</p>
                                                 <div className="progress mb-2">
                                                     <div className="progress-bar" style={{ width: "45%" }} role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
@@ -110,7 +121,7 @@ const FirstTimeUser = () => {
                                         </li>
                                         <li>
                                             <div className="dropdown-progress">
-                                                <p className="small"> Mail credits used: 1200 / 2000</p>
+                                                <p className="small"> Mail credits used: {user.subscription.mail_credits} / 2000</p>
                                                 <div className="progress mb-2">
                                                     <div className="progress-bar" role="progressbar" style={{ width: "65%" }} aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
@@ -127,15 +138,15 @@ const FirstTimeUser = () => {
                                     <ul className="dropdown-menu">
                                         <li>
                                             <div className="dropdown-credit">
-                                                <span className="fw-bold">2500 credits <br /> pending</span>
+                                                <span className="fw-bold">{user.subscription.profile_credits + user.subscription.mail_credits} credits <br /> pending</span>
                                                 <img src="assets/images/credit-icon.png" alt="title" />
                                             </div>
                                         </li>
                                         <li><a className="dropdown-item active" href="#">Upgrade to Premium</a></li>
-                                        <li><a className="dropdown-item" href="#">Buy Credits</a></li>
-                                        <li><a className="dropdown-item" href="#">Profile Settings</a></li>
-                                        <li><a className="dropdown-item" href="#">Export History</a></li>
-                                        <li><a className="dropdown-item" href="#"><span className="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
+                                        <li><a className="dropdown-item" href="/pricing">Buy Credits</a></li>
+                                        <li><a className="dropdown-item" href="/profile">Profile Settings</a></li>
+                                        <li><a className="dropdown-item" href="/history">Export History</a></li>
+                                        <li><a className="dropdown-item" href="/logIn"><span className="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
                                     </ul>
                                 </li>
                             </li>

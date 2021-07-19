@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +15,81 @@ const RepeatedUser = () => {
             document.body.removeChild(script);
         }
     }, []);
+    const [searchText, setSearchText] = useState({text : null});
+    const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
+    const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
+    const [socialMediaType, setSocialMediaType] = useState({url:null, type:null});
+   
+    const user = { name:'John Smith', 
+    email:'Johnsmith087@hexagon.in',
+    subscription:{ product:'Free Analystt',
+                   price:'100 INR',
+                   period:'Yearly',
+                   status:'Active',
+                   last_renewal:'01/02/2020',
+                   expiry_date:'02/08/2021',
+                   profile_credits:500, 
+                   mail_credits:1000 }
+    };
+    const recommendations = [{name:'Robert Brown',role:'Product Manager',comp:'Flipkart'},
+                             {name:'Lan Bey',role:'CEO',comp:'Amazon UK'},
+                             {name:'John Smith',role:'Designer',comp:'Flipkart'},
+                             {name:'Chirs Apple',role:'CFO',comp:'Apple INC'},
+                             {name:'Stan Joseph',role:'Developer',comp:'Amazon IN'},
+                             {name:'Stan Joseph',role:'Developer',comp:'Amazon IN'},];
+
+ const handleHeadSearch = (e) => {
+    setSearchText({...searchText, text : e.target.value});
+}
+const handleHeadSubmit = (e) => {
+    e.preventDefault();
+    console.log(searchText);
+}
+const handleLocation = (e) => {
+    setCustomSearch({...customSearch, location:e.target.value});
+}
+const handleIndustry = (e) => {
+    setCustomSearch({...customSearch, industry:e.target.value});
+}
+const handleJob = (e) => {
+    setCustomSearch({...customSearch, job_title:e.target.value});
+}
+const handleEducation = (e) => {
+    setCustomSearch({...customSearch, education:e.target.value});
+}
+const handleCompany = (e) => {
+    setCustomSearch({...customSearch, company_name:e.target.value});
+}
+const handleKeywords = (e) => {
+    setCustomSearch({...customSearch, keywords:e.target.value});
+}
+const handleCustomSubmit = (e) => {
+    console.log(customSearch);
+}
+const handleCSVFile = (e) => {
+    setCustomSearch({...customSearch, csv_file:e.target.files[0]});
+}
+const handleSocial = (e) => {
+    setSocialMediaSearch({...socialMediaSearch, text:e.target.value})
+}
+const handleSocialSubmit = (e) => {
+    console.log(socialMediaSearch);
+}
+const handleType = (e) => {
+    setSocialMediaType({...socialMediaType, type:e.target.value});
+}
+const handleURL = (e) => {
+    setSocialMediaType({...socialMediaType, url:e.target.value});
+}
+const handleTypeSubmit = (e) => {
+    e.preventDefault();
+    console.log(searchText);
+    console.log(customSearch);
+    console.log(socialMediaType);
+}
+const myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',mail_used:7,profile_used:5},
+{name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',mail_used:12,profile_used:9}];
+const myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15,profile_used:22}];
     return (
         <div>
             <header class="header-area">
@@ -24,7 +99,7 @@ const RepeatedUser = () => {
 
                         <ul class="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li class="nav-item me-md-4 me-3">
-                                <a class="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-home.png" alt="home here" /><span class="text-danger">Home</span></a>
+                                <a class="nav-icon-menu nav-link" href="/"><img src="assets/images/menu-home.png" alt="home here" /><span class="text-danger">Home</span></a>
                             </li>
                             <li class="nav-item me-md-4 me-3">
                                 <a class="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved lists</a>
@@ -39,7 +114,7 @@ const RepeatedUser = () => {
                                         <li><p class="dropdown-item"><img src="assets/images/pro-codesandbox.png" alt="title" /> My Credits</p></li>
                                         <li>
                                             <div class="dropdown-progress">
-                                                <p class="small">Profile credits used: 300 / 1000</p>
+                                                <p class="small">Profile credits used: {user.subscription.profile_credits} / 1000</p>
                                                 <div class="progress mb-2">
                                                     <div class="progress-bar" style={{ width: "45%" }} role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
@@ -47,7 +122,7 @@ const RepeatedUser = () => {
                                         </li>
                                         <li>
                                             <div class="dropdown-progress">
-                                                <p class="small"> Mail credits used: 1200 / 2000</p>
+                                                <p class="small"> Mail credits used: {user.subscription.mail_credits} / 2000</p>
                                                 <div class="progress mb-2">
                                                     <div class="progress-bar" role="progressbar" style={{ width: "65%" }} aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
@@ -64,15 +139,15 @@ const RepeatedUser = () => {
                                     <ul class="dropdown-menu">
                                         <li>
                                             <div class="dropdown-credit">
-                                                <span class="fw-bold">2500 credits <br /> pending</span>
+                                                <span class="fw-bold">{user.subscription.profile_credits + user.subscription.mail_credits} credits <br /> pending</span>
                                                 <img src="assets/images/credit-icon.png" alt="title" />
                                             </div>
                                         </li>
                                         <li><a class="dropdown-item active" href="#">Upgrade to premium</a></li>
-                                        <li><a class="dropdown-item" href="#">Buy Credits</a></li>
-                                        <li><a class="dropdown-item" href="#">Profile Settings</a></li>
-                                        <li><a class="dropdown-item" href="#">Export History</a></li>
-                                        <li><a class="dropdown-item" href="#"><span class="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
+                                        <li><a class="dropdown-item" href="/pricing">Buy Credits</a></li>
+                                        <li><a class="dropdown-item" href="/profile">Profile Settings</a></li>
+                                        <li><a class="dropdown-item" href="history">Export History</a></li>
+                                        <li><a class="dropdown-item" href="/logIn"><span class="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
                                     </ul>
                                 </li>
                             </li>
@@ -93,7 +168,7 @@ const RepeatedUser = () => {
                             <div class="dz-message needsclick">
                                 <button type="button" class="dz-button">Drag and Drop File</button><br />
                                 <button type="button" class="dz-button">OR </button><br />
-                                <span class="note needsclick">Browse</span>
+                                <span class="note needsclick"><input type="file" accept=".csv" onChange={handleCSVFile}/></span>
                             </div>
                         </form>
                     </div>
@@ -116,7 +191,7 @@ const RepeatedUser = () => {
                                         </h2>
                                         <div id="one" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <input className='customize-search' type="text" placeholder='Search Location' />
+                                                <input className='customize-search' onBlur={handleLocation} type="text" placeholder='Search Location' />
                                             </div>
                                         </div>
                                     </div>
@@ -128,7 +203,7 @@ const RepeatedUser = () => {
                                         </h2>
                                         <div id="two" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <input className='customize-search' type="text" placeholder='Search Industry' />
+                                                <input className='customize-search' onBlur={handleIndustry} type="text" placeholder='Search Industry' />
                                             </div>
                                         </div>
                                     </div>
@@ -140,7 +215,7 @@ const RepeatedUser = () => {
                                         </h2>
                                         <div id="tree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <input className='customize-search' type="text" placeholder='Search Job title' />
+                                                <input className='customize-search' onBlur={handleJob} type="text" placeholder='Search Job title' />
                                             </div>
                                         </div>
                                     </div>
@@ -152,7 +227,7 @@ const RepeatedUser = () => {
                                         </h2>
                                         <div id="four" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <input className='customize-search' type="text" placeholder='Search Education' />
+                                                <input className='customize-search' onBlur={handleEducation} type="text" placeholder='Search Education' />
                                             </div>
                                         </div>
                                     </div>
@@ -164,7 +239,7 @@ const RepeatedUser = () => {
                                         </h2>
                                         <div id="five" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <input className='customize-search' type="text" placeholder='Search Company Name' />
+                                                <input className='customize-search' onBlur={handleCompany} type="text" placeholder='Search Company Name' />
                                             </div>
                                         </div>
                                     </div>
@@ -176,13 +251,13 @@ const RepeatedUser = () => {
                                         </h2>
                                         <div id="six" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
-                                                <input className='customize-search' type="text" placeholder='Search Keywords' />
+                                                <input className='customize-search' onBlur={handleKeywords} type="text" placeholder='Search Keywords' />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <button style={{ background: "#FB3E3E" }} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
-                                <p>Bulk Search by uploding <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#bulkmodal">csv</a></p>
+                                <button style={{ background: "#FB3E3E" }} class="btn text-white" onClick={handleCustomSubmit} type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
+                                <p>Bulk Search by uploding <a href="#" class="text-danger" onChange={handleCSVFile} data-bs-toggle="modal" data-bs-target="#bulkmodal">csv</a></p>
                             </div>
                             <div class="sidebar-search-for sidebar-widget p-4 my-3">
                                 <h6 class="text-danger mb-3">  Now Extract contacts </h6>
@@ -197,10 +272,10 @@ const RepeatedUser = () => {
                                 </ul>
                                 <form>
                                     <div class="mb-3">
-                                        <input type="text" class="form-control" placeholder="Enter Social media URL" />
+                                        <input type="text" class="form-control" onBlur={handleURL} placeholder="Enter Social media URL" />
                                     </div>
                                     <div class="dropdown mb-3">
-                                        <input class="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <input class="form-control dropdown-toggle" onChange={handleType} id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <div className="dropdown-wraper">
                                                 <div className='radio-bg'>
@@ -230,8 +305,8 @@ const RepeatedUser = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <button style={{ background: "#FB3E3E" }} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
-                                    <p class="m-0"><a href="#" class="learn-link">Learn More</a></p>
+                                    <button style={{ background: "#FB3E3E" }} onClick={handleTypeSubmit} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
+                                    <p class="m-0"><a href="/userGuide" class="learn-link">Learn More</a></p>
                                 </form>
                             </div>
                         </div>
@@ -243,16 +318,16 @@ const RepeatedUser = () => {
                                         <form action="#" class="search-form4 d-flex mb-3">
                                             <div class="input-group">
                                                 <div class="input-placeholder">
-                                                    <input class="ps-3" type="text" required />
+                                                    <input class="ps-3" type="text" onBlur={handleHeadSearch} required />
                                                     <div class="placeholder">
                                                         Eg: I want to <span>email IDs</span> of people following <span>Flipkart Facebook Page</span>
                                                     </div>
                                                 </div>
-                                                <button class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
+                                                <button onClick={handleHeadSubmit} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                             </div>
                                         </form>
                                         <p class="fst-italic">Hey, Get started by putting a <span class="text-danger">name, social media URL</span> or <br /> state your requirement above</p>
-                                        <a href="#" class="text-danger">Learn more</a>
+                                        <a href="/userGuide" class="text-danger">Learn more</a>
                                     </div>
 
                                 </div>
@@ -268,57 +343,19 @@ const RepeatedUser = () => {
                                 <p class="text-muted mb-3"> Hey, Based on your latest search intrest, these are best magic recommendation
                                     for you !! <span class="text-danger">~Jarvis</span></p>
                                 <div class="px-5 pxlg-7 mb-3 row">
+                                    {recommendations.map(data => (
                                     <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
                                         <div class="user-author-item my-2">
                                             <img src="assets/images/user-athor-pic.png" alt="title" />
-                                            <h6 class="small m-0">Robert Brown</h6>
-                                            <small>Product Manager</small>
-                                            <small> Flipkart</small>
+                                            <h6 class="small m-0">{data.name}</h6>
+                                            <small>{data.role}</small><br></br>
+                                            <small>{data.comp}</small>
                                         </div>
                                     </div>
-                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                                        <div class="user-author-item my-2">
-                                            <img src="assets/images/user-athor-pic.png" alt="title" />
-                                            <h6 class="small m-0">Lan Bey</h6>
-                                            <small>Product Manager</small>
-                                            <small> Amazon</small>
-                                        </div>
+                                    ))}
                                     </div>
-                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                                        <div class="user-author-item my-2">
-                                            <img src="assets/images/user-athor-pic.png" alt="title" />
-                                            <h6 class="small m-0">Robert Brown</h6>
-                                            <small>Product Manager</small>
-                                            <small> Hexagon AB</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                                        <div class="user-author-item my-2">
-                                            <img src="assets/images/user-athor-pic.png" alt="title" />
-                                            <h6 class="small m-0">John Smith</h6>
-                                            <small>Product Manager</small>
-                                            <small> Flipkart</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                                        <div class="user-author-item my-2">
-                                            <img src="assets/images/user-athor-pic.png" alt="title" />
-                                            <h6 class="small m-0">Stan Joseph</h6>
-                                            <small>Product Manager</small>
-                                            <small> Amazon</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-                                        <div class="user-author-item my-2">
-                                            <img src="assets/images/user-athor-pic.png" alt="title" />
-                                            <h6 class="small m-0">Lanre Bey</h6>
-                                            <small>Product Manager</small>
-                                            <small> Hexagon AB</small>
-                                        </div>
-                                    </div>
-                                </div>
                                 <img src="assets/images/user-robot-icon.png" alt="#" class="user-author-shape" />
-                                <a href="#" class="text-danger">View List</a>
+                                <a href="/history" class="text-danger">View List</a>
                             </div>
 
                             <div class="user-widget-box text-center p-4 my-3">
@@ -328,7 +365,7 @@ const RepeatedUser = () => {
                                         <div class="user-promote-item">
                                             <p class="">Want to extract contacts of group members in a LinkedIn group?</p>
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="#" class="small m-0">Try This</a>
+                                                <a href="/searchResult" class="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>
@@ -336,7 +373,7 @@ const RepeatedUser = () => {
                                         <div class="user-promote-item">
                                             <p class="">Need a list of companies in semi-conductor space with 1000+ employees in US?</p>
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="#" class="small m-0">Try This</a>
+                                                <a href="/searchResult" class="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>
@@ -344,7 +381,7 @@ const RepeatedUser = () => {
                                         <div class="user-promote-item">
                                             <p class="">Need a detailed list of all the people working for Flipkart?</p>
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="#" class="small m-0">Try This</a>
+                                                <a href="/searchResult" class="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>
@@ -352,7 +389,7 @@ const RepeatedUser = () => {
                                         <div class="user-promote-item">
                                             <p class="">Want to extract contacts of group members in a LinkedIn group?</p>
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="#" class="small m-0">Try This</a>
+                                                <a href="/searchResult" class="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>
@@ -361,7 +398,7 @@ const RepeatedUser = () => {
                                             <p class="">Need a detailed list of all the people working for Flipkart?</p>
 
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="#" class="small m-0">Try This</a>
+                                                <a href="/searchResult" class="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>
@@ -369,7 +406,7 @@ const RepeatedUser = () => {
                                         <div class="user-promote-item">
                                             <p class="">Want to extract contacts of group members in a LinkedIn group?</p>
                                             <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="#" class="small m-0">Try This</a>
+                                                <a href="/searchResult" class="small m-0">Try This</a>
                                             </div>
                                         </div>
                                     </div>

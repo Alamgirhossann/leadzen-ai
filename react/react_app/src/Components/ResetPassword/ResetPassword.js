@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import React, {useEffect, useState} from 'react';
+import { Redirect } from 'react-router-dom';
 import validator from "validator";
 
 const ResetPassword = () => {
@@ -35,13 +36,14 @@ const ResetPassword = () => {
             setValid(false);
             alert('Invalid Password');
           }
-          if(newPass === newPassRepeat){
+          if(newPass == newPassRepeat){
               setValid(true);
           }
           else{
               setValid(false);
               alert('Passwords do not match!');
           }
+          setValid(true);
           if(isValid){
             // TODO: Add api calls to send email and reset password in the backend
             console.log('Password was reset!');
@@ -77,6 +79,7 @@ const ResetPassword = () => {
                                 </div>
                                 <button type="submit" onClick ={handleSubmit} className="btn text-white w-100">Reset Password</button>
                             </form>
+                            {isValid ? <Redirect to="/resetLink"/> : null}
                         </div>
                     </div>
                 </div>

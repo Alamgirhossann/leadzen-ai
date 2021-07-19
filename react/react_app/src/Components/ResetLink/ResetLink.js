@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import React from 'react';
 import './ResetLink.css';
 const ResetLink = () => {
@@ -16,9 +17,9 @@ const ResetLink = () => {
                         <div className='reset-container-align'>
                             <div className='text-center product-container'>
                                 <img style={{height:"130px"}} src="assets/images/Group 2250.png" alt="" />
-                                <p className="text-danger pt-5 fw-bold">Hey Buddy</p>
-                                <p className='para'>we have e-mailed you the reset link at xxx0123@abc.com. Please check your email.</p>
-                                <p className="pt-5 pb-3"><a href="#" className='text-danger'>Back</a></p>
+                                <p className="text-danger pt-5 fw-bold">Hey Buddy!</p>
+                                <p className='para'>we have e-mailed you the reset link at {Cookies.get('forgot_email')} Please check your email.</p>
+                                <p className="pt-5 pb-3"><a href="/logIn" className='text-danger'>Back</a></p>
                             </div>
                         </div>
                     </div>
