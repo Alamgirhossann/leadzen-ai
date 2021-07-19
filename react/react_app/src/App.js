@@ -64,7 +64,7 @@ const App = () => {
         <Route path='/profile'>
           <Profile />
         </Route>
-        <Route path='/saveList'>
+        <Route path='/savedList'>
           <SavedList />
         </Route>
         <Route path='/userGuide'>

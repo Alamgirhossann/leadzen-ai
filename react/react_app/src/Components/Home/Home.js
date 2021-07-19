@@ -23,7 +23,7 @@ const Home = () => {
                 <Link to='/howToUse'>How to Use</Link>
                 <Link to='/paymentFailed'>Payment Failed</Link>
                 <Link to='/userGuide'>User Guide</Link>
-                <Link to='/saveList'>Save List</Link>
+                <Link to='/savedList'>Saved List</Link>
                 <Link to='/resetPassword'>Reset Password</Link>
                 <Link to='/firstTimeUser'>First Time User</Link>
                 <Link to='/history'>History</Link>
