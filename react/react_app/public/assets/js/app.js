@@ -21,7 +21,7 @@ $("form").on("change", ".file-upload-field", function(){
 });
 /*  Slider*/
  $('.feature-slider').slick({
-  slidesToShow: 4,
+  slidesToShow: 6,
   arrows: true,
   dots: false,
   responsive: [ 
@@ -109,6 +109,13 @@ $('.user-promote-slider').slick({
     meanMenuClose: "<span></span><span></span><span></span>",
     siteLogo: "<span class='mean-logo'>Overview</span>", 
   });
+
+  $('input[type=radio]').click(function(){
+    if (this.previous) {
+        this.checked = false;
+    }
+    this.previous = this.checked;
+});
 /*  Aos  */ 
 AOS.init({
   offset: 120,

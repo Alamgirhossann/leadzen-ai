@@ -173,6 +173,8 @@ const SpecificUser = (props) => {
                     <div class="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
                     <div class="user-promote-slider">
                         {props.details.related_profiles.map(profile => (
+                    <h4 className='text-left'>Probable People Associated</h4>
+                    <div class="feature-slider">
                         <div>
                             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <a href={profile.url}><img className='' src="assets/images/user-athor-pic.png" alt="" /></a>

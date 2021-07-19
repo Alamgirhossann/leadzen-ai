@@ -78,7 +78,7 @@ const DetailedInfo = () => {
     }
     const [perPage,setPerPage] = useState(5);
     const [currentPage,setCurrentPage] = useState(0);
-    const user = { name:'John Smith', 
+    const user = { name:'John Smith',
                    email:'Johnsmith087@hexagon.in',
                    subscription:{ product:'Free Analystt',
                                 price:'100 INR',
@@ -86,7 +86,7 @@ const DetailedInfo = () => {
                                 status:'Active',
                                 last_renewal:'01/02/2020',
                                 expiry_date:'02/08/2021',
-                                profile_credits:500, 
+                                profile_credits:500,
                                 mail_credits:1000 }
          };
     const details = {name:'Joe Mama',
@@ -128,7 +128,7 @@ const DetailedInfo = () => {
         const searchData = {count:12,total:250};
         const myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                        {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false}];
-    
+
                        return (
         <div>
             <header className="header-area">
@@ -217,14 +217,22 @@ const DetailedInfo = () => {
             <div className="main-content-area pb-6 pt-2">
                 <div className="main-wrapper container-fluid">
 
-                    <div className="row">
-                        <div className="col-md-4 col-lg-3">
-                            <div className="sidebar-search-for sidebar-widget p-4 my-3">
-                                <h6 className="text-danger mb-3">Customize your search </h6>
-                                <div className="sidebar-accordion accordion" id="accordionExample">
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#one">
+                    <div class="row">
+                        <div class="col-md-4 col-lg-3">
+                            <div class="sidebar-search-for sidebar-widget p-4 my-3">
+                                <h6 class="text-danger mb-3">Customize your search </h6>
+                                <div>
+                                    <p className='text-left top-search' style={{width:"100px"}}><img style={{width:"10px", marginRight:"5px"}} src="assets/images/cil_location-pin.png" alt="" />USA<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
+                                    <p className='text-left top-search' style={{width:"130px"}}><img style={{width:"8px", marginRight:"5px"}} src="assets/images/pro-profile.png" alt="" />Designer<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
+                                    <div className='d-flex justify-content-between'>
+                                        <p><img style={{width:"10px", marginRight:"5px"}} src="assets/images/combined-eye.png" alt="" />Hide</p>
+                                        <p className='text-danger'>Clear All</p>
+                                    </div>
+                                </div>
+                                <div class="sidebar-accordion accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#one">
                                                 <img src="assets/images/accord-map-pin.png" alt="title" /> Location
                                             </button>
                                         </h2>
@@ -313,15 +321,36 @@ const DetailedInfo = () => {
                                     <div className="mb-3">
                                         <input type="text" className="form-control" onBlur={handleSocialMedia} placeholder="Enter Social Media URL" />
                                     </div>
-                                    <div className="mb-3">
-                                        <select name="states" id="jobs-select" onChange={handleType} className="form-control" >
-                                            <option value="O1">All</option>
-                                            <option value="O2">Followers</option>
-                                            <option value="O3">Likers</option>
-                                            <option value="O4">Commentors </option>
-                                            <option value="O5">Job seekers</option>
-                                            <option value="O6">Group Members</option>
-                                        </select>
+                                    <div class="dropdown mb-3">
+                                        <input class="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <div className="dropdown-wraper">
+                                                <div className='radio-bg'>
+                                                    <span>All</span>
+                                                    <input type="radio" id='All' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Follower</span>
+                                                    <input type="radio" id='Follower' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span >Likers</span>
+                                                    <input type="radio" id='Likers' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Comentetors</span>
+                                                    <input type="radio" id='Comentetors' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Job Seaker</span>
+                                                    <input type="radio" id='Job Seaker' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Group Members</span>
+                                                    <input type="radio" id='Group Members' />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button style={{ background: "#FB3E3E" }} onClick={handleTypeSubmit} className="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                     <p className="m-0"><a href="#" className="learn-link">Learn More</a></p>
@@ -360,7 +389,7 @@ const DetailedInfo = () => {
                                 <div className='info-container'>
                                     <div className="user-info-container">
                                         <input className='info-box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='ingo-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                        <p className='info-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
                                         <div className='info-user'>
                                             <p>{details.name}</p>
                                         </div>

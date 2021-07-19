@@ -262,15 +262,36 @@ const FirstTimeUser = () => {
                                     <div className="mb-3">
                                         <input type="text" className="form-control" placeholder="Enter Social media URL" onBlur={handleURL} />
                                     </div>
-                                    <div className="mb-3">
-                                        <select name="states" id="jobs-select" onChange={handleType} className="form-control" >
-                                            <option value="O1">All</option>
-                                            <option value="O2">Followers</option>
-                                            <option value="O3">Likers</option>
-                                            <option value="O4">Commentors </option>
-                                            <option value="O5">Job seekers</option>
-                                            <option value="O6">Group Members</option>
-                                        </select>
+                                    <div class="dropdown mb-3">
+                                        <input class="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <div className="dropdown-wraper">
+                                                <div className='radio-bg'>
+                                                    <span>All</span>
+                                                    <input type="radio" id='All' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Follower</span>
+                                                    <input type="radio" id='Follower' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span >Likers</span>
+                                                    <input type="radio" id='Likers' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Comentetors</span>
+                                                    <input type="radio" id='Comentetors' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Job Seaker</span>
+                                                    <input type="radio" id='Job Seaker' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Group Members</span>
+                                                    <input type="radio" id='Group Members' />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button style={{ background: "#FB3E3E" }} onClick={handleTypeSubmit} className="btn text-white" type="submit"><span classNameName='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                     <p className="m-0"><a href="/userGuide" className="learn-link">Learn More</a></p>

@@ -41,4 +41,49 @@
     display: flex;
     justify-content: center;
   }
-  
+  @media only screen and (max-width: 991px){
+    .info-container{
+      overflow-x: scroll;
+    }
+    .user-info-wraper{
+      overflow-x: scroll;
+    }
+  }
+.search-two-container{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: 'b a u u u e e e v v c f';
+    align-items: center;
+    width: 900px;
+  }
+.search-two-container.box{
+    grid-area: b;
+}
+.search-two-container.search-author{
+  grid-area: a;
+}
+.search-two-container.search-user{
+  grid-area: u;
+}
+.search-two-container.search-email{
+  grid-area: e;
+}
+.search-two-container.search-view-btn{
+  grid-area: v;
+}
+.search-two-container.search-close-btn{
+  grid-area: c;
+  display: flex;
+  justify-content: center;
+  padding-right: 5px;
+  align-items: center;
+}
+.search-two-container.search-flag-btn{
+    grid-area: f;
+  }
+.user-info-wraper{
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+}

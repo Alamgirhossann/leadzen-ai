@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import './SearchResult3.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -98,6 +99,24 @@ const SearchResult3 = () => {
                 </div>
             </div>
 
+            <div class="modal" id="UpgradeModal">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div className="d-flex">
+                            <div className='pe-4'>
+                                <img style={{ height: "125px", width: "100px" }} src="assets/images/g10.png" alt="" />
+                            </div>
+                            <div className='text-center'>
+                                <p className='text-danger '>Oops</p>
+                                <p>looks like you have insufficient credit to access this leads. upgrade your plan now.</p>
+                                <button style={{ background: "#FB3E3E" }} class="btn text-white"> Upgrade Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="main-content-area pb-6 pt-2">
                 <div class="main-wrapper container-fluid">
 
@@ -105,6 +124,14 @@ const SearchResult3 = () => {
                         <div class="col-md-4 col-lg-3">
                             <div class="sidebar-search-for sidebar-widget p-4 my-3">
                                 <h6 class="text-danger mb-3">Customize your search </h6>
+                                <div>
+                                    <p className='text-left top-search' style={{ width: "100px" }}><img style={{ width: "10px", marginRight: "5px" }} src="assets/images/cil_location-pin.png" alt="" />USA<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
+                                    <p className='text-left top-search' style={{ width: "130px" }}><img style={{ width: "8px", marginRight: "5px" }} src="assets/images/pro-profile.png" alt="" />Designer<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
+                                    <div className='d-flex justify-content-between'>
+                                        <p><img style={{ width: "10px", marginRight: "5px" }} src="assets/images/combined-eye.png" alt="" />Hide</p>
+                                        <p className='text-danger'>Clear All</p>
+                                    </div>
+                                </div>
                                 <div class="sidebar-accordion accordion" id="accordionExample">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -197,15 +224,36 @@ const SearchResult3 = () => {
                                     <div class="mb-3">
                                         <input type="text" class="form-control" placeholder="Enter Social media URL" />
                                     </div>
-                                    <div class="mb-3">
-                                        <select name="states" id="jobs-select" class="form-control">
-                                            <option value="O1">All</option>
-                                            <option value="O2">Followers</option>
-                                            <option value="O3">Likers</option>
-                                            <option value="O4">Commentors </option>
-                                            <option value="O5">Job seekers</option>
-                                            <option value="O6">Group Members</option>
-                                        </select>
+                                    <div class="dropdown mb-3">
+                                        <input class="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <div className="dropdown-wraper">
+                                                <div className='radio-bg'>
+                                                    <span>All</span>
+                                                    <input type="radio" id='All' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Follower</span>
+                                                    <input type="radio" id='Follower' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span >Likers</span>
+                                                    <input type="radio" id='Likers' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Comentetors</span>
+                                                    <input type="radio" id='Comentetors' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Job Seaker</span>
+                                                    <input type="radio" id='Job Seaker' />
+                                                </div>
+                                                <div className='radio-bg'>
+                                                    <span>Group Members</span>
+                                                    <input type="radio" id='Group Members' />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button style={{ background: "#FB3E3E" }} class="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
                                     <p class="m-0"><a href="#" class="learn-link">Learn More</a></p>
@@ -346,12 +394,13 @@ const SearchResult3 = () => {
                                 </div>
                             </div>
                             <div className='d-flex justify-content-center'>
-                                <div style={{ borderRadius: "50%", background: "#FB3E3E", height: "30px", width: "30px" }}><p className=' d-flex text-white justify-content-center align-items-center'>1</p></div>
-                                <p className='pe-4'> <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#bulkmodal">2</a></p>
-                                <p className='pe-4'>3</p>
-                                <p className='pe-4'>4</p>
-                                <p className='pe-4'>5</p>
-                                <p className='pe-4'>Next</p>
+                                <div className='number-align'> 1 </div>
+                                <div className='ps-3 d-flex align-items-center' data-bs-toggle="modal" data-bs-target="#UpgradeModal"> 2 </div>
+                                <div className='ps-3 d-flex align-items-center'> 3 </div>
+                                <div className='ps-3 d-flex align-items-center'> 4 </div>
+                                <div className='ps-3 d-flex align-items-center'> 5 </div>
+                                <div className='ps-3 d-flex align-items-center'> 6 </div>
+                                <div className='ps-3 d-flex align-items-center'> Next </div>
                             </div>
 
                             <div class="user-widget-box p-4 my-3">

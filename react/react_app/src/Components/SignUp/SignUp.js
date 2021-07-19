@@ -110,7 +110,7 @@ const SignUp = () => {
                 console.log('User Created!');
                 Cookies.set('user_email', form.email)
             }
-        } 
+        }
         if(isValid){
             fetchData();
         }

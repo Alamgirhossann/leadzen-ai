@@ -30,6 +30,7 @@
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas: 'b a u u u u e e e v v c';
   align-items: center;
+  width: 900px;
 }
 .box{
     grid-area: b;
@@ -73,5 +74,21 @@
     width: 95px;
     padding-right: 10px;
   }
+}
+.top-search{
+  background: #FFE3E3;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+.number-align{
+  border-radius: 50%;
+  height: 32px;
+  width: 32px;
+  color:white;
+  background: #FB3E3E;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 

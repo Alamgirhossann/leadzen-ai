@@ -21,6 +21,12 @@
      grid-template-columns: 1fr 1fr 1fr;
      width: 900px;
  }
+ .less-btn{
+     border: 0.5px solid #FB3E3E;
+     background: white;
+     border-radius: 20px;
+     padding: 0px 15px;
+ }
  @media only screen and (max-width: 991px){
      .item-section{
          overflow-x: scroll;
