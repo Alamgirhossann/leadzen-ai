@@ -171,10 +171,9 @@ const SpecificUser = (props) => {
             <section>
                 <div class="user-widget-box text-center p-4 my-3">
                     <div class="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
+                    <h4 className='text-center'>Probable People Associated</h4>
                     <div class="user-promote-slider">
-                        {props.details.related_profiles.map(profile => (
-                    <h4 className='text-left'>Probable People Associated</h4>
-                    <div class="feature-slider">
+                    {props.details.related_profiles.map(profile => (
                         <div>
                             <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <a href={profile.url}><img className='' src="assets/images/user-athor-pic.png" alt="" /></a>
@@ -182,8 +181,7 @@ const SpecificUser = (props) => {
                             <p className='d-block mt-3'>{profile.name}</p>
                         </div>
                         ))}
-                    </div>
-
+                </div>
                 </div>
             </section>
             <div className='item-section' align="center">
