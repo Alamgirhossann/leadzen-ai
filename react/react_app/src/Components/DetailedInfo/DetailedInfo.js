@@ -89,7 +89,7 @@ const DetailedInfo = () => {
                                 profile_credits:500, 
                                 mail_credits:1000 }
          };
-    var details = {name:'Joe Mama',
+    const details = {name:'Joe Mama',
                    desc:'English Speaker',
                    comp:{ name:'Hexagon AB',
                           address:'6720 Ulster Court, Alpharetta, Georgia'},
@@ -125,8 +125,8 @@ const DetailedInfo = () => {
                                     ],
                     rating:4.5,
                 };
-        var searchData = {count:12,total:250};
-        var myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
+        const searchData = {count:12,total:250};
+        const myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                        {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false}];
     
                        return (
