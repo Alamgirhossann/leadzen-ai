@@ -1,7 +1,7 @@
 #!/bin/bash
 
 REMOTE_SERVER="ubuntu@3.109.59.177"
-PEM_FILE="linux2-pinaki.pem"
+PEM_FILE="./linux2-pinaki.pem"
 CONTAINER_REGISTRY="480068984177.dkr.ecr.ap-south-1.amazonaws.com"
 CONTAINER_REPOSITORY="analystt"
 
