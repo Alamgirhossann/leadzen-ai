@@ -114,6 +114,8 @@ scp -i "$PEM_FILE" docker-compose.yml "$REMOTE_SERVER":/home/ubuntu/docker-compo
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker-Compose File Upload Error <<<"
+    pwd
+    ls -al
     exit 1
 else
     echo "--- Done Uploading Docker-Compose File ---"
