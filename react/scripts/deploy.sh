@@ -129,16 +129,6 @@ else
     echo "--- Done Uploading .env File ---"
 fi
 
-# shellcheck disable=SC2086
-scp -i "$PEM_FILE" ./django/.env "$REMOTE_SERVER":/home/ubuntu/.env.django
-# shellcheck disable=SC2181
-if [ $? != 0 ]; then
-    echo ">>> ./django/.env File Upload Error <<<"
-    exit 1
-else
-    echo "--- Done Uploading ./django/.env File ---"
-fi
-
 
 echo "-------------------------"
 echo "*** Show Docker status on $REMOTE_SERVER"
