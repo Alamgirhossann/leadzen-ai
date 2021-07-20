@@ -9,17 +9,7 @@ CONTAINER_REPOSITORY="analystt"
 # -----------------------------------------------------------------------------------------------------------
 # React build image -> push image to ecr ->  pull image from ecr to aws instance 
 # -----------------------------------------------------------------------------------------------------------
-PROJECT_DIRECTORY="react"
 PROJECT_NAME="person_react"
-
-#cd $PROJECT_DIRECTORY || exit
-## shellcheck disable=SC2181
-#if [ $? != 0 ]; then
-#    echo ">>> Unable to React Project Directory"
-#    exit 1
-#else
-#    echo "--- In React Project Directory ---"
-#fi
 
 ROOT_DIRECTORY=$(pwd)
 VERSION=$(date +%s)
@@ -86,7 +76,6 @@ else
     echo "--- Done Pushing to Registry ---"
 fi
 
-cd ..
 
 echo "--------------------------------"
 echo "*** Pulling $DOCKER_IMAGE_NAME Image from Container Registry: $CONTAINER_REGISTRY_IMAGE"
