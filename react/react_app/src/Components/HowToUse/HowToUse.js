@@ -4,13 +4,13 @@ const HowToUse = () => {
     return (
         <div>
             <header className='header-area'>
-                <nav class="header-navbar navbar navbar-expand-xl bg-light">
+                <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a class="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
                     </div>
                 </nav>
             </header>
-            <div class="main-content-area overflow-hidden">
+            <div className="main-content-area overflow-hidden">
                 <div className="main-wrapper">
                     <div className='w-100 pt-5 h-100 d-flex justify-content-center '>
                         <div className='learn-container-align'>

@@ -19,9 +19,9 @@ const History = () => {
                                 profile_credits:500, 
                                 mail_credits:1000 }
          };
-    var myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',mail_used:7,profile_used:5},
+    const myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',mail_used:7,profile_used:5},
                    {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',mail_used:12,profile_used:9}];
-    var myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15,profile_used:22}];
+    const myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15,profile_used:22}];
     const handleDelete = (name) => {
     // TODO: Remove element from database if delete is pressed
     let index = myLeads.splice(myLeads.findIndex(myLeads=> myLeads.name === name),1);
@@ -44,7 +44,7 @@ const History = () => {
                             alt="title" /></a>
                         <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-home.png"
+                                <a className="nav-icon-menu nav-link" href="/"><img src="assets/images/menu-home.png"
                                     alt="home here" /><span className="text-danger">Home</span></a>
                             </li>
                             <li className="nav-item me-md-4 me-3">
