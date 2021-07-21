@@ -36,7 +36,7 @@ const ResetPassword = () => {
             setValid(false);
             alert('Invalid Password');
           }
-          if(newPass == newPassRepeat){
+          if(newPass === newPassRepeat){
               setValid(true);
           }
           else{
