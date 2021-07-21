@@ -105,10 +105,10 @@ const myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15
                                 <a className="nav-icon-menu nav-link" href="/"><img src="assets/images/menu-home.png" alt="home here" /><span className="text-danger">Home</span></a>
                             </li>
                             <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved lists</a>
+                                <a className="nav-icon-menu nav-link" href="/savedList"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved lists</a>
                             </li>
                             <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="#"><img src="assets/images/menu-history.png" alt="history here" />History</a>
+                                <a className="nav-icon-menu nav-link" href="/history"><img src="assets/images/menu-history.png" alt="history here" />History</a>
                             </li>
                             <li className="nav-item me-md-4 me-3">
                                 <li className="nav-item dropdown">
