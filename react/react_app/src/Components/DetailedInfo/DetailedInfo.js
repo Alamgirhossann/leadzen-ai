@@ -5,12 +5,30 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import SpecificUser from '../SpecificUser/SpecificUser';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import Cookies from "js-cookie";
+import SearchResult from '../SearchResult/SearchResult';
 
 const DetailedInfo = () => {
-    useEffect(() => {
+    useEffect(async() => {
         const script = document.createElement('script');
         script.src = "assets/js/app.js";
         script.async = true;
+        const apiServer = '';
+        const apiUrl = '';
+        try{
+        const response = await fetch(apiUrl, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: '',
+            },
+          });
+          if (response.ok) {
+            const result = await response.json();
+            setMyLeads(result); //Set leads json as object
+          }
+        } catch (error) {
+          console.error("Error while fetching data", error);
+        }      
         document.body.appendChild(script);
         return () => {
             document.body.removeChild(script);
@@ -126,8 +144,8 @@ const DetailedInfo = () => {
                     rating:4.5,
                 };
         const searchData = {count:12,total:250};
-        const myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
-                       {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false}];
+        const [myLeads, setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
+                                                {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false}]);
 
                        return (
         <div>

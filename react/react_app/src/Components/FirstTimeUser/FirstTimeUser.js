@@ -80,15 +80,33 @@ const FirstTimeUser = () => {
                    mail_credits:1000 }
  };
 
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = "assets/js/app.js";
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        }
+ useEffect(async() => {
+    const script = document.createElement('script');
+    script.src = "assets/js/app.js";
+    script.async = true;
+    const apiServer = '';
+    const apiUrl = '';
+    try{
+    const response = await fetch(apiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: '',
+        },
+      });
+      if (response.ok) {
+        const result = await response.json();
+      }
+    } catch (error) {
+      console.error("Error while fetching data", error);
+    }
+    
+    document.body.appendChild(script);
+    return () => {
+        document.body.removeChild(script);
+    }
     }, []);
+
     return (
         <div>
             <header className="header-area">

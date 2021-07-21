@@ -1,15 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import SavedList from '../SavedList/SavedList';
-import History from '../History/History'
+import History from '../History/History';
+import SearchResult from '../SearchResult/SearchResult';
 
 const RepeatedUser = () => {
-    useEffect(() => {
+    useEffect(async() => {
         const script = document.createElement('script');
         script.src = "assets/js/app.js";
         script.async = true;
+        const apiServer = '';
+        const apiUrl = '';
+        try{
+        const response = await fetch(apiUrl, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: '',
+            },
+          });
+          if (response.ok) {
+            const result = await response.json();
+            setMyLeads(result); //Set leads json as object
+          }
+        } catch (error) {
+          console.error("Error while fetching data", error);
+        }
+        
         document.body.appendChild(script);
         return () => {
             document.body.removeChild(script);
@@ -47,6 +66,7 @@ const RepeatedUser = () => {
 const handleHeadSubmit = (e) => {
     e.preventDefault();
     console.log(searchText);
+    return <Redirect to="/searchResult" />;
 }
 const handleLocation = (e) => {
     setCustomSearch({...customSearch, location:e.target.value});
@@ -68,6 +88,7 @@ const handleKeywords = (e) => {
 }
 const handleCustomSubmit = (e) => {
     console.log(customSearch);
+    return <Redirect to="/searchResult"/>;
 }
 const handleCSVFile = (e) => {
     setCustomSearch({...customSearch, csv_file:e.target.files[0]});
@@ -90,8 +111,8 @@ const handleTypeSubmit = (e) => {
     console.log(customSearch);
     console.log(socialMediaType);
 }
-const myLeads = [{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',mail_used:7,profile_used:5},
-{name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',mail_used:12,profile_used:9}];
+const [myLeads, setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',mail_used:7,profile_used:5},
+                                        {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',mail_used:12,profile_used:9}]);
 const myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15,profile_used:22}];
     return (
         <div>

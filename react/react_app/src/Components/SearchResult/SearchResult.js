@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect,useState, useCallback } from 'react';
 import './SearchResult.css';
 import { Link,Redirect,useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,10 +18,28 @@ const SearchResult = () => {
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
-    useEffect(() => {
+    useEffect(async() => {
         const script = document.createElement('script');
         script.src = "assets/js/app.js";
         script.async = true;
+        const apiServer = '';
+        const apiUrl = '';
+        try{
+        const response = await fetch(apiUrl, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: '',
+            },
+          });
+          if (response.ok) {
+            const result = await response.json();
+            setMyLeads(result); //Set leads json as object
+          }
+        } catch (error) {
+          console.error("Error while fetching data", error);
+        }
+        
         document.body.appendChild(script);
         return () => {
             document.body.removeChild(script);
