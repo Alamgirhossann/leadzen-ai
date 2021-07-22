@@ -37,7 +37,7 @@ const RepeatedUser = () => {
     const [searchText, setSearchText] = useState({text : null});
     const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:null});
+    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
    
     const user = { name:'John Smith', 
     email:'johnsmith087@hexagon.in',
@@ -100,7 +100,7 @@ const handleSocialSubmit = (e) => {
     console.log(socialMediaSearch);
 }
 const handleType = (e) => {
-    setSocialMediaType({...socialMediaType, type:e.target.value});
+    setSocialMediaType({...socialMediaType, type:[socialMediaType.type,e.target.value]});
 }
 const handleURL = (e) => {
     setSocialMediaType({...socialMediaType, url:e.target.value});
@@ -119,7 +119,7 @@ const myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
 
                         <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li className="nav-item me-md-4 me-3">
@@ -299,32 +299,32 @@ const myTags = [{tags:['Tech','MBA','USA'],search_date:'05/05/2021',mail_used:15
                                         <input type="text" className="form-control" onBlur={handleURL} placeholder="Enter Social media URL" />
                                     </div>
                                     <div className="dropdown mb-3">
-                                        <input className="form-control dropdown-toggle" onChange={handleType} id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
+                                        <input className="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
                                         <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <div className="dropdown-wraper">
                                                 <div className='radio-bg'>
                                                     <span>All</span>
-                                                    <input type="radio" id='All' />
+                                                    <input type="checkbox" id='All' value="All" onChange={handleType} checked={socialMediaType.type.includes("All")}/>
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span>Follower</span>
-                                                    <input type="radio" id='Follower' />
+                                                    <input type="checkbox" id='Follower' value="Follower" onChange={handleType} checked={socialMediaType.type.includes("Follower")} />
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span >Likers</span>
-                                                    <input type="radio" id='Likers' />
+                                                    <input type="checkbox" id='Likers' value="Likers" onChange={handleType} checked={socialMediaType.type.includes("Likers")} />
                                                 </div>
                                                 <div className='radio-bg'>
-                                                    <span>Comentetors</span>
-                                                    <input type="radio" id='Comentetors' />
+                                                    <span>Commentors</span>
+                                                    <input type="checkbox" id='Comentetors' value="Commentors" onChange={handleType} checked={socialMediaType.type.includes("Commentors")}/>
                                                 </div>
                                                 <div className='radio-bg'>
-                                                    <span>Job Seaker</span>
-                                                    <input type="radio" id='Job Seaker' />
+                                                    <span>Job Seeker</span>
+                                                    <input type="checkbox" id='Job Seeker' value="Job Seeker"  onChange={handleType} checked={socialMediaType.type.includes("Job Seeker")}/>
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span>Group Members</span>
-                                                    <input type="radio" id='Group Members' />
+                                                    <input type="checkbox" id='Group Members' value="Group Members" onChange={handleType} checked={socialMediaType.type.includes("Group Members")}/>
                                                 </div>
                                             </div>
                                         </div>

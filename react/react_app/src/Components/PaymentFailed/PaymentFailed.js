@@ -6,7 +6,7 @@ const PaymentFailed = () => {
             <header className='header-area'>
                 <nav class="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a class="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a class="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
                     </div>
                 </nav>
             </header>

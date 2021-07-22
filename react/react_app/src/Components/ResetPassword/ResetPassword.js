@@ -57,7 +57,7 @@ const ResetPassword = () => {
             <header className='header-area'>
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
                     </div>
                 </nav>
             </header>

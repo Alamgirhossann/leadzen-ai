@@ -121,7 +121,7 @@ const SignUp = () => {
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="" /></a>
+                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="" /></a>
                     </div>
                 </nav>
             </header>

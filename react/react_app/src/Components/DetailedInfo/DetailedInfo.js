@@ -152,7 +152,7 @@ const DetailedInfo = () => {
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
 
                         <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li className="nav-item me-md-4 me-3">
@@ -345,27 +345,27 @@ const DetailedInfo = () => {
                                             <div className="dropdown-wraper">
                                                 <div className='radio-bg'>
                                                     <span>All</span>
-                                                    <input type="radio" id='All' />
+                                                    <input type="checkbox" id='All' value="All" onChange={handleType} checked={socialMediaType.type.includes("All")}/>
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span>Follower</span>
-                                                    <input type="radio" id='Follower' />
+                                                    <input type="checkbox" id='Follower' value="Follower" onChange={handleType} checked={socialMediaType.type.includes("Follower")} />
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span >Likers</span>
-                                                    <input type="radio" id='Likers' />
+                                                    <input type="checkbox" id='Likers' value="Likers" onChange={handleType} checked={socialMediaType.type.includes("Likers")} />
                                                 </div>
                                                 <div className='radio-bg'>
-                                                    <span>Comentetors</span>
-                                                    <input type="radio" id='Comentetors' />
+                                                    <span>Commentors</span>
+                                                    <input type="checkbox" id='Comentetors' value="Commentors" onChange={handleType} checked={socialMediaType.type.includes("Commentors")}/>
                                                 </div>
                                                 <div className='radio-bg'>
-                                                    <span>Job Seaker</span>
-                                                    <input type="radio" id='Job Seaker' />
+                                                    <span>Job Seeker</span>
+                                                    <input type="checkbox" id='Job Seeker' value="Job Seeker"  onChange={handleType} checked={socialMediaType.type.includes("Job Seeker")}/>
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span>Group Members</span>
-                                                    <input type="radio" id='Group Members' />
+                                                    <input type="checkbox" id='Group Members' value="Group Members" onChange={handleType} checked={socialMediaType.type.includes("Group Members")}/>
                                                 </div>
                                             </div>
                                         </div>

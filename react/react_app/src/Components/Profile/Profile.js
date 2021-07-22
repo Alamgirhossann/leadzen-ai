@@ -22,7 +22,7 @@ const Profile = () => {
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
 
                         <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li className="nav-item me-md-4 me-3">
