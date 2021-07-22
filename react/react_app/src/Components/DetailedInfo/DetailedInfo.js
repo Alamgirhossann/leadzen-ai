@@ -44,7 +44,7 @@ const DetailedInfo = () => {
     today = dd + '/' + mm + '/' + yyyy;
     const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
     const [searchText, setSearchText] = useState();
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:null});
+    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
 
     const handleHeadSearch = (e) => {
@@ -371,7 +371,7 @@ const DetailedInfo = () => {
                                         </div>
                                     </div>
                                     <button style={{ background: "#FB3E3E" }} onClick={handleTypeSubmit} className="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
-                                    <p className="m-0"><a href="#" className="learn-link">Learn More</a></p>
+                                    <p className="m-0"><a href="/userGuide" className="learn-link">Learn More</a></p>
                                 </form>
                             </div>
                         </div>

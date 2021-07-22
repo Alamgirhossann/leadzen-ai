@@ -16,7 +16,7 @@ const UserGuide = () => {
     const [searchText, setSearchText] = useState({text : null});
     const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:null});
+    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
     const handleHeadSearch = (e) => {
         setSearchText({...searchText, text : e.target.value});
     }

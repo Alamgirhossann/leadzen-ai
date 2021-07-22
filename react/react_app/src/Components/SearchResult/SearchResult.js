@@ -11,7 +11,7 @@ const SearchResult = () => {
     const apiUrl = `${apiServer}/?email=clark.kent@example.com&key=x8tent752npf5q26l7w9fv95`;
     const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
     const [searchText, setSearchText] = useState();
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:null});
+    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
     const [searchResult, setSearchResult] = useState();
     const [myLeads,setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
