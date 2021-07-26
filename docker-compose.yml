@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+    fastapi:
+        image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
+        container_name: "fastapi"
+        ports:
+            - "8080:5000"
+    react:
+        image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
+        container_name: "react"      
+        ports: 
+            - 8000:80
+            

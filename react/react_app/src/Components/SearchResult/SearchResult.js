@@ -11,7 +11,7 @@ const SearchResult = () => {
     const [searchText, setSearchText] = useState();
     const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
-    const [searchResult, setSearchResult] = useState();
+    const [searchResult, setSearchResult] = useState([]);
     const [myLeads,setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                                            {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},]);
     var today = new Date();
@@ -20,32 +20,13 @@ const SearchResult = () => {
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
     useEffect(async() => {
-        const apiServer = ``
-        const apiUrl = ``;
-        const script = document.createElement('script');
-        script.src = "assets/js/app.js";
-        script.async = true;
-        try{
-        const response = await fetch(apiUrl, {
-            method:'GET',
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          });
-          if (response.person) {
-            const result = await response.json();
-            console.log(result);
-            setSearchResult(result); //Set leads json as object
-          }
-        } catch (error) {
-          console.error("Error while fetching data", error);
-        }
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        }
+        fetchData();
     }, []);
+    const fetchData = async () => {
+        const response = await fetch("http://localhost:8000/",{mode:'no-cors'})
+        const data = await response.json();
+        setSearchResult(data);
+      }
     let index;
     const [show,setShow] = useState(false);
     const [selected, setSelected] = useState(false);
@@ -132,7 +113,7 @@ const SearchResult = () => {
             setCurrentPage(selectedPage);
             setOffset(offset);
         }
-    return (getData(),
+    return (
         <div>
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
