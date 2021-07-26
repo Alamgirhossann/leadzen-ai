@@ -12,14 +12,13 @@ const DetailedInfo = () => {
         const script = document.createElement('script');
         script.src = "assets/js/app.js";
         script.async = true;
-        const apiServer = '';
-        const apiUrl = '';
+        const apiServer = ``;
+        const apiUrl = ``;
         try{
         const response = await fetch(apiUrl, {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              Authorization: '',
             },
           });
           if (response.ok) {

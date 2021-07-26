@@ -7,8 +7,6 @@ import Cookies from "js-cookie";
 import ReactPaginate from 'react-paginate';
 
 const SearchResult = () => {
-    const apiServer = 'https://api.pipl.com/search';
-    const apiUrl = `${apiServer}/?email=clark.kent@example.com&key=x8tent752npf5q26l7w9fv95`;
     const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
     const [searchText, setSearchText] = useState();
     const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
@@ -21,50 +19,33 @@ const SearchResult = () => {
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
-    // useEffect(async() => {
-    //     const script = document.createElement('script');
-    //     script.src = "assets/js/app.js";
-    //     script.async = true;
-    //     try{
-    //     const response = await fetch(apiUrl, {
-    //         method:'GET',
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //           Accept: "application/json",
-    //           //Authorization: '',
-    //         },
-    //       });
-    //       if (response.person) {
-    //         const result = await response.json();
-    //         console.log(result);
-    //         setSearchResult(result); //Set leads json as object
-    //       }
-    //     } catch (error) {
-    //       console.error("Error while fetching data", error);
-    //     }
-        
-    //     document.body.appendChild(script);
-    //     return () => {
-    //         document.body.removeChild(script);
-    //     }
-    // }, []);
-    const getData = () =>{
-    const response = fetch(apiUrl, {
-        method:'GET',
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Connection: "keep-alive",
-          "Access-Control-Allow-Origin": "*",
-          //Authorization: '',
-        },
-      });
-      if (response.person) {
-        const result = response.json();
-        console.log(result);
-        setSearchResult(result); //Set leads json as object
-    }
-}
+    useEffect(async() => {
+        const apiServer = ``
+        const apiUrl = ``;
+        const script = document.createElement('script');
+        script.src = "assets/js/app.js";
+        script.async = true;
+        try{
+        const response = await fetch(apiUrl, {
+            method:'GET',
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          });
+          if (response.person) {
+            const result = await response.json();
+            console.log(result);
+            setSearchResult(result); //Set leads json as object
+          }
+        } catch (error) {
+          console.error("Error while fetching data", error);
+        }
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        }
+    }, []);
     let index;
     const [show,setShow] = useState(false);
     const [selected, setSelected] = useState(false);

@@ -18,7 +18,6 @@ const RepeatedUser = () => {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              Authorization: '',
             },
           });
           if (response.ok) {
