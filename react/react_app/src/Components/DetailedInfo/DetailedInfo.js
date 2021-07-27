@@ -8,34 +8,18 @@ import Cookies from "js-cookie";
 import SearchResult from '../SearchResult/SearchResult';
 
 const DetailedInfo = () => {
+    const [resultData, setSearchResult] = useState({data : null});
+    const [loading, setLoading] = useState(true);
+    let data = {};
     useEffect(async() => {
-        const script = document.createElement('script');
-        script.src = "assets/js/app.js";
-        script.async = true;
-        const apiServer = ``;
-        const apiUrl = ``;
-        try{
-        const response = await fetch(apiUrl, {
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          });
-          if (response.ok) {
-            const result = await response.json();
-            setMyLeads(result); //Set leads json as object
-          }
-        } catch (error) {
-          console.error("Error while fetching data", error);
-        }      
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        }
+
     }, []);
-    const fetchData = async() => {
-        // TODO:Create api calls to get user profile data from the backend
-    }
+    const fetchData = async () => {
+        const response = await fetch("http://localhost:5000/")
+        data = await response.json();
+        data ? setSearchResult({...resultData,data : data}) : setLoading(true); 
+        data ? setLoading(false) : setLoading(true);
+      }
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -146,7 +130,7 @@ const DetailedInfo = () => {
         const [myLeads, setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                                                 {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false}]);
 
-                       return (
+                       return ( fetchData(),
         <div>
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
@@ -388,7 +372,7 @@ const DetailedInfo = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="user-widget-box  my-3">
+                            {/* <div className="user-widget-box  my-3">
                                 <div className="d-flex align-items-center justify-content-between py-3">
                                     <div className='d-flex align-items-center '>
                                         <input className='ms-3 me-3' type="checkbox" id='checkbox' />
@@ -439,8 +423,6 @@ const DetailedInfo = () => {
                                             <small className='d-block'>{data.address}</small>
                                         </div>
                                         <div className='search-email text-center'>
-                                            {/* <small className={data.show ? 'd-block':'d-block blur'}>alamgirhossann</small>
-                                            <a href="#" onClick={(e)=>{e.preventDefault();data.show=true}}><small className='d-block text-danger'>Unlock</small></a> */}
                                             <small className={show ? 'd-block':'d-block blur'}>alamgirhossann</small>
                                             <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
                                         </div>
@@ -449,7 +431,55 @@ const DetailedInfo = () => {
                                     </div>
                                 </div>
                                  ))}
-                            </div>
+                            </div> */}
+                            {!loading ? (
+                            <div className="user-widget-box  my-3">
+                                <div className='info-container'>
+                                    <div className="user-info-container">
+                                        <input className='info-box ms-3 me-3' type="checkbox" id='checkbox' />
+                                        <p className='info-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                        <div className='info-user'>
+                                            <p>{resultData.data.names[0]._display}</p>
+                                        </div>
+                                        <div className='info-location'>
+                                            <small className='d-block'>Works at {resultData.data.jobs[0].organization}</small>
+                                            <small className='d-block'>{resultData.data.addresses[0]._display}</small>
+                                        </div>
+                                        <div className='info-email text-center'>
+                                            <small className='d-block'>{resultData.data.emails[1].address}</small>
+                                        </div>
+                                        <p className='info-download-btn'><img src="assets/images/Group 1899.png" alt="" /></p>
+                                        <p className='info-up-btn'><img src="assets/images/Group 1900.png" alt="" /></p>
+                                        <p className='info-plus-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
+                                    </div>
+                                </div>
+                             </div> ) : null}
+                             <div style={{background:"white",borderRadius:"20px", padding:"20px"}}>
+                                <SpecificUser details={details}/>
+                             </div> 
+
+                             <div className="user-widget-box  my-3">
+                                 {myLeads.map(data => (
+                                <div className='search-container mb-2'>
+                                    <div className="user-container py-2">
+                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                        <div className='search-user'>
+                                            <p>{data.name}</p>
+                                            <small className='d-block'>Works at {data.comp}</small>
+                                            <small className='d-block'>{data.address}</small>
+                                        </div>
+                                        <div className='search-email text-center'>
+                                            <small className={show ? 'd-block':'d-block blur'}>alamgirhossann</small>
+                                            <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
+                                        </div>
+                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
+                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
+                                    </div>
+                                </div>
+                                 ))}
+                            </div> 
+                            
                              
                             {/* <div className='d-flex justify-content-center'>
                                 <div style={{borderRadius:"10%", background:"#FB3E3E", height:"25px", width:"25px"}}><p className=' d-flex text-white justify-content-center align-items-center'>1 </p></div>

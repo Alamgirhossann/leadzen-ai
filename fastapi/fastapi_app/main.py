@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from piplapis.search import SearchAPIRequest
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
 origins = [
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -24,5 +27,6 @@ async def root():
 
     if response.person:
         currentPerson = response.person
-
-    return {"data": currentPerson}
+    
+    json_compatible_item_data = jsonable_encoder(currentPerson)
+    return JSONResponse(content=json_compatible_item_data)

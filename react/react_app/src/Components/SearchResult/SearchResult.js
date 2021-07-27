@@ -11,7 +11,9 @@ const SearchResult = () => {
     const [searchText, setSearchText] = useState();
     const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
-    const [searchResult, setSearchResult] = useState([]);
+    const [resultData, setSearchResult] = useState({data : null});
+    const [loading, setLoading] = useState(true);
+    let data = {};
     const [myLeads,setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                                            {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},]);
     var today = new Date();
@@ -20,12 +22,12 @@ const SearchResult = () => {
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
     useEffect(async() => {
-        fetchData();
     }, []);
     const fetchData = async () => {
-        const response = await fetch("http://localhost:8000/",{mode:'no-cors'})
-        const data = await response.json();
-        setSearchResult(data);
+        const response = await fetch("http://localhost:5000/")
+        data = await response.json();
+        data ? setSearchResult({...resultData,data : data}) : setLoading(true); 
+        data ? setLoading(false) : setLoading(true);
       }
     let index;
     const [show,setShow] = useState(false);
@@ -113,7 +115,7 @@ const SearchResult = () => {
             setCurrentPage(selectedPage);
             setOffset(offset);
         }
-    return (
+    return (fetchData(),
         <div>
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
@@ -390,6 +392,24 @@ const SearchResult = () => {
                                     </div>
                                     ))}
                                 </div>
+                                {!loading ? (
+                                <div className='search-container mb-2'>
+                                    <div className="user-container py-2">
+                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                        <div className='search-user'>
+                                            <p>{resultData.data.names[0]._display}</p>
+                                            <small className='d-block'>Works at {resultData.data.jobs[0].organization}</small>
+                                            <small className='d-block'>{resultData.data.addresses[0]._display}</small>
+                                        </div>
+                                        <div className='search-email text-center'>
+                                            <small className={show ? 'd-block': 'd-block blur'}>alamgirhossann</small>
+                                            <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
+                                        </div>
+                                        <p className='search-view-btn '><a href="/detailedInfo" className='button'>View Profile</a></p>
+                                        <a  href="#" onClick={clickSelect}><p className='search-close-btn'><img src={selected ? "assets/images/Frame 543.png" : "assets/images/Group 1863.png"} alt="" /></p></a>
+                                    </div>
+                                </div> ) : null }
                             </div>
                             <div className='d-flex justify-content-center'>
                                 <div className='number-align'> 1 </div>

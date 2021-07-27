@@ -1,5 +1,5 @@
 version: '3.3'
-
+# React on port 8000 and fastapi on port 5000
 services:
     fastapi:
         image: "analystt/person_fastapi:latest"
