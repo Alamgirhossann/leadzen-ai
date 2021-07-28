@@ -17,6 +17,7 @@ const SearchResult = () => {
     const [myLeads,setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                                            {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},]);
     var today = new Date();
+    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
@@ -24,7 +25,7 @@ const SearchResult = () => {
     useEffect(async() => {
     }, []);
     const fetchData = async () => {
-        const response = await fetch("http://localhost:5000/")
+        const response = await fetch(apiServer);
         data = await response.json();
         data ? setSearchResult({...resultData,data : data}) : setLoading(true); 
         data ? setLoading(false) : setLoading(true);

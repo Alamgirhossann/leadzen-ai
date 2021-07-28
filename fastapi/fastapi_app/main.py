@@ -3,8 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from piplapis.search import SearchAPIRequest
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+import os
 
 app = FastAPI()
+load_dotenv()
+
+PIPL_API_KEY = os.getenv('PIPL_API_ACCESS_KEY')
 
 origins = [
     "http://localhost",
@@ -22,7 +27,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    request = SearchAPIRequest(email=u'clark.kent@example.com', first_name=u'Clark', last_name=u'Kent', api_key='x8tent752npf5q26l7w9fv95')
+    request = SearchAPIRequest(email=u'clark.kent@example.com', first_name=u'Clark', last_name=u'Kent', api_key=PIPL_API_KEY)
     response = request.send()
 
     if response.person:
