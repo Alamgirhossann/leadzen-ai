@@ -23,6 +23,7 @@ const SearchResult = () => {
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
     useEffect(async() => {
+        fetchData();
     }, []);
     const fetchData = async () => {
         const response = await fetch(apiServer);
@@ -116,7 +117,7 @@ const SearchResult = () => {
             setCurrentPage(selectedPage);
             setOffset(offset);
         }
-    return (fetchData(),
+    return (
         <div>
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
