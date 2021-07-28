@@ -8,7 +8,7 @@ const PasswordInstruction = () => {
             <header class="header-area">
                 <nav class="header-navbar navbar navbar-expand-xl bg-light">
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="" /></a>
+                        <a class="navbar-brand" href="/"><img src="assets/images/header-brand-black.png" alt="" /></a>
                     </div>
                 </nav>
             </header>

@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect,useState, useCallback } from 'react';
 import './SearchResult.css';
 import { Link,Redirect,useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,24 +9,28 @@ import ReactPaginate from 'react-paginate';
 const SearchResult = () => {
     const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
     const [searchText, setSearchText] = useState();
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:null});
+    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
     const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
+    const [resultData, setSearchResult] = useState({data : null});
+    const [loading, setLoading] = useState(true);
+    let data = {};
     const [myLeads,setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
                                            {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},]);
     var today = new Date();
+    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
-    useEffect(() => {
-        const script = document.createElement('script');
-        script.src = "assets/js/app.js";
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        }
+    useEffect(async() => {
+        fetchData();
     }, []);
+    const fetchData = async () => {
+        const response = await fetch(apiServer);
+        data = await response.json();
+        data ? setSearchResult({...resultData,data : data}) : setLoading(true); 
+        data ? setLoading(false) : setLoading(true);
+      }
     let index;
     const [show,setShow] = useState(false);
     const [selected, setSelected] = useState(false);
@@ -118,7 +122,7 @@ const SearchResult = () => {
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="index.html"><img src="assets/images/header-brand-black.png" alt="title" /></a>
+                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
 
                         <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
                             <li className="nav-item me-md-4 me-3">
@@ -310,27 +314,27 @@ const SearchResult = () => {
                                             <div className="dropdown-wraper">
                                                 <div className='radio-bg'>
                                                     <span>All</span>
-                                                    <input type="radio" id='All' />
+                                                    <input type="checkbox" id='All' value="All" onChange={handleType} checked={socialMediaType.type.includes("All")}/>
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span>Follower</span>
-                                                    <input type="radio" id='Follower' />
+                                                    <input type="checkbox" id='Follower' value="Follower" onChange={handleType} checked={socialMediaType.type.includes("Follower")} />
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span >Likers</span>
-                                                    <input type="radio" id='Likers' />
+                                                    <input type="checkbox" id='Likers' value="Likers" onChange={handleType} checked={socialMediaType.type.includes("Likers")} />
                                                 </div>
                                                 <div className='radio-bg'>
-                                                    <span>Comentetors</span>
-                                                    <input type="radio" id='Comentetors' />
+                                                    <span>Commentors</span>
+                                                    <input type="checkbox" id='Comentetors' value="Commentors" onChange={handleType} checked={socialMediaType.type.includes("Commentors")}/>
                                                 </div>
                                                 <div className='radio-bg'>
-                                                    <span>Job Seaker</span>
-                                                    <input type="radio" id='Job Seaker' />
+                                                    <span>Job Seeker</span>
+                                                    <input type="checkbox" id='Job Seeker' value="Job Seeker"  onChange={handleType} checked={socialMediaType.type.includes("Job Seeker")}/>
                                                 </div>
                                                 <div className='radio-bg'>
                                                     <span>Group Members</span>
-                                                    <input type="radio" id='Group Members' />
+                                                    <input type="checkbox" id='Group Members' value="Group Members" onChange={handleType} checked={socialMediaType.type.includes("Group Members")}/>
                                                 </div>
                                             </div>
                                         </div>
@@ -390,6 +394,24 @@ const SearchResult = () => {
                                     </div>
                                     ))}
                                 </div>
+                                {!loading ? (
+                                <div className='search-container mb-2'>
+                                    <div className="user-container py-2">
+                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
+                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
+                                        <div className='search-user'>
+                                            <p>{resultData.data.names[0]._display}</p>
+                                            <small className='d-block'>Works at {resultData.data.jobs[0].organization}</small>
+                                            <small className='d-block'>{resultData.data.addresses[0]._display}</small>
+                                        </div>
+                                        <div className='search-email text-center'>
+                                            <small className={show ? 'd-block': 'd-block blur'}>alamgirhossann</small>
+                                            <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
+                                        </div>
+                                        <p className='search-view-btn '><a href="/detailedInfo" className='button'>View Profile</a></p>
+                                        <a  href="#" onClick={clickSelect}><p className='search-close-btn'><img src={selected ? "assets/images/Frame 543.png" : "assets/images/Group 1863.png"} alt="" /></p></a>
+                                    </div>
+                                </div> ) : null }
                             </div>
                             <div className='d-flex justify-content-center'>
                                 <div className='number-align'> 1 </div>
