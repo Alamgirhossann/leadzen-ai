@@ -1,7 +1,7 @@
 #import os, random, sys, time
 #from urllib.parse import urlparse
 from os import link, name
-# from selenium import webdriver
+from selenium import webdriver
 # #from bs4 import BeautifulSoup
 from time import sleep
 import csv
@@ -85,24 +85,6 @@ company_codes = {}
 # # defining new variable passing two parameters
 #
 # # writerow() method to the write to the file object)
-# browser = webdriver.Chrome(executable_path='chromedriver.exe')
-# with open('config.txt') as file:
-#     line = file.read().splitlines()
-#     username = line[0]
-#     password = line[1]
-# # #Open login page
-# browser.get('https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin')
-#
-#
-# # #Enter login info:
-# elementID = browser.find_element_by_id('username')
-# elementID.send_keys(username)
-#
-# elementID = browser.find_element_by_id('password')
-# elementID.send_keys(password)
-# # #Note: replace the keys "username" and "password" with your LinkedIn login info
-# elementID.submit()
-# sleep(2)
 
 def set_list_values(link, k, v, link_ends_with=''):
     prefix = "&"
@@ -158,6 +140,7 @@ key_value_pairs["location"] = [item.strip() for item in input("Location: ").spli
 key_value_pairs["currentCompany"] = [item.strip() for item in input("Current Company: ").split(',')]
 key_value_pairs["pastCompany"] = [item.strip() for item in input("Past Comapany: ").split(',')]
 
+link = ""
 kw = key_value_pairs.get("keywords", None)
 if kw:
     link = linkedin_baseurl
@@ -175,14 +158,38 @@ if kw:
                     link += k + '=' + v
                 else:
                     link += '&' + k + '=' + v
-    print(link)
     encoded_link = urllib.parse.quote(link, safe='/:?=&')
     print(encoded_link)
+    # link = encoded_link
 else:
     pass
-# browser.get(link)
-# sleep(2)
-#
+
+browser = webdriver.Chrome(executable_path='chromedriver.exe')
+with open('config.txt') as file:
+    line = file.read().splitlines()
+    username = line[0]
+    password = line[1]
+
+# Open login page
+browser.get('https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin')
+
+# #Enter login info:
+elementID = browser.find_element_by_id('username')
+elementID.send_keys(username)
+
+elementID = browser.find_element_by_id('password')
+elementID.send_keys(password)
+
+# #Note: replace the keys "username" and "password" with your LinkedIn login info
+elementID.submit()
+sleep(3)
+
+cookie_list = browser.get_cookies()
+for cookie_dict in cookie_list:
+    if cookie_dict['name']=='li_at':
+        print('\n\nli_at:')
+        print(cookie_dict['value'])
+
 # try:
 #     #data1 = browser.find_element_by_xpath('/html/body/div[6]/div[3]/div/div[1]/div/div[1]/main/div/div/div[2]/ul/li[1]/div/div/div[2]/div/div')
 #     name1 = browser.find_element_by_xpath('/html/body/div[6]/div[3]/div/div[1]/div/div[1]/main/div/div/div[3]/ul/li[1]/div/div/div[2]/div[1]/div[1]/div/span')
