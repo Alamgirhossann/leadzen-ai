@@ -14,7 +14,9 @@ const CsvBlock = () => {
             onClick={(e)=>setSampleChecked(true)}
         >
             Check Sample
-        </a>
+        </a> &nbsp;
+        before uploading your csv.
+        <br/>
 
         { sampleChecked &&
             <input
@@ -22,6 +24,7 @@ const CsvBlock = () => {
                 accept=".csv"
                 defaultValue={uploadedCSV}
                 onChange={(e)=>setUploadedCSV(e.target.files[0])}
+                disabled="disabled"
             />
         }
     </div>
