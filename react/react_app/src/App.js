@@ -34,7 +34,7 @@ import ChromeWrongPassword from './Components/ChromeWrongPassword/ChromeWrongPas
 import ChromeSearch from './Components/ChromeSearch/ChromeSearch';
 import AllUsers from './Components/AllUsers/AllUsers';
 import DashboardOne from './Components/DashboardOne/DashboardOne';
-
+import CsvBlock from './Components/CsvBlock';
 const App = () => {
   useEffect(() => {
     const script = document.createElement('script');
@@ -135,6 +135,9 @@ const App = () => {
         </Route>
         <Route path='/dashboardOne'>
             <DashboardOne />
+        </Route>
+        <Route path='/csv'>
+            <CsvBlock />
         </Route>
       </Switch>
     </Router>

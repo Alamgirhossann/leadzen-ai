@@ -33,7 +33,9 @@ const Home = () => {
                 <Link to='/searchResult2'>Search Result 2</Link>
                 <Link to='/searchResult3'>Search Result 3</Link>
                 <Link to='/allUsers'>All Users</Link>
+                <Link to='/csv'>CSV</Link>
                 <Link to='/DashboardOne'>Dashboard One</Link>
+
             </div>
         </div>
     );
