@@ -3,8 +3,20 @@ import './LogIn.css';
 import { Link, Redirect } from 'react-router-dom';
 import Cookies from "js-cookie";
 import validator from "validator";
+import Header from "../Header";
 
 const LogIn = () => {
+    const user = { name:'',
+                   email:'',
+                   subscription:{ product:'',
+                                price:'',
+                                period:'',
+                                status:'',
+                                last_renewal:'',
+                                expiry_date:'',
+                                profile_credits:'',
+                                mail_credits:''}
+         };;
 
     const [form, setForm] = useState({
         email: "",
@@ -96,6 +108,8 @@ const LogIn = () => {
 
     return (
         <div>
+            <Header user={user}/>
+        {/*
             <header className='header-area'>
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
                     <div className="container-fluid">
@@ -103,6 +117,7 @@ const LogIn = () => {
                     </div>
                 </nav>
             </header>
+        */}
             <div className="main-content-area overflow-hidden">
                 <div className="main-wrapper">
                     <div className="container-fluid">
