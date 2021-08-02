@@ -1,88 +1,91 @@
-import React, { useEffect,useState, useCallback } from 'react';
-import './SearchResult.css';
-import { Link,Redirect,useHistory } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import './Style/style.css';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Cookies from "js-cookie";
 import ReactPaginate from 'react-paginate';
-import Header from '../Header';
-import Filters from '../Filters';
-import ExtractContacts from '../ExtractContacts';
+import Header from '../SharedComponent/Header';
+import Filters from '../SharedComponent/Filters';
+import ExtractContacts from '../SharedComponent/ExtractContacts';
 
 const SearchResult = () => {
     const [customSearch, setCustomSearch] = useState({
-                                                    location:null,
-                                                    industry:null,
-                                                    job_title:null,
-                                                    education:null,
-                                                    company_name:null,
-                                                    keywords:null,
-                                                    csv_file:null
-                                                    });
+        location: null,
+        industry: null,
+        job_title: null,
+        education: null,
+        company_name: null,
+        keywords: null,
+        csv_file: null
+    });
 
     const [searchText, setSearchText] = useState();
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
-    const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
-    const [resultData, setSearchResult] = useState({data : null});
+    const [socialMediaType, setSocialMediaType] = useState({ url: null, type: [] });
+    const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
+    const [resultData, setSearchResult] = useState({ data: null });
     const [loading, setLoading] = useState(true);
     let data = {};
-    const [myLeads,setMyLeads] = useState([{
-                                            name:'John Smith',
-                                            desc:'English Speaker',
-                                            comp:'Hexagon AB',
-                                            search_date:'12/05/2021',
-                                            address:'6720 Ulster Court, Alpharetta, Georgia',
-                                            show:false
-                                            },
-                                           {
-                                            name:'Joe Mama',
-                                            desc:'English Speaker',
-                                            comp:'Apple INC',
-                                            search_date:'05/05/2021',
-                                            address:'6720 Ulster Court, Alpharetta, Georgia',
-                                            show:false
-                                            },]);
+    const [myLeads, setMyLeads] = useState([{
+        name: 'John Smith',
+        desc: 'English Speaker',
+        comp: 'Hexagon AB',
+        search_date: '12/05/2021',
+        address: '6720 Ulster Court, Alpharetta, Georgia',
+        show: false
+    },
+    {
+        name: 'Joe Mama',
+        desc: 'English Speaker',
+        comp: 'Apple INC',
+        search_date: '05/05/2021',
+        address: '6720 Ulster Court, Alpharetta, Georgia',
+        show: false
+    },]);
     var today = new Date();
     const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
     today = dd + '/' + mm + '/' + yyyy;
-    useEffect(async() => {
+    useEffect(async () => {
         fetchData();
     }, []);
     const fetchData = async () => {
         const response = await fetch(apiServer);
         data = await response.json();
-        data ? setSearchResult({...resultData,data : data}) : setLoading(true); 
+        data ? setSearchResult({ ...resultData, data: data }) : setLoading(true);
         data ? setLoading(false) : setLoading(true);
-      }
+    }
     let index;
-    const [show,setShow] = useState(false);
+    const [show, setShow] = useState(false);
     const [selected, setSelected] = useState(false);
     const showClick = (e) => {
         e.preventDefault();
-        if(!show)
+        if (!show)
             setShow(true);
     }
     const clickSelect = (e) => {
         e.preventDefault();
-        if(!selected)
+        if (!selected)
             setSelected(true);
     }
-    const user = { name:'John Smith',
-                   email:'Johnsmith087@hexagon.in',
-                   subscription:{ product:'Free Analystt',
-                                price:'100 INR',
-                                period:'Yearly',
-                                status:'Active',
-                                last_renewal:'01/02/2020',
-                                expiry_date:'02/08/2021',
-                                profile_credits:500,
-                                mail_credits:1000 }
-         };
+    const user = {
+        name: 'John Smith',
+        email: 'Johnsmith087@hexagon.in',
+        subscription: {
+            product: 'Free Analystt',
+            price: '100 INR',
+            period: 'Yearly',
+            status: 'Active',
+            last_renewal: '01/02/2020',
+            expiry_date: '02/08/2021',
+            profile_credits: 500,
+            mail_credits: 1000
+        }
+    };
 
-    var searchData = {count:12,total:250};
+    var searchData = { count: 12, total: 250 };
     const handleSearch = (e) => {
         setSearchText(e.target.value);
     }
@@ -92,31 +95,30 @@ const SearchResult = () => {
     }
 
     const handleCSVFile = (e) => {
-        setCustomSearch({...customSearch, csv_file:e.target.files[0]});
+        setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
     }
     const handleType = (e) => {
-        setSocialMediaType({...socialMediaType, type:e.target.value});
+        setSocialMediaType({ ...socialMediaType, type: e.target.value });
     }
     const handleSocialMedia = (e) => {
-        setSocialMediaSearch({...socialMediaSearch, text:e.target.value})
+        setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value })
     }
     const handleTypeSubmit = (e) => {
         e.preventDefault();
         console.log(socialMediaSearch);
     }
     const handleUnlock = (name) => {
-        let index = myLeads.findIndex(myLeads=> myLeads.name===name);
+        let index = myLeads.findIndex(myLeads => myLeads.name === name);
         let show_value = myLeads[index].show;
-        if(!show_value)
-        {
-            myLeads[index] = {...myLeads[index],show:true};
+        if (!show_value) {
+            myLeads[index] = { ...myLeads[index], show: true };
             console.log(myLeads[index]);
         }
         return false;
     }
-    const [perPage,setPerPage] = useState(5);
-    const [currentPage,setCurrentPage] = useState(0);
-    const [offset,setOffset] = useState();
+    const [perPage, setPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [offset, setOffset] = useState();
     const handlePageClick = (e) => {
         const selectedPage = e.selected;
         const offset = selectedPage * perPage;
@@ -125,7 +127,7 @@ const SearchResult = () => {
     }
     return (
         <div>
-            <Header user={user}/>
+            <Header user={user} />
             {/*
             <header className="header-area">
                 <nav className="header-navbar navbar navbar-expand-xl bg-light">
@@ -223,7 +225,7 @@ const SearchResult = () => {
                                 </button>
                                 <br />
                                 <span className="note needsclick">
-                                    <input type="file" accept=".csv" onChange={handleCSVFile}/>
+                                    <input type="file" accept=".csv" onChange={handleCSVFile} />
                                 </span>
                             </div>
                         </form>
@@ -236,9 +238,7 @@ const SearchResult = () => {
                     <div className="row">
                         <div className="col-md-4 col-lg-3">
                             <Filters />
-                            <ExtractContacts />
                         </div>
-
                         <div className="col-md-8 col-lg-9">
                             <div className="user-search-wrapper">
                                 <div className="detailed-search">
@@ -249,8 +249,10 @@ const SearchResult = () => {
                                                 aria-label="Search" />
                                             <button className="btn text-white d-flex ms-3"
                                                 onClick={handleSearchSubmit}
-                                                style={{ background: "#FB3E3E",
-                                                    position:'absolute', left:'325px' }}
+                                                style={{
+                                                    background: "#FB3E3E",
+                                                    position: 'absolute', left: '325px'
+                                                }}
                                                 type="submit">
                                                 <span className='pe-1'>
                                                     <FontAwesomeIcon icon={faSearch} />
@@ -295,101 +297,101 @@ const SearchResult = () => {
 
                             <div className="user-widget-box  my-3">
                                 <div className='search-container mb-2'>
-                                {myLeads.map(data => (
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox"
-                                            id='checkbox' />
-                                        <p className='search-author text-danger'>
-                                            <img src="assets/images/author-image.png" alt="" />
-                                        </p>
-                                        <div className='search-user'>
-                                            <p>{data.name}</p>
-                                            <small className='d-block'>
-                                                Works at {data.comp}
-                                            </small>
-                                            <small className='d-block'>
-                                                {data.address}
-                                            </small>
-                                        </div>
-                                        <div className='search-email text-center'>
-                                            {/*
-                                            <small className={index = myLeads.findIndex(myLeads=> myLeads.name === data.name),myLeads[index].show ? 'd-block': 'd-block blur'}>alamgirhossann</small> */}
-                                            {/* <a href="#" onClick={name => handleUnlock(data.name)}><small className='d-block text-danger'>Unlock</small></a> */}
-                                            <small className={show ? 'd-block': 'd-block blur'}>
-                                                alamgirhossann
-                                            </small>
-                                            <a href="#" onClick={showClick}>
-                                                <small className='d-block text-danger'>
-                                                    Unlock
-                                                </small>
-                                            </a>
-                                        </div>
-
-                                        <p className='search-view-btn '>
-                                            <a href="/detailedInfo" className='button'>
-                                                View Profile
-                                            </a>
-                                        </p>
-                                        <a  href="#" onClick={clickSelect}>
-                                            <p className='search-close-btn'>
-                                                <img src={
-                                                        selected ?
-                                                        "assets/images/Frame 543.png" :
-                                                        "assets/images/Group 1863.png"
-                                                        }
-                                                    alt="" />
+                                    {myLeads.map(data => (
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox"
+                                                id='checkbox' />
+                                            <p className='search-author text-danger'>
+                                                <img src="assets/images/author-image.png" alt="" />
                                             </p>
-                                        </a>
-                                    </div>
+                                            <div className='search-user'>
+                                                <p>{data.name}</p>
+                                                <small className='d-block'>
+                                                    Works at {data.comp}
+                                                </small>
+                                                <small className='d-block'>
+                                                    {data.address}
+                                                </small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                {/*
+                                            <small className={index = myLeads.findIndex(myLeads=> myLeads.name === data.name),myLeads[index].show ? 'd-block': 'd-block blur'}>alamgirhossann</small> */}
+                                                {/* <a href="#" onClick={name => handleUnlock(data.name)}><small className='d-block text-danger'>Unlock</small></a> */}
+                                                <small className={show ? 'd-block' : 'd-block blur'}>
+                                                    alamgirhossann
+                                                </small>
+                                                <a href="#" onClick={showClick}>
+                                                    <small className='d-block text-danger'>
+                                                        Unlock
+                                                    </small>
+                                                </a>
+                                            </div>
+
+                                            <p className='search-view-btn '>
+                                                <a href="/detailedInfo" className='button'>
+                                                    View Profile
+                                                </a>
+                                            </p>
+                                            <a href="#" onClick={clickSelect}>
+                                                <p className='search-close-btn'>
+                                                    <img src={
+                                                        selected ?
+                                                            "assets/images/Frame 543.png" :
+                                                            "assets/images/Group 1863.png"
+                                                    }
+                                                        alt="" />
+                                                </p>
+                                            </a>
+                                        </div>
                                     ))}
                                 </div>
 
                                 {!loading ? (
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox"
-                                            id='checkbox' />
-                                        <p className='search-author text-danger'>
-                                            <img src="assets/images/author-image.png" alt="" />
-                                        </p>
+                                    <div className='search-container mb-2'>
+                                        <div className="user-container py-2">
+                                            <input className='box ms-3 me-3' type="checkbox"
+                                                id='checkbox' />
+                                            <p className='search-author text-danger'>
+                                                <img src="assets/images/author-image.png" alt="" />
+                                            </p>
 
-                                        <div className='search-user'>
-                                            <p>
-                                                {resultData.data.names[0]._display}
-                                            </p>
-                                            <small className='d-block'>
-                                                Works at {resultData.data.jobs[0].organization}
-                                            </small>
-                                            <small className='d-block'>
-                                                {resultData.data.addresses[0]._display}
-                                            </small>
-                                        </div>
-                                        <div className='search-email text-center'>
-                                            <small className={show ? 'd-block': 'd-block blur'}>
-                                                alamgirhossann
-                                            </small>
-                                            <a href="#" onClick={showClick}>
-                                                <small className='d-block text-danger'>
-                                                    Unlock
+                                            <div className='search-user'>
+                                                <p>
+                                                    {resultData.data.names[0]._display}
+                                                </p>
+                                                <small className='d-block'>
+                                                    Works at {resultData.data.jobs[0].organization}
                                                 </small>
+                                                <small className='d-block'>
+                                                    {resultData.data.addresses[0]._display}
+                                                </small>
+                                            </div>
+                                            <div className='search-email text-center'>
+                                                <small className={show ? 'd-block' : 'd-block blur'}>
+                                                    alamgirhossann
+                                                </small>
+                                                <a href="#" onClick={showClick}>
+                                                    <small className='d-block text-danger'>
+                                                        Unlock
+                                                    </small>
+                                                </a>
+                                            </div>
+                                            <p className='search-view-btn '>
+                                                <a href="/detailedInfo" className='button'>
+                                                    View Profile
+                                                </a>
+                                            </p>
+                                            <a href="#" onClick={clickSelect}>
+                                                <p className='search-close-btn'>
+                                                    <img src={
+                                                        selected ?
+                                                            "assets/images/Frame 543.png" :
+                                                            "assets/images/Group 1863.png"}
+                                                        alt="" />
+                                                </p>
                                             </a>
                                         </div>
-                                        <p className='search-view-btn '>
-                                            <a href="/detailedInfo" className='button'>
-                                                View Profile
-                                            </a>
-                                        </p>
-                                        <a  href="#" onClick={clickSelect}>
-                                            <p className='search-close-btn'>
-                                            <img src={
-                                                    selected ?
-                                                    "assets/images/Frame 543.png" :
-                                                    "assets/images/Group 1863.png"}
-                                                    alt="" />
-                                            </p>
-                                        </a>
-                                    </div>
-                                </div> ) : null }
+                                    </div>) : null}
                             </div>
                             <div className='d-flex justify-content-center'>
                                 <div className='number-align'> 1 </div>
@@ -404,7 +406,7 @@ const SearchResult = () => {
                                 <div className="user-promote-logo">
                                     <img src="assets/images/user-company-brand.png"
                                         alt="title" />
-                                    </div>
+                                </div>
                                 <div className="user-promote-slider">
                                     <div className="item">
                                         <div className="user-promote-item">
@@ -413,9 +415,11 @@ const SearchResult = () => {
                                                 LinkedIn group?
                                             </p>
                                             <div classNameName="px-3 pb-4"
-                                                style={{ position: "absolute",
-                                                        bottom: "5px",
-                                                        content: "", }} >
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }} >
                                                 <a href="/searchResult" className="small m-0">
                                                     Try This
                                                 </a>
@@ -429,9 +433,11 @@ const SearchResult = () => {
                                                 with 1000+ employees in US?
                                             </p>
                                             <div classNameName="px-3 pb-4"
-                                                style={{ position: "absolute",
-                                                        bottom: "5px",
-                                                        content: "", }} >
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }} >
                                                 <a href="/searchResult" className="small m-0">
                                                     Try This
                                                 </a>
@@ -445,9 +451,11 @@ const SearchResult = () => {
                                                 Flipkart?
                                             </p>
                                             <div classNameName="px-3 pb-4"
-                                                style={{ position: "absolute",
-                                                        bottom: "5px",
-                                                        content: "", }} >
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }} >
                                                 <a href="/searchResult" className="small m-0">
                                                     Try This
                                                 </a>
@@ -461,9 +469,11 @@ const SearchResult = () => {
                                                 LinkedIn group?
                                             </p>
                                             <div classNameName="px-3 pb-4"
-                                                style={{ position: "absolute",
-                                                        bottom: "5px",
-                                                        content: "", }} >
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }} >
                                                 <a href="/searchResult" className="small m-0">
                                                     Try This
                                                 </a>
@@ -478,9 +488,11 @@ const SearchResult = () => {
                                             </p>
 
                                             <div className="px-3 pb-4"
-                                                style={{ position: "absolute",
-                                                        bottom: "5px",
-                                                        content: "", }} >
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }} >
                                                 <a href="/searchResult" className="small m-0">
                                                     Try This
                                                 </a>
@@ -494,9 +506,11 @@ const SearchResult = () => {
                                                 LinkedIn group?
                                             </p>
                                             <div className="px-3 pb-4"
-                                                style={{ position: "absolute",
-                                                        bottom: "5px",
-                                                        content: "", }} >
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }} >
                                                 <a href="/searchResult" className="small m-0">
                                                     Try This
                                                 </a>

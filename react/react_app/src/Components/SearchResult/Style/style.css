@@ -1,0 +1,170 @@
+.ask-jarv{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: 'r r r r r r r r r r j j';
+  }
+  .related-slider{
+    grid-area: r;
+  }
+  .jarv{
+    grid-area: j;
+    height: 180px;
+    width: 125px;
+    padding: 10px;
+    margin-left: 20px;
+  }
+  .unlock-btn{
+    background: #F1F1F1;
+    border-radius: 8px;
+    margin: 0px 5px;
+    padding: 8px 20px;
+  }
+  .export-btn{
+    background: #FFE3E3;
+    border-radius: 8px;
+    margin: 0px 5px;
+    padding: 8px 20px;
+  }
+  .user-container{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: 'b a u u u u e e e v v c';
+    align-items: center;
+    width: 900px;
+  }
+  .box{
+      grid-area: b;
+  }
+  .search-author{
+    grid-area: a;
+  }
+  .search-user{
+    grid-area: u;
+  }
+  .search-email{
+    grid-area: e;
+  }
+  .search-view-btn{
+    grid-area: v;
+  }
+  .search-close-btn{
+    grid-area: c;
+    display: flex;
+    justify-content: center;
+    padding-right: 5px;
+    align-items: center;
+  }
+  .search-user p{
+    font-size: 18px;
+    margin: 0px;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+  }
+  .search-user small{
+      font-size: 12;
+  }
+  .blur {
+    color: transparent;
+    text-shadow: 0 0 8px #000;
+  }
+  @media only screen and (max-width: 991px){
+    .jarv{
+      height: 170px;
+      width: 95px;
+      padding-right: 10px;
+    }
+  }
+  .top-search{
+    background: #FFE3E3;
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 10px;
+  }
+  .number-align{
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+    color:white;
+    background: #FB3E3E;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #UpgradeModal {
+    padding: 30px;
+    z-index: 999999; }
+    #UpgradeModal #mydrop {
+      border: 1px dashed #FF6464;
+      padding: 40px 22px;
+      border-radius: 15px; }
+    #UpgradeModal .btn-close {
+      float: right;
+      margin-bottom: 20px;
+      cursor: pointer;
+      z-index: 22222;
+      position: relative;
+      filter: brightness(0) invert(1); }
+    #UpgradeModal .modal-dialog {
+      margin-top: 40vh;
+      pointer-events: unset; }
+      #UpgradeModal .modal-dialog .modal-header {
+        position: relative;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px;
+        border-radius: 15px;
+        border: 0;
+        box-shadow: rgba(0, 0, 0, 0.1) 0 6px 15px 0;
+        background-color: #fff;
+        margin-bottom: 10px;
+        z-index: 999999; }
+      #UpgradeModal .modal-dialog .modal-content {
+        padding: 20px;
+        border-radius: 15px;
+        border: 0;
+        box-shadow: rgba(0, 0, 0, 0.1) 0 6px 15px 0; }
+        #UpgradeModal .modal-dialog .modal-content .dz-message {
+          text-align: center; }
+        #UpgradeModal .modal-dialog .modal-content .dz-button {
+          color: #232323;
+          margin-bottom: 15px; }
+        #UpgradeModal .modal-dialog .modal-content .note {
+          background-color: #FF6464;
+          padding: 5px 20px;
+          border-radius: 5px;
+          color: #FFFFFF;
+          margin-top: 5px;
+          display: inline-block; }
+.radio-bg{
+  background: #FFF2F2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-radius: 7px;
+  padding: 5px 10px;
+}
+.radio-bg input[type="radio"] {
+  /* remove standard background appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* create custom radiobutton appearance */
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  padding: 1px;
+  /* background-color only for content */
+  background-clip: content-box;
+  border: 1px solid #bbbbbb;
+  background-color: #e7e6e7;
+  border-radius: 50%;
+}
+.radio-bg input[type="radio"]:checked {
+  background-color: #FB3E3E;
+}
+.dropdown-wraper{
+  padding: 10px ;
+}  

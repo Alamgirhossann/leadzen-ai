@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie';
 import React from 'react';
-import './ResetLink.css';
 const ResetLink = () => {
     return (
         <div>
