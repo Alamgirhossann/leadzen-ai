@@ -24,8 +24,6 @@ import History from './Components/History/History';
 import RepeatedUser from './Components/UserInfo/RepeatedUser';
 import DetailedInfo from './Components/DetailedInfo/DetailedInfo';
 import SearchResult from './Components/SearchResult/SearchResult';
-import SearchResult2 from './Components/SearchResult/SearchResult2';
-import SearchResult3 from './Components/SearchResult/SearchResult3';
 import LoginEmailError from './Components/LogIn/LoginEmailError';
 import PasswordInstruction from './Components/SignUp/PasswordInstruction';
 import ResetLink from './Components/ResetLink/ResetLink';
@@ -102,12 +100,6 @@ const App = () => {
         </Route>
         <Route path='/searchResult'>
           <SearchResult />
-        </Route>
-        <Route path='/searchResult2'>
-          <SearchResult2 />
-        </Route>
-        <Route path='/searchResult3'>
-          <SearchResult3 />
         </Route>
         <Route path='/loginEmailError'>
           <LoginEmailError />
