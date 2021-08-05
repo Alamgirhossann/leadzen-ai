@@ -9798,7 +9798,9 @@ a {
       margin-right: 10px;
       margin-bottom: 10px;
       display: block; }
-
+.main-profile a{
+  text-decoration: none;
+}
 .main-profile {
   display: flex;
   align-items: center; }
@@ -10802,6 +10804,10 @@ a {
   width:40px;
   margin-right:10px;
 }
+.btn-sign-out:hover, .btn-renew:hover{
+  color:white;
+  text-decoration: none;
+}
 .btn-sign-out, .btn-renew{
   background: #FB3E3E;
   color: white;
@@ -11027,6 +11033,11 @@ a {
   border: none;
   outline: none;
 }
-/* .radio-bg{
-  background: #FFF2F2;
-} */
+.reset-container-align{
+  background: #FFFFFF;
+  width: 800px;
+  border-radius: 20px;
+}
+.product-container{
+    padding-top: 100px;
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './SignUp.css';
+import './Style/style.css';
 import { Link, Redirect } from 'react-router-dom';
 import Cookies from "js-cookie";
 import validator from "validator";

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import './DetailedInfo.css';
+import './Style/style.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import SpecificUser from '../SpecificUser/SpecificUser';
+import SpecificUser from './SpecificUser';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import Cookies from "js-cookie";
 import SearchResult from '../SearchResult/SearchResult';
+import AskJarvis from '../SharedComponent/AskJarvis';
 
 const DetailedInfo = () => {
     const [resultData, setSearchResult] = useState({data : null});
@@ -490,59 +491,8 @@ const DetailedInfo = () => {
                                 <p className='pe-4'>5</p>
                                 <p className='pe-4'>Next</p>
                             </div> */}
-                             <div className="user-widget-box text-center p-4 my-3">
-                                <div className="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
-                                <div className="user-promote-slider">
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Want to extract contacts of group members in a LinkedIn group?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Need a list of companies in semi-conductor space with 1000+ employees in US?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Need a detailed list of all the people working for Flipkart?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Want to extract contacts of group members in a LinkedIn group?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Need a detailed list of all the people working for Flipkart?</p>
-
-                                            <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Want to extract contacts of group members in a LinkedIn group?</p>
-                                            <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div>
+                                <AskJarvis/>
                             </div>
                         </div>
                     </div>

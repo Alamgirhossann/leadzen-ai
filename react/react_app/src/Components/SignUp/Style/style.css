@@ -1,0 +1,333 @@
+.sign-up-page-robot {
+    background-image: url('../../../images/sign-up-robot.png');
+    background-repeat: no-repeat;
+    background-size: 90% 90%;
+    padding: 30px 85px 70px 30px;
+    line-height: 28.8px;
+    letter-spacing: 3%;
+    margin-top: 30px;
+    max-width: 395px;
+    position: relative; 
+}
+.sign-up-page-robot::before {
+    content: "";
+    background-image: url('../../../images/sign-up-robman.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 163px;
+    height: 231px;
+    margin-top: 85px;
+    position: absolute;
+    right: -120px; 
+}
+.robot-container{
+    padding-left: 50px;
+}
+@media only screen and (max-width: 991px){
+    .sign-up-page-robot::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 190px;
+        right: -50px; }
+    .sign-up-page-robot{
+        background-size: 90% 85%;
+        padding: 30px 55px 100px 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 767px){
+    .sign-up-page-robot::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 130px;
+        margin-bottom: 10px;
+        right: 10px; }
+    .sign-up-page-robot{
+        background-size: 75% 85%;
+        padding: 10px 110px 70px 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 380px){
+    .sign-up-page-robot::before {
+        width: 81px;
+        height: 165px;
+        margin-top: 175px;
+        right: 5px; }
+    .sign-up-page-robot{
+        background-size: 75% 85%;
+        padding: 30px 100px 90px 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 320px){
+    .sign-up-page-robot::before {
+        width: 65px;
+        height: 145px;
+        margin-top: 210px;
+        right: -5px; }
+        .sign-up-page-robot{
+            background-size: 80% 85%;
+            padding: 10px 60px 90px 15px;
+        }
+}
+    
+.sign-up-email-error {
+    background-image: url('../../../images/sign-up-robot.png');
+    background-repeat: no-repeat;
+    background-size: 80% 90%;
+    padding: 20px 90px 70px 0px;
+    line-height: 28.8px;
+    letter-spacing: 3%;
+    margin-top: 0px;
+    max-width: 395px;
+    position: relative; 
+}
+.sign-up-email-error::before {
+    content: "";
+    background-image: url('../../../images/sign-up-robman.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 163px;
+    height: 231px;
+    margin-top: 25px;
+    position: absolute;
+    right: -100px; 
+}
+.robot-container{
+    padding-left: 50px;
+}
+@media only screen and (max-width: 991px){
+    .sign-up-email-error::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 50px;
+        right: -50px; }
+    .sign-up-email-error{
+        background-size: 90% 85%;
+        padding: 30px 65px 70px 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 767px){
+    .sign-up-email-error::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 20px;
+        right: 5px; }
+    .sign-up-email-error{
+        background-size: 75% 85%;
+        padding: 10px 115px 50px 20px;
+        margin-bottom: 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 380px){
+    .sign-up-email-error::before {
+        width: 81px;
+        height: 165px;
+        margin-top: 75px;
+        right: 0px; }
+    .sign-up-email-error{
+        background-size: 75% 85%;
+        padding: 30px 100px 90px 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 320px){
+    .sign-up-email-error::before {
+        width: 65px;
+        height: 145px;
+        margin-top: 100px;
+        right: -10px; }
+        .sign-up-email-error{
+            background-size: 80% 85%;
+            padding: 10px 70px 90px 10px;
+        }
+}
+    
+.sign-up-error-page {
+    background-image: url('../../../images/sign-up-robot.png');
+    background-repeat: no-repeat;
+    background-size: 85% 80%;
+    padding: 20px 95px 50px 30px;
+    line-height: 28.8px;
+    letter-spacing: 3%;
+    margin-top: 0px;
+    max-width: 395px;
+    position: relative; 
+}
+.sign-up-error-page::before {
+    content: "";
+    background-image: url('../../../images/sign-up-robman.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 163px;
+    height: 231px;
+    margin-top: 20px;
+    position: absolute;
+    right: -125px; 
+}
+.robot-container{
+    padding-left: 50px;
+}
+@media only screen and (max-width: 991px){
+    .sign-up-error-page::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 95px;
+        right: -55px; }
+    .sign-up-error-page{
+        background-size: 90% 85%;
+        padding: 30px 60px 70px 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 767px){
+    .sign-up-error-page::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 60px;
+        margin-bottom: 10px;
+        right: -10px; }
+    .sign-up-error-page{
+        background-size: 80% 85%;
+        padding: 30px 80px 50px 20px;
+        margin-bottom: 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 380px){
+    .sign-up-error-page::before {
+        width: 81px;
+        height: 165px;
+        margin-top: 105px;
+        right: -0px; }
+    .sign-up-error-page{
+        background-size: 75% 85%;
+        padding: 30px 100px 70px 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 320px){
+    .sign-up-error-page::before {
+        width: 65px;
+        height: 145px;
+        margin-top: 125px;
+        right: -5px; }
+        .sign-up-error-page{
+            background-size: 80% 85%;
+            padding: 10px 60px 70px 15px;
+        }
+}
+    
+.password-instruction {
+    background-image: url('../../../images/sign-up-robot.png');
+    background-repeat: no-repeat;
+    background-size: 90% 95%;
+    padding: 30px 80px 40px 30px;
+    line-height: 28.8px;
+    letter-spacing: 3%;
+    margin-top: 0px;
+    max-width: 395px;
+    position: relative; 
+}
+.password-instruction::before {
+    content: "";
+    background-image: url('../../../images/sign-up-robman.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 163px;
+    height: 231px;
+    margin-top: 50px;
+    position: absolute;
+    right: -130px; 
+}
+.robot-container{
+    padding-left: 50px;
+}
+@media only screen and (max-width: 991px){
+    .password-instruction::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 145px;
+        right: -50px; }
+    .password-instruction{
+        background-size: 90% 85%;
+        padding: 30px 60px 80px 30px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 767px){
+    .password-instruction::before {
+        width: 91px;
+        height: 200px;
+        margin-top: 95px;
+        right: -5px; }
+    .password-instruction{
+        background-size: 78% 85%;
+        padding: 30px 100px 70px 20px;
+        margin-bottom: 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 380px){
+    .password-instruction::before {
+        width: 81px;
+        height: 165px;
+        margin-top: 130px;
+        right: -0px; }
+    .password-instruction{
+        background-size: 75% 85%;
+        padding: 30px 90px 70px 20px;
+    }
+    .robot-container{
+        padding-left: 30px;
+    }
+}
+
+@media only screen and (max-width: 320px){
+    .password-instruction::before {
+        width: 65px;
+        height: 145px;
+        margin-top: 210px;
+        right: -10px; }
+        .password-instruction{
+            background-size: 80% 85%;
+            padding: 10px 70px 90px 20px;
+        }
+}
+    
