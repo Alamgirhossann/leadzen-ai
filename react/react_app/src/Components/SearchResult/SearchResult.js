@@ -7,7 +7,9 @@ import Cookies from "js-cookie";
 import ReactPaginate from "react-paginate";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
-import ExtractContacts from "../SharedComponent/ExtractContacts";
+import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
+import CustomizeButton from "../SharedComponent/CustomizeButton";
+import AskJarvis from "../SharedComponent/AskJarvis";
 
 const SearchResult = () => {
   const [customSearch, setCustomSearch] = useState({
@@ -210,7 +212,14 @@ const SearchResult = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <Filters />
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+                <h6 className="text-danger mb-3">Customize your search</h6>
+                <div className="px-4">
+                  <CustomizeButton />
+                </div>
+                <Filters />
+              </div>
+              <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
               <div className="user-search-wrapper">
@@ -414,7 +423,8 @@ const SearchResult = () => {
                   Next{" "}
                 </div>
               </div>
-              <div className="user-widget-box text-center p-4 my-3">
+              <AskJarvis />
+              {/* <div className="user-widget-box text-center p-4 my-3">
                 <div className="user-promote-logo">
                   <img src="assets/images/user-company-brand.png" alt="title" />
                 </div>
@@ -541,7 +551,7 @@ const SearchResult = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
