@@ -1,33 +1,12 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-from fastapi_app.router.pipl_router import piplrouter
+from fastapi import APIRouter
+from loguru import logger
 
-app = FastAPI()
-load_dotenv()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+router = APIRouter(prefix="/texAu", tags=["TexAu Search"])
 
 
-@app.get("/")
-async def root():
-    return {"message": "Analyst People API Endpoint"}
-
-
-app.include_router(
-    router=piplrouter
-)
-
-
-@app.post("/texAu")
-async def texAu():
-    print("in texau..")
+@router.post("/search")
+async def texau_search():
+    logger.debug("in texau..")
     response = {
         "execution": {
             "status": "completed",
@@ -36,7 +15,7 @@ async def texAu():
             "inputs": {
                 "li_at": "AQEDAQr0kDQA6KfIAAABewqYtE0AAAF7LqU4TU4AQ8QM5xmytN-EQ0lwxuRLPZXNWvNRpxS5cQ660JmpcdvDvzg2mi4QJi7ufPMHJox_KHjf5R9De5gcFdJt6p3SPC4WLMGWqFdzTvmfiuem9Zs3JAs-",
                 "search": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
-                "numberOfPage": 1
+                "numberOfPage": 1,
             },
             "output": [
                 {
@@ -51,7 +30,7 @@ async def texAu():
                     "location": "Pune",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-mishra-17a9bb165?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACd7Qi4BIjU20DHyWZJXHYYaHX2Ei23ldPA",
@@ -65,7 +44,7 @@ async def texAu():
                     "location": "Pune",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akashmishra1292?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAAAp00g8B2tjIdPm5w7LXjDAH-Ott0oolOGk",
@@ -79,7 +58,7 @@ async def texAu():
                     "location": "Delhi, India",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-kumar-mishra-11513118b?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACyw9mEBGF1cXMp-R2iue0dUz4nOwqrYkio",
@@ -93,7 +72,7 @@ async def texAu():
                     "location": "Cuttack",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akashbm?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACjYdmUBOD2weBGIQd-gcIXVf7No7AKI0rw",
@@ -107,7 +86,7 @@ async def texAu():
                     "location": "Visakhapatnam",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-kumar-mishra-a602a6141?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACJkgGgB24NucoG4NbdShWbZ3e-tnYuktiY",
@@ -121,7 +100,7 @@ async def texAu():
                     "location": "Bengaluru",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-mishra-1085b115b?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACZablgB1CdKmbiHoKUqcIl6imrEotQx_zo",
@@ -135,7 +114,7 @@ async def texAu():
                     "location": "Bhopal",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-mishra-a5112711?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAAAJU8x0BUbDySdeE1QPRdzeUeKxav2lSkDc",
@@ -149,7 +128,7 @@ async def texAu():
                     "location": "Mumbai",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-kumar-mishra-18aa9614a?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACQcmnoBXmGECYsPZBj_Iuos2l9wr0GFcK0",
@@ -163,7 +142,7 @@ async def texAu():
                     "location": "Delhi, India",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-mishra-?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAABh9LyIBrAKQBPCTCjeNeG1ua9nzeAjBhvA",
@@ -177,7 +156,7 @@ async def texAu():
                     "location": "Gurgaon",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akash-kumar-mishra-11513118b?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACyw9mEBGF1cXMp-R2iue0dUz4nOwqrYkio",
@@ -191,7 +170,7 @@ async def texAu():
                     "location": "Cuttack",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
+                    "timestamp": "2021-08-03T06:03:52.503Z",
                 },
                 {
                     "url": "https://www.linkedin.com/in/akashbm?miniProfileUrn=urn%3Ali%3Afs_miniProfile%3AACoAACjYdmUBOD2weBGIQd-gcIXVf7No7AKI0rw",
@@ -205,8 +184,8 @@ async def texAu():
                     "location": "Visakhapatnam",
                     "query": "https://www.linkedin.com/search/results/people/?firstName=akash&lastName=mishra&title=developer&keywords=web&industry=%5B%2296%22%5D",
                     "category": "People",
-                    "timestamp": "2021-08-03T06:03:52.503Z"
-                }
+                    "timestamp": "2021-08-03T06:03:52.503Z",
+                },
             ],
             "columnOrder": [
                 "url",
@@ -222,9 +201,9 @@ async def texAu():
                 "timestamp",
                 "error",
                 "message",
-                "cookieError"
-            ]
+                "cookieError",
+            ],
         },
-        "success": True
+        "success": True,
     }
     return response

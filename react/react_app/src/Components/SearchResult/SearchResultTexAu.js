@@ -117,7 +117,7 @@ const SearchResult = (props) => {
   }
   const fetchData = async (searchText) => {
     console.log("SearchText.....In Result...", searchText);
-    const response = await fetch(apiServer + "/texAu", {
+    const response = await fetch(apiServer + "/texau/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

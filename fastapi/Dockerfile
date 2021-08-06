@@ -10,21 +10,19 @@ RUN apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 RUN adduser appuser
 RUN echo "appuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
+USER appuser
 WORKDIR /home/appuser
 
-COPY requirements.txt requirements.txt
+COPY --chown=appuser:appuser  requirements.txt requirements.txt
 
 RUN python -m venv venv
 RUN venv/bin/pip install pip wheel setuptools --upgrade
-RUN venv/bin/pip install -r requirements.txt && rm -rf /root/.cache/pip
+RUN venv/bin/pip install -r requirements.txt && rm -rf ~/.cache/pip
 
-COPY fastapi_app fastapi_app
-COPY boot.sh ./
+COPY --chown=appuser:appuser  app app
+COPY --chown=appuser:appuser  boot.sh ./
 
 RUN chmod +x boot.sh
-RUN chown -R appuser:appuser ./
-
-USER appuser
 
 EXPOSE 5000
 

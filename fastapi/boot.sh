@@ -18,5 +18,5 @@ echo "..."
 echo "> ============================="
 echo "> Starting FastAPI Server"
 echo "> ============================="
-exec uvicorn fastapi_app.main:app --host 0.0.0.0 --port 5000
+exec uvicorn app.main:app --host 0.0.0.0 --port 5000 --root-path /api
 

@@ -108,8 +108,7 @@ const SearchResult = (props) => {
       if (urlUser === undefined) urlUser = "";
       reqJson = {
         email: emailUser,
-        firstName: firstNameUser,
-        lastName: lastNameUser,
+        name: {first_name: firstNameUser, last_name: lastNameUser},
         url: urlUser,
       };
       console.log("reqJson>>>>>>>>", reqJson);
@@ -125,7 +124,7 @@ const SearchResult = (props) => {
   }
   const fetchData = async (searchText) => {
     console.log("SearchText.....FetchApi...",apiServer);
-    const response = await fetch(apiServer + "/pipl/get_pipl", {
+    const response = await fetch(apiServer + "/pipl/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
