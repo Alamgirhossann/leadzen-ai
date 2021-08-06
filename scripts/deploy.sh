@@ -85,6 +85,8 @@ else
 fi
 
 
+cd ..
+
 echo "--------------------------------"
 echo "*** Pulling $DOCKER_IMAGE_NAME Image from Container Registry: $CONTAINER_REGISTRY_IMAGE"
 echo "--------------------------------"
@@ -98,8 +100,6 @@ else
     echo "--- Done Pulling from Registry ---"
 fi
 
-
-cd ..
 
 # -----------------------------------------------------------------------------------------------------------
 # Fastapi build image -> push image to ecr ->  pull image from ecr to aws instance 
@@ -179,6 +179,7 @@ else
     echo "--- Done Pushing to Registry ---"
 fi
 
+cd ..
 
 echo "--------------------------------"
 echo "*** Pulling $DOCKER_IMAGE_NAME Image from Container Registry: $CONTAINER_REGISTRY_IMAGE"
@@ -193,8 +194,6 @@ else
     echo "--- Done Pulling from Registry ---"
 fi
 
-
-cd ..
 
 # -----------------------------------------------------------------------------------------------------------
 # Push docker-compose and env file to aws -> bring down the docker instances -> bring up the docker instances

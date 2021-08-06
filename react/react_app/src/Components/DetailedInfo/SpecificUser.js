@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import './Style/style.css';
 import { Map, GoogleApiWrapper } from 'google-maps-react';
 const SpecificUser = (props) => {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const script = document.createElement("script");
+  //   script.src = "assets/js/app.js";
+  //   script.async = true;
+  //   document.body.appendChild(script);
+  //   return () => {
+  //     document.body.removeChild(script);
+  //   };
+  // }, []);
   // useEffect(() => {
   //   console.log("props>>>", this.prop);
   // });
