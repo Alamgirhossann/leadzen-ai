@@ -125,7 +125,7 @@ const SearchResult = (props) => {
   }
   const fetchData = async (searchText) => {
     console.log("SearchText.....FetchApi...",apiServer);
-    const response = await fetch(apiServer + "pipl/get_pipl", {
+    const response = await fetch(apiServer + "/pipl/get_pipl", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

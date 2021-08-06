@@ -9,9 +9,6 @@ sudo ./scripts/build.docker.sh
 echo "-----------------------------"
 
 cd ..
-echo "Building Docker-Compose Containers"
-# sudo docker-compose build
-echo "----------------------------------"
 
 echo "Finished Building Docker Images"
 echo "------------------------------"

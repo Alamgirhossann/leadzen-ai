@@ -1,9 +1,0 @@
-version: "3.3"
-
-services:
-  react:
-    image: "analystt/person_react:latest"
-    container_name: "react"      
-    ports: 
-      - 8000:80
-

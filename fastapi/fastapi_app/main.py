@@ -6,16 +6,9 @@ from fastapi_app.router.pipl_router import piplrouter
 app = FastAPI()
 load_dotenv()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:3000",
-    "http://172.17.0.1",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
