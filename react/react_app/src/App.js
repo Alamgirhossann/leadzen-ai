@@ -32,6 +32,7 @@ import ChromeWrongPassword from './Components/ChromeExtension/ChromeWrongPasswor
 import ChromeSearch from './Components/ChromeExtension/ChromeSearch';
 import AllUsers from './Components/AdminDashboard/AllUsers';
 import DashboardOne from './Components/AdminDashboard/DashboardOne';
+import DashboardTwo from './Components/AdminDashboard/DashboardTwo';
 
 const App = () => {
   useEffect(() => {
@@ -127,6 +128,9 @@ const App = () => {
         </Route>
         <Route path='/dashboardOne'>
             <DashboardOne />
+        </Route>
+        <Route path='/dashboardTwo'>
+            <DashboardTwo />
         </Route>
       </Switch>
     </Router>
