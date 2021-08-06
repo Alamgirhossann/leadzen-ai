@@ -1,14 +1,15 @@
 version: '3.3'
-# React on port 8000 and fastapi on port 5000
+
 services:
-    fastapi:
+    person_fastapi:
         image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
-        container_name: "fastapi"
+        container_name: "person_fastapi"
         ports:
-            - "8080:5000"
-    react:
+            - "8000:5000"
+            
+    person_react:
         image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
-        container_name: "react"      
+        container_name: "person_react"      
         ports: 
-            - 8000:80
+            - 80:80
             
