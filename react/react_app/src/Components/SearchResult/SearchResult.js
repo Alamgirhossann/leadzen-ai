@@ -135,7 +135,7 @@ const SearchResult = (props) => {
     data1 = await response.json();
     console.log("Data>>>>>>>>>>>", data1);
 
-    data1 ? setMyLeads(data1) : setLoading(true);
+    data1 ? setMyLeads(data1)  : setLoading(true);
     // setLoading(true);
     data1 ? setSearchResult({ ...resultData, data: data1 }) : setLoading(true);
     data1 ? setLoading(false) : setLoading(true);
@@ -878,7 +878,7 @@ const SearchResult = (props) => {
                       id="checkbox"
                     />
                     <small className="">
-                      <b>{searchData.count}</b> of{" "}
+                      <b>{currentLeads.length}</b> of{" "}
                       <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
                     </small>
                   </div>
@@ -913,7 +913,7 @@ const SearchResult = (props) => {
 
               <div className="user-widget-box  my-3">
                 <div className="search-container mb-2">
-                  {currentLeads
+                  {myLeads.length===0 ?<div><h5>Record not found</h5></div>:currentLeads
                     ? currentLeads.map((data, index) => (
                         <div>
                           <div className="user-container py-2" key={index}>
@@ -1002,8 +1002,8 @@ const SearchResult = (props) => {
                             </div>
                           </div>
                         </div>
-                      ))
-                    : null}
+                      )):null
+                    }
                 </div>
               </div>
               <div className="d-flex justify-content-center">
