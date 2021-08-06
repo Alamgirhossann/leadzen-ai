@@ -8,9 +8,9 @@ CONTAINER_REPOSITORY="analystt"
 # -----------------------------------------------------------------------------------------------------------
 # React build image -> push image to ecr ->  pull image from ecr to aws instance 
 # -----------------------------------------------------------------------------------------------------------
-PROJECT_NAME="react"
+PROJECT_NAME="person_react"
 
-cd $PROJECT_NAME || exit
+cd react || exit
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Unable to React Project Directory"
@@ -84,7 +84,6 @@ else
     echo "--- Done Pushing to Registry ---"
 fi
 
-cd ..
 
 echo "--------------------------------"
 echo "*** Pulling $DOCKER_IMAGE_NAME Image from Container Registry: $CONTAINER_REGISTRY_IMAGE"
@@ -100,12 +99,14 @@ else
 fi
 
 
+cd ..
+
 # -----------------------------------------------------------------------------------------------------------
 # Fastapi build image -> push image to ecr ->  pull image from ecr to aws instance 
 # -----------------------------------------------------------------------------------------------------------
-PROJECT_NAME="fastapi"
+PROJECT_NAME="person_fastapi"
 
-cd $PROJECT_NAME || exit
+cd fastapi || exit
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Unable to Find fastapi Project Directory"
@@ -178,7 +179,6 @@ else
     echo "--- Done Pushing to Registry ---"
 fi
 
-cd ..
 
 echo "--------------------------------"
 echo "*** Pulling $DOCKER_IMAGE_NAME Image from Container Registry: $CONTAINER_REGISTRY_IMAGE"
@@ -194,6 +194,7 @@ else
 fi
 
 
+cd ..
 
 # -----------------------------------------------------------------------------------------------------------
 # Push docker-compose and env file to aws -> bring down the docker instances -> bring up the docker instances
@@ -220,16 +221,6 @@ if [ $? != 0 ]; then
     exit 1
 else
     echo "--- Done Uploading .env File ---"
-fi
-
-# shellcheck disable=SC2086
-scp -i "$PEM_FILE" ./django/.env "$REMOTE_SERVER":/home/ubuntu/.env.django
-# shellcheck disable=SC2181
-if [ $? != 0 ]; then
-    echo ">>> ./django/.env File Upload Error <<<"
-    exit 1
-else
-    echo "--- Done Uploading ./django/.env File ---"
 fi
 
 
