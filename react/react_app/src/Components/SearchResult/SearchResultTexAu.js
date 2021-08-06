@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import "./Style/style.css";
+import { Link, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useHistory } from "react-router-dom";
+import Pagination from "../SharedComponent/Pagination";
 
-const FirstTimeUser = () => {
-  const history = useHistory();
-  const [searchText, setSearchText] = useState();
+const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -16,30 +15,161 @@ const FirstTimeUser = () => {
     keywords: null,
     csv_file: null,
   });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
+  const [searchText, setSearchText] = useState();
   const [socialMediaType, setSocialMediaType] = useState({
     url: null,
     type: [],
   });
-  const handleHeadSearch = (e) => {
-    setSearchText({ ...searchText, text: e.target.value });
+  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
+  const [resultData, setSearchResult] = useState({ data: null });
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLeads, setCurrentLeads] = useState([]);
+  let data1 = {};
+  const [myLeads, setMyLeads] = useState([]);
+  let today = new Date();
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+  let dd = String(today.getDate()).padStart(2, "0");
+  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  let yyyy = today.getFullYear();
+
+  const paginate = (pageNumber) => {
+    setCurrentLeads([]);
+    setCurrentPage(pageNumber);
+
+    setCurrentLeads(myLeads.slice(pageNumber * 10 - 10, pageNumber * 10));
+    console.log(
+      "currentLeads>>>",
+      currentLeads,
+      pageNumber * 10 - 10,
+      pageNumber * 10,
+      myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+    );
   };
-  const handleHeadSubmit = (e) => {
-    e.preventDefault();
-    console.log("search Text>>>>>>>>>>>>", searchText);
-    if (
-      searchText.text === undefined ||
-      searchText.text.toString().length <= 0
-    ) {
-      alert("Enter details");
-      return;
+  today = dd + "/" + mm + "/" + yyyy;
+  useEffect(async () => {
+    console.log("Props STate>>>>", props.location.state.searchText.text);
+    // await fetchData(props.location.state.searchText.text);
+    // console.log("after fetch>>>>");
+    if (props.location.pathname.includes("/searchResultTexAu")) {
+      let isEmail = props.location.state.searchText.text.includes("@");
+      let words = WordCount(props.location.state.searchText.text);
+      let isMultiWords = props.location.state.searchText.text.includes(" ");
+      let isUrl =
+        props.location.state.searchText.text
+          .toLowerCase()
+          .includes("https://") ||
+        props.location.state.searchText.text.toLowerCase().includes("http://");
+
+      // if (isEmail || words >= 0) {
+      let reqJson = {};
+      let firstNameUser,
+        lastNameUser,
+        emailUser,
+        urlUser = "";
+      console.log(
+        "check>>>>>>>>>!isUrl && !isEmail && isMultiWords <= 3",
+        isEmail,
+        isUrl,
+        words <= 3,
+        !isUrl && !isEmail && isMultiWords
+      );
+      if (isEmail) {
+        emailUser = props.location.state.searchText.text;
+      }
+      if (!isUrl && !isEmail && isMultiWords) {
+        firstNameUser = props.location.state.searchText.text.split(" ")[0];
+
+        switch (words) {
+          case 2:
+            lastNameUser = props.location.state.searchText.text.split(" ")[1];
+            break;
+          case 3:
+            lastNameUser = props.location.state.searchText.text.split(" ")[2];
+            break;
+        }
+      }
+      if (isUrl) {
+        urlUser = props.location.state.searchText.text;
+      }
+      if (emailUser === undefined || emailUser === null) emailUser = "";
+      if (lastNameUser === undefined || lastNameUser === null)
+        lastNameUser = "";
+      if (firstNameUser === undefined || firstNameUser === null)
+        firstNameUser = "";
+      if (urlUser === undefined) urlUser = "";
+      reqJson = {
+        email: emailUser,
+        firstName: firstNameUser,
+        lastName: lastNameUser,
+        url: urlUser,
+      };
+      console.log("reqJson>>>>>>>>", reqJson);
+      await fetchData(reqJson);
     }
-    history.push({
-      pathname: "/searchResult",
-      state: { searchText },
+  }, []);
+
+  useEffect(async () => {
+    paginate(1);
+  }, [myLeads]);
+  function WordCount(str) {
+    return str.split(" ").length;
+  }
+  const fetchData = async (searchText) => {
+    console.log("SearchText.....In Result...", searchText);
+    const response = await fetch(apiServer + "texAu", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(searchText),
     });
+    data1 = await response.json();
+    console.log("Data>>>>>>>>>>>", data1);
+
+    data1 ? setMyLeads(data1.execution.output) : setLoading(true);
+    // setLoading(true);
+    data1 ? setSearchResult({ ...resultData, data: data1 }) : setLoading(true);
+    data1 ? setLoading(false) : setLoading(true);
+    console.log("MyLeads before paginate>>>>>", myLeads);
+    // paginate(1);
+  };
+  console.log("myLeads>>>>>>>>>>>", myLeads);
+
+  const [show, setShow] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const showClick = (e) => {
+    e.preventDefault();
+    if (!show) setShow(true);
+  };
+  const clickSelect = (e) => {
+    e.preventDefault();
+    if (!selected) setSelected(true);
+  };
+  const user = {
+    name: "John Smith",
+    email: "Johnsmith087@hexagon.in",
+    subscription: {
+      product: "Free Analystt",
+      price: "100 INR",
+      period: "Yearly",
+      status: "Active",
+      last_renewal: "01/02/2020",
+      expiry_date: "02/08/2021",
+      profile_credits: 500,
+      mail_credits: 1000,
+    },
   };
 
+  let searchData = { count: 12, total: 250 };
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    console.log(searchText);
+  };
   const handleLocation = (e) => {
     setCustomSearch({ ...customSearch, location: e.target.value });
   };
@@ -64,64 +194,36 @@ const FirstTimeUser = () => {
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
-  const handleSocial = (e) => {
-    setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
-  };
-  const handleSocialSubmit = (e) => {
-    console.log(socialMediaSearch);
-  };
   const handleType = (e) => {
     setSocialMediaType({ ...socialMediaType, type: e.target.value });
   };
-  const handleURL = (e) => {
-    setSocialMediaType({ ...socialMediaType, url: e.target.value });
+  const handleSocialMedia = (e) => {
+    setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
   };
   const handleTypeSubmit = (e) => {
     e.preventDefault();
-    console.log(searchText);
-    console.log(customSearch);
-    console.log(socialMediaType);
-  };
-  const user = {
-    name: "John Smith",
-    email: "Johnsmith087@hexagon.in",
-    subscription: {
-      product: "Free Analystt",
-      price: "100 INR",
-      period: "Yearly",
-      status: "Active",
-      last_renewal: "01/02/2020",
-      expiry_date: "02/08/2021",
-      profile_credits: 500,
-      mail_credits: 1000,
-    },
+    console.log(socialMediaSearch);
   };
 
-  useEffect(async () => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    const apiServer = "";
-    const apiUrl = "";
-    try {
-      const response = await fetch(apiUrl, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      if (response.ok) {
-        const result = await response.json();
-      }
-    } catch (error) {
-      console.error("Error while fetching data", error);
-    }
+  // const handleUnlock = (name) => {
+  //   let index = myLeads.findIndex((myLeads) => myLeads.name === name);
+  //   let show_value = myLeads[index].show;
+  //   if (!show_value) {
+  //     myLeads[index] = { ...myLeads[index], show: true };
+  //     console.log(myLeads[index]);
+  //   }
+  //   return false;
+  // };
 
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+  function handleViewProfile(index, resData) {
+    console.log("handleViewProfile>>>>", index, resData, currentPage);
+
+    // history.push({
+    //   pathname: "/detailedInfo",
+    //   state: { data },
+    // });
+    // return <SpecificUser details={resData} />;
+  }
 
   return (
     <div>
@@ -134,7 +236,7 @@ const FirstTimeUser = () => {
 
             <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
               <li className="nav-item me-md-4 me-3">
-                <a className="nav-icon-menu nav-link" href="/">
+                <a className="nav-icon-menu nav-link" href="#">
                   <img src="assets/images/menu-home.png" alt="home here" />
                   <span className="text-danger">Home</span>
                 </a>
@@ -145,7 +247,7 @@ const FirstTimeUser = () => {
                     src="assets/images/menu-saved-list.png"
                     alt="saved here"
                   />
-                  Saved Lists
+                  Saved lists
                 </a>
               </li>
               <li className="nav-item me-md-4 me-3">
@@ -242,7 +344,7 @@ const FirstTimeUser = () => {
                     </li>
                     <li>
                       <a className="dropdown-item active" href="#">
-                        Upgrade to Premium
+                        Upgrade to premium
                       </a>
                     </li>
                     <li>
@@ -319,7 +421,52 @@ const FirstTimeUser = () => {
           <div className="row">
             <div className="col-md-4 col-lg-3">
               <div className="sidebar-search-for sidebar-widget p-4 my-3">
-                <h6 className="text-danger mb-3">Customize Your Search </h6>
+                <h6 className="text-danger mb-3">Customize your search </h6>
+                <div>
+                  <p
+                    className="text-left top-search"
+                    style={{ width: "100px" }}
+                  >
+                    <img
+                      style={{ width: "10px", marginRight: "5px" }}
+                      src="assets/images/cil_location-pin.png"
+                      alt=""
+                    />
+                    USA
+                    <img
+                      className="ps-4"
+                      src="assets/images/cross-icon.png"
+                      alt=""
+                    />
+                  </p>
+                  <p
+                    className="text-left top-search"
+                    style={{ width: "130px" }}
+                  >
+                    <img
+                      style={{ width: "8px", marginRight: "5px" }}
+                      src="assets/images/pro-profile.png"
+                      alt=""
+                    />
+                    Designer
+                    <img
+                      className="ps-4"
+                      src="assets/images/cross-icon.png"
+                      alt=""
+                    />
+                  </p>
+                  <div className="d-flex justify-content-between">
+                    <p>
+                      <img
+                        style={{ width: "10px", marginRight: "5px" }}
+                        src="assets/images/combined-eye.png"
+                        alt=""
+                      />
+                      Hide
+                    </p>
+                    <p className="text-danger">Clear All</p>
+                  </div>
+                </div>
                 <div
                   className="sidebar-accordion accordion"
                   id="accordionExample"
@@ -347,9 +494,9 @@ const FirstTimeUser = () => {
                       <div className="accordion-body">
                         <input
                           className="customize-search"
+                          onBlur={handleLocation}
                           type="text"
                           placeholder="Search Location"
-                          onBlur={handleLocation}
                         />
                       </div>
                     </div>
@@ -377,9 +524,9 @@ const FirstTimeUser = () => {
                       <div className="accordion-body">
                         <input
                           className="customize-search"
+                          onBlur={handleIndustry}
                           type="text"
                           placeholder="Search Industry"
-                          onBlur={handleIndustry}
                         />
                       </div>
                     </div>
@@ -393,7 +540,7 @@ const FirstTimeUser = () => {
                         data-bs-target="#tree"
                       >
                         <img src="assets/images/accord-award.png" alt="title" />{" "}
-                        Job Title
+                        Job title
                       </button>
                     </h2>
                     <div
@@ -404,9 +551,9 @@ const FirstTimeUser = () => {
                       <div className="accordion-body">
                         <input
                           className="customize-search"
+                          onBlur={handleJob}
                           type="text"
                           placeholder="Search Job title"
-                          onBlur={handleJob}
                         />
                       </div>
                     </div>
@@ -431,9 +578,9 @@ const FirstTimeUser = () => {
                       <div className="accordion-body">
                         <input
                           className="customize-search"
+                          onBlur={handleEducation}
                           type="text"
                           placeholder="Search Education"
-                          onBlur={handleEducation}
                         />
                       </div>
                     </div>
@@ -461,9 +608,9 @@ const FirstTimeUser = () => {
                       <div className="accordion-body">
                         <input
                           className="customize-search"
+                          onBlur={handleCompany}
                           type="text"
                           placeholder="Search Company Name"
-                          onBlur={handleCompany}
                         />
                       </div>
                     </div>
@@ -488,9 +635,9 @@ const FirstTimeUser = () => {
                       <div className="accordion-body">
                         <input
                           className="customize-search"
+                          onBlur={handleKeywords}
                           type="text"
                           placeholder="Search Keywords"
-                          onBlur={handleKeywords}
                         />
                       </div>
                     </div>
@@ -521,7 +668,7 @@ const FirstTimeUser = () => {
                 </p>
               </div>
               <div className="sidebar-search-for sidebar-widget p-4 my-3">
-                <h6 className="text-danger mb-3"> Now Extract Contacts </h6>
+                <h6 className="text-danger mb-3"> Now Extract contacts </h6>
                 <p>
                   {" "}
                   of Followers, Likers, Commentors & Group Members & Job Seekers
@@ -576,8 +723,8 @@ const FirstTimeUser = () => {
                     <input
                       type="text"
                       className="form-control"
+                      onBlur={handleSocialMedia}
                       placeholder="Enter Social media URL"
-                      onBlur={handleURL}
                     />
                   </div>
                   <div className="dropdown mb-3">
@@ -683,57 +830,181 @@ const FirstTimeUser = () => {
               </div>
             </div>
             <div className="col-md-8 col-lg-9">
-              <div className="user-widget-box p-4 my-3">
-                <div className="user-search-wrapper">
-                  <img
-                    className="search-promote-image"
-                    src="assets/images/user-success-image.png"
-                    alt="title"
-                  />
+              <div className="user-search-wrapper">
+                <div className="detailed-search">
                   <div className="search-promote-content">
-                    <form action="#" className="search-form4 d-flex mb-3">
-                      <div className="input-group">
-                        <div className="input-placeholder">
-                          <input
-                            className="ps-3"
-                            type="text"
-                            onBlur={handleHeadSearch}
-                            required
-                          />
-                          <div className="placeholder">
-                            Eg: I want the <span>email IDs</span> of people
-                            following the <span>Flipkart Facebook Page</span>
-                          </div>
-                        </div>
-                        <button
-                          className="btn text-white"
-                          onClick={handleHeadSubmit}
-                          type="submit"
-                        >
-                          <span className="pe-1">
-                            <FontAwesomeIcon icon={faSearch} />
-                          </span>{" "}
-                          Search
-                        </button>
-                        {/*{searchText.text ? (*/}
-                        {/*  <Redirect to="/searchResult" />*/}
-                        {/*) : null}*/}
-                      </div>
+                    <form className="form-inline d-flex my-2 my-lg-0">
+                      <input
+                        className="form-control mr-sm-2"
+                        type="search"
+                        onBlur={handleSearch}
+                        placeholder="Search"
+                        aria-label="Search"
+                      />
+                      <button
+                        className="btn text-white d-flex ms-3"
+                        onClick={handleSearchSubmit}
+                        style={{
+                          background: "#FB3E3E",
+                          position: "absolute",
+                          left: "325px",
+                        }}
+                        type="submit"
+                      >
+                        <span className="pe-1">
+                          <FontAwesomeIcon icon={faSearch} />
+                        </span>{" "}
+                        Search
+                      </button>
                     </form>
-                    <p className="fst-italic">
-                      Hey, Get started by putting a{" "}
-                      <span className="text-danger">
-                        name, social media URL
-                      </span>{" "}
-                      or <br /> state your requirement above
-                    </p>
-                    <a href="/userGuide" className="text-danger">
-                      Learn more
-                    </a>
+                  </div>
+                  <div>
+                    <small>Last Updated: {today}</small>
+                  </div>
+                </div>
+              </div>
+              <div className="user-widget-box  my-3">
+                <div className="d-flex align-items-center justify-content-between py-3">
+                  <div className="d-flex align-items-center ">
+                    <input
+                      className="ms-3 me-3"
+                      type="checkbox"
+                      id="checkbox"
+                    />
+                    <small className="">
+                      <b>{searchData.count}</b> of{" "}
+                      <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
+                    </small>
+                  </div>
+                  <div className="d-flex">
+                    <small className="unlock-btn">
+                      Unlock Profile{" "}
+                      <img
+                        className="ps-3"
+                        src="assets/images/Group 1617.png"
+                        alt=""
+                      />
+                    </small>
+                    <small className="unlock-btn">
+                      Unlock Mails{" "}
+                      <img
+                        className="ps-3"
+                        src="assets/images/Group 1617.png"
+                        alt=""
+                      />
+                    </small>
+                    <small className="export-btn">
+                      Export{" "}
+                      <img
+                        className="ps-3"
+                        src="assets/images/export.png"
+                        alt=""
+                      />
+                    </small>
                   </div>
                 </div>
               </div>
 
+              <div className="user-widget-box  my-3">
+                <div className="search-container mb-2">
+                  {currentLeads
+                    ? currentLeads.map((data, index) => (
+                        <div>
+                          <div className="user-container py-2" key={index}>
+                            <input
+                              className="box ms-3 me-3"
+                              type="checkbox"
+                              id="checkbox"
+                            />
+                            <p className="search-author text-danger">
+                              <img
+                                src={
+                                  data.profilePicture
+                                    ? data.profilePicture
+                                    : "assets/images/author-image.png"
+                                }
+                                alt=""
+                              />
+                            </p>
+                            <div className="search-user">
+                              <p>{data.length === 0 ? null : data.name}</p>
+                              <small className="d-block">
+                                Works at {data.length === 0 ? null : data.job}
+                              </small>
+                              <small className="d-block">
+                                {data.length === 0 ? null : data.location}
+                              </small>
+                            </div>
+                            <div className="search-email text-center">
+                              <small
+                                className={show ? "d-block" : "d-block blur"}
+                              >
+                                alamgirhossann
+                              </small>
+                              <a href="#" onClick={showClick}>
+                                <small className="d-block text-danger">
+                                  Unlock
+                                </small>
+                              </a>
+                            </div>
+                            <p className="search-view-btn ">
+                              <a
+                                className="btn"
+                                data-toggle="collapse"
+                                href={"#collapseExample_" + index}
+                                data-target={"#collapseExample_" + index}
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="collapseExample"
+                                onClick={handleViewProfile(index, data)}
+                              >
+                                View Profile
+                              </a>
+                            </p>
+
+                            <a href="#" onClick={clickSelect}>
+                              <p className="search-close-btn">
+                                <img
+                                  src={
+                                    selected
+                                      ? "assets/images/Frame 543.png"
+                                      : "assets/images/Group 1863.png"
+                                  }
+                                  alt=""
+                                />
+                              </p>
+                            </a>
+                          </div>
+                          <div
+                            style={{
+                              background: "white",
+                              borderRadius: "20px",
+                              padding: "20px",
+                            }}
+                          >
+                            <div
+                              className="panel-collapse collapse in"
+                              id={"collapseExample_" + index}
+                            >
+                              {/*{handleViewProfile(index, data)}*/}
+                              <div className="card card-body">
+                                welcome
+                                {/*<SpecificUser details={data} />*/}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    : null}
+                </div>
+              </div>
+              <div className="d-flex justify-content-center">
+                <Pagination
+                  postsPerPage={10}
+                  totalPosts={myLeads.length}
+                  paginate={paginate}
+                />
+              </div>
               <div className="user-widget-box text-center p-4 my-3">
                 <div className="user-promote-logo">
                   <img src="assets/images/user-company-brand.png" alt="title" />
@@ -862,161 +1133,6 @@ const FirstTimeUser = () => {
                   </div>
                 </div>
               </div>
-              <div className="user-widget-box p-4 my-3 text-center">
-                <h5 className="text-danger">Now Extract contacts</h5>
-                <p className="text-dark mb-3">
-                  of Followers, Likers, Commentors & Group Members & Job Seekers
-                  From Social Media
-                </p>
-                <ul className="user-widget-social mt-3 mb-4 list-inline">
-                  <li className="list-inline-item">
-                    <a href="#">
-                      <img
-                        src="assets/images/social-facebook.png"
-                        alt="title"
-                      />
-                    </a>
-                  </li>
-                  <li className="list-inline-item">
-                    <a href="#">
-                      <img
-                        src="assets/images/social-instagram.png"
-                        alt="title"
-                      />
-                    </a>
-                  </li>
-                  <li className="list-inline-item">
-                    <a href="#">
-                      <img src="assets/images/social-twitter.png" alt="title" />
-                    </a>
-                  </li>
-                  <li className="list-inline-item">
-                    <a href="#">
-                      <img
-                        src="assets/images/social-linkedin.png"
-                        alt="title"
-                      />
-                    </a>
-                  </li>
-                  <li className="list-inline-item">
-                    <a href="#">
-                      <img src="assets/images/social-youtube.png" alt="title" />
-                    </a>
-                  </li>
-                  <li className="list-inline-item">
-                    <a href="#">
-                      <img
-                        src="assets/images/social-naukri-com.png"
-                        alt="title"
-                      />
-                    </a>
-                  </li>
-                </ul>
-                <form action="#" className="search-form-lg m-auto">
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      onBlur={handleSocial}
-                      placeholder="Paste Social Media URL"
-                    />
-                    <button className="btn btn-danger" type="submit">
-                      <img
-                        src="assets/images/social-search-past.png"
-                        alt="title"
-                      />
-                    </button>
-                  </div>
-                </form>
-
-                <div className="radio-form-check d-block my-3">
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="inlineRadioOptions"
-                      id="inlineRadio1"
-                    />
-                    <label className="form-check-label" for="inlineRadio1">
-                      All
-                    </label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="inlineRadioOptions"
-                      id="inlineRadio2"
-                      checked
-                    />
-                    <label className="form-check-label" for="inlineRadio2">
-                      Followers
-                    </label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="inlineRadioOptions"
-                      id="inlineRadio3"
-                      checked
-                    />
-                    <label className="form-check-label" for="inlineRadio3">
-                      Likers
-                    </label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="inlineRadioOptions"
-                      id="inlineRadio4"
-                    />
-                    <label className="form-check-label" for="inlineRadio4">
-                      Commentors
-                    </label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="inlineRadioOptions"
-                      id="inlineRadio5"
-                    />
-                    <label className="form-check-label" for="inlineRadio5">
-                      Job Seekers
-                    </label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      name="inlineRadioOptions"
-                      id="inlineRadio6"
-                    />
-                    <label className="form-check-label" for="inlineRadio6">
-                      Group Members
-                    </label>
-                  </div>
-                </div>
-
-                <button
-                  style={{ background: "#FB3E3E" }}
-                  onClick={handleSocialSubmit}
-                  className="btn text-white"
-                  type="submit"
-                >
-                  <span className="pe-1">
-                    <FontAwesomeIcon icon={faSearch} />
-                  </span>{" "}
-                  Search
-                </button>
-                <p className="m-0 mt-2">
-                  <a href="/userGuide" className="text-danger">
-                    Learn More{" "}
-                  </a>
-                </p>
-              </div>
             </div>
           </div>
         </div>
@@ -1025,4 +1141,4 @@ const FirstTimeUser = () => {
   );
 };
 
-export default FirstTimeUser;
+export default SearchResult;

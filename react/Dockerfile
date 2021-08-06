@@ -2,7 +2,7 @@
 FROM node:14 as build
 WORKDIR /app
 COPY react_app .
-# ENV REACT_APP_CONFIG_API_SERVER="/"
+ENV REACT_APP_CONFIG_API_SERVER="/api"
 # ENV REACT_APP_CONFIG_MEILISEARCH_API="http://migration.analystt.ai"
 # for team page logo api
 # ENV REACT_APP_CONFIG_LOGO_API="https://logo.clearbit.com/"

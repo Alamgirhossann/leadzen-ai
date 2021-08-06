@@ -32,6 +32,7 @@ import ChromeWrongPassword from './Components/ChromeExtension/ChromeWrongPasswor
 import ChromeSearch from './Components/ChromeExtension/ChromeSearch';
 import AllUsers from './Components/AdminDashboard/AllUsers';
 import DashboardOne from './Components/AdminDashboard/DashboardOne';
+import SearchResultTexAu from "./Components/SearchResult/SearchResultTexAu";
 
 const App = () => {
   useEffect(() => {
@@ -98,9 +99,8 @@ const App = () => {
         <Route path='/signUpEmailError'>
           <SignUpEmailError />
         </Route>
-        <Route path='/searchResult'>
-          <SearchResult />
-        </Route>
+        <Route path="/searchResult" component={SearchResult} />
+        <Route path="/searchResultTexAu" component={SearchResultTexAu} />
         <Route path='/loginEmailError'>
           <LoginEmailError />
         </Route>
