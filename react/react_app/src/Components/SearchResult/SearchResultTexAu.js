@@ -956,7 +956,6 @@ const SearchResult = (props) => {
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="collapseExample"
-                                onClick={handleViewProfile(index, data)}
                               >
                                 View Profile
                               </a>
@@ -989,6 +988,7 @@ const SearchResult = (props) => {
                               {/*{handleViewProfile(index, data)}*/}
                               <div className="card card-body">
                                 welcome
+                                {/*{handleViewProfile(index,data)}*/}
                                 {/*<SpecificUser details={data} />*/}
                               </div>
                             </div>

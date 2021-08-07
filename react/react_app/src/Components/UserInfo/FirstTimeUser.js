@@ -28,6 +28,7 @@ const FirstTimeUser = () => {
     e.preventDefault();
     console.log("search Text>>>>>>>>>>>>", searchText);
     if (
+      searchText === undefined ||
       searchText.text === undefined ||
       searchText.text.toString().length <= 0
     ) {

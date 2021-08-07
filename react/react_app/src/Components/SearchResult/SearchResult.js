@@ -4,7 +4,6 @@ import { Link, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 
@@ -108,7 +107,7 @@ const SearchResult = (props) => {
       if (urlUser === undefined) urlUser = "";
       reqJson = {
         email: emailUser,
-        name: {first_name: firstNameUser, last_name: lastNameUser},
+        name: { first_name: firstNameUser, last_name: lastNameUser },
         url: urlUser,
       };
       console.log("reqJson>>>>>>>>", reqJson);
@@ -123,7 +122,7 @@ const SearchResult = (props) => {
     return str.split(" ").length;
   }
   const fetchData = async (searchText) => {
-    console.log("SearchText.....FetchApi...",apiServer);
+    console.log("SearchText.....FetchApi...", apiServer);
     const response = await fetch(apiServer + "/pipl/search", {
       method: "POST",
       headers: {
@@ -135,7 +134,7 @@ const SearchResult = (props) => {
     data1 = await response.json();
     console.log("Data>>>>>>>>>>>", data1);
 
-    data1 ? setMyLeads(data1)  : setLoading(true);
+    data1 ? setMyLeads(data1) : setLoading(true);
     // setLoading(true);
     data1 ? setSearchResult({ ...resultData, data: data1 }) : setLoading(true);
     data1 ? setLoading(false) : setLoading(true);
@@ -913,97 +912,98 @@ const SearchResult = (props) => {
 
               <div className="user-widget-box  my-3">
                 <div className="search-container mb-2">
-                  {myLeads.length===0 ?<div><h5>Record not found</h5></div>:currentLeads
-                    ? currentLeads.map((data, index) => (
-                        <div>
-                          <div className="user-container py-2" key={index}>
-                            <input
-                              className="box ms-3 me-3"
-                              type="checkbox"
-                              id="checkbox"
-                            />
-                            <p className="search-author text-danger">
+                  {myLeads.length === 0 ? (
+                    <div>
+                      <h5>Record not found</h5>
+                    </div>
+                  ) : currentLeads ? (
+                    currentLeads.map((data, index) => (
+                      <div>
+                        <div className="user-container py-2" key={index}>
+                          <input
+                            className="box ms-3 me-3"
+                            type="checkbox"
+                            id="checkbox"
+                          />
+                          <p className="search-author text-danger">
+                            <img src="assets/images/author-image.png" alt="" />
+                          </p>
+                          <div className="search-user">
+                            <p>
+                              {data.names.length === 0
+                                ? null
+                                : data.names[0]._display}
+                            </p>
+                            <small className="d-block">
+                              Works at{" "}
+                              {data.jobs.length === 0
+                                ? null
+                                : data.jobs[0]._display}
+                            </small>
+                            <small className="d-block">
+                              {data.addresses.length === 0
+                                ? null
+                                : data.addresses[0]._display}
+                            </small>
+                          </div>
+                          <div className="search-email text-center">
+                            <small
+                              className={show ? "d-block" : "d-block blur"}
+                            >
+                              alamgirhossann
+                            </small>
+                            <a href="#" onClick={showClick}>
+                              <small className="d-block text-danger">
+                                Unlock
+                              </small>
+                            </a>
+                          </div>
+                          <p className="search-view-btn ">
+                            <a
+                              className="btn"
+                              data-toggle="collapse"
+                              href={"#collapseExample_" + index}
+                              data-target={"#collapseExample_" + index}
+                              role="button"
+                              aria-expanded="false"
+                              aria-controls="collapseExample"
+                            >
+                              View Profile
+                            </a>
+                          </p>
+
+                          <a href="#" onClick={clickSelect}>
+                            <p className="search-close-btn">
                               <img
-                                src="assets/images/author-image.png"
+                                src={
+                                  selected
+                                    ? "assets/images/Frame 543.png"
+                                    : "assets/images/Group 1863.png"
+                                }
                                 alt=""
                               />
                             </p>
-                            <div className="search-user">
-                              <p>
-                                {data.names.length === 0
-                                  ? null
-                                  : data.names[0]._display}
-                              </p>
-                              <small className="d-block">
-                                Works at{" "}
-                                {data.jobs.length === 0
-                                  ? null
-                                  : data.jobs[0]._display}
-                              </small>
-                              <small className="d-block">
-                                {data.addresses.length === 0
-                                  ? null
-                                  : data.addresses[0]._display}
-                              </small>
-                            </div>
-                            <div className="search-email text-center">
-                              <small
-                                className={show ? "d-block" : "d-block blur"}
-                              >
-                                alamgirhossann
-                              </small>
-                              <a href="#" onClick={showClick}>
-                                <small className="d-block text-danger">
-                                  Unlock
-                                </small>
-                              </a>
-                            </div>
-                            <p className="search-view-btn ">
-                              <a
-                                className="btn"
-                                data-toggle="collapse"
-                                href={"#collapseExample_" + index}
-                                data-target={"#collapseExample_" + index}
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                              >
-                                View Profile
-                              </a>
-                            </p>
-
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
-                          </div>
+                          </a>
+                        </div>
+                        <div
+                          style={{
+                            background: "white",
+                            borderRadius: "20px",
+                            padding: "20px",
+                          }}
+                        >
                           <div
-                            style={{
-                              background: "white",
-                              borderRadius: "20px",
-                              padding: "20px",
-                            }}
+                            className="panel-collapse collapse in"
+                            id={"collapseExample_" + index}
                           >
-                            <div
-                              className="panel-collapse collapse in"
-                              id={"collapseExample_" + index}
-                            >
-                              {/* <div className="card card-body"> */}
-                              <SpecificUser details={data} />
-                              {/* </div> */}
-                            </div>
+                            {/* <div className="card card-body"> */}
+                            <SpecificUser details={data} />
+                            {/* </div> */}
                           </div>
                         </div>
-                      )):null
-                    }
+                      </div>
+                    ))
+                  ) : null}
                 </div>
               </div>
               <div className="d-flex justify-content-center">

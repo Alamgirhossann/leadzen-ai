@@ -39,7 +39,7 @@ async def people_search(request: PiplRequest):
         # request = SearchAPIRequest(email='', first_name='', last_name='',
         #                            url=u'https://www.linkedin.com/pub/superman/20/7a/365',
         #                            # url=u'https://www.linkedin.com/in/malharlakdawala/',
-        #                            api_key=PIPL_API_KEY)
+        #                            api_key=API_CONFIG_PIPL_API_KEY)
         response = request.send()
         if response:
             if response.person:
@@ -48,7 +48,7 @@ async def people_search(request: PiplRequest):
             elif response.possible_persons:
                 logger.success("multiple records")
                 response_data = response.possible_persons
-            logger.success("response_data Size>>>>", response_data)
+            logger.success("response_data Size>>>>"+ response_data)
     except Exception as e:
         logger.critical("Exception >>", e)
 

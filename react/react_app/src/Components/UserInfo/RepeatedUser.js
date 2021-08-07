@@ -734,12 +734,15 @@ const RepeatedUser = () => {
                     alt="title"
                   />
                   <div className="search-promote-content">
-                    <form action="#" className="search-form4 d-flex mb-3">
+                    <form
+                      action={handleHeadSubmit}
+                      className="search-form4 d-flex mb-3"
+                    >
                       <div className="input-group">
                         <div className="input-placeholder">
                           <input
                             className="ps-3"
-                            type="text"
+                            name="searchText"
                             onBlur={handleHeadSearch}
                             required
                           />
