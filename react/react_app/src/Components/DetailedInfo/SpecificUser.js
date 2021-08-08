@@ -11,6 +11,49 @@ const SpecificUser = (props) => {
       document.body.removeChild(script);
     };
   }, []);
+
+  const [details, setDetails] = useState(props.details);
+  var companies = [...props.details.companies];
+
+  const getDomain = async (company) => {
+    const domainApiServer = `${process.env.REACT_APP_DOMAIN_API_SERVER}`;
+    const domainApiUrl = `${domainApiServer}v1/domains/find?name=`;
+    const domainApiKey = `${process.env.REACT_APP_DOMAIN_API_KEY}`
+    const companyName = company.name.split(' ').join('-');
+    try {
+      const domainApiResponse = await fetch(`${domainApiUrl}${companyName}`,
+        {
+          headers: {Authorization: `Bearer ${domainApiKey}`}
+        });
+      if (domainApiResponse.ok) {
+        const response = await domainApiResponse.json();
+        const domain = response.domain;
+        const index = companies.findIndex(comp => comp.name === company.name);
+        companies[index] = [...companies[index], url:domain];
+      };
+  } catch (error){
+    console.error(error);
+  }
+  }
+
+  const updateCompaniesUrl = () =>{
+//  	var companies = details.companies.map( comp => {
+//  	    const domain = getDomain(comp.name);
+//  	    console.log(domain);
+//  		return {...comp, url: domain}
+//  	}
+    details.companies.map( comp => {
+            const domain = getDomain(comp);
+        }
+  );
+  console.log(companies);
+//  setDetails({...details, companies:companies});
+  }
+
+  useEffect(()=>{
+    updateCompaniesUrl();
+  }, [])
+
   return (
     <div>
       <section className="item-section">
@@ -166,7 +209,7 @@ const SpecificUser = (props) => {
       <section className="item-section">
         <div>
           <h4>Associated Jobs and Companies</h4>
-          {props.details.companies.map((comp) => (
+          {details.companies.map((comp) => (
             <div className="table-alignment container-fluid">
               <td>{comp.name}</td>
               <td>{comp.role}</td>
