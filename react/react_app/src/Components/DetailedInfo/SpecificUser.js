@@ -13,7 +13,6 @@ const SpecificUser = (props) => {
   }, []);
 
   const [details, setDetails] = useState(props.details);
-  const [companies, setCompanies] = useState(props.details.companies);
 
   const getDomain = async (companyName) => {
     const domainApiServer = `${process.env.REACT_APP_DOMAIN_API_SERVER}`;
@@ -47,11 +46,6 @@ const SpecificUser = (props) => {
   useEffect(()=>{
     updateCompaniesUrl();
   }, [])
-
-  useEffect(()=>{
-    console.log(companies);
-    setDetails({...details, companies:companies});
-  }, [companies])
 
   return (
     <div>
