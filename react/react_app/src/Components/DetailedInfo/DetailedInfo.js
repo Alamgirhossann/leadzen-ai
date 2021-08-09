@@ -162,7 +162,7 @@ const DetailedInfo = () => {
     ],
     education: [
       {
-        name: "APICS- Association for Operation Management",
+        name: "APICS",
         since: "2011 - 2013",
         location: "Texas, USA",
         url: "apicsassociation.com",
@@ -174,7 +174,7 @@ const DetailedInfo = () => {
         url: "Ghentuniversity.com",
       },
       {
-        name: "St.Jozef Institute",
+        name: "St. Jozef Institute",
         since: "2009 - 2005",
         location: "Texas, USA",
         url: "apicsassociation.com",

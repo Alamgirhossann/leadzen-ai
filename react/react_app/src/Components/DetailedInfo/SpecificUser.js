@@ -37,15 +37,19 @@ const SpecificUser = (props) => {
   	const companies = await Promise.all(details.companies.map( async comp => {
       const domain = await getDomain(comp.name);
   		return {...comp, url: domain}
-  	}
-  )
-  )
-  setDetails({...details, companies:companies});
+  		}
+  	));
+  	const education = await Promise.all(details.education.map( async edu => {
+      const domain = await getDomain(edu.name);
+  		return {...edu, url: domain}
+  		}
+  	));
+  setDetails({...details, companies: companies, education: education});
   }
 
   useEffect(()=>{
     updateCompaniesUrl();
-  }, [])
+  },[])
 
   return (
     <div>
