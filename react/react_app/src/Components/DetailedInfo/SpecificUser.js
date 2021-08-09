@@ -13,46 +13,45 @@ const SpecificUser = (props) => {
   }, []);
 
   const [details, setDetails] = useState(props.details);
-  var companies = [...props.details.companies];
+  const [companies, setCompanies] = useState(props.details.companies);
 
-  const getDomain = async (company) => {
+  const getDomain = async (companyName) => {
     const domainApiServer = `${process.env.REACT_APP_DOMAIN_API_SERVER}`;
     const domainApiUrl = `${domainApiServer}v1/domains/find?name=`;
     const domainApiKey = `${process.env.REACT_APP_DOMAIN_API_KEY}`
-    const companyName = company.name.split(' ').join('-');
+    const company = companyName.split(' ').join('-');
     try {
-      const domainApiResponse = await fetch(`${domainApiUrl}${companyName}`,
+      const domainApiResponse = await  fetch(`${domainApiUrl}${company}`,
         {
           headers: {Authorization: `Bearer ${domainApiKey}`}
         });
-      if (domainApiResponse.ok) {
+      if (domainApiResponse.ok){
         const response = await domainApiResponse.json();
-        const domain = response.domain;
-        const index = companies.findIndex(comp => comp.name === company.name);
-        companies[index] = [...companies[index], url:domain];
+        return await response.domain
       };
   } catch (error){
     console.error(error);
   }
   }
 
-  const updateCompaniesUrl = () =>{
-//  	var companies = details.companies.map( comp => {
-//  	    const domain = getDomain(comp.name);
-//  	    console.log(domain);
-//  		return {...comp, url: domain}
-//  	}
-    details.companies.map( comp => {
-            const domain = getDomain(comp);
-        }
-  );
-  console.log(companies);
-//  setDetails({...details, companies:companies});
+  const updateCompaniesUrl = async () =>{
+  	const companies = await Promise.all(details.companies.map( async comp => {
+      const domain = await getDomain(comp.name);
+  		return {...comp, url: domain}
+  	}
+  )
+  )
+  setDetails({...details, companies:companies});
   }
 
   useEffect(()=>{
     updateCompaniesUrl();
   }, [])
+
+  useEffect(()=>{
+    console.log(companies);
+    setDetails({...details, companies:companies});
+  }, [companies])
 
   return (
     <div>
@@ -234,7 +233,7 @@ const SpecificUser = (props) => {
       <section className="item-section">
         <div >
           <h4>Probable Education Associated</h4>
-          {props.details.education.map((edu) => (
+          {details.education.map((edu) => (
             <div className="table-alignment container-fluid">
               <td>{edu.name}</td>
               <td>{edu.since}</td>

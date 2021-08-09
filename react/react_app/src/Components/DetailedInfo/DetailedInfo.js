@@ -142,19 +142,19 @@ const DetailedInfo = () => {
         url: "apicsassociation.com",
       },
       {
-        name: "Catavolt, Part of Hexagon",
+        name: "Catavolt",
         role: "Software Engineer",
         since: "12-05-2017",
         url: "google.com",
       },
       {
-        name: "Infor- Atlanta, GA, USA",
+        name: "Infor",
         role: "Software Engineer",
         since: "12-05-2015",
         url: "ga.com",
       },
       {
-        name: "MAPICS, Inc.- Atlanta, GA, USA",
+        name: "MAPICS",
         role: "Software Engineer",
         since: "12-05-2011",
         url: "atlanta.com",
