@@ -28,19 +28,9 @@ import ChromeSearch from "./Components/ChromeExtension/ChromeSearch";
 import AllUsers from "./Components/AdminDashboard/AllUsers";
 import DashboardOne from "./Components/AdminDashboard/DashboardOne";
 import SearchResultTexAu from "./Components/SearchResult/SearchResultTexAu";
-import SearchResultTest from "./Components/SearchResult/Test";
+import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 
 const App = () => {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   return (
     <Router>
       <Switch>
@@ -124,6 +114,9 @@ const App = () => {
         </Route>
         <Route path="/dashboardOne">
           <DashboardOne />
+        </Route>
+        <Route path="/dashboardTwo">
+          <DashboardTwo />
         </Route>
       </Switch>
     </Router>

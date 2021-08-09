@@ -27,6 +27,7 @@ class PiplRequest(BaseModel):
     "/search",
 )
 async def people_search(request: PiplRequest):
+    print("Request...", request)
     response_data = None
     try:
         request = SearchAPIRequest(
@@ -48,9 +49,10 @@ async def people_search(request: PiplRequest):
             elif response.possible_persons:
                 logger.success("multiple records")
                 response_data = response.possible_persons
-            logger.success("response_data Size>>>>"+ response_data)
+
+        logger.success("response_data Size>>>>" + str(response_data))
     except Exception as e:
-        logger.critical("Exception >>", e)
+        logger.critical("Exception >>" + str(e))
 
     json_compatible_item_data = jsonable_encoder(response_data)
     return JSONResponse(content=json_compatible_item_data)

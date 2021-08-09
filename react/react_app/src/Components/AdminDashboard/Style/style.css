@@ -4,7 +4,6 @@
     border-radius: 60px;
     text-align: center;
     padding: 10px;
-    margin: 20px 0px;
 }
 .user-all{
     display: flex;
@@ -18,7 +17,7 @@
 .input-control{
     border: none;
     outline: none;
-    margin-left: 17px;
+    margin-left: 10px;
 }
 .admin-user-wraper{
     background: #FFFFFF;
@@ -78,7 +77,6 @@
     border-radius: 60px;
     text-align: center;
     padding: 10px;
-    margin: 20px 0px;
 }
 .recomandation{
     background: #FFF2F2;
@@ -90,15 +88,87 @@
     width: 206px;
     height: 200px;
 }
-
-.table-container{
-    background: white;
-    border-radius: 20px;
-    padding: 20px;
-    margin-top: 20px;
+.invoice-div{
+    background: #FFEFEF;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
-.table-head{
-    background: #FEDADA;
-    height: 40px;
-    margin-bottom: 10px;
+.invoice-div p{
+    margin: 0px;
+}
+.dashboard-head{
+    font-family: Poppins;
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 21px;
+letter-spacing: 0.03em;
+color: #000000;
+}
+.up-coming img{
+  height: 335px;
+  padding: 0px 0px 70px 0px ;
+}
+.common-btn{
+    background: #FB3E3E;
+}
+@media only screen and (max-width: 991px){
+    .invoice-div{
+        padding: 0px 10px;
+    }
+}
+@media only screen and (max-width: 767px){
+    .admin-user-wraper{
+        overflow-x: scroll;
+    }
+    .admin-user-container{
+        width: 800px;
+    }
+}
+
+.lorem{
+    font-size: 11px;
+    background: #FFFEFE;
+    border-radius: 35px;
+    padding: 0px 5px;
+    margin: 0px 5px;
+}
+.all-user-btn{
+    border: none;
+    outline: none;
+    background: #EDEDED;
+    border-radius: 53px;
+    padding: 5px 43px;
+    margin: 10px 10px;
+}
+.subscription{
+    border: none;
+    background: white;
+    outline: none;
+}
+@media only screen and (max-width: 991px){
+    .all-user-btn{
+        padding: 5px 20px;
+        margin: 10px 10px;
+    }
+}
+@media only screen and (max-width: 767px){
+    .all-user-btn{
+        padding: 5px 10px;
+        margin: 7px 5px;
+    }
+}
+.user-btn-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.btn-alignment{
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 64px;
+    width: 100%;
+    padding: 5px;
 }
