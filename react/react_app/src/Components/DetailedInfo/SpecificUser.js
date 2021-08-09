@@ -214,7 +214,7 @@ const SpecificUser = (props) => {
               <td>
                 <div className="d-flex justify-content-between">
                   <p>{comp.url}</p>
-                  <a href={comp.url}>
+                  <a href={'https://www.'+comp.url} target="_blank">
                     <img
                       className="ms-2"
                       style={{ height: "10px" }}
@@ -239,7 +239,7 @@ const SpecificUser = (props) => {
               <td>
                 <div className="d-flex justify-content-between">
                   <p>{edu.url}</p>
-                  <a href={edu.url}>
+                  <a href={'https://www.'+edu.url} target="_blank">
                     <img
                       className="ms-2"
                       style={{ height: "10px" }}
