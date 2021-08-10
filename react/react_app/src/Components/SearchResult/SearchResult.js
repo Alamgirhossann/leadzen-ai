@@ -31,7 +31,6 @@ const SearchResult = (props) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
-  let data1 = {};
   const [myLeads, setMyLeads] = useState([]);
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -57,9 +56,9 @@ const SearchResult = (props) => {
     // console.log("Props STate>>>>", props.location.state.searchText.text);
     if (props.location.pathname.includes("/advanceSearch")) {
       console.log("from advance......", props.location.state.customSearch);
-      let response = null;
+      let json_res = null;
       try {
-        response = await fetch(apiServer + "/texAu/search", {
+        const response = await fetch(apiServer + "/texAu/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -67,7 +66,8 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(props.location.state.customSearch),
         });
-        data1 = await response.json();
+        json_res = await response.json();
+        console.log("json_res texAu...", json_res);
       } catch (err) {
         console.error("Error: ", err);
       }
@@ -143,7 +143,8 @@ const SearchResult = (props) => {
   }
   const fetchData = async (searchText) => {
     console.log("SearchText.....FetchApi...", apiServer);
-    let response = null;
+    let response,
+      json_res = null;
     try {
       response = await fetch(apiServer + "/pipl/search", {
         method: "POST",
@@ -153,16 +154,18 @@ const SearchResult = (props) => {
         },
         body: JSON.stringify(searchText),
       });
+
+      json_res = await response.json();
+
+      console.log("Data>>>>>>>>>>>", json_res);
+
+      if (!json_res.detail) {
+        setMyLeads(json_res);
+      }
+      setLoading(false);
     } catch (err) {
       console.error("Error: ", err);
     }
-    data1 = await response.json();
-    console.log("Data>>>>>>>>>>>", data1);
-
-    if (data1) {
-      setMyLeads(data1);
-    }
-    setLoading(false);
   };
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(false);
@@ -201,25 +204,6 @@ const SearchResult = (props) => {
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
-
-  // const handleUnlock = (name) => {
-  //   let index = myLeads.findIndex((myLeads) => myLeads.name === name);
-  //   let show_value = myLeads[index].show;
-  //   if (!show_value) {
-  //     myLeads[index] = { ...myLeads[index], show: true };
-  //     console.log(myLeads[index]);
-  //   }
-  //   return false;
-  // };
-
-  function handleViewProfile(index, resData) {
-    console.log("handleViewProfile>>>>", index, resData);
-    // history.push({
-    //   pathname: "/detailedInfo",
-    //   state: { data },
-    // });
-    // return <SpecificUser details={resData} />;
-  }
 
   return (
     <div>

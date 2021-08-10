@@ -18,11 +18,9 @@ const Filters = () => {
   });
 
   const handleLocationOnChange = async (e) => {
-    let response = null;
-    let loc_res = null;
     if (e.target.value && e.target.value.length > 3) {
       try {
-        response = await fetch(
+        const response = await fetch(
           apiServer + "/filter/location?search_location=" + e.target.value,
           {
             method: "GET",
@@ -32,7 +30,7 @@ const Filters = () => {
             },
           }
         );
-        loc_res = await response.json();
+        let loc_res = await response.json();
         setLocationRes(loc_res.hits.hits);
         console.log("loc_res>>>>", loc_res.hits.hits);
       } catch (err) {

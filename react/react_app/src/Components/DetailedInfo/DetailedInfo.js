@@ -20,14 +20,17 @@ const DetailedInfo = () => {
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   const fetchData = async () => {
     let response = null;
+    let json_res = null;
     try {
       response = await fetch(apiServer);
+      json_res = await response.json();
+      json_res
+        ? setSearchResult({ ...resultData, data: json_res })
+        : setLoading(true);
+      json_res ? setLoading(false) : setLoading(true);
     } catch (err) {
       console.error("error : ", err);
     }
-    data = await response.json();
-    data ? setSearchResult({ ...resultData, data: data }) : setLoading(true);
-    data ? setLoading(false) : setLoading(true);
   };
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");

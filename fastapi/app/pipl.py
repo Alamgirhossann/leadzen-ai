@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -28,7 +28,8 @@ class PiplRequest(BaseModel):
 )
 async def people_search(request: PiplRequest):
     print("Request...", request)
-    response_data = None
+    response_data =None
+    json_compatible_item_data = None
     try:
         request = SearchAPIRequest(
             email=request.email,
@@ -49,10 +50,14 @@ async def people_search(request: PiplRequest):
             elif response.possible_persons:
                 logger.success("multiple records")
                 response_data = response.possible_persons
-
+        else:
+            response_data = None
+            json_compatible_item_data = None
         logger.success("response_data Size>>>>" + str(response_data))
     except Exception as e:
         logger.critical("Exception >>" + str(e))
+        raise HTTPException(status_code=404, detail="Item not found")
 
-    json_compatible_item_data = jsonable_encoder(response_data)
+    if response_data:
+        json_compatible_item_data = jsonable_encoder(response_data)
     return JSONResponse(content=json_compatible_item_data)

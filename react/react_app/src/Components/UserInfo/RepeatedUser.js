@@ -84,8 +84,9 @@ const RepeatedUser = () => {
     e.preventDefault();
     console.log("search Text>>>>>>>>>>>>", searchText);
     if (
-      searchText.text === undefined ||
-      searchText.text.toString().length <= 0
+      !searchText.text
+      // searchText.text === undefined ||
+      // searchText.text.toString().length <= 0
     ) {
       alert("Enter details");
       return;

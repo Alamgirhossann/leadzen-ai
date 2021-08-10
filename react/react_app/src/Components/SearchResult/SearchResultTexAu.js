@@ -25,7 +25,6 @@ const SearchResult = (props) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
-  let data1 = {};
   const [myLeads, setMyLeads] = useState([]);
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -50,9 +49,9 @@ const SearchResult = (props) => {
   useEffect(async () => {
     if (props.location.pathname.includes("/searchResultTexAu")) {
       console.log("from advance......", props.location.state.customSearch);
-      let response = null;
+
       try {
-        response = await fetch(apiServer + "/texAu/search", {
+        const response = await fetch(apiServer + "/texAu/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -60,48 +59,24 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(props.location.state.customSearch),
         });
+        let json_res = await response.json();
+        console.log("Data>>>>>>>>>>>", json_res);
+        json_res ? setMyLeads(json_res.execution.output) : setLoading(true);
+        json_res
+          ? setSearchResult({ ...resultData, data: json_res })
+          : setLoading(true);
+        json_res ? setLoading(false) : setLoading(true);
+        console.log("MyLeads before paginate>>>>>", myLeads);
       } catch (err) {
         console.error("Error: ", err);
       }
-      data1 = await response.json();
-      console.log("Data>>>>>>>>>>>", data1);
-
-      data1 ? setMyLeads(data1.execution.output) : setLoading(true);
-      // setLoading(true);
-      data1
-        ? setSearchResult({ ...resultData, data: data1 })
-        : setLoading(true);
-      data1 ? setLoading(false) : setLoading(true);
-      console.log("MyLeads before paginate>>>>>", myLeads);
     }
   }, []);
 
   useEffect(async () => {
     paginate(1);
   }, [myLeads]);
-  function WordCount(str) {
-    return str.split(" ").length;
-  }
-  const fetchData = async (searchText) => {
-    console.log("SearchText.....In Result...", searchText);
-    const response = await fetch(apiServer + "/texAu/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(searchText),
-    });
-    data1 = await response.json();
-    console.log("Data>>>>>>>>>>>", data1);
 
-    data1 ? setMyLeads(data1.execution.output) : setLoading(true);
-    // setLoading(true);
-    data1 ? setSearchResult({ ...resultData, data: data1 }) : setLoading(true);
-    data1 ? setLoading(false) : setLoading(true);
-    console.log("MyLeads before paginate>>>>>", myLeads);
-    // paginate(1);
-  };
   console.log("myLeads>>>>>>>>>>>", myLeads);
 
   const [show, setShow] = useState(false);
@@ -171,26 +146,6 @@ const SearchResult = (props) => {
     e.preventDefault();
     console.log(socialMediaSearch);
   };
-
-  // const handleUnlock = (name) => {
-  //   let index = myLeads.findIndex((myLeads) => myLeads.name === name);
-  //   let show_value = myLeads[index].show;
-  //   if (!show_value) {
-  //     myLeads[index] = { ...myLeads[index], show: true };
-  //     console.log(myLeads[index]);
-  //   }
-  //   return false;
-  // };
-
-  function handleViewProfile(index, resData) {
-    console.log("handleViewProfile>>>>", index, resData, currentPage);
-
-    // history.push({
-    //   pathname: "/detailedInfo",
-    //   state: { data },
-    // });
-    // return <SpecificUser details={resData} />;
-  }
 
   return (
     <div>
