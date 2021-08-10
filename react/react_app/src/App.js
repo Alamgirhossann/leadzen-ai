@@ -87,6 +87,7 @@ const App = () => {
         </Route>
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/searchResultTexAu" component={SearchResultTexAu} />
+        <Route path="/advanceSearch" component={SearchResult} />
 
         <Route path="/loginEmailError">
           <LoginEmailError />

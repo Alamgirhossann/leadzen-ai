@@ -48,64 +48,31 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    console.log("Props STate>>>>", props.location.state.searchText.text);
-    // await fetchData(props.location.state.searchText.text);
-    // console.log("after fetch>>>>");
     if (props.location.pathname.includes("/searchResultTexAu")) {
-      let isEmail = props.location.state.searchText.text.includes("@");
-      let words = WordCount(props.location.state.searchText.text);
-      let isMultiWords = props.location.state.searchText.text.includes(" ");
-      let isUrl =
-        props.location.state.searchText.text
-          .toLowerCase()
-          .includes("https://") ||
-        props.location.state.searchText.text.toLowerCase().includes("http://");
+      console.log("from advance......", props.location.state.customSearch);
+      let response = null;
+      try {
+        response = await fetch(apiServer + "/texAu/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(props.location.state.customSearch),
+        });
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+      data1 = await response.json();
+      console.log("Data>>>>>>>>>>>", data1);
 
-      // if (isEmail || words >= 0) {
-      let reqJson = {};
-      let firstNameUser,
-        lastNameUser,
-        emailUser,
-        urlUser = "";
-      console.log(
-        "check>>>>>>>>>!isUrl && !isEmail && isMultiWords <= 3",
-        isEmail,
-        isUrl,
-        words <= 3,
-        !isUrl && !isEmail && isMultiWords
-      );
-      if (isEmail) {
-        emailUser = props.location.state.searchText.text;
-      }
-      if (!isUrl && !isEmail && isMultiWords) {
-        firstNameUser = props.location.state.searchText.text.split(" ")[0];
-
-        switch (words) {
-          case 2:
-            lastNameUser = props.location.state.searchText.text.split(" ")[1];
-            break;
-          case 3:
-            lastNameUser = props.location.state.searchText.text.split(" ")[2];
-            break;
-        }
-      }
-      if (isUrl) {
-        urlUser = props.location.state.searchText.text;
-      }
-      if (emailUser === undefined || emailUser === null) emailUser = "";
-      if (lastNameUser === undefined || lastNameUser === null)
-        lastNameUser = "";
-      if (firstNameUser === undefined || firstNameUser === null)
-        firstNameUser = "";
-      if (urlUser === undefined) urlUser = "";
-      reqJson = {
-        email: emailUser,
-        firstName: firstNameUser,
-        lastName: lastNameUser,
-        url: urlUser,
-      };
-      console.log("reqJson>>>>>>>>", reqJson);
-      await fetchData(reqJson);
+      data1 ? setMyLeads(data1.execution.output) : setLoading(true);
+      // setLoading(true);
+      data1
+        ? setSearchResult({ ...resultData, data: data1 })
+        : setLoading(true);
+      data1 ? setLoading(false) : setLoading(true);
+      console.log("MyLeads before paginate>>>>>", myLeads);
     }
   }, []);
 

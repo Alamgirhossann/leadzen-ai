@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-
+import Autosuggest from "react-autosuggest";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
-import CustomizeButton from "../SharedComponent/CustomizeButton";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
 
@@ -55,8 +54,24 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    console.log("Props STate>>>>", props.location.state.searchText.text);
-
+    // console.log("Props STate>>>>", props.location.state.searchText.text);
+    if (props.location.pathname.includes("/advanceSearch")) {
+      console.log("from advance......", props.location.state.customSearch);
+      let response = null;
+      try {
+        response = await fetch(apiServer + "/texAu/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(props.location.state.customSearch),
+        });
+        data1 = await response.json();
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    }
     if (props.location.pathname.includes("/searchResult")) {
       let isEmail = props.location.state.searchText.text.includes("@");
       let words = WordCount(props.location.state.searchText.text);
@@ -290,9 +305,6 @@ const SearchResult = (props) => {
             <div className="col-md-4 col-lg-3">
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
-                <div className="px-4">
-                  <CustomizeButton />
-                </div>
                 <Filters />
               </div>
               <SidebarExtractContact />
