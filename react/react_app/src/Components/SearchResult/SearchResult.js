@@ -3,7 +3,6 @@ import "./Style/style.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import Autosuggest from "react-autosuggest";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
@@ -53,7 +52,7 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    // console.log("Props STate>>>>", props.location.state.searchText.text);
+
     if (props.location.pathname.includes("/advanceSearch")) {
       console.log("from advance......", props.location.state.customSearch);
       let json_res = null;
