@@ -3,7 +3,7 @@ import "./Style/style.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import Autosuggest from "react-autosuggest";
+// import Autosuggest from "react-autosuggest";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";

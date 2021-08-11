@@ -10885,7 +10885,7 @@ a {
   border: none;
   outline: none;
   background: #E9F1FF;
-  padding: 6px;
+  padding: 8px;
   border-radius: 20px;
 }
 .alignment{
@@ -11041,3 +11041,26 @@ a {
 .product-container{
     padding-top: 100px;
 }
+
+datalist {
+  /* position: absolute;
+  max-height: 20em;
+  border: 0 none;
+  overflow-x: hidden;
+  overflow-y: auto; */
+}
+
+datalist option {
+  font-size: 0.8em;
+  padding: 0.3em 1em;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* option active styles */
+datalist option:hover, datalist option:focus {
+  color: #fff;
+  background-color: #036;
+  outline: 0 none;
+}
+

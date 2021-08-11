@@ -245,7 +245,14 @@ const Filters = () => {
                   type="text"
                   placeholder="Search Location"
                   onChange={handleLocationOnChange}
+                  autocomplete="off" 
+                  list="location"
                 />
+                <datalist id="location">
+                  <option>Delhi</option>
+                  <option>Dehradun</option>
+                  <option>Mumbai</option>
+                </datalist>
               </div>
             </div>
           </div>
@@ -269,12 +276,18 @@ const Filters = () => {
               data-bs-parent="#accordionExample"
             >
               <div className="accordion-body">
-                <input
-                  className="customize-search"
-                  onBlur={handleIndustry}
-                  type="text"
+                  <input
+                    className="customize-search"
+                    onBlur={handleIndustry}
+                    type="text"
                   placeholder="Search Industry"
+                  list="industry"
                 />
+                <datalist id="industry">
+                  <option>Delhi</option>
+                  <option>Dehradun</option>
+                  <option>Mumbai</option>
+                </datalist>
               </div>
             </div>
           </div>
@@ -296,12 +309,18 @@ const Filters = () => {
               data-bs-parent="#accordionExample"
             >
               <div className="accordion-body">
-                <input
-                  className="customize-search"
-                  onBlur={handleJob}
-                  type="text"
+                  <input
+                    className="customize-search"
+                    onBlur={handleJob}
+                    type="text"
                   placeholder="Search Job title"
+                  list="job-title"
                 />
+                <datalist id="job-title">
+                  <option>Delhi</option>
+                  <option>Dehradun</option>
+                  <option>Mumbai</option>
+                </datalist>
               </div>
             </div>
           </div>
@@ -324,11 +343,17 @@ const Filters = () => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
-                  onBlur={handleEducation}
-                  type="text"
+                    className="customize-search"
+                    onBlur={handleEducation}
+                    type="text"
                   placeholder="Search Education"
+                  list="education"
                 />
+                <datalist id="education">
+                  <option>Delhi</option>
+                  <option>Dehradun</option>
+                  <option>Mumbai</option>
+                </datalist>
               </div>
             </div>
           </div>
@@ -352,11 +377,17 @@ const Filters = () => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
-                  onBlur={handleCompany}
-                  type="text"
+                    className="customize-search"
+                    onBlur={handleCompany}
+                    type="text"
                   placeholder="Search Company Name"
+                  list="company"
                 />
+                <datalist id="company">
+                  <option>Delhi</option>
+                  <option>Dehradun</option>
+                  <option>Mumbai</option>
+                </datalist>
               </div>
             </div>
           </div>
@@ -379,11 +410,17 @@ const Filters = () => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
-                  onBlur={handleKeywords}
-                  type="text"
+                    className="customize-search"
+                    onBlur={handleKeywords}
+                    type="text"
                   placeholder="Search Keywords"
+                  list="keywords"
                 />
+                <datalist id="keywords">
+                  <option>Delhi</option>
+                  <option>Dehradun</option>
+                  <option>Mumbai</option>
+                </datalist>
               </div>
             </div>
           </div>
