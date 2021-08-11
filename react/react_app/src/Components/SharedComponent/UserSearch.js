@@ -10,21 +10,88 @@ const UserSearch = () => {
   const handleHeadSearch = (e) => {
     setSearchText({ ...searchText, text: e.target.value });
   };
+  function WordCount(str) {
+    return str.split(" ").length;
+  }
   const handleHeadSubmit = (e) => {
     e.preventDefault();
+    let isUrl,
+      isEmail,
+      isMultiWords,
+      words = null;
+    let firstNameUser,
+      lastNameUser,
+      emailUser,
+      urlUser = "";
     console.log("search Text>>>>>>>>>>>>", searchText.text);
-    if (
-      !searchText.text
-      // searchText.text === undefined ||
-      // searchText.text.toString().length <= 0
-    ) {
+    if (!searchText.text) {
       alert("Enter details");
       return;
+    } else {
+      isEmail = searchText.text.includes("@");
+      words = WordCount(searchText.text);
+      isMultiWords = searchText.text.includes(" ");
+      isUrl =
+        searchText.text.toLowerCase().includes("https://") ||
+        searchText.text.toLowerCase().includes("http://");
+
+      if (isEmail) {
+        console.log("Its email");
+        emailUser = searchText.text;
+      }
+      if (!isUrl && !isEmail && isMultiWords) {
+        console.log("Its sentence or multiple words");
+        firstNameUser = searchText.text.split(" ")[0];
+
+        switch (words) {
+          case 2:
+            lastNameUser = searchText.text.split(" ")[1];
+            break;
+          case 3:
+            lastNameUser = searchText.text.split(" ")[2];
+            break;
+          default:
+            lastNameUser = searchText.text.split(" ")[words - 1];
+        }
+      }
+      if (isUrl) {
+        console.log("Its Url");
+        urlUser = searchText.text;
+      }
     }
-    history.push({
-      pathname: "/searchResult",
-      state: { searchText },
-    });
+    if (emailUser === undefined || emailUser === null) emailUser = "";
+    if (lastNameUser === undefined || lastNameUser === null) lastNameUser = "";
+    if (firstNameUser === undefined || firstNameUser === null)
+      firstNameUser = "";
+    if (urlUser === undefined) urlUser = "";
+    let reqJsonPipl = {
+      email: emailUser,
+      name: { first_name: "", last_name: "" },
+      url: urlUser,
+    };
+
+    if (isUrl || isEmail) {
+      history.push({
+        pathname: "/searchResult",
+        state: { reqJsonPipl },
+      });
+    }
+    let requestTexAu = {
+      firstName: firstNameUser,
+      lastName: lastNameUser,
+      title: "",
+      keywords: "",
+      industry: [],
+      location: [],
+      currentCompany: [],
+      pastCompany: [],
+    };
+    if (!isUrl && !isEmail && isMultiWords) {
+      history.push({
+        pathname: "/searchResultTexAu",
+        state: { requestTexAu },
+      });
+    }
   };
 
   function handleSubmit(e) {

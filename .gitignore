@@ -52,3 +52,4 @@ Thumbs.db
 *.wmv
 
 config.txt
+package-lock.json

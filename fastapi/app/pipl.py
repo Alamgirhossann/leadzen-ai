@@ -40,7 +40,7 @@ async def people_search(request: PiplRequest):
         )
         # request = SearchAPIRequest(email='', first_name='', last_name='',
         #                            url=u'https://www.linkedin.com/pub/superman/20/7a/365',
-        #                            # url=u'https://www.linkedin.com/in/malharlakdawala/',
+        #                            # url=u'https://www.linkedin.com/in/malharlakdawala/' , clark.kent@example.com
         #                            api_key=API_CONFIG_PIPL_API_KEY)
         response = request.send()
         if response:

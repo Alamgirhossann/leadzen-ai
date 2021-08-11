@@ -47,9 +47,23 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
+    console.log(">>>>>>>>>>", props);
     if (props.location.pathname.includes("/searchResultTexAu")) {
-      console.log("from advance......", props.location.state.customSearch);
-
+      let requestForTexAu = {};
+      if (props.location.state.requestTexAu) {
+        console.log(
+          "from advance. requestTexAu name.....",
+          props.location.state.requestTexAu
+        );
+        requestForTexAu = props.location.state.requestTexAu;
+      }
+      if (props.location.state.customSearch) {
+        console.log(
+          "from advance.customSearch filters .....",
+          props.location.state.customSearch
+        );
+        requestForTexAu = props.location.state.customSearch;
+      }
       try {
         const response = await fetch(apiServer + "/texAu/search", {
           method: "POST",
@@ -57,7 +71,7 @@ const SearchResult = (props) => {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify(props.location.state.customSearch),
+          body: JSON.stringify(requestForTexAu),
         });
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res);

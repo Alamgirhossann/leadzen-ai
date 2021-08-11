@@ -3,7 +3,6 @@ import "./Style/style.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import Autosuggest from "react-autosuggest";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
@@ -53,109 +52,18 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    // console.log("Props STate>>>>", props.location.state.searchText.text);
-    if (props.location.pathname.includes("/advanceSearch")) {
-      console.log("from advance......", props.location.state.customSearch);
-      let json_res = null;
-      try {
-        const response = await fetch(apiServer + "/texAu/search", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(props.location.state.customSearch),
-        });
-        json_res = await response.json();
-        console.log("json_res texAu...", json_res);
-      } catch (err) {
-        console.error("Error: ", err);
-      }
-    }
-    if (props.location.pathname.includes("/searchResult")) {
-      let isEmail = props.location.state.searchText.text.includes("@");
-      let words = WordCount(props.location.state.searchText.text);
-      let isMultiWords = props.location.state.searchText.text.includes(" ");
-      let isUrl =
-        props.location.state.searchText.text
-          .toLowerCase()
-          .includes("https://") ||
-        props.location.state.searchText.text.toLowerCase().includes("http://");
-
-      // if (isEmail || words >= 0) {
-      let reqJson = {};
-      let firstNameUser,
-        lastNameUser,
-        emailUser,
-        urlUser = "";
-      console.log(
-        "check>>>>>>>>>!isUrl && !isEmail && isMultiWords <= 3",
-        isEmail,
-        isUrl,
-        words <= 3,
-        !isUrl && !isEmail && isMultiWords
-      );
-      if (isEmail) {
-        console.log("Its email");
-        emailUser = props.location.state.searchText.text;
-      }
-      if (!isUrl && !isEmail && isMultiWords) {
-        console.log("Its sentence or multiple words");
-        firstNameUser = props.location.state.searchText.text.split(" ")[0];
-
-        switch (words) {
-          case 2:
-            lastNameUser = props.location.state.searchText.text.split(" ")[1];
-            break;
-          case 3:
-            lastNameUser = props.location.state.searchText.text.split(" ")[2];
-            break;
-          default:
-            lastNameUser =
-              props.location.state.searchText.text.split(" ")[words - 1];
-        }
-      }
-      if (isUrl) {
-        console.log("Its Url");
-        urlUser = props.location.state.searchText.text;
-      }
-      if (emailUser === undefined || emailUser === null) emailUser = "";
-      if (lastNameUser === undefined || lastNameUser === null)
-        lastNameUser = "";
-      if (firstNameUser === undefined || firstNameUser === null)
-        firstNameUser = "";
-      if (urlUser === undefined) urlUser = "";
-      reqJson = {
-        email: emailUser,
-        name: { first_name: firstNameUser, last_name: lastNameUser },
-        url: urlUser,
-      };
-      console.log("reqJson>>>>>>>>", reqJson);
-      await fetchData(reqJson);
-    }
-  }, []);
-
-  useEffect(async () => {
-    paginate(1);
-  }, [myLeads]);
-  function WordCount(str) {
-    return str.split(" ").length;
-  }
-  const fetchData = async (searchText) => {
-    console.log("SearchText.....FetchApi...", apiServer);
-    let response,
-      json_res = null;
+    console.log("Request..", props.location.state.reqJsonPipl);
     try {
-      response = await fetch(apiServer + "/pipl/search", {
+      const response = await fetch(apiServer + "/pipl/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(searchText),
+        body: JSON.stringify(props.location.state.reqJsonPipl),
       });
 
-      json_res = await response.json();
+      let json_res = await response.json();
 
       console.log("Data>>>>>>>>>>>", json_res);
 
@@ -166,7 +74,12 @@ const SearchResult = (props) => {
     } catch (err) {
       console.error("Error: ", err);
     }
-  };
+  }, []);
+
+  useEffect(async () => {
+    paginate(1);
+  }, [myLeads]);
+
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(false);
   const showClick = (e) => {
@@ -192,7 +105,6 @@ const SearchResult = (props) => {
     },
   };
 
-  var searchData = { count: 12, total: 250 };
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };

@@ -59,6 +59,7 @@ const Filters = () => {
   };
   const handleCustomSubmit = (e) => {
     console.log(">>>>>>>>>>>>", customSearch);
+
     history.push({
       pathname: "/searchResultTexAu",
       state: { customSearch },
