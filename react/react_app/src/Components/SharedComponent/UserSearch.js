@@ -24,10 +24,12 @@ const UserSearch = () => {
       emailUser,
       urlUser = "";
     console.log("search Text>>>>>>>>>>>>", searchText.text);
+
     if (!searchText.text) {
       alert("Enter details");
       return;
     } else {
+      console.log("In else....");
       isEmail = searchText.text.includes("@");
       words = WordCount(searchText.text);
       isMultiWords = searchText.text.includes(" ");
@@ -39,11 +41,14 @@ const UserSearch = () => {
         console.log("Its email");
         emailUser = searchText.text;
       }
-      if (!isUrl && !isEmail && isMultiWords) {
+      if (!isUrl && !isEmail) {
         console.log("Its sentence or multiple words");
         firstNameUser = searchText.text.split(" ")[0];
 
         switch (words) {
+          case 1:
+            lastNameUser = "";
+            break;
           case 2:
             lastNameUser = searchText.text.split(" ")[1];
             break;
@@ -86,7 +91,7 @@ const UserSearch = () => {
       currentCompany: [],
       pastCompany: [],
     };
-    if (!isUrl && !isEmail && isMultiWords) {
+    if (!isUrl && !isEmail) {
       history.push({
         pathname: "/searchResultTexAu",
         state: { requestTexAu },
