@@ -52,7 +52,7 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    // console.log("Props STate>>>>", props.location.state.searchText.text);
+
     if (props.location.pathname.includes("/advanceSearch")) {
       console.log("from advance......", props.location.state.customSearch);
       let json_res = null;
