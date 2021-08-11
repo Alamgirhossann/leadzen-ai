@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import SpecificUser from "./SpecificUser";
-import { Link, Redirect, useHistory } from "react-router-dom";
-import Cookies from "js-cookie";
-import SearchResult from "../SearchResult/SearchResult";
+import { Link } from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -21,10 +19,18 @@ const DetailedInfo = () => {
   }, []);
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   const fetchData = async () => {
-    const response = await fetch(apiServer);
-    data = await response.json();
-    data ? setSearchResult({ ...resultData, data: data }) : setLoading(true);
-    data ? setLoading(false) : setLoading(true);
+    let response = null;
+    let json_res = null;
+    try {
+      response = await fetch(apiServer);
+      json_res = await response.json();
+      json_res
+        ? setSearchResult({ ...resultData, data: json_res })
+        : setLoading(true);
+      json_res ? setLoading(false) : setLoading(true);
+    } catch (err) {
+      console.error("error : ", err);
+    }
   };
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
@@ -304,7 +310,7 @@ const DetailedInfo = () => {
                   </div>
                 </div>
               </div>
-              
+
               {!loading ? (
                 <div className="user-widget-box  mt-3">
                   <div className="info-container">

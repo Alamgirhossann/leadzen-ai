@@ -1,81 +1,103 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./Style/style.css";
-import { Map, GoogleApiWrapper } from "google-maps-react";
+import { GoogleApiWrapper, Map } from "google-maps-react";
+
 const SpecificUser = (props) => {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
   return (
     <div>
       <section className="item-section">
         <div className="phone-child-div">
           <div className="">
-            <h6>Associated Phone Numbers</h6>
-            {props.details.phone_num.map((number) => (
-              <div className="ms-2 d-flex align-items-center mb-3">
-                <div className="d-flex align-items-center">
-                  <img src="assets/images/Group 1338.png" alt="" />
-                  <small className="ms-2">{number.number}</small>
-                </div>
-                <div className="d-flex align-items-center">
-                  <small className="me-2 ms-2">{number.type}</small>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigator.clipboard.writeText(number.number);
-                      alert("Phone Number Copied!");
-                    }}
-                  >
-                    <img
-                      style={{ height: "10px" }}
-                      src="assets/images/Union.png"
-                      alt=""
-                    />
-                  </a>
-                </div>
-              </div>
-            ))}
+            {props.details.phones.length !== 0 ? (
+              <h6>Associated Phone Numbers</h6>
+            ) : null}
+            {props.details.phones
+              ? props.details.phones.map((number) => (
+                  <div className="ms-2 d-flex align-items-center mb-3">
+                    <div className="d-flex align-items-center">
+                      <img src="assets/images/Group 1338.png" alt="" />
+                      <small className="ms-2">{number.number}</small>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <small className="me-2 ms-2">{number.type}</small>
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigator.clipboard.writeText(number.number);
+                          alert("Phone Number Copied!");
+                        }}
+                      >
+                        <img
+                          style={{ height: "10px" }}
+                          src="assets/images/Union.png"
+                          alt=""
+                        />
+                      </a>
+                    </div>
+                  </div>
+                ))
+              : null}
           </div>
           <div>
-            <h6>Associated Email Addresses</h6>
-            {props.details.email.map((data) => (
-              <div className="ms-2 d-flex align-items-center mb-3" align="left">
-                <div className="d-flex align-items-center">
-                  <small className="ms-2">{data}</small>
-                  <img
-                    className="ms-2"
-                    style={{ height: "10px" }}
-                    src="assets/images/Union.png"
-                    alt=""
-                  />
-                </div>
-                <div className="d-flex align-items-center">
-                  <img className="ms-2" src="assets/images/Vector.png" alt="" />
-                </div>
-              </div>
-            ))}
-            <h6>Associated Usernames</h6>
-            {props.details.username.map((data) => (
-              <div className="ms-2 d-flex align-items-center mb-3" align="left">
-                <div className="d-flex align-items-center">
-                  <small className="ms-2">{data.name}</small>
-                  <small className="me-2 ms-2">Since {data.since}</small>
-                </div>
-              </div>
-            ))}
-            <h6>Probable URLs Associated</h6>
+            {props.details.emails.length !== 0 ? (
+              <h6>Associated Email Addresses</h6>
+            ) : null}
+            {props.details.emails
+              ? props.details.emails.map((email) => (
+                  <div
+                    className="ms-2 d-flex align-items-center mb-3"
+                    align="left"
+                  >
+                    <div className="d-flex align-items-center">
+                      <small className="ms-2">{email.address}</small>
+                      <img
+                        className="ms-2"
+                        style={{ height: "10px" }}
+                        src="assets/images/Union.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <img
+                        className="ms-2"
+                        src="assets/images/Vector.png"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                ))
+              : null}
+
+            {props.details.usernames.length !== 0 ? (
+              <h6>Associated Usernames</h6>
+            ) : null}
+            {props.details.usernames
+              ? props.details.usernames.map((data) => (
+                  <div
+                    className="ms-2 d-flex align-items-center mb-3"
+                    align="left"
+                  >
+                    <div className="d-flex align-items-center">
+                      <small className="ms-2">{data.content}</small>
+                      <small className="me-2 ms-2">
+                        {data.valid_since ? (
+                          <span>Since {data.valid_since}</span>
+                        ) : null}
+                      </small>
+                    </div>
+                  </div>
+                ))
+              : null}
+
+            {props.details.urls.length !== 0 ? (
+              <h6>Probable URLs Associated</h6>
+            ) : null}
             {props.details.urls.map((url) => (
               <div className="ms-2 d-flex align-items-center mb-3">
                 <div className="d-flex align-items-center">
-                  <small className="ms-2">{url}</small>
-                  <a href={url} target="_blank">
+                  <small className="ms-2">{url.url}</small>
+                  <a href={url.url} target="_blank">
                     <img
                       className="ms-2"
                       style={{ height: "10px" }}
@@ -88,20 +110,31 @@ const SpecificUser = (props) => {
             ))}
           </div>
           <div>
-            <h6>Gender</h6>
+            {props.details.gender ? <h6>Gender</h6> : null}
             <div className="ms-2 d-flex align-items-center mb-3">
-              <small>{props.details.gender}</small>
+              <small>
+                {props.details.gender ? props.details.gender._content : null}
+              </small>
             </div>
-            <h6>Age</h6>
+            {props.details.dob ? <h6>Age</h6> : null}
             <div className="ms-2 d-flex align-items-center mb-3">
-              <small>{props.details.age} Years</small>
+              <small>
+                {props.details.dob ? (
+                  <span>props.details.dob._display Years</span>
+                ) : null}
+              </small>
             </div>
-            <h6>Languages Known</h6>
-            {props.details.languages.map((language) => (
-              <div className="ms-2 d-flex align-items-center mb-3">
-                <small>{language}</small>
-              </div>
-            ))}
+            {props.details.languages.length !== 0 ? (
+              <h6>Languages Known</h6>
+            ) : null}
+            {props.details.languages
+              ? props.details.languages.map((language) => (
+                  <div className="ms-2 d-flex align-items-center mb-3">
+                    <small>{language._display}</small>
+                  </div>
+                ))
+              : null}
+
             <h6>Probable Social platforms Associated</h6>
             <div className="ms-2 mb-3">
               <div className="d-flex">
@@ -164,50 +197,54 @@ const SpecificUser = (props) => {
         </div>
       </section>
       <section className="item-section">
-        <div>
+        <div style={{ width: "900px" }}>
           <h4>Associated Jobs and Companies</h4>
-          {props.details.companies.map((comp) => (
-            <div className="table-alignment container-fluid">
-              <td>{comp.name}</td>
-              <td>{comp.role}</td>
-              <td>Since {comp.since}</td>
-              <td>
-                <div className="d-flex justify-content-between">
-                  <p>{comp.url}</p>
-                  <a href={comp.url}>
-                    <img
-                      className="ms-2"
-                      style={{ height: "10px" }}
-                      src="assets/images/Union (1).png"
-                      alt=""
-                    />
-                  </a>
+          {props.details.jobs
+            ? props.details.jobs.map((comp) => (
+                <div className="table-alignment container-fluid">
+                  <td>{comp.organization}</td>
+                  <td>{comp.title}</td>
+                  <td>
+                    Since {comp.date_range ? comp.date_range.start : null}
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-between">
+                      {/*<p>{comp.url}</p>*/}
+                      {/*<a href={comp.url}>*/}
+                      {/*  <img*/}
+                      {/*    className="ms-2"*/}
+                      {/*    style={{ height: "10px" }}*/}
+                      {/*    src="assets/images/Union (1).png"*/}
+                      {/*    alt=""*/}
+                      {/*  />*/}
+                      {/*</a>*/}
+                    </div>
+                  </td>
                 </div>
-              </td>
-            </div>
-          ))}
+              ))
+            : "Companies not found"}
         </div>
       </section>
       <section className="item-section">
-        <div >
+        <div style={{ width: "900px" }}>
           <h4>Probable Education Associated</h4>
-          {props.details.education.map((edu) => (
+          {props.details.educations.map((edu) => (
             <div className="table-alignment container-fluid">
-              <td>{edu.name}</td>
-              <td>{edu.since}</td>
-              <td>{edu.location}</td>
+              <td>{edu.degree}</td>
+              {/*<td>{edu.date_range.start}</td>*/}
+              <td>{edu.school}</td>
               <td>
-                <div className="d-flex justify-content-between">
-                  <p>{edu.url}</p>
-                  <a href={edu.url}>
-                    <img
-                      className="ms-2"
-                      style={{ height: "10px" }}
-                      src="assets/images/Union (1).png"
-                      alt=""
-                    />
-                  </a>
-                </div>
+                {/*<div className="d-flex justify-content-between">*/}
+                {/*  <p>{edu.url}</p>*/}
+                {/*  <a href={edu.url}>*/}
+                {/*    <img*/}
+                {/*      className="ms-2"*/}
+                {/*      style={{ height: "10px" }}*/}
+                {/*      src="assets/images/Union (1).png"*/}
+                {/*      alt=""*/}
+                {/*    />*/}
+                {/*  </a>*/}
+                {/*</div>*/}
               </td>
             </div>
           ))}
@@ -217,20 +254,20 @@ const SpecificUser = (props) => {
         <div className="row">
           <div className="col-md-6">
             <h4>Associated Locations</h4>
-            <div>
-              <Map
-                google={props.google}
-                zoom={15}
-                style={{ width: "80%", height: "80%" }}
-                initialCenter={{ lat: 9.761927, lng: 79.95244 }}
-              />
-            </div>
+            {/*<div>*/}
+            {/*  <Map*/}
+            {/*    google={props.google}*/}
+            {/*    zoom={15}*/}
+            {/*    style={{ width: "80%", height: "80%" }}*/}
+            {/*    initialCenter={{ lat: 9.761927, lng: 79.95244 }}*/}
+            {/*  />*/}
+            {/*</div>*/}
           </div>
           <div className="col-md-6">
             <h4>List of Locations</h4>
-            {props.details.locations.map((location) => (
+            {props.details.addresses.map((location) => (
               <div>
-                <p>{location}</p>
+                <p>{location._display}</p>
               </div>
             ))}
           </div>
@@ -243,15 +280,15 @@ const SpecificUser = (props) => {
           </div>
           <h4 className="text-center">Probable People Associated</h4>
           <div class="user-promote-slider">
-            {props.details.related_profiles.map((profile) => (
+            {props.details.relationships.map((profile) => (
               <div>
                 <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
+                // style={{
+                //   width: "100%",
+                //   height: "100%",
+                //   display: "flex",
+                //   justifyContent: "center",
+                // }}
                 >
                   <a href={profile.url}>
                     <img
@@ -275,7 +312,7 @@ const SpecificUser = (props) => {
     </div>
   );
 };
-//export default SpecificUser;
-export default GoogleApiWrapper({
-  apiKey: "API_KEY",
-})(SpecificUser);
+export default SpecificUser;
+// export default GoogleApiWrapper({
+//   apiKey: "API_KEY",
+// })(SpecificUser);
