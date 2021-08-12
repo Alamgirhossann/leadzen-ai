@@ -1,17 +1,5 @@
 import React, { useEffect, useState } from "react";
-import home from "../../images/menu-home.png";
-import brand from "../../images/header-brand-black.png";
-import saveList from "../../images/menu-saved-list.png";
-import history from "../../images/menu-history.png";
-import author from "../../images/author-image.png";
-import codeSendBox from "../../images/header-brand-black.png";
-import { Link, Redirect } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import Cookies from "js-cookie";
-import validator from "validator";
-import CookieConsent, { getCookieConsentValue } from "react-cookie-consent";
-import axios from "axios";
+import { Link, useHistory } from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -20,70 +8,6 @@ import UserSearch from "../SharedComponent/UserSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
 
 const FirstTimeUser = () => {
-  const [searchText, setSearchText] = useState({ text: null });
-  const [customSearch, setCustomSearch] = useState({
-    location: null,
-    industry: null,
-    job_title: null,
-    education: null,
-    company_name: null,
-    keywords: null,
-    csv_file: null,
-  });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
-  const [socialMediaType, setSocialMediaType] = useState({
-    url: null,
-    type: [],
-  });
-  const handleHeadSearch = (e) => {
-    setSearchText({ ...searchText, text: e.target.value });
-  };
-  const handleHeadSubmit = (e) => {
-    e.preventDefault();
-    console.log(searchText);
-  };
-  const handleLocation = (e) => {
-    setCustomSearch({ ...customSearch, location: e.target.value });
-  };
-  const handleIndustry = (e) => {
-    setCustomSearch({ ...customSearch, industry: e.target.value });
-  };
-  const handleJob = (e) => {
-    setCustomSearch({ ...customSearch, job_title: e.target.value });
-  };
-  const handleEducation = (e) => {
-    setCustomSearch({ ...customSearch, education: e.target.value });
-  };
-  const handleCompany = (e) => {
-    setCustomSearch({ ...customSearch, company_name: e.target.value });
-  };
-  const handleKeywords = (e) => {
-    setCustomSearch({ ...customSearch, keywords: e.target.value });
-  };
-  const handleCustomSubmit = (e) => {
-    console.log(customSearch);
-  };
-  const handleCSVFile = (e) => {
-    setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
-  };
-  const handleSocial = (e) => {
-    setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
-  };
-  const handleSocialSubmit = (e) => {
-    console.log(socialMediaSearch);
-  };
-  const handleType = (e) => {
-    setSocialMediaType({ ...socialMediaType, type: e.target.value });
-  };
-  const handleURL = (e) => {
-    setSocialMediaType({ ...socialMediaType, url: e.target.value });
-  };
-  const handleTypeSubmit = (e) => {
-    e.preventDefault();
-    console.log(searchText);
-    console.log(customSearch);
-    console.log(socialMediaType);
-  };
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -125,25 +49,28 @@ const FirstTimeUser = () => {
     };
   }, []);
 
+  function handleCSVFile() {}
+
   return (
     <div>
       <Header user={user} />
+
       <div className="modal" id="bulkmodal">
         <button
           type="button"
           className="btn-close"
           data-bs-dismiss="modal"
           aria-label="Close"
-        ></button>
+        />
         <div className="modal-dialog">
-          <div classNameName="modal-message">
+          <div className="modal-message">
             <p>
-              <i classNameName="text-danger">Format to follow:</i> Ensure that
-              the first column has the unique values you’re searching for.
-              Download the sample below for better understanding.{" "}
+              <i className="text-danger">Format to follow:</i> Ensure that the
+              first column has the unique values you’re searching for. Download
+              the sample below for better understanding.{" "}
             </p>
             <Link>
-              <i classNameName="text-danger text-decoration-underline">
+              <i className="text-danger text-decoration-underline">
                 Click here to download csv format
               </i>
             </Link>

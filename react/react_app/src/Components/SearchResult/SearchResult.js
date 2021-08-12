@@ -1,17 +1,15 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import Cookies from "js-cookie";
-import ReactPaginate from "react-paginate";
+import Pagination from "../SharedComponent/Pagination";
+import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
-import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
-import CustomizeButton from "../SharedComponent/CustomizeButton";
-import AskJarvis from "../SharedComponent/AskJarvis";
+import Filters from "../SharedComponent/Filters";
 
-const SearchResult = () => {
+const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -30,41 +28,144 @@ const SearchResult = () => {
   const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
   const [resultData, setSearchResult] = useState({ data: null });
   const [loading, setLoading] = useState(true);
-  let data = {};
-  const [myLeads, setMyLeads] = useState([
-    {
-      name: "John Smith",
-      desc: "English Speaker",
-      comp: "Hexagon AB",
-      search_date: "12/05/2021",
-      address: "6720 Ulster Court, Alpharetta, Georgia",
-      show: false,
-    },
-    {
-      name: "Joe Mama",
-      desc: "English Speaker",
-      comp: "Apple INC",
-      search_date: "05/05/2021",
-      address: "6720 Ulster Court, Alpharetta, Georgia",
-      show: false,
-    },
-  ]);
-  var today = new Date();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLeads, setCurrentLeads] = useState([]);
+  const [myLeads, setMyLeads] = useState([]);
+  let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-  var dd = String(today.getDate()).padStart(2, "0");
-  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  var yyyy = today.getFullYear();
+  let dd = String(today.getDate()).padStart(2, "0");
+  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  let yyyy = today.getFullYear();
+
+  const paginate = (pageNumber) => {
+    setCurrentLeads([]);
+    setCurrentPage(pageNumber);
+
+    setCurrentLeads(myLeads.slice(pageNumber * 10 - 10, pageNumber * 10));
+    console.log(
+      "currentLeads>>>",
+      currentLeads,
+      pageNumber * 10 - 10,
+      pageNumber * 10,
+      myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+    );
+  };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    fetchData();
+
+    if (props.location.pathname.includes("/advanceSearch")) {
+      console.log("from advance......", props.location.state.customSearch);
+      let json_res = null;
+      try {
+        const response = await fetch(apiServer + "/texAu/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(props.location.state.customSearch),
+        });
+        json_res = await response.json();
+        console.log("json_res texAu...", json_res);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    }
+    if (props.location.pathname.includes("/searchResult")) {
+      let isEmail = props.location.state.searchText.text.includes("@");
+      let words = WordCount(props.location.state.searchText.text);
+      let isMultiWords = props.location.state.searchText.text.includes(" ");
+      let isUrl =
+        props.location.state.searchText.text
+          .toLowerCase()
+          .includes("https://") ||
+        props.location.state.searchText.text.toLowerCase().includes("http://");
+
+      // if (isEmail || words >= 0) {
+      let reqJson = {};
+      let firstNameUser,
+        lastNameUser,
+        emailUser,
+        urlUser = "";
+      console.log(
+        "check>>>>>>>>>!isUrl && !isEmail && isMultiWords <= 3",
+        isEmail,
+        isUrl,
+        words <= 3,
+        !isUrl && !isEmail && isMultiWords
+      );
+      if (isEmail) {
+        console.log("Its email");
+        emailUser = props.location.state.searchText.text;
+      }
+      if (!isUrl && !isEmail && isMultiWords) {
+        console.log("Its sentence or multiple words");
+        firstNameUser = props.location.state.searchText.text.split(" ")[0];
+
+        switch (words) {
+          case 2:
+            lastNameUser = props.location.state.searchText.text.split(" ")[1];
+            break;
+          case 3:
+            lastNameUser = props.location.state.searchText.text.split(" ")[2];
+            break;
+          default:
+            lastNameUser =
+              props.location.state.searchText.text.split(" ")[words - 1];
+        }
+      }
+      if (isUrl) {
+        console.log("Its Url");
+        urlUser = props.location.state.searchText.text;
+      }
+      if (emailUser === undefined || emailUser === null) emailUser = "";
+      if (lastNameUser === undefined || lastNameUser === null)
+        lastNameUser = "";
+      if (firstNameUser === undefined || firstNameUser === null)
+        firstNameUser = "";
+      if (urlUser === undefined) urlUser = "";
+      reqJson = {
+        email: emailUser,
+        name: { first_name: firstNameUser, last_name: lastNameUser },
+        url: urlUser,
+      };
+      console.log("reqJson>>>>>>>>", reqJson);
+      await fetchData(reqJson);
+    }
   }, []);
-  const fetchData = async () => {
-    const response = await fetch(apiServer);
-    data = await response.json();
-    data ? setSearchResult({ ...resultData, data: data }) : setLoading(true);
-    data ? setLoading(false) : setLoading(true);
+
+  useEffect(async () => {
+    paginate(1);
+  }, [myLeads]);
+  function WordCount(str) {
+    return str.split(" ").length;
+  }
+  const fetchData = async (searchText) => {
+    console.log("SearchText.....FetchApi...", apiServer);
+    let response,
+      json_res = null;
+    try {
+      response = await fetch(apiServer + "/pipl/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(searchText),
+      });
+
+      json_res = await response.json();
+
+      console.log("Data>>>>>>>>>>>", json_res);
+
+      if (!json_res.detail) {
+        setMyLeads(json_res);
+      }
+      setLoading(false);
+    } catch (err) {
+      console.error("Error: ", err);
+    }
   };
-  let index;
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(false);
   const showClick = (e) => {
@@ -102,46 +203,19 @@ const SearchResult = () => {
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
-  const handleType = (e) => {
-    setSocialMediaType({ ...socialMediaType, type: e.target.value });
-  };
-  const handleSocialMedia = (e) => {
-    setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
-  };
-  const handleTypeSubmit = (e) => {
-    e.preventDefault();
-    console.log(socialMediaSearch);
-  };
-  const handleUnlock = (name) => {
-    let index = myLeads.findIndex((myLeads) => myLeads.name === name);
-    let show_value = myLeads[index].show;
-    if (!show_value) {
-      myLeads[index] = { ...myLeads[index], show: true };
-      console.log(myLeads[index]);
-    }
-    return false;
-  };
-  const [perPage, setPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [offset, setOffset] = useState();
-  const handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    const offset = selectedPage * perPage;
-    setCurrentPage(selectedPage);
-    setOffset(offset);
-  };
+
   return (
     <div>
       <Header user={user} />
-      <div class="modal" id="UpgradeModal">
+      <div className="modal" id="UpgradeModal">
         <button
           type="button"
-          class="btn-close"
+          className="btn-close"
           data-bs-dismiss="modal"
           aria-label="Close"
-        ></button>
-        <div class="modal-dialog">
-          <div class="modal-content">
+        />
+        <div className="modal-dialog">
+          <div className="modal-content">
             <div className="d-flex">
               <div className="pe-4">
                 <img
@@ -158,7 +232,7 @@ const SearchResult = () => {
                 </p>
                 <button
                   style={{ background: "#FB3E3E" }}
-                  class="btn text-white"
+                  className="btn text-white"
                 >
                   {" "}
                   Upgrade Now
@@ -174,7 +248,7 @@ const SearchResult = () => {
           className="btn-close"
           data-bs-dismiss="modal"
           aria-label="Close"
-        ></button>
+        />
         <div className="modal-dialog">
           <div className="modal-message">
             <p>
@@ -214,9 +288,6 @@ const SearchResult = () => {
             <div className="col-md-4 col-lg-3">
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
-                <div className="px-4">
-                  <CustomizeButton />
-                </div>
                 <Filters />
               </div>
               <SidebarExtractContact />
@@ -277,8 +348,8 @@ const SearchResult = () => {
                       id="checkbox"
                     />
                     <small className="">
-                      <b>{searchData.count}</b> of
-                      <b>{searchData.total}</b> Searched profiles
+                      <b>{currentLeads.length}</b> of{" "}
+                      <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
                     </small>
                   </div>
                   <div className="d-flex">
@@ -311,120 +382,122 @@ const SearchResult = () => {
               </div>
 
               <div className="user-widget-box  my-3">
-                <div className="search-container mb-2">
-                  {myLeads.map((data) => (
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <p className="search-author text-danger">
-                        <img src="assets/images/author-image.png" alt="" />
-                      </p>
-                      <div className="search-user">
-                        <p>{data.name}</p>
-                        <small className="d-block">Works at {data.comp}</small>
-                        <small className="d-block">{data.address}</small>
-                      </div>
-                      <div className="search-email text-center">
-                        <small className={show ? "d-block" : "d-block blur"}>
-                          alamgirhossann
-                        </small>
-                        <a href="#" onClick={showClick}>
-                          <small className="d-block text-danger">Unlock</small>
-                        </a>
-                      </div>
-
-                      <p className="search-view-btn ">
-                        <a href="/detailedInfo" className="button">
-                          View Profile
-                        </a>
-                      </p>
-                      <a href="#" onClick={clickSelect}>
-                        <p className="search-close-btn">
-                          <img
-                            src={
-                              selected
-                                ? "assets/images/Frame 543.png"
-                                : "assets/images/Group 1863.png"
-                            }
-                            alt=""
-                          />
-                        </p>
-                      </a>
-                    </div>
-                  ))}
-                </div>
-
-                {!loading ? (
+                {loading === false ? (
                   <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <p className="search-author text-danger">
-                        <img src="assets/images/author-image.png" alt="" />
-                      </p>
+                    {myLeads.length === 0 ? (
+                      <div>
+                        <h5>Record not found</h5>
+                      </div>
+                    ) : currentLeads ? (
+                      currentLeads.map((data, index) => (
+                        <div>
+                          <div className="user-container py-2" key={index}>
+                            <input
+                              className="box ms-3 me-3"
+                              type="checkbox"
+                              id="checkbox"
+                            />
+                            <p className="search-author text-danger">
+                              <img
+                                src="assets/images/author-image.png"
+                                alt=""
+                              />
+                            </p>
+                            <div className="search-user">
+                              <p>
+                                {data.names.length === 0
+                                  ? null
+                                  : data.names[0]._display}
+                              </p>
+                              <small className="d-block">
+                                Works at{" "}
+                                {data.jobs.length === 0
+                                  ? null
+                                  : data.jobs[0]._display}
+                              </small>
+                              <small className="d-block">
+                                {data.addresses.length === 0
+                                  ? null
+                                  : data.addresses[0]._display}
+                              </small>
+                            </div>
+                            <div className="search-email text-center">
+                              <small
+                                className={show ? "d-block" : "d-block blur"}
+                              >
+                                alamgirhossann
+                              </small>
+                              <a href="#" onClick={showClick}>
+                                <small className="d-block text-danger">
+                                  Unlock
+                                </small>
+                              </a>
+                            </div>
+                            <p className="search-view-btn ">
+                              <a
+                                className="btn"
+                                data-toggle="collapse"
+                                href={"#collapseExample_" + index}
+                                data-target={"#collapseExample_" + index}
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="collapseExample"
+                              >
+                                View Profile
+                              </a>
+                            </p>
 
-                      <div className="search-user">
-                        <p>{resultData.data.names[0]._display}</p>
-                        <small className="d-block">
-                          Works at {resultData.data.jobs[0].organization}
-                        </small>
-                        <small className="d-block">
-                          {resultData.data.addresses[0]._display}
-                        </small>
-                      </div>
-                      <div className="search-email text-center">
-                        <small className={show ? "d-block" : "d-block blur"}>
-                          alamgirhossann
-                        </small>
-                        <a href="#" onClick={showClick}>
-                          <small className="d-block text-danger">Unlock</small>
-                        </a>
-                      </div>
-                      <p className="search-view-btn ">
-                        <a href="/detailedInfo" className="button">
-                          View Profile
-                        </a>
-                      </p>
-                      <a href="#" onClick={clickSelect}>
-                        <p className="search-close-btn">
-                          <img
-                            src={
-                              selected
-                                ? "assets/images/Frame 543.png"
-                                : "assets/images/Group 1863.png"
-                            }
-                            alt=""
-                          />
-                        </p>
-                      </a>
+                            <a href="#" onClick={clickSelect}>
+                              <p className="search-close-btn">
+                                <img
+                                  src={
+                                    selected
+                                      ? "assets/images/Frame 543.png"
+                                      : "assets/images/Group 1863.png"
+                                  }
+                                  alt=""
+                                />
+                              </p>
+                            </a>
+                          </div>
+                          <div
+                            style={{
+                              background: "white",
+                              borderRadius: "20px",
+                              padding: "20px",
+                            }}
+                          >
+                            <div
+                              className="panel-collapse collapse in"
+                              id={"collapseExample_" + index}
+                            >
+                              {/* <div className="card card-body"> */}
+                              <SpecificUser details={data} />
+                              {/* </div> */}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <h5>Record not found</h5>
+                    )}
+                  </div>
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    <div className="spinner-border" role="status">
+                      <span className="sr-only">Loading...</span>
                     </div>
                   </div>
-                ) : null}
+                )}
               </div>
               <div className="d-flex justify-content-center">
-                <div className="number-align"> 1 </div>
-                <div className="ps-3 d-flex align-items-center"> 2 </div>
-                <div className="ps-3 d-flex align-items-center"> 3 </div>
-                <div className="ps-3 d-flex align-items-center"> 4 </div>
-                <div className="ps-3 d-flex align-items-center"> 5 </div>
-                <div className="ps-3 d-flex align-items-center"> 6 </div>
-                <div
-                  className="ps-3 d-flex align-items-center"
-                  data-bs-toggle="modal"
-                  data-bs-target="#UpgradeModal"
-                >
-                  {" "}
-                  Next{" "}
-                </div>
+                <Pagination
+                  postsPerPage={10}
+                  totalPosts={myLeads.length}
+                  paginate={paginate}
+                />
               </div>
-              <AskJarvis />
-              {/* <div className="user-widget-box text-center p-4 my-3">
+              <div className="user-widget-box text-center p-4 my-3">
                 <div className="user-promote-logo">
                   <img src="assets/images/user-company-brand.png" alt="title" />
                 </div>
@@ -436,7 +509,7 @@ const SearchResult = () => {
                         group?
                       </p>
                       <div
-                        classNameName="px-3 pb-4"
+                        className="px-3 pb-4"
                         style={{
                           position: "absolute",
                           bottom: "5px",
@@ -456,7 +529,7 @@ const SearchResult = () => {
                         1000+ employees in US?
                       </p>
                       <div
-                        classNameName="px-3 pb-4"
+                        className="px-3 pb-4"
                         style={{
                           position: "absolute",
                           bottom: "5px",
@@ -476,7 +549,7 @@ const SearchResult = () => {
                         Flipkart?
                       </p>
                       <div
-                        classNameName="px-3 pb-4"
+                        className="px-3 pb-4"
                         style={{
                           position: "absolute",
                           bottom: "5px",
@@ -496,7 +569,7 @@ const SearchResult = () => {
                         group?
                       </p>
                       <div
-                        classNameName="px-3 pb-4"
+                        className="px-3 pb-4"
                         style={{
                           position: "absolute",
                           bottom: "5px",
@@ -551,7 +624,7 @@ const SearchResult = () => {
                     </div>
                   </div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

@@ -1,11 +1,9 @@
-import React, {useState, useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import SpecificUser from "./SpecificUser";
-import {Link, Redirect, useHistory} from "react-router-dom";
-import Cookies from "js-cookie";
-import SearchResult from "../SearchResult/SearchResult";
+import { Link } from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -13,39 +11,47 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import CustomizeButton from "../SharedComponent/CustomizeButton";
 
 const DetailedInfo = () => {
-    const [resultData, setSearchResult] = useState({data: null});
-    const [loading, setLoading] = useState(true);
-    let data = {};
-    useEffect(async () => {
-        fetchData();
-    }, []);
-    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-    const fetchData = async () => {
-        const response = await fetch(apiServer);
-        data = await response.json();
-        data ? setSearchResult({...resultData, data: data}) : setLoading(true);
-        data ? setLoading(false) : setLoading(true);
-    };
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    var yyyy = today.getFullYear();
-    today = dd + "/" + mm + "/" + yyyy;
-    const [customSearch, setCustomSearch] = useState({
-        location: null,
-        industry: null,
-        job_title: null,
-        education: null,
-        company_name: null,
-        keywords: null,
-        csv_file: null,
-    });
-    const [searchText, setSearchText] = useState();
-    const [socialMediaType, setSocialMediaType] = useState({
-        url: null,
-        type: [],
-    });
-    const [socialMediaSearch, setSocialMediaSearch] = useState({text: null});
+  const [resultData, setSearchResult] = useState({ data: null });
+  const [loading, setLoading] = useState(true);
+  let data = {};
+  useEffect(async () => {
+    fetchData();
+  }, []);
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+  const fetchData = async () => {
+    let response = null;
+    let json_res = null;
+    try {
+      response = await fetch(apiServer);
+      json_res = await response.json();
+      json_res
+        ? setSearchResult({ ...resultData, data: json_res })
+        : setLoading(true);
+      json_res ? setLoading(false) : setLoading(true);
+    } catch (err) {
+      console.error("error : ", err);
+    }
+  };
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var yyyy = today.getFullYear();
+  today = dd + "/" + mm + "/" + yyyy;
+  const [customSearch, setCustomSearch] = useState({
+    location: null,
+    industry: null,
+    job_title: null,
+    education: null,
+    company_name: null,
+    keywords: null,
+    csv_file: null,
+  });
+  const [searchText, setSearchText] = useState();
+  const [socialMediaType, setSocialMediaType] = useState({
+    url: null,
+    type: [],
+  });
+  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
 
     const handleHeadSearch = (e) => {
         setSearchText(e.target.value);
@@ -295,66 +301,66 @@ const DetailedInfo = () => {
                         <span className="pe-1">
                           <FontAwesomeIcon icon={faSearch}/>
                         </span>{" "}
-                                                Search
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <div>
-                                        <small>Last Updated: {today}</small>
-                                    </div>
-                                </div>
-                            </div>
+                        Search
+                      </button>
+                    </form>
+                  </div>
+                  <div>
+                    <small>Last Updated: {today}</small>
+                  </div>
+                </div>
+              </div>
 
-                            {!loading ? (
-                                <div className="user-widget-box  mt-3">
-                                    <div className="info-container">
-                                        <div className="user-info-container">
-                                            <input
-                                                className="info-box ms-3 me-3"
-                                                type="checkbox"
-                                                id="checkbox"
-                                            />
-                                            <p className="info-author text-danger">
-                                                <img src="assets/images/author-image.png" alt=""/>
-                                            </p>
-                                            <div className="info-user">
-                                                <p>{resultData.data.names[0]._display}</p>
-                                            </div>
-                                            <div className="info-location">
-                                                <small className="d-block">
-                                                    Works at {resultData.data.jobs[0].organization}
-                                                </small>
-                                                <small className="d-block">
-                                                    {resultData.data.addresses[0]._display}
-                                                </small>
-                                            </div>
-                                            <div className="info-email text-center">
-                                                <small className="d-block">
-                                                    {resultData.data.emails[1].address}
-                                                </small>
-                                            </div>
-                                            <p className="info-download-btn">
-                                                <img src="assets/images/Group 1899.png" alt=""/>
-                                            </p>
-                                            <p className="info-up-btn">
-                                                <img src="assets/images/Group 1900.png" alt=""/>
-                                            </p>
-                                            <p className="info-plus-btn">
-                                                <img src="assets/images/Group 1863.png" alt=""/>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : null}
-                            <div
-                                style={{
-                                    background: "white",
-                                    borderRadius: "20px",
-                                    padding: "20px",
-                                }}
-                            >
-                                <SpecificUser details={details}/>
-                            </div>
+              {!loading ? (
+                <div className="user-widget-box  mt-3">
+                  <div className="info-container">
+                    <div className="user-info-container">
+                      <input
+                        className="info-box ms-3 me-3"
+                        type="checkbox"
+                        id="checkbox"
+                      />
+                      <p className="info-author text-danger">
+                        <img src="assets/images/author-image.png" alt="" />
+                      </p>
+                      <div className="info-user">
+                        <p>{resultData.data.names[0]._display}</p>
+                      </div>
+                      <div className="info-location">
+                        <small className="d-block">
+                          Works at {resultData.data.jobs[0].organization}
+                        </small>
+                        <small className="d-block">
+                          {resultData.data.addresses[0]._display}
+                        </small>
+                      </div>
+                      <div className="info-email text-center">
+                        <small className="d-block">
+                          {resultData.data.emails[1].address}
+                        </small>
+                      </div>
+                      <p className="info-download-btn">
+                        <img src="assets/images/Group 1899.png" alt="" />
+                      </p>
+                      <p className="info-up-btn">
+                        <img src="assets/images/Group 1900.png" alt="" />
+                      </p>
+                      <p className="info-plus-btn">
+                        <img src="assets/images/Group 1863.png" alt="" />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              <div
+                style={{
+                  background: "white",
+                  borderRadius: "20px",
+                  padding: "20px",
+                }}
+              >
+                <SpecificUser details={details} />
+              </div>
 
                             <div className="user-widget-box  my-3">
                                 {myLeads.map((data) => (

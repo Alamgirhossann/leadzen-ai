@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import CustomizeButton from "./CustomizeButton";
+import { useHistory } from "react-router-dom";
 
 const Filters = () => {
+  const history = useHistory();
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+  const [locationRes, setLocationRes] = useState([]);
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -14,7 +17,29 @@ const Filters = () => {
     csv_file: null,
   });
 
-  const handleLocation = (e) => {
+  const handleLocationOnChange = async (e) => {
+    if (e.target.value && e.target.value.length > 3) {
+      try {
+        const response = await fetch(
+          apiServer + "/filter/location?search_location=" + e.target.value,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
+        let loc_res = await response.json();
+        setLocationRes(loc_res.hits.hits);
+        console.log("loc_res>>>>", loc_res.hits.hits);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    }
+  };
+  const handleLocation = async (e) => {
+    console.log("In handle location>>>>>>");
     setCustomSearch({ ...customSearch, location: e.target.value });
   };
   const handleIndustry = (e) => {
@@ -33,79 +58,169 @@ const Filters = () => {
     setCustomSearch({ ...customSearch, keywords: e.target.value });
   };
   const handleCustomSubmit = (e) => {
-    console.log(customSearch);
+    console.log(">>>>>>>>>>>>", customSearch);
+    history.push({
+      pathname: "/searchResultTexAu",
+      state: { customSearch },
+    });
   };
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-  const [searchText, setSearchText] = useState();
-  const [socialMediaType, setSocialMediaType] = useState({
-    url: null,
-    type: [],
-  });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
-
-  const [myLeads, setMyLeads] = useState([
-    {
-      name: "John Smith",
-      desc: "English Speaker",
-      comp: "Hexagon AB",
-      search_date: "12/05/2021",
-      address: "6720 Ulster Court, Alpharetta, Georgia",
-      show: false,
-    },
-    {
-      name: "Joe Mama",
-      desc: "English Speaker",
-      comp: "Apple INC",
-      search_date: "05/05/2021",
-      address: "6720 Ulster Court, Alpharetta, Georgia",
-      show: false,
-    },
-  ]);
-
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    console.log(searchText);
-  };
-
-  const handleType = (e) => {
-    setSocialMediaType({ ...socialMediaType, type: e.target.value });
-  };
-  const handleSocialMedia = (e) => {
-    setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
-  };
-  const handleTypeSubmit = (e) => {
-    e.preventDefault();
-    console.log(socialMediaSearch);
-  };
-  const handleUnlock = (name) => {
-    let index = myLeads.findIndex((myLeads) => myLeads.name === name);
-    let show_value = myLeads[index].show;
-    if (!show_value) {
-      myLeads[index] = { ...myLeads[index], show: true };
-      console.log(myLeads[index]);
+  const handleCloseCompany = (type) => {
+    console.log("In HandleCloseCompany......", type);
+    if (type === "location") {
+      setCustomSearch({ ...customSearch, location: "" });
     }
-    return false;
-  };
-  const [perPage, setPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [offset, setOffset] = useState();
-  const handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    const offset = selectedPage * perPage;
-    setCurrentPage(selectedPage);
-    setOffset(offset);
+    if (type === "industry") {
+      setCustomSearch({ ...customSearch, industry: "" });
+    }
+    if (type === "job_title") {
+      setCustomSearch({ ...customSearch, job_title: "" });
+    }
+    if (type === "education") {
+      setCustomSearch({ ...customSearch, education: "" });
+    }
+    if (type === "company_name") {
+      setCustomSearch({ ...customSearch, company_name: "" });
+    }
+    if (type === "keywords") {
+      setCustomSearch({ ...customSearch, keywords: "" });
+    }
   };
   return (
     <div>
       <div className="sidebar-search-for sidebar-widget px-4 pb-3 my-3">
         <div className="sidebar-accordion accordion" id="accordionExample">
           <div className="accordion-item">
+            <div>
+              {customSearch.location ? (
+                <p
+                  className="text-left top-search"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    style={{ width: "10px", marginRight: "5px" }}
+                    src="assets/images/cil_location-pin.png"
+                    alt=""
+                  />
+                  {customSearch.location}
+                  <img
+                    className="ps-4"
+                    src="assets/images/cross-icon.png"
+                    alt=""
+                    onClick={() => handleCloseCompany("location")}
+                  />
+                </p>
+              ) : null}
+              {customSearch.industry ? (
+                <p
+                  className="text-left top-search"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    style={{ width: "8px", marginRight: "5px" }}
+                    src="assets/images/pro-profile.png"
+                    alt=""
+                  />
+                  {customSearch.industry}
+                  <img
+                    className="ps-4"
+                    src="assets/images/cross-icon.png"
+                    alt=""
+                    onClick={() => handleCloseCompany("industry")}
+                  />
+                </p>
+              ) : null}
+              {customSearch.job_title ? (
+                <p
+                  className="text-left top-search"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    style={{ width: "8px", marginRight: "5px" }}
+                    src="assets/images/pro-profile.png"
+                    alt=""
+                  />
+                  {customSearch.job_title}
+                  <img
+                    className="ps-4"
+                    src="assets/images/cross-icon.png"
+                    alt=""
+                    onClick={() => handleCloseCompany("job_title")}
+                  />
+                </p>
+              ) : null}
+              {customSearch.education ? (
+                <p
+                  className="text-left top-search"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    style={{ width: "8px", marginRight: "5px" }}
+                    src="assets/images/pro-profile.png"
+                    alt=""
+                  />
+                  {customSearch.education}
+                  <img
+                    className="ps-4"
+                    src="assets/images/cross-icon.png"
+                    alt=""
+                    onClick={() => handleCloseCompany("education")}
+                  />
+                </p>
+              ) : null}
+              {customSearch.company_name ? (
+                <p
+                  className="text-left top-search"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    style={{ width: "8px", marginRight: "5px" }}
+                    src="assets/images/pro-profile.png"
+                    alt=""
+                  />
+                  {customSearch.company_name}
+                  <img
+                    className="ps-4"
+                    src="assets/images/cross-icon.png"
+                    alt=""
+                    onClick={() => handleCloseCompany("company_name")}
+                  />
+                </p>
+              ) : null}
+              {customSearch.keywords ? (
+                <p
+                  className="text-left top-search"
+                  style={{ width: "fit-content" }}
+                >
+                  <img
+                    style={{ width: "8px", marginRight: "5px" }}
+                    src="assets/images/pro-profile.png"
+                    alt=""
+                  />
+                  {customSearch.keywords}
+                  <img
+                    className="ps-4"
+                    src="assets/images/cross-icon.png"
+                    alt=""
+                    onClick={() => handleCloseCompany("keywords")}
+                  />
+                </p>
+              ) : null}
+              <div className="d-flex justify-content-between">
+                <p>
+                  <img
+                    style={{ width: "10px", marginRight: "5px" }}
+                    src="assets/images/combined-eye.png"
+                    alt=""
+                  />
+                  Hide
+                </p>
+                <p className="text-danger">Clear All</p>
+              </div>
+            </div>
             <h2 className="accordion-header">
               <button
                 className="accordion-button collapsed"
@@ -129,6 +244,7 @@ const Filters = () => {
                   onBlur={handleLocation}
                   type="text"
                   placeholder="Search Location"
+                  onChange={handleLocationOnChange}
                 />
               </div>
             </div>
@@ -286,7 +402,7 @@ const Filters = () => {
         </button>
 
         <p>
-          Bulk Search by uploding  
+          Bulk Search by uploding
           <a
             // href="#"
             className="text-danger"
@@ -294,7 +410,7 @@ const Filters = () => {
             data-bs-toggle="modal"
             data-bs-target="#bulkmodal"
           >
-             csv
+            csv
           </a>
         </p>
       </div>

@@ -1,16 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const UserSearch = () => {
+  const history = useHistory();
   const [searchText, setSearchText] = useState({ text: null });
+
   const handleHeadSearch = (e) => {
     setSearchText({ ...searchText, text: e.target.value });
   };
   const handleHeadSubmit = (e) => {
     e.preventDefault();
-    console.log(searchText);
+    console.log("search Text>>>>>>>>>>>>", searchText.text);
+    if (
+      !searchText.text
+      // searchText.text === undefined ||
+      // searchText.text.toString().length <= 0
+    ) {
+      alert("Enter details");
+      return;
+    }
+    history.push({
+      pathname: "/searchResult",
+      state: { searchText },
+    });
   };
+
+  function handleSubmit(e) {
+    console.log("in Submit.......", searchText);
+  }
+
   return (
     <div>
       <div className="user-widget-box p-4 my-3">
@@ -21,13 +41,17 @@ const UserSearch = () => {
             alt="title"
           />
           <div className="search-promote-content">
-            <form action="#" className="search-form4 d-flex mb-3">
+            <form
+              onSubmit={handleHeadSubmit}
+              className="search-form4 d-flex mb-3"
+            >
               <div className="input-group">
                 <div className="input-placeholder">
                   <input
+                    id="inputText"
                     className="ps-3"
-                    onBlur={handleHeadSearch}
-                    type="text"
+                    name="searchString"
+                    onChange={handleHeadSearch}
                     required
                   />
                   <div className="placeholder">
@@ -37,7 +61,7 @@ const UserSearch = () => {
                 </div>
                 <button
                   className="btn text-white"
-                  onClick={handleHeadSubmit}
+                  // onClick={handleHeadSubmit}
                   type="submit"
                 >
                   <span className="pe-1">
