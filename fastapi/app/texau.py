@@ -15,7 +15,7 @@ from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
     API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
     API_CONFIG_TEXAU_PROXY,
-    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
+    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL, API_CONFIG_PROXY_USER, API_CONFIG_PROXY_PASS,
 )
 from app.config import (
     API_CONFIG_TEXAU_KEY,
@@ -127,6 +127,9 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
                 "li_at": cookie,
                 "proxy": {
                     "proxyName": API_CONFIG_TEXAU_PROXY,
+                    'ip': 'http://168.81.41.43:47192',
+                    'name': API_CONFIG_PROXY_USER,
+                    'password': API_CONFIG_PROXY_PASS
                 },
             },
             "executionName": str(uuid.uuid4()),
