@@ -53,8 +53,8 @@ def read_linkedin_cookie():
     return cookie
 
 
-async def check_task_status(task_id: str) -> Optional[Dict]:
-    if not task_id:
+async def check_execution_status(execution_id: str) -> Optional[Dict]:
+    if not execution_id:
         logger.warning("Invalid task_id")
         return None
 
@@ -69,7 +69,7 @@ async def check_task_status(task_id: str) -> Optional[Dict]:
 
             while timeout_counter > 0:
                 response = await client.get(
-                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{task_id}", headers=headers
+                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{execution_id}", headers=headers
                 )
 
                 if response.status_code == 200:
@@ -96,16 +96,11 @@ async def check_task_status(task_id: str) -> Optional[Dict]:
                         #     },
                         #     "success": true
                         # }
-                        if (
-                            data["success"]
-                            and data["execution"]["status"] == "completed"
-                        ):
+                        if data["execution"]["status"] == "completed":
                             logger.success(f"Got Task Results: {data=}")
                             return data["execution"]["output"]
                         else:
-                            logger.warning(
-                                f'{data["success"]=}, {data["execution"]["status"]=}'
-                            )
+                            logger.warning(f'{data["execution"]["status"]=}')
 
                 await asyncio.sleep(
                     API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL
@@ -117,11 +112,11 @@ async def check_task_status(task_id: str) -> Optional[Dict]:
 
             return None
     except Exception as e:
-        logger.critical(f"Exception Getting Task Status: {task_id=}: {str(e)}")
+        logger.critical(f"Exception Getting Task Status: {execution_id=}: {str(e)}")
         return None
 
 
-async def send_task_request(cookie, linkedin_url) -> Optional[str]:
+async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
     payload = json.dumps(
         {
             "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
@@ -187,7 +182,9 @@ async def search_using_texau(request: TexAuRequest):
             )
 
         if not (
-            task_id := await send_task_request(cookie=cookie, linkedin_url=query_url)
+            execution_id := await send_spice_request(
+                cookie=cookie, linkedin_url=query_url
+            )
         ):
             logger.warning("Invalid Task Id")
             raise HTTPException(
@@ -195,7 +192,7 @@ async def search_using_texau(request: TexAuRequest):
                 detail=str("TexAu: Invalid Task Id"),
             )
 
-        if not (data := await check_task_status(task_id=task_id)):
+        if not (data := await check_execution_status(execution_id=execution_id)):
             logger.error("Invalid Data")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
