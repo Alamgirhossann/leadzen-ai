@@ -16,6 +16,8 @@ services:
             - "8000:5000"
         environment:
             - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
+        depends_on: 
+            - selenium
             
     person_react:
         image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"

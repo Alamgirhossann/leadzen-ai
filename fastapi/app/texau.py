@@ -65,7 +65,7 @@ async def check_execution_status(execution_id: str) -> Optional[Dict]:
                 "Content-Type": "application/json",
             }
 
-            timeout_counter = 12
+            timeout_counter = 18
 
             while timeout_counter > 0:
                 response = await client.get(
@@ -74,28 +74,6 @@ async def check_execution_status(execution_id: str) -> Optional[Dict]:
 
                 if response.status_code == 200:
                     if data := response.json():
-                        # {
-                        #     "execution": {
-                        #         "status": "completed",
-                        #         "executionTime": 3296,
-                        #         "executionName": "",
-                        #         "inputs": {
-                        #             "name": "lemondesign"
-                        #         },
-                        #         "output": {
-                        #             "name": "lemondesign",
-                        #             "domain": "lemondesign.co.in"
-                        #         },
-                        #         "columnOrder": [
-                        #             "name",
-                        #             "domain",
-                        #             "error",
-                        #             "message",
-                        #             "cookieError"
-                        #         ]
-                        #     },
-                        #     "success": true
-                        # }
                         if data["execution"]["status"] == "completed":
                             logger.success(f"Got Task Results: {data=}")
                             return data["execution"]["output"]
@@ -201,7 +179,6 @@ async def search_using_texau(request: TexAuRequest):
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=str("TexAu: Invalid Data for Task-Id"),
             )
-
         return TexAuResponse(data=data)
     except Exception as e:
         logger.critical(str(e))
