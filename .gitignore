@@ -53,3 +53,5 @@ Thumbs.db
 
 config.txt
 fastapi/venv
+fastapi/linkedin_cookies.csv
+fastapi/proxy_auth_plugin.zip

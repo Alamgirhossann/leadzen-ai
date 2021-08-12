@@ -2,10 +2,10 @@ version: '3.3'
 
 services:
     selenium:
-        image: "${CONTAINER_REGISTRY}/selenium/standalone-chrome:latest"
+        image: "selenium/standalone-chrome:latest"
         container_name: "selenium"
         ports:
-            - "4445:4444"
+            - "4444:4444"
         volumes:
             - /dev/shm:/dev/shm
 

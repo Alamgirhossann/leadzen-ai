@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_utils.tasks import repeat_every
+from loguru import logger
 
-from app.config import CSV_FILE
+from app.config import API_CONFIG_LINKEDIN_CSV_FILE
 from app.customize_filter import router as filter_router
 from app.pipl import router as pipl_router
-from app.selenium import fetch_linkedin_cookie
-from app.texau_router import router as texau_router
+from app.scraper import fetch_linkedin_cookie
+from app.texau import router as texau_router
 
 app = FastAPI()
 load_dotenv()
@@ -35,12 +36,12 @@ app.include_router(router=texau_router, prefix="/api")
 
 @app.on_event("startup")
 @repeat_every(seconds=60 * 60)
-def job():
-    print("linkedin cookie...")
+def refresh_linkedin_cookie():
+    logger.debug("linkedin cookie...")
     data = fetch_linkedin_cookie()
-    header = ['cookie']
-    with open(CSV_FILE, 'w') as f:
+    header = ["cookie"]
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
         writer.writerow([data])
-    print(header)
+    logger.debug(header)
