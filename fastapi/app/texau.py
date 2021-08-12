@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from loguru import logger
+from time import sleep
 
 router = APIRouter(prefix="/texAu", tags=["TexAu Search"])
 
@@ -7,6 +8,7 @@ router = APIRouter(prefix="/texAu", tags=["TexAu Search"])
 @router.post("/search")
 async def texau_search():
     logger.debug("in texau..")
+    sleep(2)
     response = {
         "execution": {
             "status": "completed",

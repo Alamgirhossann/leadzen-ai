@@ -28,7 +28,7 @@ class PiplRequest(BaseModel):
 )
 async def people_search(request: PiplRequest):
     print("Request...", request)
-    response_data =None
+    response_data = None
     json_compatible_item_data = None
     try:
         request = SearchAPIRequest(
@@ -36,6 +36,7 @@ async def people_search(request: PiplRequest):
             first_name=request.name.first_name,
             last_name=request.name.last_name,
             url=request.url,
+            match_requirements="phones",
             api_key=API_CONFIG_PIPL_API_KEY,
         )
         # request = SearchAPIRequest(email='', first_name='', last_name='',
@@ -53,6 +54,7 @@ async def people_search(request: PiplRequest):
         else:
             response_data = None
             json_compatible_item_data = None
+
         logger.success("response_data Size>>>>" + str(response_data))
     except Exception as e:
         logger.critical("Exception >>" + str(e))

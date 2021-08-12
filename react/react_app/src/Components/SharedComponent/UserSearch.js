@@ -28,47 +28,46 @@ const UserSearch = () => {
     if (!searchText.text) {
       alert("Enter details");
       return;
-    } else {
-      console.log("In else....");
-      isEmail = searchText.text.includes("@");
-      words = WordCount(searchText.text);
-      isMultiWords = searchText.text.includes(" ");
-      isUrl =
-        searchText.text.toLowerCase().includes("https://") ||
-        searchText.text.toLowerCase().includes("http://");
+    }
+    console.log("In else....");
+    isEmail = searchText.text.includes("@");
+    words = WordCount(searchText.text);
+    // isMultiWords = searchText.text.includes(" ");
+    isUrl =
+      searchText.text.toLowerCase().includes("https://") ||
+      searchText.text.toLowerCase().includes("http://");
 
-      if (isEmail) {
-        console.log("Its email");
-        emailUser = searchText.text;
-      }
-      if (!isUrl && !isEmail) {
-        console.log("Its sentence or multiple words");
-        firstNameUser = searchText.text.split(" ")[0];
+    if (isEmail) {
+      console.log("Its email");
+      emailUser = searchText.text;
+    }
+    if (!isUrl && !isEmail) {
+      console.log("Its sentence or multiple words");
+      firstNameUser = searchText.text.split(" ")[0];
 
-        switch (words) {
-          case 1:
-            lastNameUser = "";
-            break;
-          case 2:
-            lastNameUser = searchText.text.split(" ")[1];
-            break;
-          case 3:
-            lastNameUser = searchText.text.split(" ")[2];
-            break;
-          default:
-            lastNameUser = searchText.text.split(" ")[words - 1];
-        }
-      }
-      if (isUrl) {
-        console.log("Its Url");
-        urlUser = searchText.text;
+      switch (words) {
+        case 1:
+          lastNameUser = "";
+          break;
+        case 2:
+          lastNameUser = searchText.text.split(" ")[1];
+          break;
+        case 3:
+          lastNameUser = searchText.text.split(" ")[2];
+          break;
+        default:
+          lastNameUser = searchText.text.split(" ")[words - 1];
       }
     }
-    if (emailUser === undefined || emailUser === null) emailUser = "";
-    if (lastNameUser === undefined || lastNameUser === null) lastNameUser = "";
-    if (firstNameUser === undefined || firstNameUser === null)
-      firstNameUser = "";
-    if (urlUser === undefined) urlUser = "";
+    if (isUrl) {
+      console.log("Its Url");
+      urlUser = searchText.text;
+    }
+
+    if (!emailUser) emailUser = "";
+    if (!lastNameUser) lastNameUser = "";
+    if (!firstNameUser) firstNameUser = "";
+    if (!urlUser) urlUser = "";
     let reqJsonPipl = {
       email: emailUser,
       name: { first_name: "", last_name: "" },

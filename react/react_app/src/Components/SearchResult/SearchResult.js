@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
@@ -20,13 +18,6 @@ const SearchResult = (props) => {
     csv_file: null,
   });
 
-  const [searchText, setSearchText] = useState();
-  const [socialMediaType, setSocialMediaType] = useState({
-    url: null,
-    type: [],
-  });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
-  const [resultData, setSearchResult] = useState({ data: null });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
@@ -52,27 +43,29 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    console.log("Request..", props.location.state.reqJsonPipl);
-    try {
-      const response = await fetch(apiServer + "/pipl/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(props.location.state.reqJsonPipl),
-      });
+    if (props.location.state) {
+      console.log("Request..", props.location.state.reqJsonPipl);
+      try {
+        const response = await fetch(apiServer + "/pipl/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(props.location.state.reqJsonPipl),
+        });
 
-      let json_res = await response.json();
+        let json_res = await response.json();
 
-      console.log("Data>>>>>>>>>>>", json_res);
-
-      if (!json_res.detail) {
-        setMyLeads(json_res);
+        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setLoading(false);
+        if (!json_res.detail) {
+          setMyLeads(json_res);
+        }
+      } catch (err) {
+        console.error("Error: ", err);
       }
-      setLoading(false);
-    } catch (err) {
-      console.error("Error: ", err);
+    } else {
     }
   }, []);
 
@@ -103,14 +96,6 @@ const SearchResult = (props) => {
       profile_credits: 500,
       mail_credits: 1000,
     },
-  };
-
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    console.log(searchText);
   };
 
   const handleCSVFile = (e) => {
@@ -208,32 +193,6 @@ const SearchResult = (props) => {
             <div className="col-md-8 col-lg-9">
               <div className="user-search-wrapper">
                 <div className="detailed-search">
-                  <div className="search-promote-content">
-                    <form className="form-inline d-flex my-2 my-lg-0">
-                      <input
-                        className="form-control mr-sm-2"
-                        type="search"
-                        onBlur={handleSearch}
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                      <button
-                        className="btn text-white d-flex ms-3"
-                        onClick={handleSearchSubmit}
-                        style={{
-                          background: "#FB3E3E",
-                          position: "absolute",
-                          left: "325px",
-                        }}
-                        type="submit"
-                      >
-                        <span className="pe-1">
-                          <FontAwesomeIcon icon={faSearch} />
-                        </span>
-                        Search
-                      </button>
-                    </form>
-                  </div>
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
@@ -350,8 +309,12 @@ const SearchResult = (props) => {
                               <a
                                 className="btn"
                                 data-toggle="collapse"
-                                href={"#collapseExample_" + index}
-                                data-target={"#collapseExample_" + index}
+                                href={
+                                  "#collapseExample_" + `${currentPage}${index}`
+                                }
+                                data-target={
+                                  "#collapseExample_" + `${currentPage}${index}`
+                                }
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="collapseExample"
@@ -382,7 +345,7 @@ const SearchResult = (props) => {
                           >
                             <div
                               className="panel-collapse collapse in"
-                              id={"collapseExample_" + index}
+                              id={"collapseExample_" + `${currentPage}${index}`}
                             >
                               {/* <div className="card card-body"> */}
                               <SpecificUser details={data} />
