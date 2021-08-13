@@ -385,13 +385,10 @@ const SearchResult = (props) => {
                               {specificUserDetails?.map((spec) => (
                                 <span>
                                   {spec.index === `${currentPage}${index}` ? (
-                                    // spec.details === "Record Not Found" ? (
-                                    //   <span>Record Not found</span>
-                                    // ) : (
                                     <span>
                                       <SpecificUser details={spec.details} />
                                     </span>
-                                  ) : // )
+                                  ) :
                                   null}
                                 </span>
                               ))}{" "}
