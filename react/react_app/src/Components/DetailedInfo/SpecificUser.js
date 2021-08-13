@@ -1,52 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import {GoogleApiWrapper, Map} from "google-maps-react";
+import { GoogleApiWrapper, Map } from "google-maps-react";
 
 const SpecificUser = (props) => {
-
- // const [details, setDetails] = useState(props.details);
- //
- //    const getDomain = async (organizationName) => {
- //        const domainApiServer = `${process.env.REACT_APP_DOMAIN_API_SERVER}`;
- //        const domainApiUrl = `${domainApiServer}v1/domains/find?name=`;
- //        const domainApiKey = `${process.env.REACT_APP_DOMAIN_API_KEY}`;
- //        const organization = organizationName.split(' ').join('-');
- //        try {
- //            const domainApiResponse = await fetch(`${domainApiUrl}${organization}`,
- //                {
- //                    headers: {Authorization: `Bearer ${domainApiKey}`}
- //                });
- //            if (domainApiResponse.ok) {
- //                const response = await domainApiResponse.json();
- //                return response.domain;
- //            }
- //        } catch (error) {
- //            console.error(error);
- //        }
- //    }
- //
- //    const updateCompaniesUrl = async () => {
- //        const companyPromisesList = details.companies.map(async company => {
- //                const domain = await getDomain(company.name);
- //                return {...company, url: domain}
- //            }
- //        );
- //        const companies = await Promise.all(companyPromisesList);
- //
- //        const eduInstitutePromisesList = details.education.map(async educationInstitute => {
- //                const domain = await getDomain(educationInstitute.name);
- //                return {...educationInstitute, url: domain}
- //            }
- //        );
- //        const education = await Promise.all(eduInstitutePromisesList);
- //
- //        setDetails({...details, companies: companies, education: education});
- //    }
- //
- //    useEffect(() => {
- //        updateCompaniesUrl();
- //    }, [])
-
   return (
     <div>
       {" "}
