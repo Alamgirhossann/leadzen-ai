@@ -27,22 +27,6 @@ const FirstTimeUser = () => {
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
     script.async = true;
-    const apiServer = "";
-    const apiUrl = "";
-    try {
-      const response = await fetch(apiUrl, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      if (response.ok) {
-        const result = await response.json();
-      }
-    } catch (error) {
-      console.error("Error while fetching data", error);
-    }
-
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
