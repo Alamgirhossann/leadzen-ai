@@ -6,6 +6,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import UserSearch from "../SharedComponent/UserSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const FirstTimeUser = () => {
   const user = {
@@ -103,6 +104,7 @@ const FirstTimeUser = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
+              <BulkSearch/>
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
