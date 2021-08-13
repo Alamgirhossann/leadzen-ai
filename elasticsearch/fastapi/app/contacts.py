@@ -146,6 +146,14 @@ async def upload_csv_file(
             detail="Uploaded File is Not a CSV File",
         )
 
+    chars_not_allowed_in_filename = [" ", '"', "*", "\\", "<", "|", ",", ">", "/", "?"]
+    if any([x in file.filename for x in chars_not_allowed_in_filename]):
+        logger.warning(f"Invalid Filename: {file.filename=}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Filename cannot contain any of these: {chars_not_allowed_in_filename}",
+        )
+
     # this is due to a known defect in the SpooledTemporary file library
     # as it dont implement the readable interface that pandas needs to read data
     # so i make a copy of the spooled temp file into a regular temp file
