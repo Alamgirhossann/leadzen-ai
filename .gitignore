@@ -52,4 +52,5 @@ Thumbs.db
 *.wmv
 
 config.txt
-package-lock.json
+elasticsearch/elastic_data
+elasticsearch/fastapi/venv
