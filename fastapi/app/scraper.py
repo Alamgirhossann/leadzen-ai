@@ -118,6 +118,7 @@ def fetch_linkedin_cookie():
                 print("\n\nli_at:")
                 print(cookie_dict["value"])
                 cookie = cookie_dict["value"]
+        browser.quit()
 
         return cookie
     except Exception as e:

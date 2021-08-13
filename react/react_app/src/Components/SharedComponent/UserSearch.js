@@ -92,7 +92,7 @@ const UserSearch = () => {
     };
     if (!isUrl && !isEmail) {
       history.push({
-        pathname: "/searchResultTexAu",
+        pathname: "/result_by_name",
         state: { requestTexAu },
       });
     }

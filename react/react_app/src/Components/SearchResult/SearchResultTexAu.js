@@ -38,19 +38,17 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
 
-    setCurrentLeads(myLeads.slice(pageNumber * 10 - 10, pageNumber * 10));
-    console.log(
-      "currentLeads>>>",
-      currentLeads,
-      pageNumber * 10 - 10,
-      pageNumber * 10,
-      myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+    setCurrentLeads(
+      myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
     );
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
-    if (props.location.pathname.includes("/searchResultTexAu")) {
+    if (
+      props.location.pathname.includes("/result_by_name") ||
+      props.location.pathname.includes("/advanceSearch")
+    ) {
       let requestForTexAu = {};
       if (props.location.state.requestTexAu) {
         console.log(
@@ -59,15 +57,48 @@ const SearchResult = (props) => {
         );
         requestForTexAu = props.location.state.requestTexAu;
       }
+      let keyword = null;
+      let isKeyword,
+        isEducation = false;
       if (props.location.state.customSearch) {
         console.log(
           "from advance.customSearch filters .....",
           props.location.state.customSearch
         );
-        requestForTexAu = props.location.state.customSearch;
+        if (props.location.state.customSearch.keywords) isKeyword = true;
+        if (props.location.state.customSearch.education) isEducation = true;
+        if (isKeyword && isEducation)
+          keyword =
+            props.location.state.customSearch.keywords +
+            " " +
+            props.location.state.customSearch.education;
+
+        if (!isEducation && isKeyword)
+          keyword = props.location.state.customSearch.keywords;
+        if (!isKeyword && isEducation)
+          keyword = props.location.state.customSearch.education;
+        requestForTexAu = {
+          firstName: "",
+          lastName: "",
+          title: props.location.state.customSearch.title
+            ? props.location.state.customSearch.title
+            : "",
+          keywords: keyword ? keyword : "",
+          industry: props.location.state.customSearch.industry
+            ? [props.location.state.customSearch.industry]
+            : [],
+          location: props.location.state.customSearch.location
+            ? [props.location.state.customSearch.location]
+            : [],
+          currentCompany: props.location.state.customSearch.company_name
+            ? [props.location.state.customSearch.company_name]
+            : [],
+          pastCompany: [],
+        };
+        console.log("request....", requestForTexAu);
       }
       try {
-        const response = await fetch(apiServer + "/texAu/search", {
+        const response = await fetch(apiServer + "/texau/search?", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -78,7 +109,10 @@ const SearchResult = (props) => {
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res);
         setLoading(false);
-        json_res ? setMyLeads(json_res.execution.output) : setLoading(true);
+        if (json_res) setMyLeads(json_res.data);
+        if (json_res.detail) {
+          setMyLeads("");
+        }
         // json_res
         //   ? setSearchResult({ ...resultData, data: json_res })
         //   : setLoading(true);
@@ -295,7 +329,7 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads.length === 0 ? (
+                    {myLeads && myLeads.length === 0 ? (
                       <div>
                         <h5>Record not found</h5>
                       </div>
@@ -388,8 +422,7 @@ const SearchResult = (props) => {
                                     <span>
                                       <SpecificUser details={spec.details} />
                                     </span>
-                                  ) :
-                                  null}
+                                  ) : null}
                                 </span>
                               ))}{" "}
                             </div>
@@ -411,7 +444,7 @@ const SearchResult = (props) => {
               <div className="d-flex justify-content-center">
                 <Pagination
                   postsPerPage={10}
-                  totalPosts={myLeads.length}
+                  totalPosts={myLeads ? myLeads.length : 1}
                   paginate={paginate}
                 />
               </div>
