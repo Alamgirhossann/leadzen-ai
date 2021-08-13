@@ -11,8 +11,7 @@ from app.config import (
 )
 
 linkedin_baseurl = API_CONFIG_LINKEDIN_SEARCH_BASE_URL
-location_codes = {}
-company_codes = {}
+
 key_value_pairs = dict()
 with open(API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE) as json_file:
     industry_codes = json.load(json_file)
