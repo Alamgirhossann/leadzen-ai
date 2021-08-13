@@ -71,6 +71,9 @@ def query_url_builder(search_field_dict):
 
         link = linkedin_baseurl
         for k, v in key_value_pairs.items():
+            if k == 'education':
+                kw += (f' {v}' if kw else v)
+                continue
             if v:
                 if type(v) is list:
                     if link.endswith("?"):
