@@ -14651,8 +14651,8 @@ a:hover {
 .customize-search {
   border: none;
   outline: none;
-  background: #e9f1ff;
-  padding: 6px;
+  background: #E9F1FF;
+  padding: 8px;
   border-radius: 20px;
 }
 .alignment {
@@ -14824,3 +14824,26 @@ a:hover {
   outline: none;
   padding: 3px 15px;
 }
+
+datalist {
+  /* position: absolute;
+  max-height: 20em;
+  border: 0 none;
+  overflow-x: hidden;
+  overflow-y: auto; */
+}
+
+datalist option {
+  font-size: 0.8em;
+  padding: 0.3em 1em;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* option active styles */
+datalist option:hover, datalist option:focus {
+  color: #fff;
+  background-color: #036;
+  outline: 0 none;
+}
+

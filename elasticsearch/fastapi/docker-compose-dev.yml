@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  contact_search:
+    image: "analystt/contact_search:latest"
+    container_name: "contact_search"
+    environment:
+      -  API_CONFIG_ELASTICSEARCH_URL_WITH_USER_PASS=${ELASTICSEARCH}
+      -  API_CONFIG_MANDATORY_COLUMNS=PhoneNumbers
+      -  API_CONFIG_DEFAULT_USERNAME=${USERNAME}
+      -  API_CONFIG_DEFAULT_PASSWORD=${PASSWORD}
+      -  API_CONFIG_MAX_RECORDS_UPLOADED_PER_CALL=5000
+    ports:
+        - "8000:5000"
