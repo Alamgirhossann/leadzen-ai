@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
+import BulkSearch from "../SharedComponent/BulkSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
 import Filters from "../SharedComponent/Filters";
 import Header from "../SharedComponent/Header";
@@ -86,6 +87,7 @@ const UserGuide = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
+              <BulkSearch/>
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">

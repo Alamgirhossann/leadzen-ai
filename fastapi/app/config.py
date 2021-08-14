@@ -26,6 +26,16 @@ API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE = os.getenv(
     "./app/industry_codes.json",
 )
 
+API_CONFIG_LINKEDIN_LOCATION_CODES_FILE = os.getenv(
+    "API_CONFIG_LINKEDIN_LOCATION_CODES_FILE",
+    "./app/location_codes.json",
+)
+
+API_CONFIG_LINKEDIN_COMPANY_CODES_FILE = os.getenv(
+    "API_CONFIG_LINKEDIN_COMPANY_CODES_FILE",
+    "./app/company_codes.json",
+)
+
 API_CONFIG_TEXAU_URL = os.getenv("TEXAU_URL", "https://prod-api.texau.com/api/invoke")
 API_CONFIG_TEXAU_KEY = os.getenv(
     "TEXAU_KEY",
