@@ -6,8 +6,18 @@ import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const SearchResult = (props) => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "assets/js/app.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -188,6 +198,7 @@ const SearchResult = (props) => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
+              <BulkSearch/>
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
