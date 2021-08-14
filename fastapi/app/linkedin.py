@@ -13,14 +13,26 @@ from app.config import (
 linkedin_baseurl = API_CONFIG_LINKEDIN_SEARCH_BASE_URL
 
 key_value_pairs = dict()
-with open(API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE) as json_file:
-    industry_codes = json.load(json_file)
+try:
+    with open(API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE) as json_file:
+        industry_codes = json.load(json_file)
+except Exception as e:
+    industry_codes = {}
+    logger.critical(str(e))
 
-with open(API_CONFIG_LINKEDIN_LOCATION_CODES_FILE) as json_file:
-    location_codes = json.load(json_file)
+try:
+    with open(API_CONFIG_LINKEDIN_LOCATION_CODES_FILE) as json_file:
+        location_codes = json.load(json_file)
+except Exception as e:
+    location_codes = {}
+    logger.critical(str(e))
 
-with open(API_CONFIG_LINKEDIN_COMPANY_CODES_FILE) as json_file:
-    company_codes = json.load(json_file)
+try:
+    with open(API_CONFIG_LINKEDIN_COMPANY_CODES_FILE) as json_file:
+        company_codes = json.load(json_file)
+except Exception as e:
+    company_codes = {}
+    logger.critical(str(e))
 
 
 def set_list_values(link, k, v, link_ends_with=""):
