@@ -19,23 +19,23 @@ const Filters = () => {
 
   const handleLocationOnChange = async (e) => {
     if (e.target.value && e.target.value.length > 3) {
-      try {
-        const response = await fetch(
-          apiServer + "/filter/location?search_location=" + e.target.value,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
-        );
-        let loc_res = await response.json();
-        setLocationRes(loc_res.hits.hits);
-        console.log("loc_res>>>>", loc_res.hits.hits);
-      } catch (err) {
-        console.error("Error: ", err);
-      }
+      // try {
+      //   const response = await fetch(
+      //     apiServer + "/filter/location?search_location=" + e.target.value,
+      //     {
+      //       method: "GET",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         Accept: "application/json",
+      //       },
+      //     }
+      //   );
+      //   let loc_res = await response.json();
+      //   setLocationRes(loc_res.hits.hits);
+      //   console.log("loc_res>>>>", loc_res.hits.hits);
+      // } catch (err) {
+      //   console.error("Error: ", err);
+      // }
     }
   };
   const handleLocation = async (e) => {
@@ -58,9 +58,10 @@ const Filters = () => {
     setCustomSearch({ ...customSearch, keywords: e.target.value });
   };
   const handleCustomSubmit = (e) => {
-    console.log(">>>>>>>>>>>>", customSearch);
+    console.log(">>>>>>>>>>>>",customSearch, customSearch.location);
+
     history.push({
-      pathname: "/searchResultTexAu",
+      pathname: "/advanceSearch",
       state: { customSearch },
     });
   };
