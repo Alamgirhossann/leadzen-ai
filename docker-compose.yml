@@ -1,15 +1,29 @@
 version: '3.3'
 
 services:
+    selenium:
+        image: "selenium/standalone-chrome:latest"
+        container_name: "selenium"
+        ports:
+            - "4444:4444"
+        volumes:
+            - /dev/shm:/dev/shm
+
     person_fastapi:
         image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
         container_name: "person_fastapi"
         ports:
             - "8000:5000"
+        environment:
+            - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
+        depends_on: 
+            - selenium
             
     person_react:
         image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
         container_name: "person_react"      
         ports: 
             - 80:80
+        depends_on:
+            - person_fastapi
             

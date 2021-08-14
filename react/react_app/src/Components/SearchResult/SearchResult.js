@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const SearchResult = (props) => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "assets/js/app.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -20,13 +28,6 @@ const SearchResult = (props) => {
     csv_file: null,
   });
 
-  const [searchText, setSearchText] = useState();
-  const [socialMediaType, setSocialMediaType] = useState({
-    url: null,
-    type: [],
-  });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
-  const [resultData, setSearchResult] = useState({ data: null });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
@@ -52,120 +53,36 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-
-    if (props.location.pathname.includes("/advanceSearch")) {
-      console.log("from advance......", props.location.state.customSearch);
-      let json_res = null;
+    if (props.location.state) {
+      console.log("Request..", props.location.state.reqJsonPipl);
       try {
-        const response = await fetch(apiServer + "/texAu/search", {
+        const response = await fetch(apiServer + "/pipl/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify(props.location.state.customSearch),
+          body: JSON.stringify(props.location.state.reqJsonPipl),
         });
-        json_res = await response.json();
-        console.log("json_res texAu...", json_res);
+
+        let json_res = await response.json();
+
+        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setLoading(false);
+        if (!json_res.detail) {
+          setMyLeads(json_res);
+        }
       } catch (err) {
         console.error("Error: ", err);
       }
-    }
-    if (props.location.pathname.includes("/searchResult")) {
-      let isEmail = props.location.state.searchText.text.includes("@");
-      let words = WordCount(props.location.state.searchText.text);
-      let isMultiWords = props.location.state.searchText.text.includes(" ");
-      let isUrl =
-        props.location.state.searchText.text
-          .toLowerCase()
-          .includes("https://") ||
-        props.location.state.searchText.text.toLowerCase().includes("http://");
-
-      // if (isEmail || words >= 0) {
-      let reqJson = {};
-      let firstNameUser,
-        lastNameUser,
-        emailUser,
-        urlUser = "";
-      console.log(
-        "check>>>>>>>>>!isUrl && !isEmail && isMultiWords <= 3",
-        isEmail,
-        isUrl,
-        words <= 3,
-        !isUrl && !isEmail && isMultiWords
-      );
-      if (isEmail) {
-        console.log("Its email");
-        emailUser = props.location.state.searchText.text;
-      }
-      if (!isUrl && !isEmail && isMultiWords) {
-        console.log("Its sentence or multiple words");
-        firstNameUser = props.location.state.searchText.text.split(" ")[0];
-
-        switch (words) {
-          case 2:
-            lastNameUser = props.location.state.searchText.text.split(" ")[1];
-            break;
-          case 3:
-            lastNameUser = props.location.state.searchText.text.split(" ")[2];
-            break;
-          default:
-            lastNameUser =
-              props.location.state.searchText.text.split(" ")[words - 1];
-        }
-      }
-      if (isUrl) {
-        console.log("Its Url");
-        urlUser = props.location.state.searchText.text;
-      }
-      if (emailUser === undefined || emailUser === null) emailUser = "";
-      if (lastNameUser === undefined || lastNameUser === null)
-        lastNameUser = "";
-      if (firstNameUser === undefined || firstNameUser === null)
-        firstNameUser = "";
-      if (urlUser === undefined) urlUser = "";
-      reqJson = {
-        email: emailUser,
-        name: { first_name: firstNameUser, last_name: lastNameUser },
-        url: urlUser,
-      };
-      console.log("reqJson>>>>>>>>", reqJson);
-      await fetchData(reqJson);
+    } else {
     }
   }, []);
 
   useEffect(async () => {
     paginate(1);
   }, [myLeads]);
-  function WordCount(str) {
-    return str.split(" ").length;
-  }
-  const fetchData = async (searchText) => {
-    console.log("SearchText.....FetchApi...", apiServer);
-    let response,
-      json_res = null;
-    try {
-      response = await fetch(apiServer + "/pipl/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(searchText),
-      });
 
-      json_res = await response.json();
-
-      console.log("Data>>>>>>>>>>>", json_res);
-
-      if (!json_res.detail) {
-        setMyLeads(json_res);
-      }
-      setLoading(false);
-    } catch (err) {
-      console.error("Error: ", err);
-    }
-  };
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(false);
   const showClick = (e) => {
@@ -189,15 +106,6 @@ const SearchResult = (props) => {
       profile_credits: 500,
       mail_credits: 1000,
     },
-  };
-
-  var searchData = { count: 12, total: 250 };
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    console.log(searchText);
   };
 
   const handleCSVFile = (e) => {
@@ -290,37 +198,12 @@ const SearchResult = (props) => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
+              <BulkSearch/>
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
               <div className="user-search-wrapper">
                 <div className="detailed-search">
-                  <div className="search-promote-content">
-                    <form className="form-inline d-flex my-2 my-lg-0">
-                      <input
-                        className="form-control mr-sm-2"
-                        type="search"
-                        onBlur={handleSearch}
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                      <button
-                        className="btn text-white d-flex ms-3"
-                        onClick={handleSearchSubmit}
-                        style={{
-                          background: "#FB3E3E",
-                          position: "absolute",
-                          left: "325px",
-                        }}
-                        type="submit"
-                      >
-                        <span className="pe-1">
-                          <FontAwesomeIcon icon={faSearch} />
-                        </span>
-                        Search
-                      </button>
-                    </form>
-                  </div>
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
@@ -437,8 +320,12 @@ const SearchResult = (props) => {
                               <a
                                 className="btn"
                                 data-toggle="collapse"
-                                href={"#collapseExample_" + index}
-                                data-target={"#collapseExample_" + index}
+                                href={
+                                  "#collapseExample_" + `${currentPage}${index}`
+                                }
+                                data-target={
+                                  "#collapseExample_" + `${currentPage}${index}`
+                                }
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="collapseExample"
@@ -469,7 +356,7 @@ const SearchResult = (props) => {
                           >
                             <div
                               className="panel-collapse collapse in"
-                              id={"collapseExample_" + index}
+                              id={"collapseExample_" + `${currentPage}${index}`}
                             >
                               {/* <div className="card card-body"> */}
                               <SpecificUser details={data} />

@@ -6,6 +6,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import UserSearch from "../SharedComponent/UserSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const FirstTimeUser = () => {
   const user = {
@@ -27,22 +28,6 @@ const FirstTimeUser = () => {
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
     script.async = true;
-    const apiServer = "";
-    const apiUrl = "";
-    try {
-      const response = await fetch(apiUrl, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      if (response.ok) {
-        const result = await response.json();
-      }
-    } catch (error) {
-      console.error("Error while fetching data", error);
-    }
-
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
@@ -103,6 +88,7 @@ const FirstTimeUser = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
+              <BulkSearch/>
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
