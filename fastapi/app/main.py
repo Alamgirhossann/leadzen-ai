@@ -45,3 +45,15 @@ def refresh_linkedin_cookie():
         writer.writerow(header)
         writer.writerow([data])
     logger.debug(header)
+
+
+@app.get("/refresh_linkedin_cookie")
+def refresh_linkedin_cookie_manually():
+    logger.debug("linkedin cookie...")
+    data = fetch_linkedin_cookie()
+    header = ["cookie"]
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerow([data])
+    logger.debug(header)

@@ -24,4 +24,6 @@ services:
         container_name: "person_react"      
         ports: 
             - 80:80
+        depends_on:
+            - person_fastapi
             
