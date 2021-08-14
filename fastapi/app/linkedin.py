@@ -83,6 +83,7 @@ def query_url_builder(search_field_dict):
         kw = key_value_pairs.get("keywords", "")
 
         link = linkedin_baseurl
+
         for k, v in key_value_pairs.items():
             if k == 'education':
                 kw += (f' {v}' if kw else v)
@@ -107,6 +108,7 @@ def query_url_builder(search_field_dict):
                 link += f'keywords={kw}'
             else:
                 link += '&' + f'keywords={kw}'
+
         encoded_link = urllib.parse.quote(link, safe="/:?=&")
         print(encoded_link)
         return encoded_link
