@@ -74,7 +74,7 @@ async def check_execution_status(execution_id: str) -> Optional[Dict]:
 
                 if response.status_code == 200:
                     if data := response.json():
-                        if data["execution"]["status"] == "completed":
+                        if data["execution"]["status"] == "completed" and data["execution"].get("output") is not None:
                             logger.success(f"Got Task Results: {data=}")
                             return data["execution"]["output"]
                         else:
