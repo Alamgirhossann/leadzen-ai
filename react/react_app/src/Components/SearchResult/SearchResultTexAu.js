@@ -367,7 +367,7 @@ const SearchResult = (props) => {
                               >
                                 alamgirhossann
                               </small>
-                              <a href="#" onClick={showClick}>
+                              <a href="#">
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>
