@@ -30,12 +30,18 @@ const UserSearch = () => {
       return;
     }
     console.log("In else....");
-    isEmail = searchText.text.includes("@");
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(searchText.text)){
+      isEmail=true;
+    }
+    // isEmail = searchText.text.includes("@");
     words = WordCount(searchText.text);
     // isMultiWords = searchText.text.includes(" ");
-    isUrl =
-      searchText.text.toLowerCase().includes("https://") ||
-      searchText.text.toLowerCase().includes("http://");
+    if (/^(http:\/\/www.|https:\/\/www.|www.){1}linkedin\.com(\/\w+(\-{0,1}\w+)+)+\/{0,1}$/.test(searchText.text)){
+      isUrl=true;
+    }
+    // isUrl =
+    //   searchText.text.toLowerCase().includes("https://") ||
+    //   searchText.text.toLowerCase().includes("http://");
 
     if (isEmail) {
       console.log("Its email");
