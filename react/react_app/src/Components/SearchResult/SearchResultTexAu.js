@@ -57,6 +57,7 @@ const SearchResult = (props) => {
                     props.location.state.requestTexAu
                 );
                 requestForTexAu = props.location.state.requestTexAu;
+                setLoading(true);
             }
             let keyword = null;
             let isKeyword,
@@ -97,6 +98,7 @@ const SearchResult = (props) => {
                     pastCompany: [],
                 };
                 console.log("request....", requestForTexAu);
+                setLoading(true);
             }
             try {
                 const response = await fetch(apiServer + "/texau/search?", {
@@ -123,7 +125,10 @@ const SearchResult = (props) => {
                 console.error("Error: ", err);
             }
         }
-    }, []);
+    }, [props.location.state.customSearch]);
+
+    useEffect(()=>{
+    }, [loading]);
 
     useEffect(async () => {
         paginate(1);
