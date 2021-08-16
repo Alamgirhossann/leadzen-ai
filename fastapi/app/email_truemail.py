@@ -16,7 +16,7 @@ async def truemail_single(email_id):
         apiKey = API_CONFIG_TRUEMAIL_API_KEY
         apiUrl = API_CONFIG_TRUEMAIL_API_URL + apiKey + "&email=" + email_id
         async with httpx.AsyncClient() as client:
-            response =await  client.get(apiUrl)
+            response = await client.get(apiUrl)
         response_text = json.loads(response.text)
         return response_text
     except Exception as e:
