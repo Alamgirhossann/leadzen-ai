@@ -82,8 +82,8 @@ const SearchResult = (props) => {
                 requestForTexAu = {
                     firstName: "",
                     lastName: "",
-                    title: props.location.state.customSearch.title
-                        ? props.location.state.customSearch.title
+                    title: props.location.state.customSearch.job_title
+                        ? props.location.state.customSearch.job_title
                         : "",
                     keywords: keyword ? keyword : "",
                     industry: props.location.state.customSearch.industry
