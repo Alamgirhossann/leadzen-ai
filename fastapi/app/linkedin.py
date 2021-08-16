@@ -43,17 +43,17 @@ def set_list_values(link, k, v, link_ends_with=""):
     if k == "industry":
         code_list = []
         for item in v:
-            code = industry_codes.get(item, None)
+            code = industry_codes.get(item.capitalize(), None)
             if code:
                 code_list.append(code)
             else:
                 kw += f" {item}"
         if code_list:
             link += prefix + k + "=" + str(code_list)
-    elif k == "location":
+    elif k == "geoUrn":
         code_list = []
         for item in v:
-            code = location_codes.get(item, None)
+            code = location_codes.get(item.capitalize(), None)
             if code:
                 code_list.append(code)
             else:
@@ -63,7 +63,7 @@ def set_list_values(link, k, v, link_ends_with=""):
     elif k == "currentCompany" or k == "pastCompany":
         code_list = []
         for item in v:
-            code = industry_codes.get(item, None)
+            code = company_codes.get(item.capitalize(), None)
             if code:
                 code_list.append(code)
             else:
@@ -79,9 +79,11 @@ def set_list_values(link, k, v, link_ends_with=""):
 def query_url_builder(search_field_dict):
     try:
         key_value_pairs = search_field_dict
+        key_value_pairs["geoUrn"] = key_value_pairs.pop("location")
         kw = key_value_pairs.get("keywords", "")
 
         link = linkedin_baseurl
+
         for k, v in key_value_pairs.items():
             if k == 'education':
                 kw += (f' {v}' if kw else v)
@@ -106,6 +108,7 @@ def query_url_builder(search_field_dict):
                 link += f'keywords={kw}'
             else:
                 link += '&' + f'keywords={kw}'
+
         encoded_link = urllib.parse.quote(link, safe="/:?=&")
         print(encoded_link)
         return encoded_link

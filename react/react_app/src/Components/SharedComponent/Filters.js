@@ -17,49 +17,36 @@ const Filters = () => {
     csv_file: null,
   });
 
-  const handleLocationOnChange = async (e) => {
-    if (e.target.value && e.target.value.length > 3) {
-      // try {
-      //   const response = await fetch(
-      //     apiServer + "/filter/location?search_location=" + e.target.value,
-      //     {
-      //       method: "GET",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //         Accept: "application/json",
-      //       },
-      //     }
-      //   );
-      //   let loc_res = await response.json();
-      //   setLocationRes(loc_res.hits.hits);
-      //   console.log("loc_res>>>>", loc_res.hits.hits);
-      // } catch (err) {
-      //   console.error("Error: ", err);
-      // }
-    }
-  };
+  // const handleLocationOnChange = async (e) => {
+  //   console.log("handleLocation, e.target.value=", e.target.value);
+  //   setCustomSearch({ ...customSearch, location: e.target.value });
+  // };
   const handleLocation = async (e) => {
-    console.log("In handle location>>>>>>");
+    console.log("handleLocation, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, location: e.target.value });
   };
   const handleIndustry = (e) => {
+    console.log("handleIndustry, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, industry: e.target.value });
   };
   const handleJob = (e) => {
+    console.log("handleJob, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, job_title: e.target.value });
   };
   const handleEducation = (e) => {
+    console.log("handleEducation, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, education: e.target.value });
   };
   const handleCompany = (e) => {
+    console.log("handleCompany, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, company_name: e.target.value });
   };
   const handleKeywords = (e) => {
+    console.log("handleKeywords, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, keywords: e.target.value });
   };
   const handleCustomSubmit = (e) => {
-    console.log(">>>>>>>>>>>>",customSearch, customSearch.location);
-
+    console.log(">>>>>>>>>>>>", customSearch, customSearch.location);
     history.push({
       pathname: "/advanceSearch",
       state: { customSearch },
@@ -242,18 +229,13 @@ const Filters = () => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
-                  onBlur={handleLocation}
+                  // onBlur={handleLocation}
                   type="text"
                   placeholder="Search Location"
-                  onChange={handleLocationOnChange}
-                  autocomplete="off" 
+                  onChange={handleLocation}
+                  autocomplete="off"
                   list="location"
                 />
-                <datalist id="location">
-                  <option>Delhi</option>
-                  <option>Dehradun</option>
-                  <option>Mumbai</option>
-                </datalist>
               </div>
             </div>
           </div>
@@ -277,18 +259,13 @@ const Filters = () => {
               data-bs-parent="#accordionExample"
             >
               <div className="accordion-body">
-                  <input
-                    className="customize-search"
-                    onBlur={handleIndustry}
-                    type="text"
+                <input
+                  className="customize-search"
+                  onChange={handleIndustry}
+                  type="text"
                   placeholder="Search Industry"
                   list="industry"
                 />
-                <datalist id="industry">
-                  <option>Delhi</option>
-                  <option>Dehradun</option>
-                  <option>Mumbai</option>
-                </datalist>
               </div>
             </div>
           </div>
@@ -310,18 +287,13 @@ const Filters = () => {
               data-bs-parent="#accordionExample"
             >
               <div className="accordion-body">
-                  <input
-                    className="customize-search"
-                    onBlur={handleJob}
-                    type="text"
+                <input
+                  className="customize-search"
+                  onChange={handleJob}
+                  type="text"
                   placeholder="Search Job title"
                   list="job-title"
                 />
-                <datalist id="job-title">
-                  <option>Delhi</option>
-                  <option>Dehradun</option>
-                  <option>Mumbai</option>
-                </datalist>
               </div>
             </div>
           </div>
@@ -344,17 +316,12 @@ const Filters = () => {
             >
               <div className="accordion-body">
                 <input
-                    className="customize-search"
-                    onBlur={handleEducation}
-                    type="text"
+                  className="customize-search"
+                  onChange={handleEducation}
+                  type="text"
                   placeholder="Search Education"
                   list="education"
                 />
-                <datalist id="education">
-                  <option>Delhi</option>
-                  <option>Dehradun</option>
-                  <option>Mumbai</option>
-                </datalist>
               </div>
             </div>
           </div>
@@ -378,17 +345,12 @@ const Filters = () => {
             >
               <div className="accordion-body">
                 <input
-                    className="customize-search"
-                    onBlur={handleCompany}
-                    type="text"
+                  className="customize-search"
+                  onChange={handleCompany}
+                  type="text"
                   placeholder="Search Company Name"
                   list="company"
                 />
-                <datalist id="company">
-                  <option>Delhi</option>
-                  <option>Dehradun</option>
-                  <option>Mumbai</option>
-                </datalist>
               </div>
             </div>
           </div>
@@ -411,17 +373,12 @@ const Filters = () => {
             >
               <div className="accordion-body">
                 <input
-                    className="customize-search"
-                    onBlur={handleKeywords}
-                    type="text"
+                  className="customize-search"
+                  onChange={handleKeywords}
+                  type="text"
                   placeholder="Search Keywords"
                   list="keywords"
                 />
-                <datalist id="keywords">
-                  <option>Delhi</option>
-                  <option>Dehradun</option>
-                  <option>Mumbai</option>
-                </datalist>
               </div>
             </div>
           </div>
