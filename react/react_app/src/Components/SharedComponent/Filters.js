@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 
-const Filters = () => {
+const Filters = (props) => {
   const history = useHistory();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   const [locationRes, setLocationRes] = useState([]);
@@ -77,6 +77,13 @@ const Filters = () => {
       setCustomSearch({ ...customSearch, keywords: "" });
     }
   };
+
+  useEffect(()=>{
+    if (props.customSearch){
+      setCustomSearch(props.customSearch)
+    }
+  }, [props])
+
   return (
     <div>
       <div className="sidebar-search-for sidebar-widget px-4 pb-3 my-3">
