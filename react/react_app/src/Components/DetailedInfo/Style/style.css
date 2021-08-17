@@ -1,0 +1,142 @@
+.item-section{
+  background: white;
+  border-radius: 20px;
+  padding: 20px 0px 10px 20px;
+  box-shadow: 0px 1px 5px rgb(0 0 0 / 10%);
+  margin-bottom: 15px;
+  width: 100%;
+}
+.detail-info-head{
+   font-size: 14px;
+   font-weight: 600;
+}
+.item-child-div{
+   width: 100%;
+}
+.table-alignment{
+   display: grid;
+   grid-template-columns: repeat(4, 1fr);
+}
+.jarv-head{
+ padding-right: 40px;
+}
+.phone-num-section small{
+   font-size: 14px;
+}
+.phone-child-div{
+   display: grid;
+   grid-template-columns: 1fr 1fr 1fr;
+   width: 100%;
+}
+.less-btn{
+   border: 0.5px solid #FB3E3E;
+   background: white;
+   border-radius: 20px;
+   padding: 0px 15px;
+}
+@media only screen and (max-width: 1024px){
+   .item-section{
+       overflow-x: scroll;
+   }
+   .phone-child-div{
+      width: 900px;
+  }
+  .item-child-div{
+      width: 900px;
+  }
+} 
+
+.info-container{
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  padding: 15px 10px ;
+}
+.user-info-container{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-areas: 'b a u u l l l e e d p k';
+  align-items: center;
+  width: 100%;
+}
+.info-box{
+    grid-area: b;
+}
+.info-author{
+  grid-area: a;
+}
+.info-user{
+  grid-area: u;
+}
+.info-location{
+ grid-area: l;
+}
+.info-email{
+  grid-area: e;
+}
+.info-download-btn{
+  grid-area: d;
+  display: flex;
+  justify-content: center;
+}
+.info-up-btn{
+  grid-area: p;
+  display: flex;
+  justify-content: center;
+}
+.info-plus-btn{
+  grid-area: k;
+  display: flex;
+  justify-content: center;
+}
+@media only screen and (max-width: 1024px){
+  .info-container{
+    overflow-x: scroll;
+  }
+  .user-info-container{
+    width: 900px;
+  }
+  .user-info-wraper{
+    overflow-x: scroll;
+  }
+  .search-two-container{
+    width: 900px;
+  }
+}
+.search-two-container{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-areas: 'b a u u u e e e v v c f';
+  align-items: center;
+}
+.search-two-container.box{
+  grid-area: b;
+}
+.search-two-container.search-author{
+grid-area: a;
+}
+.search-two-container.search-user{
+grid-area: u;
+}
+.search-two-container.search-email{
+grid-area: e;
+}
+.search-two-container.search-view-btn{
+grid-area: v;
+}
+.search-two-container.search-close-btn{
+grid-area: c;
+display: flex;
+justify-content: center;
+padding-right: 5px;
+align-items: center;
+}
+.search-two-container.search-flag-btn{
+  grid-area: f;
+}
+.user-info-wraper{
+background: white;
+border-radius: 20px;
+padding: 20px;
+width: 100%;
+}

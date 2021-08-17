@@ -1,0 +1,33 @@
+.search-chrome{
+    background: #FFF1F1;
+    padding: 10px 5px;
+    border-radius: 10px;
+}
+.search-chrome-container{
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    padding: 15px 10px ;
+  }
+  .search-chrome-user-container{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: 'a a u u l l l l l l p p';
+    align-items: center;
+  }
+  .chrome-author{
+    grid-area: a;
+  }
+  .chrome-user{
+    grid-area: u;
+  }
+  .chrome-location{
+   grid-area: l;
+  }
+  .chrome-plus-btn{
+    grid-area: p;
+    display: flex;
+    justify-content: center;
+  }
+
+  

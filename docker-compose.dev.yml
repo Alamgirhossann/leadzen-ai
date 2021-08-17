@@ -1,13 +1,28 @@
 version: '3.3'
-# React on port 8000 and fastapi on port 5000
+
 services:
-    fastapi:
-        image: "analystt/person_fastapi:latest"
-        container_name: "fastapi"
+    selenium:
+        image: "selenium/standalone-chrome:latest"
+        container_name: "selenium"
         ports:
-            - "5000:5000"
-    react:
+            - "4445:4444"
+        volumes:
+            - /dev/shm:/dev/shm
+
+    person_fastapi:
+        image: "analystt/person_fastapi:latest"
+        container_name: "person_fastapi"
+        ports:
+            - 12001:5000
+        environment:
+            - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
+        depends_on: 
+            - selenium
+    
+    person_react:
         image: "analystt/person_react:latest"
-        container_name: "react"      
+        container_name: "person_react"
         ports: 
-            - 8000:80
+            - 12002:80
+        depends_on:
+            - person_fastapi

@@ -1,215 +1,266 @@
-import React, { useState, useEffect } from 'react';
-import './DetailedInfo.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import SpecificUser from '../SpecificUser/SpecificUser';
-import { Link, Redirect, useHistory } from 'react-router-dom';
-import Cookies from "js-cookie";
-import SearchResult from '../SearchResult/SearchResult';
+import React, { useEffect, useState } from "react";
+import "./Style/style.css";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import SpecificUser from "./SpecificUser";
+import { Link } from "react-router-dom";
+import AskJarvis from "../SharedComponent/AskJarvis";
+import Header from "../SharedComponent/Header";
+import Filters from "../SharedComponent/Filters";
+import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
+import CustomizeButton from "../SharedComponent/CustomizeButton";
 
 const DetailedInfo = () => {
-    const [resultData, setSearchResult] = useState({data : null});
-    const [loading, setLoading] = useState(true);
-    let data = {};
-    useEffect(async() => {
-        fetchData();
-    }, []);
-    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-    const fetchData = async () => {
-        const response = await fetch(apiServer);
-        data = await response.json();
-        data ? setSearchResult({...resultData,data : data}) : setLoading(true); 
-        data ? setLoading(false) : setLoading(true);
-      }
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-    today = dd + '/' + mm + '/' + yyyy;
-    const [customSearch, setCustomSearch] = useState({location:null, industry:null, job_title:null, education:null, company_name:null, keywords:null,csv_file:null});
-    const [searchText, setSearchText] = useState();
-    const [socialMediaType, setSocialMediaType] = useState({url:null, type:[]});
-    const [socialMediaSearch, setSocialMediaSearch] = useState({text:null});
+  const [resultData, setSearchResult] = useState({ data: null });
+  const [loading, setLoading] = useState(true);
+  let data = {};
+  useEffect(async () => {
+    fetchData();
+  }, []);
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+  const fetchData = async () => {
+    let response = null;
+    let json_res = null;
+    try {
+      response = await fetch(apiServer);
+      json_res = await response.json();
+      json_res
+        ? setSearchResult({ ...resultData, data: json_res })
+        : setLoading(true);
+      json_res ? setLoading(false) : setLoading(true);
+    } catch (err) {
+      console.error("error : ", err);
+    }
+  };
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var yyyy = today.getFullYear();
+  today = dd + "/" + mm + "/" + yyyy;
+  const [customSearch, setCustomSearch] = useState({
+    location: null,
+    industry: null,
+    job_title: null,
+    education: null,
+    company_name: null,
+    keywords: null,
+    csv_file: null,
+  });
+  const [searchText, setSearchText] = useState();
+  const [socialMediaType, setSocialMediaType] = useState({
+    url: null,
+    type: [],
+  });
+  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
 
     const handleHeadSearch = (e) => {
         setSearchText(e.target.value);
-    }
+    };
     const handleHeadSearchSubmit = (e) => {
         e.preventDefault();
         console.log(searchText);
-    }
+    };
     const handleLocation = (e) => {
-        setCustomSearch({...customSearch, location:e.target.value});
-    }
+        setCustomSearch({...customSearch, location: e.target.value});
+    };
     const handleIndustry = (e) => {
-        setCustomSearch({...customSearch, industry:e.target.value});
-    }
+        setCustomSearch({...customSearch, industry: e.target.value});
+    };
     const handleJob = (e) => {
-        setCustomSearch({...customSearch, job_title:e.target.value});
-    }
+        setCustomSearch({...customSearch, job_title: e.target.value});
+    };
     const handleEducation = (e) => {
-        setCustomSearch({...customSearch, education:e.target.value});
-    }
+        setCustomSearch({...customSearch, education: e.target.value});
+    };
     const handleCompany = (e) => {
-        setCustomSearch({...customSearch, company_name:e.target.value});
-    }
+        setCustomSearch({...customSearch, company_name: e.target.value});
+    };
     const handleKeywords = (e) => {
-        setCustomSearch({...customSearch, keywords:e.target.value});
-    }
+        setCustomSearch({...customSearch, keywords: e.target.value});
+    };
     const handleCustomSubmit = (e) => {
         console.log(customSearch);
-    }
+    };
     const handleCSVFile = (e) => {
-        setCustomSearch({...customSearch, csv_file:e.target.files[0]});
-    }
+        setCustomSearch({...customSearch, csv_file: e.target.files[0]});
+    };
     const handleType = (e) => {
-        setSocialMediaType({...socialMediaType, type:e.target.value});
-    }
+        setSocialMediaType({...socialMediaType, type: e.target.value});
+    };
     const handleSocialMedia = (e) => {
-        setSocialMediaSearch({...socialMediaSearch, text:e.target.value})
-    }
+        setSocialMediaSearch({...socialMediaSearch, text: e.target.value});
+    };
     const handleTypeSubmit = (e) => {
         e.preventDefault();
         console.log(socialMediaSearch);
-    }
-    const [show,setShow] = useState(false);
+    };
+    const [show, setShow] = useState(false);
     const showClick = (e) => {
         e.preventDefault();
-        if(!show)
-            setShow(true);
-    }
-    const [perPage,setPerPage] = useState(5);
-    const [currentPage,setCurrentPage] = useState(0);
-    const user = { name:'John Smith',
-                   email:'Johnsmith087@hexagon.in',
-                   subscription:{ product:'Free Analystt',
-                                price:'100 INR',
-                                period:'Yearly',
-                                status:'Active',
-                                last_renewal:'01/02/2020',
-                                expiry_date:'02/08/2021',
-                                profile_credits:500,
-                                mail_credits:1000 }
-         };
-    const details = {name:'Joe Mama',
-                   desc:'English Speaker',
-                   comp:{ name:'Hexagon AB',
-                          address:'6720 Ulster Court, Alpharetta, Georgia'},
-                   email: ['Chris07@hexagon.com','chris12@gmail.com','chris2194@apple.com'],
-                   phone_num:[{number:'404-786-5546',type:'telephone'},
-                              {number:'404-786-4732',type:'mobile'},
-                              {number:'421-230-3235',type:'mobile'},
-                              {number:'123-456-7890',type:'mobile'}],
-                   username: [{name:'christophe.heyman',since:'23-12-2010'},],
-                   urls:['Prizmgoogle.net','john.hexagon.com','prizma2.google.com'],
-                   gender:'Male',
-                   age:'35',
-                   languages:['English','French'],
-                   social_media:{facebook:'chris.facebook.com',
-                                 twitter:'chris.twitter.com',
-                                 instagram:'instagram.chris.com',
-                                 linkedin:'chris.linkedin.com',
-                                },
-                    companies:[{name:'Hexagon AB',role:'Software Engineer',since:'12-05-2019',url:'apicsassociation.com'},
-                                {name:'Catavolt, Part of Hexagon',role:'Software Engineer',since:'12-05-2017',url:'google.com'},
-                                {name:'Infor- Atlanta, GA, USA',role:'Software Engineer',since:'12-05-2015',url:'ga.com'},
-                                {name:'MAPICS, Inc.- Atlanta, GA, USA',role:'Software Engineer',since:'12-05-2011',url:'atlanta.com'},],
-                    education:[{name:'APICS- Association for Operation Management',since:'2011 - 2013',location:'Texas, USA',url:'apicsassociation.com'},
-                                {name:'Ghent University',since:'2009 - 2011',location:'New York, USA',url:'Ghentuniversity.com'},
-                                {name:'St.Jozef Institute',since:'2009 - 2005',location:'Texas, USA',url:'apicsassociation.com'},],
-                    locations:['Texas, USA','New York, USA','Tbilisi, Georgia','London, UK','Dubai, UAE','Atlanta, Georgia'],
-                    related_profiles:[{name:'Stan Joseph',url:'stan_joseph.com'},
-                                      {name:'Robert Brown',url:'robert_brown.com'},
-                                      {name:'Dan Schmitt',url:'banschmitt.in'},
-                                      {name:'Lan Bey',url:'labney.com'},
-                                      {name:'Stan Joseph',url:'stanjosepy.io'},
-                                      {name:'Lanre Bey',url:'lanrebey.in'},
-                                    ],
-                    rating:4.5,
-                };
-        const searchData = {count:12,total:250};
-        const [myLeads, setMyLeads] = useState([{name:'John Smith',desc:'English Speaker',comp:'Hexagon AB',search_date:'12/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false},
-                                                {name:'Joe Mama',desc:'English Speaker',comp:'Apple INC',search_date:'05/05/2021',address:'6720 Ulster Court, Alpharetta, Georgia',show:false}]);
+        if (!show) setShow(true);
+    };
+    const [perPage, setPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(0);
+    const user = {
+        name: "John Smith",
+        email: "Johnsmith087@hexagon.in",
+        subscription: {
+            product: "Free Analystt",
+            price: "100 INR",
+            period: "Yearly",
+            status: "Active",
+            last_renewal: "01/02/2020",
+            expiry_date: "02/08/2021",
+            profile_credits: 500,
+            mail_credits: 1000,
+        },
+    };
+    const details = {
+        name: "Joe Mama",
+        desc: "English Speaker",
+        comp: {
+            name: "Hexagon AB",
+            address: "6720 Ulster Court, Alpharetta, Georgia",
+        },
+        email: ["Chris07@hexagon.com", "chris12@gmail.com", "chris2194@apple.com"],
+        phone_num: [
+            {number: "404-786-5546", type: "telephone"},
+            {number: "404-786-4732", type: "mobile"},
+            {number: "421-230-3235", type: "mobile"},
+            {number: "123-456-7890", type: "mobile"},
+        ],
+        username: [{name: "christophe.heyman", since: "23-12-2010"}],
+        urls: ["Prizmgoogle.net", "john.hexagon.com", "prizma2.google.com"],
+        gender: "Male",
+        age: "35",
+        languages: ["English", "French"],
+        social_media: {
+            facebook: "chris.facebook.com",
+            twitter: "chris.twitter.com",
+            instagram: "instagram.chris.com",
+            linkedin: "chris.linkedin.com",
+        },
+        companies: [
+            {
+                name: "Hexagon AB",
+                role: "Software Engineer",
+                since: "12-05-2019",
+                url: "apicsassociation.com",
+            },
+            {
+                name: "Catavolt",
+                role: "Software Engineer",
+                since: "12-05-2017",
+                url: "google.com",
+            },
+            {
+                name: "Infor",
+                role: "Software Engineer",
+                since: "12-05-2015",
+                url: "ga.com",
+            },
+            {
+                name: "MAPICS",
+                role: "Software Engineer",
+                since: "12-05-2011",
+                url: "atlanta.com",
+            },
+        ],
+        education: [
+            {
+                name: "APICS",
+                since: "2011 - 2013",
+                location: "Texas, USA",
+                url: "apicsassociation.com",
+            },
+            {
+                name: "Ghent University",
+                since: "2009 - 2011",
+                location: "New York, USA",
+                url: "Ghentuniversity.com",
+            },
+            {
+                name: "St. Jozef Institute",
+                since: "2009 - 2005",
+                location: "Texas, USA",
+                url: "apicsassociation.com",
+            },
+        ],
+        locations: [
+            "Texas, USA",
+            "New York, USA",
+            "Tbilisi, Georgia",
+            "London, UK",
+            "Dubai, UAE",
+            "Atlanta, Georgia",
+        ],
+        related_profiles: [
+            {name: "Stan Joseph", url: "stan_joseph.com"},
+            {name: "Robert Brown", url: "robert_brown.com"},
+            {name: "Dan Schmitt", url: "banschmitt.in"},
+            {name: "Lan Bey", url: "labney.com"},
+            {name: "Stan Joseph", url: "stanjosepy.io"},
+            {name: "Lanre Bey", url: "lanrebey.in"},
+        ],
+        rating: 4.5,
+    };
+    const searchData = {count: 12, total: 250};
+    const [myLeads, setMyLeads] = useState([
+        {
+            name: "John Smith",
+            desc: "English Speaker",
+            comp: "Hexagon AB",
+            search_date: "12/05/2021",
+            address: "6720 Ulster Court, Alpharetta, Georgia",
+            show: false,
+        },
+        {
+            name: "Joe Mama",
+            desc: "English Speaker",
+            comp: "Apple INC",
+            search_date: "05/05/2021",
+            address: "6720 Ulster Court, Alpharetta, Georgia",
+            show: false,
+        },
+    ]);
 
-                       return (
+    return (
         <div>
-            <header className="header-area">
-                <nav className="header-navbar navbar navbar-expand-xl bg-light">
-                    <div className="container-fluid">
-                        <a className="navbar-brand" href="/repeatedUser"><img src="assets/images/header-brand-black.png" alt="title" /></a>
-
-                        <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
-                            <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="/"><img src="assets/images/menu-home.png" alt="home here" /><span className="text-danger">Home</span></a>
-                            </li>
-                            <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="/savedList"><img src="assets/images/menu-saved-list.png" alt="saved here" />Saved lists</a>
-                            </li>
-                            <li className="nav-item me-md-4 me-3">
-                                <a className="nav-icon-menu nav-link" href="/history"><img src="assets/images/menu-history.png" alt="history here" />History</a>
-                            </li>
-                            <li className="nav-item me-md-4 me-3">
-                                <li className="nav-item dropdown">
-                                    <a className="credit-btn btn btn-outline-danger nav-link" href="#">4 Credits Left</a>
-                                    <ul className="dropdown-menu">
-                                        <li><p className="dropdown-item"><img src="assets/images/pro-codesandbox.png" alt="title" />My Credits</p></li>
-                                        <li>
-                                            <div className="dropdown-progress">
-                                                <p className="small">Profile credits used: {user.subscription.profile_credits} / 1000</p>
-                                                <div className="progress mb-2">
-                                                    <div className="progress-bar" style={{ width: "45%" }} role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div className="dropdown-progress">
-                                                <p className="small"> Mail credits used: {user.subscription.mail_credits} / 2000</p>
-                                                <div className="progress mb-2">
-                                                    <div className="progress-bar" role="progressbar" style={{ width: "65%" }} aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-
-                                                <span className="small">Limit resets in 5 days</span>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </li>
-                            <li className="nav-item">
-                                <li className="nav-item dropdown">
-                                    <a className="profile-avata nav-link" data-bs-toggle="dropdown" href="#"><img src="assets/images/author-image.png" alt="search here" /></a>
-                                    <ul className="dropdown-menu">
-                                        <li>
-                                            <div className="dropdown-credit">
-                                                <span className="fw-bold">{user.subscription.profile_credits + user.subscription.mail_credits} credits <br /> pending</span>
-                                                <img src="assets/images/credit-icon.png" alt="title" />
-                                            </div>
-                                        </li>
-                                        <li><a className="dropdown-item active" href="#">Upgrade to premium</a></li>
-                                        <li><a className="dropdown-item" href="/pricing">Buy Credits</a></li>
-                                        <li><a className="dropdown-item" href="/profile">Profile Settings</a></li>
-                                        <li><a className="dropdown-item" href="/history">Export History</a></li>
-                                        <li><a className="dropdown-item" href="/logIn"><span className="text-muted me-3">Logout</span> <img src="assets/images/logout-icon.png" alt="image" /></a></li>
-                                    </ul>
-                                </li>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </header>
-
+            <Header user={user}/>
             <div className="modal" id="bulkmodal">
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
                 <div className="modal-dialog">
-                    <div className='modal-message'>
-                        <p><i className='text-danger'>Format to follow:</i> Ensure that the first column has the unique values you’re searching for. Download the sample below for better understanding. </p>
-                        <Link><i className='text-danger text-decoration-underline'>Click here to download csv format</i></Link>
+                    <div className="modal-message">
+                        <p>
+                            <i className="text-danger">Format to follow:</i> Ensure that the
+                            first column has the unique values you’re searching for. Download
+                            the sample below for better understanding.{" "}
+                        </p>
+                        <Link>
+                            <i className="text-danger text-decoration-underline">
+                                Click here to download csv format
+                            </i>
+                        </Link>
                     </div>
                     <div className="modal-content">
                         <form action="/upload" id="mydrop" className="dropzone">
                             <div className="dz-message needsclick">
-                                <button type="button" className="dz-button">Drag and Drop File</button><br />
-                                <button type="button" className="dz-button">OR </button><br />
-                                <span className="note needsclick"><input type="file" accept=".csv" onChange={handleCSVFile}/></span>
+                                <button type="button" className="dz-button">
+                                    Drag and Drop File
+                                </button>
+                                <br/>
+                                <button type="button" className="dz-button">
+                                    OR{" "}
+                                </button>
+                                <br/>
+                                <span className="note needsclick">
+                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
+                </span>
                             </div>
                         </form>
                     </div>
@@ -218,335 +269,141 @@ const DetailedInfo = () => {
 
             <div className="main-content-area pb-6 pt-2">
                 <div className="main-wrapper container-fluid">
-
                     <div className="row">
                         <div className="col-md-4 col-lg-3">
-                            <div className="sidebar-search-for sidebar-widget p-4 my-3">
-                                <h6 className="text-danger mb-3">Customize your search </h6>
-                                <div>
-                                    {/* <p className='text-left top-search' style={{width:"100px"}}><img style={{width:"10px", marginRight:"5px"}} src="assets/images/cil_location-pin.png" alt="" />USA<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p>
-                                    <p className='text-left top-search' style={{width:"130px"}}><img style={{width:"8px", marginRight:"5px"}} src="assets/images/pro-profile.png" alt="" />Designer<img className='ps-4' src="assets/images/cross-icon.png" alt="" /></p> */}
-                                    <div className='d-flex justify-content-between'>
-                                        {/* <p><img style={{width:"10px", marginRight:"5px"}} src="assets/images/combined-eye.png" alt="" />Hide</p> */}
-                                        {/* <p className='text-danger'>Clear All</p> */}
-                                    </div>
+                            <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+                                <h6 className="text-danger mb-3">Customize your search</h6>
+                                <div className="px-4">
+                                    <CustomizeButton/>
                                 </div>
-                                <div className="sidebar-accordion accordion" id="accordionExample">
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#one">
-                                                <img src="assets/images/accord-map-pin.png" alt="title" /> Location
-                                            </button>
-                                        </h2>
-                                        <div id="one" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <input className='customize-search' onBlur={handleLocation} type="text" placeholder='Search Location' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#two">
-                                                <img src="assets/images/accord-coffee.png" alt="title" /> Industry
-                                            </button>
-                                        </h2>
-                                        <div id="two" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <input className='customize-search' onBlur={handleIndustry} type="text" placeholder='Search Industry' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tree">
-                                                <img src="assets/images/accord-award.png" alt="title" /> Job title
-                                            </button>
-                                        </h2>
-                                        <div id="tree" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <input className='customize-search' onBlur={handleJob} type="text" placeholder='Search Job title' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#four">
-                                                <img src="assets/images/accord-book.png" alt="title" /> Education
-                                            </button>
-                                        </h2>
-                                        <div id="four" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <input className='customize-search' type="text" onBlur={handleEducation} placeholder='Search Education' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#five">
-                                                <img src="assets/images/accord-briefcase.png" alt="title" /> Company Name
-                                            </button>
-                                        </h2>
-                                        <div id="five" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <input className='customize-search' type="text" onBlur={handleCompany} placeholder='Search Company Name' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#six">
-                                                <img src="assets/images/accord-key.png" alt="title" /> Keywords
-                                            </button>
-                                        </h2>
-                                        <div id="six" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <input className='customize-search' type="text" onBlur={handleKeywords} placeholder='Search Keywords' />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button style={{ background: "#FB3E3E" }} className="btn text-white" onClick={handleCustomSubmit} type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
-                                <p>Bulk Search by uploding <a href="#" className="text-danger" onChange={handleCSVFile} data-bs-toggle="modal" data-bs-target="#bulkmodal">csv</a></p>
+                                <Filters/>
                             </div>
-                            <div className="sidebar-search-for sidebar-widget p-4 my-3">
-                                <h6 className="text-danger mb-3">  Now Extract contacts </h6>
-                                <p> of Followers, Likers, Commentors & Group Members & Job Seekers From Social Media</p>
-                                <ul className="sidebar-social mt-3 mb-4 list-inline">
-                                    <li className="list-inline-item"><a href="#"><img src="assets/images/social-facebook.png" alt="title" /></a></li>
-                                    <li className="list-inline-item"><a href="#"><img src="assets/images/social-instagram.png" alt="title" /></a></li>
-                                    <li className="list-inline-item"><a href="#"><img src="assets/images/social-twitter.png" alt="title" /></a></li>
-                                    <li className="list-inline-item"><a href="#"><img src="assets/images/social-linkedin.png" alt="title" /></a></li>
-                                    <li className="list-inline-item"><a href="#"><img src="assets/images/social-youtube.png" alt="title" /></a></li>
-                                    <li className="list-inline-item"><a href="#"><img src="assets/images/social-naukri-com.png" alt="title" /></a></li>
-                                </ul>
-                                <form>
-                                    <div className="mb-3">
-                                        <input type="text" className="form-control" onBlur={handleSocialMedia} placeholder="Enter Social Media URL" />
-                                    </div>
-                                    <div className="dropdown mb-3">
-                                        <input className="form-control dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" placeholder='Search your job' />
-                                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <div className="dropdown-wraper">
-                                                <div className='radio-bg'>
-                                                    <span>All</span>
-                                                    <input type="checkbox" id='All' value="All" onChange={handleType} checked={socialMediaType.type.includes("All")}/>
-                                                </div>
-                                                <div className='radio-bg'>
-                                                    <span>Follower</span>
-                                                    <input type="checkbox" id='Follower' value="Follower" onChange={handleType} checked={socialMediaType.type.includes("Follower")} />
-                                                </div>
-                                                <div className='radio-bg'>
-                                                    <span >Likers</span>
-                                                    <input type="checkbox" id='Likers' value="Likers" onChange={handleType} checked={socialMediaType.type.includes("Likers")} />
-                                                </div>
-                                                <div className='radio-bg'>
-                                                    <span>Commentors</span>
-                                                    <input type="checkbox" id='Comentetors' value="Commentors" onChange={handleType} checked={socialMediaType.type.includes("Commentors")}/>
-                                                </div>
-                                                <div className='radio-bg'>
-                                                    <span>Job Seeker</span>
-                                                    <input type="checkbox" id='Job Seeker' value="Job Seeker"  onChange={handleType} checked={socialMediaType.type.includes("Job Seeker")}/>
-                                                </div>
-                                                <div className='radio-bg'>
-                                                    <span>Group Members</span>
-                                                    <input type="checkbox" id='Group Members' value="Group Members" onChange={handleType} checked={socialMediaType.type.includes("Group Members")}/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button style={{ background: "#FB3E3E" }} onClick={handleTypeSubmit} className="btn text-white" type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
-                                    <p className="m-0"><a href="/userGuide" className="learn-link">Learn More</a></p>
-                                </form>
-                            </div>
+                            <SidebarExtractContact/>
                         </div>
                         <div className="col-md-8 col-lg-9">
                             <div className="user-search-wrapper">
                                 <div className="detailed-search">
                                     <div className="search-promote-content">
                                         <form className=" d-flex my-2 my-lg-0">
-                                            <input className="form-control mr-sm-2" type="search" onBlur={handleHeadSearch} placeholder="Search" aria-label="Search" />
-                                            <button className="btn text-white w-auto d-flex ms-3" onClick={handleHeadSearchSubmit} style={{ background: "#FB3E3E" }} type="submit"><span className='pe-1'><FontAwesomeIcon icon={faSearch} /></span> Search</button>
-                                        </form>
-                                    </div>
-                                    <div>
-                                        <small>Last Updated: {today}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            {/* <div className="user-widget-box  my-3">
-                                <div className="d-flex align-items-center justify-content-between py-3">
-                                    <div className='d-flex align-items-center '>
-                                        <input className='ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <small className=''><b>{searchData.count}</b> of <b>{searchData.total}</b> Searched profiles</small>
-                                    </div>
-                                    <div className='d-flex'>
-                                        <small className='unlock-btn'>Unlock Profile <img className='ps-3' src="assets/images/Group 1617.png" alt="" /></small>
-                                        <small className='unlock-btn'>Unlock Mails <img className='ps-3' src="assets/images/Group 1617.png" alt="" /></small>
-                                        <small className='export-btn'>Export <img className='ps-3' src="assets/images/export.png" alt="" /></small>
-                                    </div>
-                                </div>
-                            </div>
+                                            <input
+                                                className="form-control mr-sm-2"
+                                                type="search"
+                                                onBlur={handleHeadSearch}
+                                                placeholder="Search"
+                                                aria-label="Search"
+                                            />
+                                            <button
+                                                className="btn text-white w-auto d-flex ms-3"
+                                                onClick={handleHeadSearchSubmit}
+                                                style={{background: "#FB3E3E"}}
+                                                type="submit"
+                                            >
+                        <span className="pe-1">
+                          <FontAwesomeIcon icon={faSearch}/>
+                        </span>{" "}
+                        Search
+                      </button>
+                    </form>
+                  </div>
+                  <div>
+                    <small>Last Updated: {today}</small>
+                  </div>
+                </div>
+              </div>
+
+              {!loading ? (
+                <div className="user-widget-box  mt-3">
+                  <div className="info-container">
+                    <div className="user-info-container">
+                      <input
+                        className="info-box ms-3 me-3"
+                        type="checkbox"
+                        id="checkbox"
+                      />
+                      <p className="info-author text-danger">
+                        <img src="assets/images/author-image.png" alt="" />
+                      </p>
+                      <div className="info-user">
+                        <p>{resultData.data.names[0]._display}</p>
+                      </div>
+                      <div className="info-location">
+                        <small className="d-block">
+                          Works at {resultData.data.jobs[0].organization}
+                        </small>
+                        <small className="d-block">
+                          {resultData.data.addresses[0]._display}
+                        </small>
+                      </div>
+                      <div className="info-email text-center">
+                        <small className="d-block">
+                          {resultData.data.emails[1].address}
+                        </small>
+                      </div>
+                      <p className="info-download-btn">
+                        <img src="assets/images/Group 1899.png" alt="" />
+                      </p>
+                      <p className="info-up-btn">
+                        <img src="assets/images/Group 1900.png" alt="" />
+                      </p>
+                      <p className="info-plus-btn">
+                        <img src="assets/images/Group 1863.png" alt="" />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              <div
+                style={{
+                  background: "white",
+                  borderRadius: "20px",
+                  padding: "20px",
+                }}
+              >
+                <SpecificUser details={details} />
+              </div>
 
                             <div className="user-widget-box  my-3">
-                                <div className='info-container'>
-                                    <div className="user-info-container">
-                                        <input className='info-box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='info-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='info-user'>
-                                            <p>{details.name}</p>
-                                        </div>
-                                        <div className='info-location'>
-                                            <small className='d-block'>Works at {details.comp.name}</small>
-                                            <small className='d-block'>{details.comp.address}</small>
-                                        </div>
-                                        <div className='info-email text-center'>
-                                            <small className='d-block'>{details.email[0]}</small>
-                                        </div>
-                                        <p className='info-download-btn'><img src="assets/images/Group 1899.png" alt="" /></p>
-                                        <p className='info-up-btn'><img src="assets/images/Group 1900.png" alt="" /></p>
-                                        <p className='info-plus-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
-                                    </div>
-                                </div>
-                             </div>
-                             <div style={{background:"white",borderRadius:"20px", padding:"20px"}}>
-                                <SpecificUser details={details}/>
-                             </div>
-
-                             <div className="user-widget-box  my-3">
-                                 {myLeads.map(data => (
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>{data.name}</p>
-                                            <small className='d-block'>Works at {data.comp}</small>
-                                            <small className='d-block'>{data.address}</small>
-                                        </div>
-                                        <div className='search-email text-center'>
-                                            <small className={show ? 'd-block':'d-block blur'}>alamgirhossann</small>
-                                            <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
-                                    </div>
-                                </div>
-                                 ))}
-                            </div> */}
-                            {!loading ? (
-                            <div className="user-widget-box  my-3">
-                                <div className='info-container'>
-                                    <div className="user-info-container">
-                                        <input className='info-box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='info-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='info-user'>
-                                            <p>{resultData.data.names[0]._display}</p>
-                                        </div>
-                                        <div className='info-location'>
-                                            <small className='d-block'>Works at {resultData.data.jobs[0].organization}</small>
-                                            <small className='d-block'>{resultData.data.addresses[0]._display}</small>
-                                        </div>
-                                        <div className='info-email text-center'>
-                                            <small className='d-block'>{resultData.data.emails[1].address}</small>
-                                        </div>
-                                        <p className='info-download-btn'><img src="assets/images/Group 1899.png" alt="" /></p>
-                                        <p className='info-up-btn'><img src="assets/images/Group 1900.png" alt="" /></p>
-                                        <p className='info-plus-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
-                                    </div>
-                                </div>
-                             </div> ) : null}
-                             <div style={{background:"white",borderRadius:"20px", padding:"20px"}}>
-                                <SpecificUser details={details}/>
-                             </div> 
-
-                             <div className="user-widget-box  my-3">
-                                 {myLeads.map(data => (
-                                <div className='search-container mb-2'>
-                                    <div className="user-container py-2">
-                                        <input className='box ms-3 me-3' type="checkbox" id='checkbox' />
-                                        <p className='search-author text-danger'><img src="assets/images/author-image.png" alt="" /></p>
-                                        <div className='search-user'>
-                                            <p>{data.name}</p>
-                                            <small className='d-block'>Works at {data.comp}</small>
-                                            <small className='d-block'>{data.address}</small>
-                                        </div>
-                                        <div className='search-email text-center'>
-                                            <small className={show ? 'd-block':'d-block blur'}>alamgirhossann</small>
-                                            <a href="#" onClick={showClick}><small className='d-block text-danger'>Unlock</small></a>
-                                        </div>
-                                        <p className='search-view-btn '><a href="" className='button'>View Profile</a></p>
-                                        <p className='search-close-btn'><img src="assets/images/Group 1863.png" alt="" /></p>
-                                    </div>
-                                </div>
-                                 ))}
-                            </div> 
-                            
-                             
-                            {/* <div className='d-flex justify-content-center'>
-                                <div style={{borderRadius:"10%", background:"#FB3E3E", height:"25px", width:"25px"}}><p className=' d-flex text-white justify-content-center align-items-center'>1 </p></div>
-                                <p className='pe-4'>2</p>
-                                <p className='pe-4'>3</p>
-                                <p className='pe-4'>4</p>
-                                <p className='pe-4'>5</p>
-                                <p className='pe-4'>Next</p>
-                            </div> */}
-                             <div className="user-widget-box text-center p-4 my-3">
-                                <div className="user-promote-logo"><img src="assets/images/user-company-brand.png" alt="title" /></div>
-                                <div className="user-promote-slider">
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Want to extract contacts of group members in a LinkedIn group?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
+                                {myLeads.map((data) => (
+                                    <div className="search-container mb-2">
+                                        <div className="user-container py-2">
+                                            <input
+                                                className="box ms-3 me-3"
+                                                type="checkbox"
+                                                id="checkbox"
+                                            />
+                                            <p className="search-author text-danger">
+                                                <img src="assets/images/author-image.png" alt=""/>
+                                            </p>
+                                            <div className="search-user">
+                                                <p>{data.name}</p>
+                                                <small className="d-block">Works at {data.comp}</small>
+                                                <small className="d-block">{data.address}</small>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Need a list of companies in semi-conductor space with 1000+ employees in US?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
+                                            <div className="search-email text-center">
+                                                <small className={show ? "d-block" : "d-block blur"}>
+                                                    alamgirhossann
+                                                </small>
+                                                <a href="#" onClick={showClick}>
+                                                    <small className="d-block text-danger">Unlock</small>
+                                                </a>
                                             </div>
+                                            <p className="search-view-btn ">
+                                                <a href="" className="button">
+                                                    View Profile
+                                                </a>
+                                            </p>
+                                            <p className="search-close-btn">
+                                                <img src="assets/images/Group 1863.png" alt=""/>
+                                            </p>
                                         </div>
                                     </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Need a detailed list of all the people working for Flipkart?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Want to extract contacts of group members in a LinkedIn group?</p>
-                                            <div classNameName="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Need a detailed list of all the people working for Flipkart?</p>
-
-                                            <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="user-promote-item">
-                                            <p className="">Want to extract contacts of group members in a LinkedIn group?</p>
-                                            <div className="px-3 pb-4" style={{ position: "absolute", bottom: "5px", content: "", }} >
-                                                <a href="/searchResult" className="small m-0">Try This</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                ))}
+                            </div>
+                            <div>
+                                <AskJarvis/>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

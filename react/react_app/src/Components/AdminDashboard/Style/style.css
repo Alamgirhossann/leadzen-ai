@@ -1,0 +1,174 @@
+.admin-head{
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 60px;
+    text-align: center;
+    padding: 10px;
+}
+.user-all{
+    display: flex;
+    justify-content: space-between;
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 64px;
+    width: 100%;
+    padding: 5px;
+}
+.input-control{
+    border: none;
+    outline: none;
+    margin-left: 10px;
+}
+.admin-user-wraper{
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    margin-top: 25px;
+    width: 100%;
+}
+.admin-user-container{
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: 'a a u u e e e p p d d d';
+    align-items: center;
+}
+.admin-pass{
+    grid-area: p;   
+}
+.admin-author{
+  grid-area: a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.admin-user{
+  grid-area: u;
+}
+.admin-email{
+  grid-area: e;
+}
+.admin-delete-btn{
+  grid-area: d;
+  display: flex;
+  justify-content: center;
+ align-items: center;
+}
+.admin-delete-btn a{
+    color: white;
+    background: #FB3E3E;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 64px;
+    padding: 5px 15px;
+}
+.common-div{
+    background: #EDEDED;
+    border-radius: 2px;
+    margin-bottom: 5px;
+}
+.common-div-wraper{
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    padding: 20px 15px 10px 15px;
+}
+.user-stats{
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 60px;
+    text-align: center;
+    padding: 10px;
+}
+.recomandation{
+    background: #FFF2F2;
+    border-radius: 20px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    width: 206px;
+    height: 200px;
+}
+.invoice-div{
+    background: #FFEFEF;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.invoice-div p{
+    margin: 0px;
+}
+.dashboard-head{
+    font-family: Poppins;
+font-style: normal;
+font-weight: 500;
+font-size: 14px;
+line-height: 21px;
+letter-spacing: 0.03em;
+color: #000000;
+}
+.up-coming img{
+  height: 335px;
+  padding: 0px 0px 70px 0px ;
+}
+.common-btn{
+    background: #FB3E3E;
+}
+@media only screen and (max-width: 991px){
+    .invoice-div{
+        padding: 0px 10px;
+    }
+}
+@media only screen and (max-width: 767px){
+    .admin-user-wraper{
+        overflow-x: scroll;
+    }
+    .admin-user-container{
+        width: 800px;
+    }
+}
+
+.lorem{
+    font-size: 11px;
+    background: #FFFEFE;
+    border-radius: 35px;
+    padding: 0px 5px;
+    margin: 0px 5px;
+}
+.all-user-btn{
+    border: none;
+    outline: none;
+    background: #EDEDED;
+    border-radius: 53px;
+    padding: 5px 43px;
+    margin: 10px 10px;
+}
+.subscription{
+    border: none;
+    background: white;
+    outline: none;
+}
+@media only screen and (max-width: 991px){
+    .all-user-btn{
+        padding: 5px 20px;
+        margin: 10px 10px;
+    }
+}
+@media only screen and (max-width: 767px){
+    .all-user-btn{
+        padding: 5px 10px;
+        margin: 7px 5px;
+    }
+}
+.user-btn-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.btn-alignment{
+    background: #FFFFFF;
+    box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 64px;
+    width: 100%;
+    padding: 5px;
+}
