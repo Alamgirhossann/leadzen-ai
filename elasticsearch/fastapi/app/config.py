@@ -14,3 +14,11 @@ API_CONFIG_DEFAULT_PASSWORD = os.getenv("API_CONFIG_DEFAULT_PASSWORD", "Hello!12
 API_CONFIG_MAX_RECORDS_UPLOADED_PER_CALL = int(
     os.getenv("API_CONFIG_MAX_RECORDS_UPLOADED_PER_CALL", "5000")
 )
+API_CONFIG_ALLOWED_CONTENT_TYPES = [
+    x.strip()
+    for x in os.getenv(
+        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel"
+    ).split(",")
+    if x
+]
+API_CONFIG_ALLOWED_FILE_TYPE = os.getenv("API_CONFIG_ALLOWED_FILE_TYPE", ".csv")
