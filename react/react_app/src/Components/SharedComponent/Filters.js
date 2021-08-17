@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 const Filters = (props) => {
   const history = useHistory();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-  const [locationRes, setLocationRes] = useState([]);
+  const [isHide, setIsHide] = useState(true);
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -84,13 +84,21 @@ const Filters = (props) => {
     }
   }, [props])
 
+  const handleHide = () => {
+   setIsHide(!isHide)
+  }
+
+  const handleClearAll = () => {
+   setCustomSearch({ });
+  }
+
   return (
     <div>
       <div className="sidebar-search-for sidebar-widget px-4 pb-3 my-3">
         <div className="sidebar-accordion accordion" id="accordionExample">
           <div className="accordion-item">
             <div>
-              {customSearch.location ? (
+              {isHide && customSearch.location ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -109,7 +117,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.industry ? (
+              {isHide && customSearch.industry ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -119,7 +127,7 @@ const Filters = (props) => {
                     src="assets/images/pro-profile.png"
                     alt=""
                   />
-                  {customSearch.industry}
+                  {isHide && customSearch.industry}
                   <img
                     className="ps-4"
                     src="assets/images/cross-icon.png"
@@ -128,7 +136,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.job_title ? (
+              {isHide && customSearch.job_title ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -147,7 +155,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.education ? (
+              {isHide && customSearch.education ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -166,7 +174,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.company_name ? (
+              {isHide && customSearch.company_name ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -185,7 +193,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.keywords ? (
+              {isHide && customSearch.keywords ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -205,15 +213,16 @@ const Filters = (props) => {
                 </p>
               ) : null}
               <div className="d-flex justify-content-between">
-                <p>
+                <a onClick={()=> handleHide()}>
                   <img
                     style={{ width: "10px", marginRight: "5px" }}
                     src="assets/images/combined-eye.png"
                     alt=""
                   />
-                  Hide
-                </p>
-                <p className="text-danger">Clear All</p>
+                  {isHide? <h7> Hide</h7>:<h7> Show </h7>}
+
+                </a>
+                <a className="text-danger" onClick={()=>handleClearAll()}>Clear All</a>
               </div>
             </div>
             <h2 className="accordion-header">
