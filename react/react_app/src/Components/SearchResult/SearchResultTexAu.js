@@ -6,6 +6,7 @@ import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const SearchResult = (props) => {
     const [customSearch, setCustomSearch] = useState({
@@ -297,6 +298,7 @@ const SearchResult = (props) => {
                                 <h6 className="text-danger mb-3">Customize your search </h6>
                                 <Filters customSearch={customSearch} />
                             </div>
+                            <BulkSearch />
                             <SidebarExtractContact/>
                         </div>
                         <div className="col-md-8 col-lg-9">

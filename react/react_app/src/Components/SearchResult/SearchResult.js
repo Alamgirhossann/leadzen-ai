@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import Header from "../SharedComponent/Header";
@@ -92,9 +92,9 @@ const SearchResult = (props) => {
             console.log(show);
             console.log('inside showClick if');
             setShow(show.map((value, i) => {
-                    if (index === i) return true
-                    else return value
-                }
+                if (index === i) return true
+                else return value
+            }
             ))
             console.log(show);
         }
@@ -124,12 +124,12 @@ const SearchResult = (props) => {
     };
 
     const handleCSVFile = (e) => {
-        setCustomSearch({...customSearch, csv_file: e.target.files[0]});
+        setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
     };
 
     return (
         <div>
-            <Header user={user}/>
+            <Header user={user} />
             <div className="modal" id="UpgradeModal">
                 <button
                     type="button"
@@ -142,7 +142,7 @@ const SearchResult = (props) => {
                         <div className="d-flex">
                             <div className="pe-4">
                                 <img
-                                    style={{height: "125px", width: "100px"}}
+                                    style={{ height: "125px", width: "100px" }}
                                     src="assets/images/g10.png"
                                     alt=""
                                 />
@@ -154,7 +154,7 @@ const SearchResult = (props) => {
                                     upgrade your plan now.
                                 </p>
                                 <button
-                                    style={{background: "#FB3E3E"}}
+                                    style={{ background: "#FB3E3E" }}
                                     className="btn text-white"
                                 >
                                     {" "}
@@ -191,14 +191,14 @@ const SearchResult = (props) => {
                                 <button type="button" className="dz-button">
                                     Drag and Drop File
                                 </button>
-                                <br/>
+                                <br />
                                 <button type="button" className="dz-button">
                                     OR
                                 </button>
-                                <br/>
+                                <br />
                                 <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
-                </span>
+                                    <input type="file" accept=".csv" onChange={handleCSVFile} />
+                                </span>
                             </div>
                         </form>
                     </div>
@@ -211,10 +211,10 @@ const SearchResult = (props) => {
                         <div className="col-md-4 col-lg-3">
                             <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                                 <h6 className="text-danger mb-3">Customize your search</h6>
-                                <Filters/>
+                                <Filters />
                             </div>
-                            <BulkSearch/>
-                            <SidebarExtractContact/>
+                            <BulkSearch />
+                            <SidebarExtractContact />
                         </div>
                         <div className="col-md-8 col-lg-9">
                             <div className="user-search-wrapper">
@@ -227,9 +227,9 @@ const SearchResult = (props) => {
                                     <p className="mt-3">
                                         Extracted Results for:{" "}
                                         <span className="link-style">
-                      <img src="assets/images/Vector (2).png" alt=""/>{" "}
+                                            <img src="assets/images/Vector (2).png" alt="" />{" "}
                                             https://www.instagram.com/
-                    </span>
+                                        </span>
                                         <span className="link-style">Followers</span>{" "}
                                         <a className="text-danger" href="#">
                                             Clear All
@@ -325,7 +325,7 @@ const SearchResult = (props) => {
                                                             >
                                                                 abc@xyz.com
                                                             </small>
-                                                            <a href="#" onClick={(e)=>showClick(e, index)}>
+                                                            <a href="#" onClick={(e) => showClick(e, index)}>
                                                                 <small className="d-block text-danger">
                                                                     Unlock
                                                                 </small>
@@ -374,7 +374,7 @@ const SearchResult = (props) => {
                                                             id={"collapseExample_" + `${currentPage}${index}`}
                                                         >
                                                             {/* <div className="card card-body"> */}
-                                                            <SpecificUser details={data}/>
+                                                            <SpecificUser details={data} />
                                                             {/* </div> */}
                                                         </div>
                                                     </div>
@@ -401,7 +401,7 @@ const SearchResult = (props) => {
                             </div>
                             <div className="user-widget-box text-center p-4 my-3">
                                 <div className="user-promote-logo">
-                                    <img src="assets/images/user-company-brand.png" alt="title"/>
+                                    <img src="assets/images/user-company-brand.png" alt="title" />
                                 </div>
                                 <div className="user-promote-slider">
                                     <div className="item">

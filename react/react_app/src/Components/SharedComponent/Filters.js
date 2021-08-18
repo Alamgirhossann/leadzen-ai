@@ -402,19 +402,6 @@ const Filters = (props) => {
           </span>
           Search
         </button>
-
-        <p>
-          Bulk Search by uploding
-          <a
-            // href="#"
-            className="text-danger"
-            onChange={handleCSVFile}
-            data-bs-toggle="modal"
-            data-bs-target="#bulkmodal"
-          >
-            csv
-          </a>
-        </p>
       </div>
     </div>
   );
