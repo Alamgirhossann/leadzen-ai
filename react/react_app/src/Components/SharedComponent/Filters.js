@@ -89,7 +89,7 @@ const Filters = (props) => {
   }
 
   const handleClearAll = () => {
-   setCustomSearch({ });
+   setCustomSearch({ location:""});
   }
 
   return (
@@ -245,11 +245,10 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
-                  // onBlur={handleLocation}
                   type="text"
                   placeholder="Search Location"
                   onChange={handleLocation}
-                  autocomplete="off"
+                  value={customSearch.location}
                   list="location"
                 />
               </div>
@@ -278,6 +277,7 @@ const Filters = (props) => {
                 <input
                   className="customize-search"
                   onChange={handleIndustry}
+                  value={customSearch.industry}
                   type="text"
                   placeholder="Search Industry"
                   list="industry"
@@ -305,6 +305,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.job_title}
                   onChange={handleJob}
                   type="text"
                   placeholder="Search Job title"
@@ -333,6 +334,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.education}
                   onChange={handleEducation}
                   type="text"
                   placeholder="Search Education"
@@ -362,6 +364,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.company_name}
                   onChange={handleCompany}
                   type="text"
                   placeholder="Search Company Name"
@@ -390,6 +393,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.keywords}
                   onChange={handleKeywords}
                   type="text"
                   placeholder="Search Keywords"
@@ -411,19 +415,6 @@ const Filters = (props) => {
           </span>
           Search
         </button>
-
-        <p>
-          Bulk Search by uploding
-          <a
-            // href="#"
-            className="text-danger"
-            onChange={handleCSVFile}
-            data-bs-toggle="modal"
-            data-bs-target="#bulkmodal"
-          >
-            csv
-          </a>
-        </p>
       </div>
     </div>
   );
