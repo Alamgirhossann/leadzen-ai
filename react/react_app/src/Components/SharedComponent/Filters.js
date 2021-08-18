@@ -17,10 +17,6 @@ const Filters = (props) => {
     csv_file: null,
   });
 
-  // const handleLocationOnChange = async (e) => {
-  //   console.log("handleLocation, e.target.value=", e.target.value);
-  //   setCustomSearch({ ...customSearch, location: e.target.value });
-  // };
   const handleLocation = async (e) => {
     console.log("handleLocation, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, location: e.target.value });
@@ -51,9 +47,6 @@ const Filters = (props) => {
       pathname: "/advanceSearch",
       state: { customSearch },
     });
-  };
-  const handleCSVFile = (e) => {
-    setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
   const handleCloseCompany = (type) => {
