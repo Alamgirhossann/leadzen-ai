@@ -243,7 +243,7 @@ const RepeatedUser = () => {
                   {" "}
                   Hey, Based on your latest search intrest, these are best magic
                   recommendation for you !!{" "}
-                  <span className="text-danger">~Jarvis</span>
+                  <span className="text-danger">~Jarv</span>
                 </p>
                 <div className="px-5 pxlg-7 mb-3 row">
                   {recommendations.map((data) => (
