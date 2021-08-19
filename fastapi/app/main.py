@@ -12,6 +12,7 @@ from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau import router as texau_router
 from app.email_truemail import router as email_verification
+from app.csv_upload import router as csv_upload
 
 
 app = FastAPI()
@@ -34,6 +35,7 @@ async def root():
 app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
+app.include_router(router=csv_upload, prefix="/api")
 
 
 @app.on_event("startup")
