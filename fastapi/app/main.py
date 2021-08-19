@@ -10,9 +10,9 @@ from app.config import API_CONFIG_LINKEDIN_CSV_FILE
 from app.customize_filter import router as filter_router
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
-from app.texau import router as texau_router
+from app.texau.router import router as texau_router
 from app.email_truemail import router as email_verification
-from app.csv_upload import router as csv_upload
+from app.bulk_upload import router as bulk_router
 
 
 app = FastAPI()
@@ -35,7 +35,7 @@ async def root():
 app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
-app.include_router(router=csv_upload, prefix="/api")
+app.include_router(router=bulk_router, prefix="/api")
 
 
 @app.on_event("startup")
@@ -61,6 +61,7 @@ def refresh_linkedin_cookie_manually():
         writer.writerow(header)
         writer.writerow([data])
     logger.debug(header)
+
+
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
-

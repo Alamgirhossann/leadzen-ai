@@ -5,10 +5,10 @@ API_CONFIG_SELENIUM_SERVER_URL = os.getenv(
     "APP_CONFIG_SELENIUM_SERVER_URL", "http://localhost:4445/wd/hub"
 )
 
-API_CONFIG_PROXY_HOST = os.getenv("PROXY_HOST", "168.81.41.43")
-API_CONFIG_PROXY_PORT = os.getenv("PROXY_PORT", "47192")
-API_CONFIG_PROXY_USER = os.getenv("PROXY_USER", "malharlakdawala")
-API_CONFIG_PROXY_PASS = os.getenv("PROXY_PASS", "AsHhgbZE")
+API_CONFIG_TEXAU_PROXY_HOST = os.getenv("PROXY_HOST", "http://168.81.41.43:47192")
+API_CONFIG_TEXAU_PROXY_PORT = os.getenv("PROXY_PORT", "47192")
+API_CONFIG_TEXAU_PROXY_USER = os.getenv("PROXY_USER", "malharlakdawala")
+API_CONFIG_TEXAU_PROXY_PASS = os.getenv("PROXY_PASS", "AsHhgbZE")
 
 API_CONFIG_LINKEDIN_CSV_FILE = os.getenv("CSV_FILE", "linkedin_cookies.csv")
 API_CONFIG_LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME", "kaylaklug2021@gmail.com")
@@ -51,9 +51,36 @@ API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID = os.getenv(
     "API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID",
     "texau-automation-1-dev-linkedInSearchExtractor",
 )
-API_CONFIG_TEXAU_PROXY = os.getenv("API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pune")
+API_CONFIG_TEXAU_PROXY_NAME = os.getenv(
+    "API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pune"
+)
 API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL = float(
     os.getenv("API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL", "5.0")
 )
-API_CONFIG_TRUEMAIL_API_KEY = os.getenv("TRUEMAIL_API_ACCESS_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
-API_CONFIG_TRUEMAIL_API_URL = os.getenv("TRUEMAIL_API_ACCESS_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
+API_CONFIG_TRUEMAIL_API_KEY = os.getenv(
+    "TRUEMAIL_API_ACCESS_KEY",
+    "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn",
+)
+API_CONFIG_TRUEMAIL_API_URL = os.getenv(
+    "TRUEMAIL_API_ACCESS_URL",
+    "https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=",
+)
+
+API_CONFIG_BULK_INCOMING_DIRECTORY = "./bulk/incoming"
+API_CONFIG_BULK_OUTGOING_DIRECTORY = "./bulk/outgoing"
+
+API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_RECIPE_ID = os.getenv(
+    "API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_RECIPE_ID", "5e4d2381f0a6f62ab94d8207"
+)
+API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_FUNC_ID = os.getenv(
+    "API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_FUNC_ID",
+    "texau-automation-scripts-3-dev-findEmailUsingLinkedin",
+)
+API_CONFIG_ALLOWED_CONTENT_TYPES = [
+    x.strip()
+    for x in os.getenv(
+        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel"
+    ).split(",")
+    if x
+]
+API_CONFIG_ALLOWED_FILE_TYPE = os.getenv("API_CONFIG_ALLOWED_FILE_TYPE", ".csv")
