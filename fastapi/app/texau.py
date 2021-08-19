@@ -36,6 +36,14 @@ class TexAuRequest(BaseModel):
     pastCompany: List[str] = []
 
 
+class TexAuRequestExecution(BaseModel):
+    executionId: Optional[str] = None
+
+
+class TexAuExecutionResponse(BaseModel):
+    execution_id: Optional[str] = None
+
+
 class TexAuResponse(BaseModel):
     data: Optional[List[Dict]] = None
 
@@ -53,8 +61,10 @@ def read_linkedin_cookie():
     return cookie
 
 
-async def check_execution_status(execution_id: str) -> Optional[Dict]:
-    if not execution_id:
+@router.post("/execution_status", response_model=TexAuResponse)
+async def check_execution_status(request: TexAuRequestExecution) -> Optional[TexAuResponse]:
+
+    if not request.executionId:
         logger.warning("Invalid task_id")
         return None
 
@@ -69,16 +79,21 @@ async def check_execution_status(execution_id: str) -> Optional[Dict]:
 
             while timeout_counter > 0:
                 response = await client.get(
-                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{execution_id}", headers=headers
+                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{request.executionId}", headers=headers
                 )
-
+                logger.debug("Response>>>>"+str(response.text))
                 if response.status_code == 200:
                     if data := response.json():
                         if data["execution"]["status"] == "completed" and data["execution"].get("output") is not None:
                             logger.success(f"Got Task Results: {data=}")
-                            return data["execution"]["output"]
+                            result = data["execution"]["output"]
+                            return TexAuResponse(data=result)
+                        elif data["execution"]["status"] == "cookieError":
+                            result = data["execution"]["output"]
+                            return TexAuResponse(data=result)
                         else:
                             logger.warning(f'{data["execution"]["status"]=}')
+
 
                 await asyncio.sleep(
                     API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL
@@ -90,18 +105,19 @@ async def check_execution_status(execution_id: str) -> Optional[Dict]:
 
             return None
     except Exception as e:
-        logger.critical(f"Exception Getting Task Status: {execution_id=}: {str(e)}")
+        logger.critical(f"Exception Getting Task Status: {request.executionId=}: {str(e)}")
         return None
 
 
 async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
+    logger.debug("send_spice_request id>>>>>>>>>", linkedin_url)
     payload = json.dumps(
         {
             "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
             "spiceId": API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
             "inputs": {
                 "search": linkedin_url,
-                "numberOfPage": "1",
+                "numberOfPage": "10",
                 "li_at": cookie,
                 "proxy": {
                     "proxyName": API_CONFIG_TEXAU_PROXY,
@@ -131,18 +147,18 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
             if not (data := response.json()):
                 logger.error(f"Invalid Data")
                 return None
-
+            logger.debug("ExecutionId>>>>" + data.get("executionId"))
             if not (task_id := data.get("executionId")):
                 logger.error(f"Invalid Data")
                 return None
-
+            logger.debug("task_id>>>>" + task_id)
             return task_id
     except Exception as e:
         logger.critical(f"Exception sending to texau: {str(e)}")
         return None
 
 
-@router.post("/search", response_model=TexAuResponse)
+@router.post("/search", response_model=TexAuExecutionResponse)
 async def search_using_texau(request: TexAuRequest):
     logger.info(f"{request=}")
 
@@ -173,13 +189,15 @@ async def search_using_texau(request: TexAuRequest):
                 detail=str("TexAu: Invalid Task Id"),
             )
 
-        if not (data := await check_execution_status(execution_id=execution_id)):
-            logger.error("Invalid Data")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=str("TexAu: Invalid Data for Task-Id"),
-            )
-        return TexAuResponse(data=data)
+        # if not (data := await check_execution_status(execution_id=execution_id)):
+        #     logger.error("Invalid Data")
+        #     raise HTTPException(
+        #         status_code=status.HTTP_404_NOT_FOUND,
+        #         detail=str("TexAu: Invalid Data for Task-Id"),
+        #     )
+        # return TexAuResponse(data=data)
+        logger.debug("Execution Id in main>>>>>" + execution_id)
+        return {"execution_id": execution_id}
     except Exception as e:
         logger.critical(str(e))
         raise HTTPException(
