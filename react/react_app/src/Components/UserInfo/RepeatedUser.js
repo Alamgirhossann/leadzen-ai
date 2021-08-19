@@ -266,7 +266,7 @@ const RepeatedUser = () => {
                   alt="#"
                   className="user-author-shape"
                 />
-                <a href="/history" className="text-danger">
+                <a href="/searchResult" className="text-danger">
                   View List
                 </a>
               </div>

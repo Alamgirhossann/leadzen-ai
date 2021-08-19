@@ -8,7 +8,7 @@ const Header = (props) => {
       <header className="header-area">
         <nav className="header-navbar navbar navbar-expand-xl bg-light">
           <div className="container-fluid" style={{ paddingRight: "0px" }}>
-            <a className="navbar-brand" href="index.html">
+            <a className="navbar-brand" href="/repeatedUser">
               <img src="assets/images/header-brand-black.png" alt="title" />
             </a>
 
