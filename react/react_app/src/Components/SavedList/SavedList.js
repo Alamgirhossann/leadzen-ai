@@ -194,7 +194,7 @@ const SavedList = () => {
 
                       <p className="save-view-btn">
                         <a href="/detailedInfo" className="button">
-                          View Profile
+                          Unlock Profile
                         </a>
                       </p>
                       <a
@@ -308,7 +308,7 @@ const SavedList = () => {
 
                       <p className="save-view-btn">
                         <a href="/detailedInfo" className="button">
-                          View Profile
+                        Unlock Profile
                         </a>
                       </p>
                       <p className="save-close-btn">
