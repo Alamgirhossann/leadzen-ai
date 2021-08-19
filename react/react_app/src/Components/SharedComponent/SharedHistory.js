@@ -119,7 +119,7 @@ const SharedHistory = () => {
                   </div>
                   <p className="view-btn" align="right">
                     <a href="/detailedInfo" className="button">
-                      View Profile
+                    Unlock Profile
                     </a>
                   </p>
                   <a
@@ -167,7 +167,7 @@ const SharedHistory = () => {
                   </div>
                   <p className="view-btn" align="right">
                     <a href="/detailedInfo" className="button">
-                      View Profile
+                    Unlock Profile
                     </a>
                   </p>
                   <p className="close-btn">

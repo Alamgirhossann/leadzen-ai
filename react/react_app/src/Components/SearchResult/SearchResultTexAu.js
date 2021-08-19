@@ -413,7 +413,7 @@ const SearchResult = (props) => {
                                                                 aria-controls="collapseExample"
                                                                 onClick={() => handleProfile(index, data)}
                                                             >
-                                                                View Profile
+                                                                Unlock Profile
                                                             </a>
                                                         </p>
 
