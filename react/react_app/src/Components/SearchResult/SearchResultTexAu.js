@@ -41,7 +41,6 @@ const SearchResult = (props) => {
     setCurrentLeads(
       myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
     );
-    // setShow(new Array(currentLeads.length).fill().map((item) => false))
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {

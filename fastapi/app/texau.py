@@ -189,13 +189,6 @@ async def search_using_texau(request: TexAuRequest):
                 detail=str("TexAu: Invalid Task Id"),
             )
 
-        # if not (data := await check_execution_status(execution_id=execution_id)):
-        #     logger.error("Invalid Data")
-        #     raise HTTPException(
-        #         status_code=status.HTTP_404_NOT_FOUND,
-        #         detail=str("TexAu: Invalid Data for Task-Id"),
-        #     )
-        # return TexAuResponse(data=data)
         logger.debug("Execution Id in main>>>>>" + execution_id)
         return {"execution_id": execution_id}
     except Exception as e:
