@@ -129,30 +129,25 @@ const SearchResult = (props) => {
       return;
     }
 
-    const interval = setInterval(async () => {
+    let timeoutId;
+
+    const intervalId = setInterval(async () => {
       console.log("In interval.....");
       try {
-        const response = await fetch(apiServer + "/texau/execution_status", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            executionId: executionId,
-          }),
-        });
+        const response = await fetch(
+          apiServer + `/texau/check_status/${executionId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
 
         if (response.status === 404) {
-          console.warn("Report File Not Yet Generated");
+          console.warn("Execution Not Complete");
           // TODO: show appropriate ui content like spinners and stuff
-          return;
-        }
-
-        if (response.status === 204) {
-          console.error("Report Generation has Failed");
-          clearInterval(interval);
-          // TODO: show appropriate ui content, stop spinners and show error messages
           return;
         }
 
@@ -162,13 +157,19 @@ const SearchResult = (props) => {
           );
           return;
         }
-        let json_res = await response.json();
 
-        console.log("Data>>>>>>>>>>>", json_res);
+        let data = await response.json();
+        if (!data) {
+          console.warn(`Invalid Data`);
+          return;
+        }
+
+        console.log("Data>>>>>>>>>>>", data);
         setLoading(false);
-        clearInterval(interval);
-        if (json_res) setMyLeads(json_res.data);
-        if (json_res.detail) {
+        if (timeoutId) clearTimeout(timeoutId);
+        clearInterval(intervalId);
+        if (data) setMyLeads(data.data);
+        if (data.detail) {
           setMyLeads("");
         }
       } catch (e) {
@@ -176,9 +177,9 @@ const SearchResult = (props) => {
       }
     }, 5 * 1000);
 
-    setTimeout(function () {
+    timeoutId = setTimeout(function () {
       console.error("Report was not found within 5 Min");
-      clearInterval(interval);
+      clearInterval(intervalId);
       // TODO: show appropriate ui actions like stop spinners and show error message etc
     }, 5 * 60 * 1000);
   };

@@ -15,7 +15,9 @@ from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
     API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
     API_CONFIG_TEXAU_PROXY,
-    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL, API_CONFIG_PROXY_USER, API_CONFIG_PROXY_PASS,
+    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
+    API_CONFIG_PROXY_USER,
+    API_CONFIG_PROXY_PASS,
 )
 from app.config import (
     API_CONFIG_TEXAU_KEY,
@@ -37,7 +39,7 @@ class TexAuRequest(BaseModel):
 
 
 class TexAuRequestExecution(BaseModel):
-    executionId: Optional[str] = None
+    execution_id: Optional[str] = None
 
 
 class TexAuExecutionResponse(BaseModel):
@@ -61,10 +63,52 @@ def read_linkedin_cookie():
     return cookie
 
 
-@router.post("/execution_status", response_model=TexAuResponse)
-async def check_execution_status(request: TexAuRequestExecution) -> Optional[TexAuResponse]:
+@router.get("/check_status/{execution_id}", response_model=TexAuResponse)
+async def check_execution_status(execution_id: str):
+    try:
+        async with httpx.AsyncClient() as client:
+            headers = {
+                "Authorization": f"APIKey {API_CONFIG_TEXAU_KEY}",
+                "Content-Type": "application/json",
+            }
 
-    if not request.executionId:
+            response = await client.get(
+                f"{API_CONFIG_TEXAU_EXECUTION_URL}{execution_id}", headers=headers
+            )
+
+            if response.status_code == 200:
+                if data := response.json():
+                    if (
+                        data["execution"]["status"] == "completed"
+                        and data["execution"].get("output") is not None
+                    ):
+                        logger.success(f"Got Task Results: {data=}")
+                        result = data["execution"]["output"]
+                        return TexAuResponse(data=result)
+                    elif data["execution"]["status"] == "cookieError":
+                        result = data["execution"]["output"]
+                        logger.error(f'{data["execution"]["status"]=}')
+                        # TODO: Handle the cookie error by sending an alert or refreshing the linkedin cookie
+                    else:
+                        logger.warning(f'{data["execution"]["status"]=}')
+
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No Results Found",
+            )
+    except Exception as e:
+        logger.critical(f"Exception Getting Task Status: {execution_id=}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Finding Results",
+        )
+
+
+# this will be needed in the csv/bulk search case
+async def wait_and_check_execution_status(
+    execution_id: str, max_timeout_counter: int = 18
+) -> Optional[TexAuResponse]:
+    if not execution_id:
         logger.warning("Invalid task_id")
         return None
 
@@ -75,16 +119,19 @@ async def check_execution_status(request: TexAuRequestExecution) -> Optional[Tex
                 "Content-Type": "application/json",
             }
 
-            timeout_counter = 18
+            timeout_counter = max_timeout_counter
 
             while timeout_counter > 0:
                 response = await client.get(
-                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{request.executionId}", headers=headers
+                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{execution_id}",
+                    headers=headers,
                 )
-                logger.debug("Response>>>>"+str(response.text))
                 if response.status_code == 200:
                     if data := response.json():
-                        if data["execution"]["status"] == "completed" and data["execution"].get("output") is not None:
+                        if (
+                            data["execution"]["status"] == "completed"
+                            and data["execution"].get("output") is not None
+                        ):
                             logger.success(f"Got Task Results: {data=}")
                             result = data["execution"]["output"]
                             return TexAuResponse(data=result)
@@ -93,7 +140,6 @@ async def check_execution_status(request: TexAuRequestExecution) -> Optional[Tex
                             return TexAuResponse(data=result)
                         else:
                             logger.warning(f'{data["execution"]["status"]=}')
-
 
                 await asyncio.sleep(
                     API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL
@@ -105,7 +151,7 @@ async def check_execution_status(request: TexAuRequestExecution) -> Optional[Tex
 
             return None
     except Exception as e:
-        logger.critical(f"Exception Getting Task Status: {request.executionId=}: {str(e)}")
+        logger.critical(f"Exception Getting Task Status: {execution_id=}: {str(e)}")
         return None
 
 
@@ -121,9 +167,9 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
                 "li_at": cookie,
                 "proxy": {
                     "proxyName": API_CONFIG_TEXAU_PROXY,
-                    'ip': 'http://168.81.41.43:47192',
-                    'name': API_CONFIG_PROXY_USER,
-                    'password': API_CONFIG_PROXY_PASS
+                    "ip": "http://168.81.41.43:47192",
+                    "name": API_CONFIG_PROXY_USER,
+                    "password": API_CONFIG_PROXY_PASS,
                 },
             },
             "executionName": str(uuid.uuid4()),
