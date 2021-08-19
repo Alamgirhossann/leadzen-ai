@@ -9,6 +9,7 @@ import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 
 const SearchResult = (props) => {
+   
     const [customSearch, setCustomSearch] = useState({
         location: null,
         industry: null,
