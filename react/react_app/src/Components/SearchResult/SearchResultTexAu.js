@@ -8,15 +8,7 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 
 const SearchResult = (props) => {
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "assets/js/app.js";
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
+   
     const [customSearch, setCustomSearch] = useState({
         location: null,
         industry: null,
