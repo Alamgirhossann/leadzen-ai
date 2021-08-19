@@ -13,25 +13,26 @@ const BulkSearch = () => {
         console.log(uploadedCSV);
     }
 
-    const uploadCsv = async () => {
+    const uploadCsv = async (file) => {
+        // TODO: check for file size here and reject if its too large, show alert about it
+        
         const formData = new FormData();
-        if (typeof (uploadedCSV) === "object") {
-            formData.append("csv-input", uploadedCSV);
-            try {
-                const response = await fetch(apiServer + "/bulksearch/csvupload", {
-                    method: "POST",
-                    body: formData
-                })
-                let json_response = await response.json();
-                if (json_response) {
-                    console.log(json_response);
-                    // console.log("success");
-                }
-            } catch (err) {
-                console.error("Error: ", err);
-            }
-        } else return
+        formData.append('file', file);
 
+        try {
+            const response = await fetch(apiServer + "/bulk_upload/csv", {
+                method: "POST",
+                body: formData
+            })
+            let json_response = await response.json();
+            if (json_response) {
+                console.log(json_response);
+                // TODO: show alert that an email will be sent to the user with the results
+            }
+        } catch (err) {
+            console.error("Error: ", err);
+            // TODO: show alert that there was an error uploading the file, perhaps attempt a retry
+        }
     }
 
     useEffect(() => {
@@ -83,7 +84,7 @@ const BulkSearch = () => {
                 style={{background: "#FB3E3E"}}
                 className="btn text-white"
                 type="submit"
-                onClick={uploadCsv}
+                onClick={async (e) => uploadCsv(e.target.files[0])}
             >
         <span className="pe-1">
           <FontAwesomeIcon icon={faSearch}/>
