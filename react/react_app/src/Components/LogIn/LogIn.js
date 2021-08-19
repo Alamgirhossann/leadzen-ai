@@ -122,13 +122,14 @@ const LogIn = () => {
     const fetchData = async () => {
       try {
         const fetchResponse = await axios.post(
-            apiServer + 'auth/jwt/login',
+            apiServer + '/auth/jwt/login',
             formData,
             {
               headers: {
                 'Content-Type': 'multipart/form-data',
               },
             },)
+        console.log("urlll>>>", apiServer + '/auth/jwt/login')
         let json_res = await fetchResponse.data;
         console.log("json_res", json_res)
         if (json_res.access_token) {

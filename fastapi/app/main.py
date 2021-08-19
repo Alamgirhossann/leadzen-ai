@@ -40,26 +40,26 @@ app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(
-    fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"]
+    fastapi_users.get_auth_router(jwt_authentication), prefix="/api/auth/jwt", tags=["auth"]
 )
 app.include_router(
-    fastapi_users.get_register_router(on_after_register), prefix="/auth", tags=["auth"]
+    fastapi_users.get_register_router(on_after_register), prefix="/api/auth", tags=["auth"]
 )
 app.include_router(
     fastapi_users.get_reset_password_router(
         SECRET, after_forgot_password=on_after_forgot_password
     ),
-    prefix="/auth",
+    prefix="/api/auth",
     tags=["auth"],
 )
 app.include_router(
     fastapi_users.get_verify_router(
         SECRET, after_verification_request=after_verification_request
     ),
-    prefix="/auth",
+    prefix="/api/auth",
     tags=["auth"],
 )
-app.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
+app.include_router(fastapi_users.get_users_router(), prefix="/api/users", tags=["users"])
 app.include_router(router=email_router, prefix="/api")
 
 @app.on_event("startup")

@@ -18,7 +18,7 @@ conf = ConnectionConfig(
     MAIL_SERVER="smtp.gmail.com",
     MAIL_TLS=True,
     MAIL_SSL=False,
-    TEMPLATE_FOLDER='templates',
+    # TEMPLATE_FOLDER='fastapi/templates',
 )
 router = APIRouter(prefix="/email", tags=["email_send"])
 
@@ -28,9 +28,10 @@ async def send_with_template(email: EmailSchema) -> JSONResponse:
     message = MessageSchema(
         subject="Fastapi-Mail module",
         recipients=email.dict().get("email"),
-        template_body={
+        body={
             "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGMxMzQ5OWYtYTYxMy00NzRjLWFlNDMtZTFmMDM0OWZlODJjIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwiYXVkIjoiZmFzdGFwaS11c2Vyczp2ZXJpZnkiLCJleHAiOjE2MjkzNzgwNTJ9.t5uNqfRoENgEUaWsYdbB_0vPLLZ5Wai9VzaZ10qA12I",
         },
+        subtype="html",
     )
 
     fm = FastMail(conf)
