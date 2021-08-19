@@ -38,10 +38,6 @@ class TexAuRequest(BaseModel):
     pastCompany: List[str] = []
 
 
-class TexAuRequestExecution(BaseModel):
-    execution_id: Optional[str] = None
-
-
 class TexAuExecutionResponse(BaseModel):
     execution_id: Optional[str] = None
 

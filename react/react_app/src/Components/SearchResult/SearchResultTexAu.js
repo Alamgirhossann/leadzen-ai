@@ -168,10 +168,7 @@ const SearchResult = (props) => {
         setLoading(false);
         if (timeoutId) clearTimeout(timeoutId);
         clearInterval(intervalId);
-        if (data) setMyLeads(data.data);
-        if (data.detail) {
-          setMyLeads("");
-        }
+        if (data.data) setMyLeads(data.data);
       } catch (e) {
         console.error("Exception>>", e);
       }
