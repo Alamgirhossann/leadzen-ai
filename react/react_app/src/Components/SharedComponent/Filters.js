@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 const Filters = (props) => {
   const history = useHistory();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-  const [locationRes, setLocationRes] = useState([]);
+  const [isHide, setIsHide] = useState(true);
   const [customSearch, setCustomSearch] = useState({
     location: null,
     industry: null,
@@ -17,10 +17,6 @@ const Filters = (props) => {
     csv_file: null,
   });
 
-  // const handleLocationOnChange = async (e) => {
-  //   console.log("handleLocation, e.target.value=", e.target.value);
-  //   setCustomSearch({ ...customSearch, location: e.target.value });
-  // };
   const handleLocation = async (e) => {
     console.log("handleLocation, e.target.value=", e.target.value);
     setCustomSearch({ ...customSearch, location: e.target.value });
@@ -52,9 +48,6 @@ const Filters = (props) => {
       state: { customSearch },
     });
   };
-  const handleCSVFile = (e) => {
-    setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
-  };
 
   const handleCloseCompany = (type) => {
     console.log("In HandleCloseCompany......", type);
@@ -84,13 +77,21 @@ const Filters = (props) => {
     }
   }, [props])
 
+  const handleHide = () => {
+   setIsHide(!isHide)
+  }
+
+  const handleClearAll = () => {
+   setCustomSearch({ location:""});
+  }
+
   return (
     <div>
       <div className="sidebar-search-for sidebar-widget px-4 pb-3 my-3">
         <div className="sidebar-accordion accordion" id="accordionExample">
           <div className="accordion-item">
             <div>
-              {customSearch.location ? (
+              {isHide && customSearch.location ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -109,7 +110,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.industry ? (
+              {isHide && customSearch.industry ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -119,7 +120,7 @@ const Filters = (props) => {
                     src="assets/images/pro-profile.png"
                     alt=""
                   />
-                  {customSearch.industry}
+                  {isHide && customSearch.industry}
                   <img
                     className="ps-4"
                     src="assets/images/cross-icon.png"
@@ -128,7 +129,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.job_title ? (
+              {isHide && customSearch.job_title ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -147,7 +148,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.education ? (
+              {isHide && customSearch.education ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -166,7 +167,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.company_name ? (
+              {isHide && customSearch.company_name ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -185,7 +186,7 @@ const Filters = (props) => {
                   />
                 </p>
               ) : null}
-              {customSearch.keywords ? (
+              {isHide && customSearch.keywords ? (
                 <p
                   className="text-left top-search"
                   style={{ width: "fit-content" }}
@@ -205,15 +206,16 @@ const Filters = (props) => {
                 </p>
               ) : null}
               <div className="d-flex justify-content-between">
-                <p>
+                <a onClick={()=> handleHide()}>
                   <img
                     style={{ width: "10px", marginRight: "5px" }}
                     src="assets/images/combined-eye.png"
                     alt=""
                   />
-                  Hide
-                </p>
-                <p className="text-danger">Clear All</p>
+                  {isHide? <h7> Hide</h7>:<h7> Show </h7>}
+
+                </a>
+                <a className="text-danger" onClick={()=>handleClearAll()}>Clear All</a>
               </div>
             </div>
             <h2 className="accordion-header">
@@ -236,11 +238,10 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
-                  // onBlur={handleLocation}
                   type="text"
                   placeholder="Search Location"
                   onChange={handleLocation}
-                  autocomplete="off"
+                  value={customSearch.location}
                   list="location"
                 />
               </div>
@@ -269,6 +270,7 @@ const Filters = (props) => {
                 <input
                   className="customize-search"
                   onChange={handleIndustry}
+                  value={customSearch.industry}
                   type="text"
                   placeholder="Search Industry"
                   list="industry"
@@ -296,6 +298,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.job_title}
                   onChange={handleJob}
                   type="text"
                   placeholder="Search Job title"
@@ -324,6 +327,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.education}
                   onChange={handleEducation}
                   type="text"
                   placeholder="Search Education"
@@ -353,6 +357,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.company_name}
                   onChange={handleCompany}
                   type="text"
                   placeholder="Search Company Name"
@@ -381,6 +386,7 @@ const Filters = (props) => {
               <div className="accordion-body">
                 <input
                   className="customize-search"
+                  value={customSearch.keywords}
                   onChange={handleKeywords}
                   type="text"
                   placeholder="Search Keywords"
@@ -402,19 +408,6 @@ const Filters = (props) => {
           </span>
           Search
         </button>
-
-        <p>
-          Bulk Search by uploding
-          <a
-            // href="#"
-            className="text-danger"
-            onChange={handleCSVFile}
-            data-bs-toggle="modal"
-            data-bs-target="#bulkmodal"
-          >
-            csv
-          </a>
-        </p>
       </div>
     </div>
   );
