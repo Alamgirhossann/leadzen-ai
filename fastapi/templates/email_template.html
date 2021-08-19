@@ -1,0 +1,35 @@
+
+<!--<form action="http://127.0.0.1:8080/auth/verify" method="POST" target="_blank">-->
+<!--  <input type="text" id="token" name="token" value={{token}}><br><br>-->
+<!--  <input type="submit" value="verfiy">-->
+<!--</form>-->
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Verify Email</h1>
+
+<a href="#" type="button" id="loginEmail"  onclick="return loadDoc()">Verify</a>
+
+<p id="demo" value={{token}}></p>
+
+<script>
+function loadDoc() {
+    const params = {
+            token: document.querySelector('#demo').value,
+        }
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("demo").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("POST", "http://127.0.0.1:8080/auth/verify", true);
+  xhttp.setRequestHeader("Content-type", "application/json");
+  xhttp.send(JSON.stringify(params));
+}
+</script>
+
+</body>
+</html>

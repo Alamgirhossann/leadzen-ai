@@ -12,7 +12,12 @@ from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau import router as texau_router
 from app.email_truemail import router as email_verification
+from app.users import jwt_authentication, on_after_register, on_after_forgot_password, SECRET, \
+    after_verification_request, database
+from app.users import fastapi_users
+from app.email import router as email_router
 
+current_active_user = fastapi_users.current_user(active=True)
 
 app = FastAPI()
 load_dotenv()
@@ -34,6 +39,37 @@ async def root():
 app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
+app.include_router(
+    fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"]
+)
+app.include_router(
+    fastapi_users.get_register_router(on_after_register), prefix="/auth", tags=["auth"]
+)
+app.include_router(
+    fastapi_users.get_reset_password_router(
+        SECRET, after_forgot_password=on_after_forgot_password
+    ),
+    prefix="/auth",
+    tags=["auth"],
+)
+app.include_router(
+    fastapi_users.get_verify_router(
+        SECRET, after_verification_request=after_verification_request
+    ),
+    prefix="/auth",
+    tags=["auth"],
+)
+app.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
+app.include_router(router=email_router, prefix="/api")
+
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
 
 
 @app.on_event("startup")
@@ -59,6 +95,7 @@ def refresh_linkedin_cookie_manually():
         writer.writerow(header)
         writer.writerow([data])
     logger.debug(header)
+
+
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
-

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import "./Style/style.css";
-import { Link, Redirect } from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import Cookies from "js-cookie";
 import validator from "validator";
 import Header from "../SharedComponent/Header";
+import axios from "axios";
+
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const LogIn = () => {
   const user = {
@@ -21,23 +24,22 @@ const LogIn = () => {
     },
   };
 
-  const [form, setForm] = useState({
+  const [userLogin, setUserLogin] = useState({
     email: "",
     password: "",
     error: "",
   });
 
   const [isValid, setValid] = useState(false);
-  const [response, setResponse] = useState({ ok: null, message: null });
+  const [response, setResponse] = useState({ok: null, message: null});
   const [showPass, setShowPass] = useState(false);
 
-  const handleBlur = (e) => {
-    setForm({ ...form, email: e.target.value });
-  };
 
-  const handleBlurPass = (e) => {
-    setForm({ ...form, password: e.target.value });
-  };
+  const handleInput = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setUserLogin({...userLogin, [name]: value})
+  }
 
   const handlePassClick = (e) => {
     e.preventDefault();
@@ -85,43 +87,65 @@ const LogIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) {
-      setForm({ ...form, error: "Email and Password cannot be blank!" });
+    console.log("userLogin", userLogin)
+    if (!userLogin.email || !userLogin.password) {
+      setUserLogin({...userLogin, error: "Email and Password cannot be blank!"});
       alert("Email and Password cannot be blank!");
     } else {
       setValid(true);
-      setForm({ ...form, error: "" });
+      setUserLogin({...userLogin, error: ""});
     }
-    if (!validator.isEmail(form.email)) {
-      setForm({ ...form, error: "Invalid Email" });
+    if (!validator.isEmail(userLogin.email)) {
+      setUserLogin({...userLogin, error: "Invalid Email"});
       setValid(false);
       alert("Invalid Email");
     }
-    if (
-      !validator.isStrongPassword(form.password, {
-        minLength: 8,
-        minLowercase: 1,
-        maxlength: 50,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1,
-      })
-    ) {
-      setForm({ ...form, error: "Invalid Password" });
+    if (!validator.isStrongPassword(userLogin.password, {
+      minLength: 8,
+      minLowercase: 1,
+      maxlength: 50,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    })) {
+      setUserLogin({...userLogin, error: "Invalid Password"});
       setValid(false);
       alert("Invalid Password!");
     }
-    const fetchData = async () => {
-      // const apiHost = ;
-      // TODO: Complete async function to use the form to check login credentials using api
-      setResponse({ ...response, ok: true });
-      if (response.ok === true) {
-        Cookies.set("user_email", form.email);
-      }
-    };
-    if (isValid) {
-      fetchData();
+    const formData = new FormData();
+    formData.set('username', userLogin.email);
+    formData.set('password', userLogin.password);
+    console.log("formData", formData)
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
     }
+    const fetchData = async () => {
+      try {
+        const fetchResponse = await axios.post(
+            apiServer + 'auth/jwt/login',
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },)
+        let json_res = await fetchResponse.data;
+        console.log("json_res", json_res)
+        if (json_res.access_token) {
+          Cookies.set("user_email", userLogin.email);
+          Cookies.set("user_token", json_res.access_token);
+        }
+        setResponse({...response, ok: true});
+        console.log("response", response)
+        if (response.ok === true) {
+          Cookies.set("user_email", userLogin.email);
+        }
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+
+    };
+      fetchData();
   };
 
   return (
@@ -142,55 +166,41 @@ const LogIn = () => {
                           Most Intelligent Lead Generation Platform
                         </h5>
                       </div>
-                      <form className="sign-up-form">
+                      <form className="sign-up-form" onSubmit={handleSubmit}>
                         <div className="mb-3">
-                          <input
-                            type="email"
-                            name="email"
-                            className="w-100"
-                            placeholder="Enter your email"
-                            id="email"
-                            onBlur={handleBlur}
-                          />
+                          <input type="email" className="w-100" autoComplete="off" value={userLogin.email}
+                                 onChange={handleInput} name="email" placeholder="Enter your email" id="email"/>
                         </div>
                         <div className="mb-3 password-input">
-                          <input
-                            type={showPass ? "text" : "password"}
-                            name="password"
-                            className="w-100"
-                            placeholder="Enter your password"
-                            id="password"
-                            onBlur={handleBlurPass}
-                          />
-                          <a href="" onClick={handlePassClick}>
+                          <input type={showPass ? "text" : "password"} className="w-100" autoComplete="off"
+                                 value={userLogin.password} onChange={handleInput} name="password"
+                                 placeholder="Enter your password" id="password"/>
+                          <Link to="" onClick={handlePassClick}>
                             <img
-                              src="assets/images/combined-eye.png"
-                              style={{
-                                position: "absolute",
-                                top: "13px",
-                                right: "10px",
-                              }}
+                                src="assets/images/combined-eye.png"
+                                style={{
+                                  position: "absolute",
+                                  top: "13px",
+                                  right: "10px",
+                                }}
                             />
-                          </a>
+                          </Link>
                         </div>
                         <div className="mb-1 d-block d-md-flex justify-content-end">
                           <p>
                             <Link
-                              to="/resetPassword"
-                              onClick={() =>
-                                Cookies.set("forgot_email", form.email)
-                              }
-                              className="small text-secondary"
+                                to="#"
+                                // to="/resetPassword"
+                                // onClick={() =>
+                                //   Cookies.set("forgot_email", form.email)
+                                // }
+                                className="small text-secondary"
                             >
                               Forgot your password?
                             </Link>
                           </p>
                         </div>
-                        <button
-                          type="submit"
-                          onClick={handleSubmit}
-                          className="btn text-white w-100"
-                        >
+                        <button type="submit" className="btn text-white w-100">
                           Sign In
                         </button>
                         <div className="text-center mt-2">
