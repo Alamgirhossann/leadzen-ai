@@ -83,15 +83,15 @@ async def check_execution_status(execution_id: str):
                         return TexAuResponse(data=result)
                     if data["execution"]["status"] == "cookieError":
                         print("cookie error")
-                        async with httpx.AsyncClient() as cookie_client:
+                        # async with httpx.AsyncClient() as cookie_client:
                             # r = await cookie_client.get('/refresh_linkedin_cookie')
                             # logger.debug("R >>>"+str(r))
                             #
                             # if r != 200:
-                            raise HTTPException(
-                                status_code=status.HTTP_403_FORBIDDEN,
-                                detail="Cookie Error",
-                            )
+                        raise HTTPException(
+                            status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Cookie Error",
+                        )
                     # TODO: Handle the cookie error by sending an alert or refreshing the linkedin cookie
 
             raise HTTPException(
