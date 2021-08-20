@@ -6,6 +6,7 @@ import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -20,12 +21,11 @@ const SearchResult = (props) => {
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
-  const [resultData, setSearchResult] = useState({ data: null });
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
-  const [activeIndexProfile, setActiveIndexProfile] = useState(false);
 
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -235,8 +235,6 @@ const SearchResult = (props) => {
     },
   };
 
-  let searchData = { count: 12, total: 250 };
-
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
@@ -350,10 +348,11 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <div className="sidebar-search-for sidebar-widget p-4 my-3">
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
               </div>
+              <BulkSearch />
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
