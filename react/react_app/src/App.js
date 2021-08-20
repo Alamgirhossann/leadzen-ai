@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import React from "react";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Home from "./Components/Home/Home";
 import LogIn from "./Components/LogIn/LogIn";
@@ -29,6 +29,7 @@ import AllUsers from "./Components/AdminDashboard/AllUsers";
 import DashboardOne from "./Components/AdminDashboard/DashboardOne";
 import SearchResultTexAu from "./Components/SearchResult/SearchResultTexAu";
 import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
+import Verification from "./Components/SignUp/Verification";
 
 const App = () => {
   return (
@@ -87,7 +88,8 @@ const App = () => {
         </Route>
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/result_by_name" component={SearchResultTexAu} />
-        <Route path="/advanceSearch" component={SearchResultTexAu} />
+        <Route path="/advanceSearch" component={SearchResultTexAu}/>
+        <Route path="/verification" component={Verification}/>
 
         <Route path="/loginEmailError">
           <LoginEmailError />
