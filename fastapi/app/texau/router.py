@@ -1,6 +1,5 @@
 import uuid
 from http.client import HTTPException
-from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from loguru import logger
@@ -17,7 +16,7 @@ from app.texau.linkedin.search_profiles import (
     TexAuFindProfileRequest,
 )
 
-router = APIRouter(prefix="/texau", tags=["TexAu Search"])
+router = APIRouter(prefix="/texau", tags=["TexAu"])
 
 
 @router.post("/find_matching_linkedin_profiles", response_model=TexAuResponse)
@@ -54,7 +53,11 @@ async def find_email_and_phone_for_linkedin_profile_url(
     else:
         cookie = request.cookie
 
-    filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
+    if not request.filename:
+        filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
+    else:
+        filename = request.filename
+
     logger.debug(f"{filename=}")
 
     background_tasks.add_task(

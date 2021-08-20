@@ -1,20 +1,23 @@
 import asyncio
 import os
 import tempfile
+import uuid
 from typing import List
 
-import httpx as httpx
+import httpx
 import pandas as pd
-from fastapi import UploadFile, File, status, HTTPException, BackgroundTasks
 from fastapi import APIRouter
+from fastapi import UploadFile, File, status, HTTPException, BackgroundTasks
 from loguru import logger
+from pydantic import BaseModel
 
 from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
     API_CONFIG_ALLOWED_CONTENT_TYPES,
+    API_CONFIG_TEXAU_LINKEDIN_EMAIL_SEARCH_URL,
+    API_CONFIG_BULK_OUTGOING_DIRECTORY,
 )
 from app.texau.linkedin.email_phone import (
-    handle_find_email_and_phone_for_linkedin_profile_url,
     TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     TexAuFindEmailAndPhoneForLinkedInProfileResponse,
 )
@@ -27,12 +30,15 @@ async def send_email(email_id: str, filename: str):
     pass
 
 
-async def handle_linkedin_profile_urls(urls: List[str], max_timeout_counter: int = 18):
+async def handle_linkedin_profile_urls(
+    urls: List[str], filename: str, max_timeout_counter: int = 18
+):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            "http://localhost:12005/api/texau/find_email_and_phone_for_linkedin_profile_url",
+            API_CONFIG_TEXAU_LINKEDIN_EMAIL_SEARCH_URL,
             json=TexAuFindEmailAndPhoneForLinkedInProfileRequest(
                 urls=urls,
+                filename=filename,
                 cookie="AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7hCKx0k4AeljWlYLJWzMzPyxIRAjQSo6OK5dVCVSSBXpy2J0DZrt9uyOICBu64noYRNWpJUHXEOm20kpdqFB5JFh6Az2QHDSH4_YwdnPjnqXEjJ8ihhF0Mo8D",
             ).dict(),
         )
@@ -72,7 +78,12 @@ async def handle_linkedin_profile_urls(urls: List[str], max_timeout_counter: int
         )
 
 
-@router.post("/csv")
+class BulkUploadResponse(BaseModel):
+    input_filename: str
+    output_filename: str
+
+
+@router.post("/csv", response_model=BulkUploadResponse)
 async def upload_csv_file(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
@@ -125,8 +136,11 @@ async def upload_csv_file(
         if "emails" in df.columns:
             pass
         elif "linkedin_profile_urls" in df.columns:
+            filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             background_tasks.add_task(
-                handle_linkedin_profile_urls, urls=list(df.linkedin_profile_urls)
+                handle_linkedin_profile_urls,
+                urls=list(df.linkedin_profile_urls),
+                filename=filename,
             )
         else:
             logger.warning("emails or linkedin_profile_urls columns not preset in file")
@@ -135,4 +149,4 @@ async def upload_csv_file(
                 detail="emails or linkedin_profile_urls columns not preset in file",
             )
 
-    return True
+    return BulkUploadResponse(input_filename=file.filename, output_filename=filename)

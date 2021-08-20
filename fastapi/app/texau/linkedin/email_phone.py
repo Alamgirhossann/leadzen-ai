@@ -78,6 +78,7 @@ async def send_spice_request(cookie: str, linkedin_profile_url: str) -> Optional
 class TexAuFindEmailAndPhoneForLinkedInProfileRequest(BaseModel):
     urls: List[str]
     cookie: Optional[str] = None
+    filename: Optional[str] = None
 
 
 class TexAuFindEmailAndPhoneForLinkedInProfileResponse(BaseModel):
@@ -87,6 +88,20 @@ class TexAuFindEmailAndPhoneForLinkedInProfileResponse(BaseModel):
 async def handle_find_email_and_phone_for_linkedin_profile_url(
     request: TexAuFindEmailAndPhoneForLinkedInProfileRequest, cookie: str, filename: str
 ) -> Optional[TexAuFindEmailAndPhoneForLinkedInProfileResponse]:
+    """
+    :param request: pydantic request object
+    :param cookie: linkedin cookie
+    :param filename: expected filename of the output
+    :return: pydantic response object
+
+    take in the url, cookie and filename, do search on texau and collect the results and store it into the filename
+    as a csv file
+    """
+
+    if not filename.endswith(".csv"):
+        logger.warning("Filename does not end with .csv, only CSV files are supported")
+        return None
+
     try:
         unique_urls = list(set(request.urls))
 

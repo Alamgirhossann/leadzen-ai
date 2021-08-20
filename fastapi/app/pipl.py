@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from app.config import API_CONFIG_PIPL_API_KEY
 
-router = APIRouter(prefix="/pipl", tags=["PIPL Search"])
+router = APIRouter(prefix="/pipl", tags=["PIPL"])
 
 
 class Name(BaseModel):
