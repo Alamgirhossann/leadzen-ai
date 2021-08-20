@@ -11,8 +11,8 @@ API_CONFIG_PROXY_USER = os.getenv("PROXY_USER", "malharlakdawala")
 API_CONFIG_PROXY_PASS = os.getenv("PROXY_PASS", "AsHhgbZE")
 
 API_CONFIG_LINKEDIN_CSV_FILE = os.getenv("CSV_FILE", "linkedin_cookies.csv")
-API_CONFIG_LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME", "kaylaklug2021@gmail.com")
-API_CONFIG_LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD", "Q5$&%bD7d$&4*%^bs^3j")
+API_CONFIG_LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME", "tareiljess@yahoo.com")
+API_CONFIG_LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD", "Challenge123$")
 API_CONFIG_LINKEDIN_LOGIN_URL = os.getenv(
     "LINKEDIN_LOGIN_URL",
     "https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin",
@@ -57,3 +57,4 @@ API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL = float(
 )
 API_CONFIG_TRUEMAIL_API_KEY = os.getenv("TRUEMAIL_API_ACCESS_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
 API_CONFIG_TRUEMAIL_API_URL = os.getenv("TRUEMAIL_API_ACCESS_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
+API_CONFIG_FASTAPI_SERVER = os.getenv("FAST_API_SERVER", 'http://localhost:8000/api/refresh_linkedin_cookie')

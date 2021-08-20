@@ -145,13 +145,9 @@ const SearchResult = (props) => {
           }
         );
 
-        if (response.status === 404) {
-          console.warn("Execution Not Complete");
-          // TODO: show appropriate ui content like spinners and stuff
-          return;
-        }
-
         if (response.status !== 200) {
+          console.log("Response cookie error", response.statusText);
+          // if (response.statusText === "cookieError")
           console.warn(
             `Invalid Status, Code: ${response.status}, Text: ${response.statusText}`
           );
@@ -159,8 +155,11 @@ const SearchResult = (props) => {
         }
 
         let data = await response.json();
+        console.log("Data>>>>", data, ">>>>>", response);
         if (!data) {
           console.warn(`Invalid Data`);
+          // clearInterval(intervalId);
+          // setLoading(false);
           return;
         }
 
@@ -175,7 +174,7 @@ const SearchResult = (props) => {
     }, 5 * 1000);
 
     timeoutId = setTimeout(function () {
-      console.error("Report was not found within 5 Min");
+      console.error("record not found within 5 Min");
       clearInterval(intervalId);
       // TODO: show appropriate ui actions like stop spinners and show error message etc
     }, 5 * 60 * 1000);
