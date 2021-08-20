@@ -8,14 +8,14 @@ from loguru import logger
 
 from app.config import API_CONFIG_LINKEDIN_CSV_FILE
 from app.customize_filter import router as filter_router
+from app.email_truemail import router as email_verification
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
+from app.send_email import router as email_router
 from app.texau import router as texau_router
-from app.email_truemail import router as email_verification
+from app.users import fastapi_users
 from app.users import jwt_authentication, on_after_register, on_after_forgot_password, SECRET, \
     after_verification_request, database
-from app.users import fastapi_users
-from app.email import router as email_router
 
 current_active_user = fastapi_users.current_user(active=True)
 
