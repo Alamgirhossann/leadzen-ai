@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Pagination from "../SharedComponent/Pagination";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -9,7 +9,7 @@ import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 
 const SearchResult = (props) => {
-   
+
     const [customSearch, setCustomSearch] = useState({
         location: null,
         industry: null,
@@ -20,9 +20,9 @@ const SearchResult = (props) => {
         csv_file: null,
     });
     const [specificUserDetails, setSpecificUserDetails] = useState([
-        {index: null, details: null},
+        { index: null, details: null },
     ]);
-    const [resultData, setSearchResult] = useState({data: null});
+    const [resultData, setSearchResult] = useState({ data: null });
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentLeads, setCurrentLeads] = useState([]);
@@ -130,7 +130,7 @@ const SearchResult = (props) => {
         }
     }, [props.location.state.customSearch]);
 
-    useEffect(()=>{
+    useEffect(() => {
     }, [loading]);
 
     useEffect(async () => {
@@ -149,9 +149,9 @@ const SearchResult = (props) => {
             console.log(show);
             console.log('inside showClick if');
             setShow(show.map((value, i) => {
-                    if (index === i) return true
-                    else return value
-                }
+                if (index === i) return true
+                else return value
+            }
             ))
             console.log(show);
         }
@@ -180,16 +180,16 @@ const SearchResult = (props) => {
         },
     };
 
-    let searchData = {count: 12, total: 250};
+    let searchData = { count: 12, total: 250 };
 
     const handleCSVFile = (e) => {
-        setCustomSearch({...customSearch, csv_file: e.target.files[0]});
+        setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
     };
 
     const handleProfile = async (index, data) => {
         let reqJsonPipl = {
             email: "",
-            name: {first_name: "", last_name: ""},
+            name: { first_name: "", last_name: "" },
             url: data.url,
         };
         console.log("in Handle profile...", `${currentPage}${index}`, data);
@@ -219,13 +219,13 @@ const SearchResult = (props) => {
                 if (json_res) {
                     setSpecificUserDetails((prev) => [
                         ...prev,
-                        {index: `${currentPage}${index}`, details: json_res[0]},
+                        { index: `${currentPage}${index}`, details: json_res[0] },
                     ]);
                 } else {
                     console.log("In setSpecificUserDetails else");
                     setSpecificUserDetails((prev) => [
                         ...prev,
-                        {index: `${currentPage}${index}`, details: "Record Not Found"},
+                        { index: `${currentPage}${index}`, details: "Record Not Found" },
                     ]);
                     console.log(
                         "In setSpecificUserDetails else ress....",
@@ -249,7 +249,7 @@ const SearchResult = (props) => {
 
     return (
         <div>
-            <Header user={user}/>
+            <Header user={user} />
 
             <div className="modal" id="bulkmodal">
                 <button
@@ -277,14 +277,14 @@ const SearchResult = (props) => {
                                 <button type="button" className="dz-button">
                                     Drag and Drop File
                                 </button>
-                                <br/>
+                                <br />
                                 <button type="button" className="dz-button">
                                     OR{" "}
                                 </button>
-                                <br/>
+                                <br />
                                 <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
-                </span>
+                                    <input type="file" accept=".csv" onChange={handleCSVFile} />
+                                </span>
                             </div>
                         </form>
                     </div>
@@ -295,12 +295,12 @@ const SearchResult = (props) => {
                 <div className="main-wrapper container-fluid">
                     <div className="row">
                         <div className="col-md-4 col-lg-3">
-                            <div className="sidebar-search-for sidebar-widget p-4 my-3">
+                            <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                                 <h6 className="text-danger mb-3">Customize your search </h6>
                                 <Filters customSearch={customSearch} />
                             </div>
                             <BulkSearch />
-                            <SidebarExtractContact/>
+                            <SidebarExtractContact />
                         </div>
                         <div className="col-md-8 col-lg-9">
                             <div className="user-search-wrapper">
@@ -444,12 +444,12 @@ const SearchResult = (props) => {
                                                         >
                                                             {specificUserDetails?.map((spec) => (
                                                                 <span>
-                                  {spec.index === `${currentPage}${index}` ? (
-                                      <span>
-                                      <SpecificUser details={spec.details}/>
-                                    </span>
-                                  ) : null}
-                                </span>
+                                                                    {spec.index === `${currentPage}${index}` ? (
+                                                                        <span>
+                                                                            <SpecificUser details={spec.details} />
+                                                                        </span>
+                                                                    ) : null}
+                                                                </span>
                                                             ))}{" "}
                                                         </div>
                                                     </div>
@@ -476,7 +476,7 @@ const SearchResult = (props) => {
                             </div>
                             <div className="user-widget-box text-center p-4 my-3">
                                 <div className="user-promote-logo">
-                                    <img src="assets/images/user-company-brand.png" alt="title"/>
+                                    <img src="assets/images/user-company-brand.png" alt="title" />
                                 </div>
                                 <div className="user-promote-slider">
                                     <div className="item">

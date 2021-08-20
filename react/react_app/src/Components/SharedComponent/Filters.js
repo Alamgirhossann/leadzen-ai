@@ -237,7 +237,7 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
+                  className="customize-search w-100"
                   type="text"
                   placeholder="Search Location"
                   onChange={handleLocation}
@@ -268,7 +268,7 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
+                  className="customize-search w-100"
                   onChange={handleIndustry}
                   value={customSearch.industry}
                   type="text"
@@ -297,7 +297,7 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
+                  className="customize-search w-100"
                   value={customSearch.job_title}
                   onChange={handleJob}
                   type="text"
@@ -326,7 +326,7 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
+                  className="customize-search w-100"
                   value={customSearch.education}
                   onChange={handleEducation}
                   type="text"
@@ -356,7 +356,7 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
+                  className="customize-search w-100"
                   value={customSearch.company_name}
                   onChange={handleCompany}
                   type="text"
@@ -385,7 +385,7 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
-                  className="customize-search"
+                  className="customize-search w-100"
                   value={customSearch.keywords}
                   onChange={handleKeywords}
                   type="text"
