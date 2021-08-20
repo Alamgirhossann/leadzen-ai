@@ -88,10 +88,14 @@ async def check_execution_status(execution_id: str):
                             # logger.debug("R >>>"+str(r))
                             #
                             # if r != 200:
-                        raise HTTPException(
-                            status_code=status.HTTP_403_FORBIDDEN,
-                            detail="Cookie Error",
-                        )
+                        result = data["execution"]["output"]
+                        logger.debug("Result Cookie Error>>>"+ str(result))
+
+                        return TexAuResponse(data=[result])
+                        # raise HTTPException(
+                        #     status_code=status.HTTP_403_FORBIDDEN,
+                        #     detail="Cookie Error",
+                        # )
                     # TODO: Handle the cookie error by sending an alert or refreshing the linkedin cookie
 
             raise HTTPException(

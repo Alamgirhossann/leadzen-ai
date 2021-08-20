@@ -162,8 +162,13 @@ const SearchResult = (props) => {
           // setLoading(false);
           return;
         }
+        if (data.data[0].cookieError === true) {
+          setLoading(false);
+          setMyLeads("");
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+        }
 
-        console.log("Data>>>>>>>>>>>", data);
         setLoading(false);
         if (timeoutId) clearTimeout(timeoutId);
         clearInterval(intervalId);
@@ -404,7 +409,9 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads && myLeads.length === 0 ? (
+                    {myLeads &&
+                    (myLeads.length === 0 ||
+                      myLeads[0].cookieError === true) ? (
                       <div>
                         <h5>Record not found</h5>
                       </div>
