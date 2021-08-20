@@ -163,7 +163,7 @@ async def upload_csv_file(
         lines = file.file.readlines()
         temp_file.writelines(lines)
         temp_file.seek(0)
-        df = pd.read_csv(temp_file)
+        df = pd.read_csv(temp_file, encoding="ISO-8859-1")
 
         logger.debug(df.head())
 
