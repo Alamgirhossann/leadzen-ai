@@ -1,8 +1,10 @@
+from typing import List
+
 from fastapi import APIRouter
-from starlette.responses import JSONResponse
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from pydantic import BaseModel, EmailStr
-from typing import List
+from starlette.responses import JSONResponse
+
 from app.config import API_CONFIG_GSUITE_EMAIL, API_CONFIG_GSUITE_PASSWORD
 
 
