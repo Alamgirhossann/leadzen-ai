@@ -7,6 +7,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
+import { func } from "prop-types";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -37,7 +38,6 @@ const SearchResult = (props) => {
   const paginate = (pageNumber) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
-
     setCurrentLeads(
       myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
     );
@@ -110,6 +110,23 @@ const SearchResult = (props) => {
           body: JSON.stringify(requestForTexAu),
         });
 
+        if (response.status === 400) {
+          // handle 400
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 500) {
+          // handle 500
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 404) {
+          setLoading(false);
+          setMyLeads({});
+        }
+
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
         if (!json_res.execution_id) {
@@ -145,34 +162,39 @@ const SearchResult = (props) => {
           }
         );
 
-        if (response.status !== 200) {
-          console.log("Response cookie error", response.statusText);
-          // if (response.statusText === "cookieError")
-          console.warn(
-            `Invalid Status, Code: ${response.status}, Text: ${response.statusText}`
-          );
-          return;
-        }
-
-        let data = await response.json();
-        console.log("Data>>>>", data, ">>>>>", response);
-        if (!data) {
-          console.warn(`Invalid Data`);
-          // clearInterval(intervalId);
-          // setLoading(false);
-          return;
-        }
-        if (data.data[0].cookieError === true) {
-          setLoading(false);
-          setMyLeads("");
+        function handleError() {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
+          
+          setLoading(false);
+          setMyLeads("");
         }
 
-        setLoading(false);
-        if (timeoutId) clearTimeout(timeoutId);
-        clearInterval(intervalId);
-        if (data.data) setMyLeads(data.data);
+        if (response.status === 403) {
+          // got cookie error - no need to check again, results will not change
+          console.log("Response cookie error", response.statusText);
+          handleError();
+          return;
+        }
+
+        if (response.status === 200) {
+          // got the response
+          const data = await response.json();
+          console.log("Data>>>>", data, ">>>>>", response);
+          if (!data) {
+            console.warn(`Invalid Data`);
+            handleError()
+            return;
+          }
+  
+          setLoading(false);
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+
+          if (data.data) setMyLeads(data.data);
+          
+          return;
+        }
       } catch (e) {
         console.error("Exception>>", e);
       }
@@ -409,10 +431,9 @@ const SearchResult = (props) => {
                 {loading === false ? (
                   <div className="search-container mb-2">
                     {myLeads &&
-                    (myLeads.length === 0 ||
-                      myLeads[0].cookieError === true) ? (
+                    (myLeads.length === 0) ? (
                       <div>
-                        <h5>Record not found</h5>
+                        <h5>Records not found</h5>
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (

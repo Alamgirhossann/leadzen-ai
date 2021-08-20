@@ -75,27 +75,18 @@ async def check_execution_status(execution_id: str):
             if response.status_code == 200:
                 if data := response.json():
                     if (
-                            data["execution"]["status"] == "completed"
-                            and data["execution"].get("output") is not None
+                        data["execution"]["status"] == "completed"
+                        and data["execution"].get("output") is not None
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
                         return TexAuResponse(data=result)
                     if data["execution"]["status"] == "cookieError":
-                        print("cookie error")
-                        # async with httpx.AsyncClient() as cookie_client:
-                            # r = await cookie_client.get('/refresh_linkedin_cookie')
-                            # logger.debug("R >>>"+str(r))
-                            #
-                            # if r != 200:
-                        result = data["execution"]["output"]
-                        logger.debug("Result Cookie Error>>>"+ str(result))
-
-                        return TexAuResponse(data=[result])
-                        # raise HTTPException(
-                        #     status_code=status.HTTP_403_FORBIDDEN,
-                        #     detail="Cookie Error",
-                        # )
+                        logger.debug("Result Cookie Error")
+                        raise HTTPException(
+                            status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Cookie Error",
+                        )
                     # TODO: Handle the cookie error by sending an alert or refreshing the linkedin cookie
 
             raise HTTPException(
@@ -104,16 +95,14 @@ async def check_execution_status(execution_id: str):
             )
     except Exception as e:
         logger.critical(f"Exception Getting Task Status: {execution_id=}: {str(e)}")
-        # raise HTTPException(
-        #     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        #     detail="Error Finding Results",
-        # )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Finding Results",
+        )
 
 
 # this will be needed in the csv/bulk search case
-async def wait_and_check_execution_status(
-        execution_id: str
-) -> Optional[TexAuResponse]:
+async def wait_and_check_execution_status(execution_id: str) -> Optional[TexAuResponse]:
     if not execution_id:
         logger.warning("Invalid task_id")
         return None
@@ -132,8 +121,8 @@ async def wait_and_check_execution_status(
             if response.status_code == 200:
                 if data := response.json():
                     if (
-                            data["execution"]["status"] == "completed"
-                            and data["execution"].get("output") is not None
+                        data["execution"]["status"] == "completed"
+                        and data["execution"].get("output") is not None
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
@@ -222,9 +211,9 @@ async def search_using_texau(request: TexAuRequest):
             )
 
         if not (
-                execution_id := await send_spice_request(
-                    cookie=cookie, linkedin_url=query_url
-                )
+            execution_id := await send_spice_request(
+                cookie=cookie, linkedin_url=query_url
+            )
         ):
             logger.warning("Invalid Task Id")
             raise HTTPException(
