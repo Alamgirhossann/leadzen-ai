@@ -1,24 +1,22 @@
 import csv
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from app.config import API_CONFIG_LINKEDIN_CSV_FILE
+from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET
 from app.customize_filter import router as filter_router
+from app.email import router as email_router
 from app.email_truemail import router as email_verification
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
-from app.email import router as email_router
-
 from app.texau import router as texau_router
 from app.users import fastapi_users
 from app.users import (
     jwt_authentication,
     on_after_register,
     on_after_forgot_password,
-    SECRET,
     after_verification_request,
     database,
 )
@@ -57,14 +55,14 @@ app.include_router(
 )
 app.include_router(
     fastapi_users.get_reset_password_router(
-        SECRET, after_forgot_password=on_after_forgot_password
+        API_CONFIG_JWT_SECRET, after_forgot_password=on_after_forgot_password
     ),
     prefix="/api/auth",
     tags=["auth"],
 )
 app.include_router(
     fastapi_users.get_verify_router(
-        SECRET, after_verification_request=after_verification_request
+        API_CONFIG_JWT_SECRET, after_verification_request=after_verification_request
     ),
     prefix="/api/auth",
     tags=["auth"],
@@ -112,3 +110,9 @@ def refresh_linkedin_cookie_manually():
 
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
+
+
+@app.get("/test_auth")
+def test_auth(user=Depends(fastapi_users.get_current_active_user)):
+    logger.debug(f"test auth, {user=}")
+    return True

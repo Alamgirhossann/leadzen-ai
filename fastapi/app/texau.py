@@ -5,7 +5,7 @@ import uuid
 from typing import Optional, List, Dict
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from loguru import logger
 from pydantic import BaseModel
 from starlette import status
@@ -15,7 +15,9 @@ from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
     API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
     API_CONFIG_TEXAU_PROXY,
-    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL, API_CONFIG_PROXY_USER, API_CONFIG_PROXY_PASS,
+    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
+    API_CONFIG_PROXY_USER,
+    API_CONFIG_PROXY_PASS,
 )
 from app.config import (
     API_CONFIG_TEXAU_KEY,
@@ -23,6 +25,7 @@ from app.config import (
 )
 from app.config import API_CONFIG_TEXAU_URL as url
 from app.linkedin import query_url_builder as linkedin_query_url_builder
+from app.users import fastapi_users
 
 
 class TexAuRequest(BaseModel):
@@ -74,7 +77,10 @@ async def check_execution_status(execution_id: str) -> Optional[Dict]:
 
                 if response.status_code == 200:
                     if data := response.json():
-                        if data["execution"]["status"] == "completed" and data["execution"].get("output") is not None:
+                        if (
+                            data["execution"]["status"] == "completed"
+                            and data["execution"].get("output") is not None
+                        ):
                             logger.success(f"Got Task Results: {data=}")
                             return data["execution"]["output"]
                         else:
@@ -105,9 +111,9 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
                 "li_at": cookie,
                 "proxy": {
                     "proxyName": API_CONFIG_TEXAU_PROXY,
-                    'ip': 'http://168.81.41.43:47192',
-                    'name': API_CONFIG_PROXY_USER,
-                    'password': API_CONFIG_PROXY_PASS
+                    "ip": "http://168.81.41.43:47192",
+                    "name": API_CONFIG_PROXY_USER,
+                    "password": API_CONFIG_PROXY_PASS,
                 },
             },
             "executionName": str(uuid.uuid4()),
@@ -143,8 +149,10 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
 
 
 @router.post("/search", response_model=TexAuResponse)
-async def search_using_texau(request: TexAuRequest):
-    logger.info(f"{request=}")
+async def search_using_texau(
+    request: TexAuRequest, user=Depends(fastapi_users.get_current_active_user)
+):
+    logger.info(f"{request=}, {user=}")
 
     try:
         if not (query_url := linkedin_query_url_builder(request.dict())):

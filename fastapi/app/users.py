@@ -1,33 +1,30 @@
 from typing import Optional
 
 import databases
+import httpx
 import sqlalchemy
 from fastapi import Request
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from fastapi_users.router.verify import VERIFY_USER_TOKEN_AUDIENCE
-from fastapi_users.utils import generate_jwt
+from loguru import logger
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
-from loguru import logger
-import httpx
 
-from app.config import API_CONFIG_SELF_BASE_URL
+from app.config import (
+    API_CONFIG_SELF_BASE_URL,
+    API_CONFIG_JWT_SECRET,
+    API_CONFIG_DATABASE_URL,
+)
 from app.email import UserEmailVerificationEmailRequest
-
-DATABASE_URL = "sqlite:///./test.db"
-SECRET = "SECRET"
 
 
 class User(models.BaseUser):
     username: Optional[str] = None
-    pass
 
 
 class UserCreate(models.BaseUserCreate):
     username: Optional[str] = None
-    # pass
 
 
 class UserUpdate(User, models.BaseUserUpdate):
@@ -38,7 +35,7 @@ class UserDB(User, models.BaseUserDB):
     username: Optional[str] = None
 
 
-database = databases.Database(DATABASE_URL)
+database = databases.Database(API_CONFIG_DATABASE_URL)
 Base: DeclarativeMeta = declarative_base()
 
 
@@ -47,7 +44,7 @@ class UserTable(Base, SQLAlchemyBaseUserTable):
 
 
 engine = sqlalchemy.create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
+    API_CONFIG_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 Base.metadata.create_all(engine)
 
@@ -92,7 +89,7 @@ async def after_verification_request(user: UserDB, token: str, request: Request)
 
 
 jwt_authentication = JWTAuthentication(
-    secret=SECRET, lifetime_seconds=3600, tokenUrl="/api/auth/jwt/login"
+    secret=API_CONFIG_JWT_SECRET, lifetime_seconds=3600, tokenUrl="/api/auth/jwt/login"
 )
 
 fastapi_users = FastAPIUsers(
