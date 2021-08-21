@@ -61,7 +61,9 @@ async def verify_email_by_token(token: str):
 
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.post("/api/auth/verify", json={"token": token})
+            response = await client.post(
+                f"{API_CONFIG_SELF_BASE_URL}/api/auth/verify", json={"token": token}
+            )
 
             if not response:
                 return JSONResponse(
