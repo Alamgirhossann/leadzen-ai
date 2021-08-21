@@ -77,6 +77,8 @@ async def after_verification_request(user: UserDB, token: str, request: Request)
     logger.info(f"Verification requested for {user=}, {token=}")
 
     try:
+        # using the http call approach instead of the direct function call so that we can use the background_tasks
+        # feature of fastapi
         async with httpx.AsyncClient() as client:
             logger.info(f"sending verification email")
             await client.post(
