@@ -2,10 +2,12 @@ from typing import Optional
 
 import databases
 import sqlalchemy
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+from fastapi_users.router.verify import VERIFY_USER_TOKEN_AUDIENCE
+from fastapi_users.utils import generate_jwt
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from loguru import logger

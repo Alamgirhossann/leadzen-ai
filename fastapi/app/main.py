@@ -3,7 +3,6 @@ import csv
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_utils.tasks import repeat_every
 from loguru import logger
 
 from app.config import API_CONFIG_LINKEDIN_CSV_FILE
@@ -12,6 +11,7 @@ from app.email_truemail import router as email_verification
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.email import router as email_router
+
 from app.texau import router as texau_router
 from app.users import fastapi_users
 from app.users import (
@@ -85,17 +85,17 @@ async def shutdown():
     await database.disconnect()
 
 
-@app.on_event("startup")
-@repeat_every(seconds=60 * 60)
-def refresh_linkedin_cookie():
-    logger.debug("linkedin cookie...")
-    data = fetch_linkedin_cookie()
-    header = ["cookie"]
-    with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerow([data])
-    logger.debug(header)
+# @app.on_event("startup")
+# @repeat_every(seconds=60 * 60)
+# def refresh_linkedin_cookie():
+#     logger.debug("linkedin cookie...")
+#     data = fetch_linkedin_cookie()
+#     header = ["cookie"]
+#     with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
+#         writer = csv.writer(f)
+#         writer.writerow(header)
+#         writer.writerow([data])
+#     logger.debug(header)
 
 
 @app.get("/refresh_linkedin_cookie")
