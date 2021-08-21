@@ -8,7 +8,11 @@ from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from loguru import logger
+import httpx
 
+from app.config import API_CONFIG_SELF_BASE_URL
+from app.email import UserEmailVerificationEmailRequest
 
 DATABASE_URL = "sqlite:///./test.db"
 SECRET = "SECRET"
@@ -49,16 +53,38 @@ users = UserTable.__table__
 user_db = SQLAlchemyUserDatabase(UserDB, database, users)
 
 
-def on_after_register(user: UserDB, request: Request):
-    print(f"User {user.id} has registered.")
+async def on_after_register(user: UserDB, request: Request):
+    logger.success(f"User Registration {user=}, {request=}")
+
+    try:
+        async with httpx.AsyncClient() as client:
+            logger.info(f"Performing Email Verification")
+            await client.post(
+                f"{API_CONFIG_SELF_BASE_URL}/api/auth/request-verify-token",
+                json={"email": user.email},
+            )
+    except Exception as e:
+        logger.critical(f"Exception in Email Verification: {str(e)}")
 
 
 def on_after_forgot_password(user: UserDB, token: str, request: Request):
-    print(f"User {user.id} has forgot their password. Reset token: {token}")
+    logger.info(f"User {user.id} has forgot their password. Reset token: {token}")
 
 
-def after_verification_request(user: UserDB, token: str, request: Request):
-    print(f"Verification requested for user {user.id}. Verification token: {token}")
+async def after_verification_request(user: UserDB, token: str, request: Request):
+    logger.info(f"Verification requested for {user=}, {token=}")
+
+    try:
+        async with httpx.AsyncClient() as client:
+            logger.info(f"sending verification email")
+            await client.post(
+                f"{API_CONFIG_SELF_BASE_URL}/api/email/verify/account",
+                json=UserEmailVerificationEmailRequest(
+                    email=user.email, token=token, name=user.username
+                ).dict(),
+            )
+    except Exception as e:
+        logger.critical(f"Exception Sending Verification Email, {str(e)}")
 
 
 jwt_authentication = JWTAuthentication(

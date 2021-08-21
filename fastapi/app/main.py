@@ -11,11 +11,17 @@ from app.customize_filter import router as filter_router
 from app.email_truemail import router as email_verification
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
-from app.send_email import router as email_router
+from app.email import router as email_router
 from app.texau import router as texau_router
 from app.users import fastapi_users
-from app.users import jwt_authentication, on_after_register, on_after_forgot_password, SECRET, \
-    after_verification_request, database
+from app.users import (
+    jwt_authentication,
+    on_after_register,
+    on_after_forgot_password,
+    SECRET,
+    after_verification_request,
+    database,
+)
 
 current_active_user = fastapi_users.current_user(active=True)
 
@@ -40,10 +46,14 @@ app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(
-    fastapi_users.get_auth_router(jwt_authentication), prefix="/api/auth/jwt", tags=["auth"]
+    fastapi_users.get_auth_router(jwt_authentication),
+    prefix="/api/auth/jwt",
+    tags=["auth"],
 )
 app.include_router(
-    fastapi_users.get_register_router(on_after_register), prefix="/api/auth", tags=["auth"]
+    fastapi_users.get_register_router(on_after_register),
+    prefix="/api/auth",
+    tags=["auth"],
 )
 app.include_router(
     fastapi_users.get_reset_password_router(
@@ -59,8 +69,11 @@ app.include_router(
     prefix="/api/auth",
     tags=["auth"],
 )
-app.include_router(fastapi_users.get_users_router(), prefix="/api/users", tags=["users"])
+app.include_router(
+    fastapi_users.get_users_router(), prefix="/api/users", tags=["Users"]
+)
 app.include_router(router=email_router, prefix="/api")
+
 
 @app.on_event("startup")
 async def startup():

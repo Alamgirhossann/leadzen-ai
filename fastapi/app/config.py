@@ -55,7 +55,22 @@ API_CONFIG_TEXAU_PROXY = os.getenv("API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pu
 API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL = float(
     os.getenv("API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL", "5.0")
 )
-API_CONFIG_TRUEMAIL_API_KEY = os.getenv("TRUEMAIL_API_ACCESS_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
-API_CONFIG_TRUEMAIL_API_URL = os.getenv("TRUEMAIL_API_ACCESS_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
-API_CONFIG_GSUITE_EMAIL = os.getenv("GSUITE_EMAIL", 'malhar@analystt.ai')
-API_CONFIG_GSUITE_PASSWORD = os.getenv("GSUITE_PASSWORD", 'Malhar123##')
+API_CONFIG_TRUEMAIL_API_KEY = os.getenv(
+    "TRUEMAIL_API_ACCESS_KEY",
+    "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn",
+)
+API_CONFIG_TRUEMAIL_API_URL = os.getenv(
+    "TRUEMAIL_API_ACCESS_URL",
+    "https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=",
+)
+API_CONFIG_GSUITE_EMAIL = os.getenv("GSUITE_EMAIL", "malhar@analystt.ai")
+API_CONFIG_GSUITE_PASSWORD = os.getenv("GSUITE_PASSWORD", "Malhar123##")
+API_CONFIG_REACT_LOGIN_PAGE_URL = os.getenv(
+    "API_CONFIG_REACT_LOGIN_PAGE", "http://localhost:3000/login"
+)
+API_CONFIG_REACT_SIGNUP_PAGE_URL = os.getenv(
+    "API_CONFIG_REACT_SIGNUP_PAGE", "http://localhost:3000/signUp"
+)
+API_CONFIG_SELF_BASE_URL = os.getenv(
+    "API_CONFIG_SELF_BASE_URL", "http://localhost:12005"
+)

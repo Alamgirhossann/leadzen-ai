@@ -1,5 +1,5 @@
 import React from "react";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Home from "./Components/Home/Home";
 import LogIn from "./Components/LogIn/LogIn";
@@ -88,8 +88,8 @@ const App = () => {
         </Route>
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/result_by_name" component={SearchResultTexAu} />
-        <Route path="/advanceSearch" component={SearchResultTexAu}/>
-        <Route path="/verification" component={Verification}/>
+        <Route path="/advanceSearch" component={SearchResultTexAu} />
+        <Route path="/verification" component={Verification} />
 
         <Route path="/loginEmailError">
           <LoginEmailError />
