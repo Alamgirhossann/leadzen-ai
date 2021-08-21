@@ -1,39 +1,29 @@
-from typing import List
-
-from fastapi import APIRouter
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-from pydantic import BaseModel, EmailStr
 from starlette.responses import JSONResponse
 
-from app.config import API_CONFIG_GSUITE_EMAIL, API_CONFIG_GSUITE_PASSWORD
-
-
-class EmailSchema(BaseModel):
-    email: List[EmailStr]
-
+from app.config import API_CONFIG_GSUITE_EMAIL, API_CONFIG_GSUITE_PASSWORD, API_CONFIG_HOST_ADDRESS
 
 conf = ConnectionConfig(
     MAIL_USERNAME=API_CONFIG_GSUITE_EMAIL,
     MAIL_PASSWORD=API_CONFIG_GSUITE_PASSWORD,
-    MAIL_FROM=API_CONFIG_GSUITE_EMAIL,
+    MAIL_FROM="noreply@analystt.ai",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_TLS=True,
     MAIL_SSL=False,
-    # TEMPLATE_FOLDER='fastapi/templates',
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True
 )
-router = APIRouter(prefix="/email", tags=["email_send"])
 
 
-@router.post("/email")
-async def send_with_template(email: EmailSchema) -> JSONResponse:
+async def send_with_template(email: str, token: str) -> JSONResponse:
     message = MessageSchema(
-        subject="Fastapi-Mail module",
-        recipients=email.dict().get("email"),
-        body={
-            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGMxMzQ5OWYtYTYxMy00NzRjLWFlNDMtZTFmMDM0OWZlODJjIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwiYXVkIjoiZmFzdGFwaS11c2Vyczp2ZXJpZnkiLCJleHAiOjE2MjkzNzgwNTJ9.t5uNqfRoENgEUaWsYdbB_0vPLLZ5Wai9VzaZ10qA12I",
-        },
-        subtype="html",
+        subject="Analystt.ai user verification",
+        recipients=[email],
+        body=f"""
+            <a href="{API_CONFIG_HOST_ADDRESS}verify-email?token={token}">ClickHere</a>
+        """,
+        subtype="html"
     )
 
     fm = FastMail(conf)

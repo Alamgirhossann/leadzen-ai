@@ -59,3 +59,4 @@ API_CONFIG_TRUEMAIL_API_KEY = os.getenv("TRUEMAIL_API_ACCESS_KEY", "QRnroC9kz3of
 API_CONFIG_TRUEMAIL_API_URL = os.getenv("TRUEMAIL_API_ACCESS_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
 API_CONFIG_GSUITE_EMAIL = os.getenv("GSUITE_EMAIL", 'malhar@analystt.ai')
 API_CONFIG_GSUITE_PASSWORD = os.getenv("GSUITE_PASSWORD", 'Malhar123##')
+API_CONFIG_HOST_ADDRESS = os.getenv("API_CONFIG_HOST_ADDRESS", 'http://localhost:3000/')

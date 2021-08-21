@@ -2,13 +2,16 @@ from typing import Optional
 
 import databases
 import sqlalchemy
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+from fastapi_users.router.verify import VERIFY_USER_TOKEN_AUDIENCE
+from fastapi_users.utils import generate_jwt
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
+from app.send_email import send_with_template
 
 DATABASE_URL = "sqlite:///./test.db"
 SECRET = "SECRET"
@@ -49,8 +52,19 @@ users = UserTable.__table__
 user_db = SQLAlchemyUserDatabase(UserDB, database, users)
 
 
-def on_after_register(user: UserDB, request: Request):
+async def on_after_register(user: UserDB, request: Request):
     print(f"User {user.id} has registered.")
+    token_data = {
+        "user_id": str(user.id),
+        "email": user.email,
+        "aud": VERIFY_USER_TOKEN_AUDIENCE,
+    }
+    token = generate_jwt(
+        token_data,
+        SECRET,
+        3600,
+    )
+    await send_with_template(user.email, token)
 
 
 def on_after_forgot_password(user: UserDB, token: str, request: Request):
