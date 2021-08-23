@@ -41,7 +41,7 @@ const BulkSearch = () => {
       }
 
       console.log(json);
-      alert("Search Results Are Sent Via Email To The User");
+      alert("Search results are sent in an email to the User as a CSV file");
     } catch (err) {
       console.error("Error: ", err);
       alert("Error Uploading File, Please Try Again Later");
