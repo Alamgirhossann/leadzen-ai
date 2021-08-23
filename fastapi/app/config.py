@@ -11,8 +11,8 @@ API_CONFIG_PROXY_USER = os.getenv("PROXY_USER", "malharlakdawala")
 API_CONFIG_PROXY_PASS = os.getenv("PROXY_PASS", "AsHhgbZE")
 
 API_CONFIG_LINKEDIN_CSV_FILE = os.getenv("CSV_FILE", "linkedin_cookies.csv")
-API_CONFIG_LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME", "tareiljess@yahoo.com")
-API_CONFIG_LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD", "Challenge123$")
+API_CONFIG_LINKEDIN_USERNAME = os.getenv("API_CONFIG_LINKEDIN_USERNAME", "tareiljess@yahoo.com")
+API_CONFIG_LINKEDIN_PASSWORD = os.getenv("API_CONFIG_LINKEDIN_PASSWORD", "Challenge123$")
 API_CONFIG_LINKEDIN_LOGIN_URL = os.getenv(
     "LINKEDIN_LOGIN_URL",
     "https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin",
@@ -55,6 +55,7 @@ API_CONFIG_TEXAU_PROXY = os.getenv("API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pu
 API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL = float(
     os.getenv("API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL", "5.0")
 )
-API_CONFIG_TRUEMAIL_API_KEY = os.getenv("TRUEMAIL_API_ACCESS_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
-API_CONFIG_TRUEMAIL_API_URL = os.getenv("TRUEMAIL_API_ACCESS_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
-API_CONFIG_FASTAPI_SERVER = os.getenv("FAST_API_SERVER", 'http://localhost:8000/api/refresh_linkedin_cookie')
+API_CONFIG_TRUEMAIL_API_KEY = os.getenv("API_CONFIG_TRUEMAIL_API_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
+API_CONFIG_TRUEMAIL_API_URL = os.getenv("API_CONFIG_TRUEMAIL_API_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
+API_CONFIG_SELF_URL = os.getenv("API_CONFIG_SELF_URL", 'http://localhost:8000/api/refresh_linkedin_cookie')
+API_CONFIG_PROXY_URL = os.getenv("API_CONFIG_PROXY_URL", 'http://168.81.41.43:47192')

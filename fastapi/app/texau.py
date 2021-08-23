@@ -18,6 +18,7 @@ from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
     API_CONFIG_PROXY_USER,
     API_CONFIG_PROXY_PASS,
+    API_CONFIG_PROXY_URL,
 )
 from app.config import (
     API_CONFIG_TEXAU_KEY,
@@ -80,6 +81,7 @@ async def check_execution_status(execution_id: str):
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
+                        logger.debug("TexAu Response>>>"+str(result))
                         return TexAuResponse(data=result)
                     if data["execution"]["status"] == "cookieError":
                         logger.debug("Result Cookie Error")
@@ -153,7 +155,7 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
                 "li_at": cookie,
                 "proxy": {
                     "proxyName": API_CONFIG_TEXAU_PROXY,
-                    "ip": "http://168.81.41.43:47192",
+                    "ip": API_CONFIG_PROXY_URL,
                     "name": API_CONFIG_PROXY_USER,
                     "password": API_CONFIG_PROXY_PASS,
                 },
