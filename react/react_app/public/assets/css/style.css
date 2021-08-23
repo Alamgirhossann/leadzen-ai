@@ -14364,6 +14364,14 @@ a:hover {
     padding: 10px 25px !important;
   }
 }
+@media only screen and (max-width: 1024px){
+  .save-list-container, .history-container{
+    width: 800px;
+  }
+ .container-style{
+   overflow-x: scroll;
+ }
+}
 
 /* ============================================== 
   Media Query : 991px
@@ -14425,10 +14433,6 @@ a:hover {
     width: 91px;
     height: 246px;
     right: -50px;
-  }
-
-  .container-style {
-    overflow-x: scroll;
   }
 }
 
@@ -14701,7 +14705,6 @@ a:hover {
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas: "p n n n d d c c c v v b";
   align-items: center;
-  width: 800px;
 }
 .profile {
   grid-area: p;
@@ -14747,7 +14750,6 @@ a:hover {
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas: "sp sn sn sn ss ss ss sd sd sv sv sb";
   align-items: center;
-  width: 800px;
 }
 .save-profile {
   grid-area: sp;

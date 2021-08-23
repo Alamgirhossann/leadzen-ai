@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./Style/style.css";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Pagination from "../SharedComponent/Pagination";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -8,6 +8,7 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
+import { func } from "prop-types";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -29,21 +30,19 @@ const SearchResult = (props) => {
   const [myLeads, setMyLeads] = useState([]);
   const [activeIndexProfile, setActiveIndexProfile] = useState(false);
 
-  let today = new Date();
-  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+    let today = new Date();
+    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
-  let dd = String(today.getDate()).padStart(2, "0");
-  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  let yyyy = today.getFullYear();
+    let dd = String(today.getDate()).padStart(2, "0");
+    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    let yyyy = today.getFullYear();
 
   const paginate = (pageNumber) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
-
     setCurrentLeads(
       myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
     );
-    // setShow(new Array(currentLeads.length).fill().map((item) => false))
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
@@ -109,96 +108,170 @@ const SearchResult = (props) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(requestForTexAu),
         });
 
-        // Handle Unauthorized and redirect to login
+        if (response.status === 400) {
+          // handle 400
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 500) {
+          // handle 500
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 404) {
+          setLoading(false);
+          setMyLeads({});
+        }
 
         let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res);
-        setLoading(false);
-        if (json_res) setMyLeads(json_res.data);
-        if (json_res.detail) {
-          setMyLeads("");
+        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
+        if (!json_res.execution_id) {
+          setLoading(false);
+          setMyLeads({});
         }
-        // json_res
-        //   ? setSearchResult({ ...resultData, data: json_res })
-        //   : setLoading(true);
-        // json_res ? setLoading(false) : setLoading(true);
-        console.log("MyLeads before paginate>>>>>", myLeads);
+        checkExecutionStatus(json_res.execution_id);
       } catch (err) {
         console.error("Error: ", err);
       }
     }
   }, [props.location.state.customSearch]);
 
+  const checkExecutionStatus = (executionId = null) => {
+    if (!executionId) {
+      console.log("executionId is Null");
+      return;
+    }
+
+    let timeoutId;
+
+    const intervalId = setInterval(async () => {
+      console.log("In interval.....");
+      try {
+        const response = await fetch(
+          apiServer + `/texau/check_status/${executionId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
+
+        function handleError() {
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+
+          setLoading(false);
+          setMyLeads("");
+        }
+
+        if (response.status === 403) {
+          // got cookie error - no need to check again, results will not change
+          console.log("Response cookie error", response.statusText);
+          handleError();
+          return;
+        }
+
+        if (response.status === 200) {
+          // got the response
+          const data = await response.json();
+          console.log("Data>>>>", data, ">>>>>", response);
+          if (!data) {
+            console.warn(`Invalid Data`);
+            handleError()
+            return;
+          }
+
+          setLoading(false);
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+
+          if (data.data) setMyLeads(data.data);
+
+          return;
+        }
+      } catch (e) {
+        console.error("Exception>>", e);
+      }
+    }, 5 * 1000);
+
+    timeoutId = setTimeout(function () {
+      console.error("record not found within 5 Min");
+      clearInterval(intervalId);
+      // TODO: show appropriate ui actions like stop spinners and show error message etc
+    }, 5 * 60 * 1000);
+  };
+
   useEffect(() => {}, [loading]);
 
-  useEffect(async () => {
-    paginate(1);
-  }, [myLeads]);
+    useEffect(async () => {
+        paginate(1);
+    }, [myLeads]);
 
-  useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
-  console.log("myLeads>>>>>>>>>>>", myLeads);
+    useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
+    console.log("myLeads>>>>>>>>>>>", myLeads);
 
-  const [show, setShow] = useState();
-  const [selected, setSelected] = useState(false);
-  const showClick = (e, index) => {
-    e.preventDefault();
-    console.log("inside showClick");
-    if (!show[index]) {
-      console.log(show);
-      console.log("inside showClick if");
-      setShow(
-        show.map((value, i) => {
-          if (index === i) return true;
-          else return value;
-        })
-      );
-      console.log(show);
-    }
-  };
+    const [show, setShow] = useState();
+    const [selected, setSelected] = useState(false);
+    const showClick = (e, index) => {
+        e.preventDefault();
+        console.log('inside showClick');
+        if (!show[index]) {
+            console.log(show);
+            console.log('inside showClick if');
+            setShow(show.map((value, i) => {
+                    if (index === i) return true
+                    else return value
+                }
+            ))
+            console.log(show);
+        }
+    };
 
-  useEffect(() => {
-    setShow(new Array(myLeads.length).fill().map((item) => false));
-  }, [currentLeads]);
+    useEffect(() => {
+        setShow(new Array(myLeads.length).fill().map((item) => false));
+    }, [currentLeads]);
 
-  const clickSelect = (e) => {
-    e.preventDefault();
-    if (!selected) setSelected(true);
-  };
-  const user = {
-    name: "John Smith",
-    email: "Johnsmith087@hexagon.in",
-    subscription: {
-      product: "Free Analystt",
-      price: "100 INR",
-      period: "Yearly",
-      status: "Active",
-      last_renewal: "01/02/2020",
-      expiry_date: "02/08/2021",
-      profile_credits: 500,
-      mail_credits: 1000,
-    },
-  };
-
-  let searchData = { count: 12, total: 250 };
+    const clickSelect = (e) => {
+        e.preventDefault();
+        if (!selected) setSelected(true);
+    };
+    const user = {
+        name: "John Smith",
+        email: "Johnsmith087@hexagon.in",
+        subscription: {
+            product: "Free Analystt",
+            price: "100 INR",
+            period: "Yearly",
+            status: "Active",
+            last_renewal: "01/02/2020",
+            expiry_date: "02/08/2021",
+            profile_credits: 500,
+            mail_credits: 1000,
+        },
+    };
 
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-  const handleProfile = async (index, data) => {
-    let reqJsonPipl = {
-      email: "",
-      name: { first_name: "", last_name: "" },
-      url: data.url,
-    };
-    console.log("in Handle profile...", `${currentPage}${index}`, data);
-    try {
-      let isDuplicate = false;
+    const handleProfile = async (index, data) => {
+        let reqJsonPipl = {
+            email: "",
+            name: {first_name: "", last_name: ""},
+            url: data.url,
+        };
+        console.log("in Handle profile...", `${currentPage}${index}`, data);
+        try {
+            let isDuplicate = false;
 
       specificUserDetails.map((spec) => {
         console.log("spec>>>", spec.index);
@@ -214,93 +287,93 @@ const SearchResult = (props) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(reqJsonPipl),
         });
 
-        let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res);
-        if (json_res) {
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: json_res[0] },
-          ]);
-        } else {
-          console.log("In setSpecificUserDetails else");
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: "Record Not Found" },
-          ]);
-          console.log(
-            "In setSpecificUserDetails else ress....",
-            specificUserDetails
-          );
+                let json_res = await response.json();
+                console.log("Data>>>>>>>>>>>", json_res);
+                if (json_res) {
+                    setSpecificUserDetails((prev) => [
+                        ...prev,
+                        {index: `${currentPage}${index}`, details: json_res[0]},
+                    ]);
+                } else {
+                    console.log("In setSpecificUserDetails else");
+                    setSpecificUserDetails((prev) => [
+                        ...prev,
+                        {index: `${currentPage}${index}`, details: "Record Not Found"},
+                    ]);
+                    console.log(
+                        "In setSpecificUserDetails else ress....",
+                        specificUserDetails
+                    );
+                }
+            }
+
+            console.log("specificUser>>>>>>>", specificUserDetails);
+            specificUserDetails?.map((spec) => {
+                console.log(
+                    "Check details>>>>",
+                    spec.index,
+                    spec.details === "Record Not Found"
+                );
+            });
+        } catch (err) {
+            console.error("Error: ", err);
         }
-      }
+    };
 
-      console.log("specificUser>>>>>>>", specificUserDetails);
-      specificUserDetails?.map((spec) => {
-        console.log(
-          "Check details>>>>",
-          spec.index,
-          spec.details === "Record Not Found"
-        );
-      });
-    } catch (err) {
-      console.error("Error: ", err);
-    }
-  };
+    return (
+        <div>
+            <Header user={user}/>
 
-  return (
-    <div>
-      <Header user={user} />
-
-      <div className="modal" id="bulkmodal">
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        />
-        <div className="modal-dialog">
-          <div className="modal-message">
-            <p>
-              <i className="text-danger">Format to follow:</i> Ensure that the
-              first column has the unique values you’re searching for. Download
-              the sample below for better understanding.{" "}
-            </p>
-            <Link>
-              <i className="text-danger text-decoration-underline">
-                Click here to download csv format
-              </i>
-            </Link>
-          </div>
-          <div className="modal-content">
-            <form action="/upload" id="mydrop" className="dropzone">
-              <div className="dz-message needsclick">
-                <button type="button" className="dz-button">
-                  Drag and Drop File
-                </button>
-                <br />
-                <button type="button" className="dz-button">
-                  OR{" "}
-                </button>
-                <br />
-                <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile} />
+            <div className="modal" id="bulkmodal">
+                <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                />
+                <div className="modal-dialog">
+                    <div className="modal-message">
+                        <p>
+                            <i className="text-danger">Format to follow:</i> Ensure that the
+                            first column has the unique values you’re searching for. Download
+                            the sample below for better understanding.{" "}
+                        </p>
+                        <Link>
+                            <i className="text-danger text-decoration-underline">
+                                Click here to download csv format
+                            </i>
+                        </Link>
+                    </div>
+                    <div className="modal-content">
+                        <form action="/upload" id="mydrop" className="dropzone">
+                            <div className="dz-message needsclick">
+                                <button type="button" className="dz-button">
+                                    Drag and Drop File
+                                </button>
+                                <br/>
+                                <button type="button" className="dz-button">
+                                    OR{" "}
+                                </button>
+                                <br/>
+                                <span className="note needsclick">
+                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
                 </span>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
       <div className="main-content-area pb-6 pt-2">
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <div className="sidebar-search-for sidebar-widget p-4 my-3">
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
               </div>
@@ -360,9 +433,10 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads && myLeads.length === 0 ? (
+                    {myLeads &&
+                    (myLeads.length === 0) ? (
                       <div>
-                        <h5>Record not found</h5>
+                        <h5>Records not found</h5>
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
@@ -421,200 +495,200 @@ const SearchResult = (props) => {
                                 aria-controls="collapseExample"
                                 onClick={() => handleProfile(index, data)}
                               >
-                                Unlock Profile
+                                View Profile
                               </a>
                             </p>
 
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
-                          </div>
-                          <div
-                            style={{
-                              background: "white",
-                              borderRadius: "20px",
-                              padding: "20px",
-                            }}
-                          >
-                            <div
-                              className="panel-collapse collapse in"
-                              id={"collapseExample_" + `${currentPage}${index}`}
-                            >
-                              {specificUserDetails?.map((spec) => (
-                                <span>
+                                                        <a href="#" onClick={clickSelect}>
+                                                            <p className="search-close-btn">
+                                                                <img
+                                                                    src={
+                                                                        selected
+                                                                            ? "assets/images/Frame 543.png"
+                                                                            : "assets/images/Group 1863.png"
+                                                                    }
+                                                                    alt=""
+                                                                />
+                                                            </p>
+                                                        </a>
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            background: "white",
+                                                            borderRadius: "20px",
+                                                            padding: "20px",
+                                                        }}
+                                                    >
+                                                        <div
+                                                            className="panel-collapse collapse in"
+                                                            id={"collapseExample_" + `${currentPage}${index}`}
+                                                        >
+                                                            {specificUserDetails?.map((spec) => (
+                                                                <span>
                                   {spec.index === `${currentPage}${index}` ? (
-                                    <span>
-                                      <SpecificUser details={spec.details} />
+                                      <span>
+                                      <SpecificUser details={spec.details}/>
                                     </span>
                                   ) : null}
                                 </span>
-                              ))}{" "}
+                                                            ))}{" "}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <h5>Record not found</h5>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="d-flex justify-content-center">
+                                        <div className="spinner-border" role="status">
+                                            <span className="sr-only">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <h5>Record not found</h5>
-                    )}
-                  </div>
-                ) : (
-                  <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="d-flex justify-content-center">
-                <Pagination
-                  postsPerPage={10}
-                  totalPosts={myLeads ? myLeads.length : 1}
-                  paginate={paginate}
-                />
-              </div>
-              <div className="user-widget-box text-center p-4 my-3">
-                <div className="user-promote-logo">
-                  <img src="assets/images/user-company-brand.png" alt="title" />
-                </div>
-                <div className="user-promote-slider">
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a list of companies in semi-conductor space with
-                        1000+ employees in US?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a detailed list of all the people working for
-                        Flipkart?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a detailed list of all the people working for
-                        Flipkart?
-                      </p>
+                            <div className="d-flex justify-content-center">
+                                <Pagination
+                                    postsPerPage={10}
+                                    totalPosts={myLeads ? myLeads.length : 1}
+                                    paginate={paginate}
+                                />
+                            </div>
+                            <div className="user-widget-box text-center p-4 my-3">
+                                <div className="user-promote-logo">
+                                    <img src="assets/images/user-company-brand.png" alt="title"/>
+                                </div>
+                                <div className="user-promote-slider">
+                                    <div className="item">
+                                        <div className="user-promote-item">
+                                            <p className="">
+                                                Want to extract contacts of group members in a LinkedIn
+                                                group?
+                                            </p>
+                                            <div
+                                                className="px-3 pb-4"
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }}
+                                            >
+                                                <a href="/searchResult" className="small m-0">
+                                                    Try This
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="item">
+                                        <div className="user-promote-item">
+                                            <p className="">
+                                                Need a list of companies in semi-conductor space with
+                                                1000+ employees in US?
+                                            </p>
+                                            <div
+                                                className="px-3 pb-4"
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }}
+                                            >
+                                                <a href="/searchResult" className="small m-0">
+                                                    Try This
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="item">
+                                        <div className="user-promote-item">
+                                            <p className="">
+                                                Need a detailed list of all the people working for
+                                                Flipkart?
+                                            </p>
+                                            <div
+                                                className="px-3 pb-4"
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }}
+                                            >
+                                                <a href="/searchResult" className="small m-0">
+                                                    Try This
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="item">
+                                        <div className="user-promote-item">
+                                            <p className="">
+                                                Want to extract contacts of group members in a LinkedIn
+                                                group?
+                                            </p>
+                                            <div
+                                                className="px-3 pb-4"
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }}
+                                            >
+                                                <a href="/searchResult" className="small m-0">
+                                                    Try This
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="item">
+                                        <div className="user-promote-item">
+                                            <p className="">
+                                                Need a detailed list of all the people working for
+                                                Flipkart?
+                                            </p>
 
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
+                                            <div
+                                                className="px-3 pb-4"
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }}
+                                            >
+                                                <a href="/searchResult" className="small m-0">
+                                                    Try This
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="item">
+                                        <div className="user-promote-item">
+                                            <p className="">
+                                                Want to extract contacts of group members in a LinkedIn
+                                                group?
+                                            </p>
+                                            <div
+                                                className="px-3 pb-4"
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: "5px",
+                                                    content: "",
+                                                }}
+                                            >
+                                                <a href="/searchResult" className="small m-0">
+                                                    Try This
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default SearchResult;

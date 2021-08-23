@@ -3,9 +3,10 @@ import csv
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_utils.tasks import repeat_every
 from loguru import logger
-
-from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET
+from starlette import status
+from app.config import API_CONFIG_LINKEDIN_CSV_FILE
 from app.customize_filter import router as filter_router
 from app.email import router as email_router
 from app.email_truemail import router as email_verification
@@ -43,6 +44,8 @@ async def root():
 app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
+app.include_router(router=filter_router, prefix="/api")
+app.include_router(router=email_verification, prefix="/api")
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
     prefix="/api/auth/jwt",
@@ -106,10 +109,10 @@ def refresh_linkedin_cookie_manually():
         writer.writerow(header)
         writer.writerow([data])
     logger.debug(header)
+    return status.HTTP_200_OK
 
 
-app.include_router(router=filter_router, prefix="/api")
-app.include_router(router=email_verification, prefix="/api")
+
 
 
 @app.get("/test_auth")
