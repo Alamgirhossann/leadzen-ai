@@ -10,7 +10,7 @@ from app.config import (
     API_CONFIG_GSUITE_PASSWORD,
     API_CONFIG_REACT_LOGIN_PAGE_URL,
     API_CONFIG_SELF_BASE_URL,
-API_CONFIG_SELF_BASE_EXTERNAL_URL,
+    API_CONFIG_SELF_BASE_EXTERNAL_URL,
 )
 
 
@@ -81,7 +81,9 @@ async def verify_email_by_token(token: str):
                 and data["detail"] == "VERIFY_USER_ALREADY_VERIFIED"
             ):
                 logger.warning("Email Already Verified, Redirect to Login")
-                return RedirectResponse(API_CONFIG_REACT_LOGIN_PAGE_URL)
+                return RedirectResponse(
+                    f"{API_CONFIG_REACT_LOGIN_PAGE_URL}?emailVerified=true"
+                )
 
             if not response or response.status_code != 200:
                 # redirect to error page
@@ -95,7 +97,9 @@ async def verify_email_by_token(token: str):
                 )
 
             logger.success("User Verified, Redirecting to login page")
-            return RedirectResponse(API_CONFIG_REACT_LOGIN_PAGE_URL)
+            return RedirectResponse(
+                f"{API_CONFIG_REACT_LOGIN_PAGE_URL}?emailVerified=true&email={data.email}"
+            )
     except Exception as e:
         logger.critical(f"Exception Verifying Email, {str(e)}")
         return JSONResponse(

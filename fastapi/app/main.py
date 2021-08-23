@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_utils.tasks import repeat_every
 from loguru import logger
 from starlette import status
-from app.config import API_CONFIG_LINKEDIN_CSV_FILE
+from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET
 from app.customize_filter import router as filter_router
 from app.email import router as email_router
 from app.email_truemail import router as email_verification
@@ -110,9 +110,6 @@ def refresh_linkedin_cookie_manually():
         writer.writerow([data])
     logger.debug(header)
     return status.HTTP_200_OK
-
-
-
 
 
 @app.get("/test_auth")
