@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "./Style/style.css";
-import {Link, Redirect} from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import validator from "validator";
 import Header from "../SharedComponent/Header";
@@ -28,8 +28,8 @@ const LogIn = () => {
   var url = new URL(url_string);
   var emailVerified = url.searchParams.get("emailVerified");
   var email = url.searchParams.get("email");
-  console.log("emailVerified",emailVerified)
-  console.log("email",email)
+  console.log("emailVerified", emailVerified);
+  console.log("email", email);
 
   const [userLogin, setUserLogin] = useState({
     email: "",
@@ -38,15 +38,14 @@ const LogIn = () => {
   });
 
   const [isValid, setValid] = useState(false);
-  const [response, setResponse] = useState({ok: null, message: null});
+  const [response, setResponse] = useState({ ok: null, message: null });
   const [showPass, setShowPass] = useState(false);
-
 
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setUserLogin({...userLogin, [name]: value})
-  }
+    setUserLogin({ ...userLogin, [name]: value });
+  };
 
   const handlePassClick = (e) => {
     e.preventDefault();
@@ -94,77 +93,117 @@ const LogIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("userLogin", userLogin)
+    console.log("userLogin", userLogin);
     if (!userLogin.email || !userLogin.password) {
-      setUserLogin({...userLogin, error: "Email and Password cannot be blank!"});
+      setUserLogin({
+        ...userLogin,
+        error: "Email and Password cannot be blank!",
+      });
       alert("Email and Password cannot be blank!");
     } else {
       setValid(true);
-      setUserLogin({...userLogin, error: ""});
+      setUserLogin({ ...userLogin, error: "" });
     }
     if (!validator.isEmail(userLogin.email)) {
-      setUserLogin({...userLogin, error: "Invalid Email"});
+      setUserLogin({ ...userLogin, error: "Invalid Email" });
       setValid(false);
       alert("Invalid Email");
     }
-    if (!validator.isStrongPassword(userLogin.password, {
-      minLength: 8,
-      minLowercase: 1,
-      maxlength: 50,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1,
-    })) {
-      setUserLogin({...userLogin, error: "Invalid Password"});
+    if (
+      !validator.isStrongPassword(userLogin.password, {
+        minLength: 8,
+        minLowercase: 1,
+        maxlength: 50,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+    ) {
+      setUserLogin({ ...userLogin, error: "Invalid Password" });
       setValid(false);
       alert("Invalid Password!");
     }
     const formData = new FormData();
-    formData.set('username', userLogin.email);
-    formData.set('password', userLogin.password);
-    console.log("formData", formData)
+    formData.set("username", userLogin.email);
+    formData.set("password", userLogin.password);
+    console.log("formData", formData);
     for (var pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
+      console.log(pair[0] + ", " + pair[1]);
     }
     const fetchData = async () => {
       try {
         const fetchResponse = await axios.post(
-            apiServer + '/auth/jwt/login',
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            },)
-        console.log("urlll>>>", apiServer + '/auth/jwt/login')
+          apiServer + "/auth/jwt/login",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("urlll>>>", apiServer + "/auth/jwt/login");
         let json_res = await fetchResponse.data;
-        console.log("json_res", json_res)
+        console.log("json_res", json_res);
+
         if (json_res.access_token) {
           Cookies.set("user_email", userLogin.email);
           Cookies.set("user_token", json_res.access_token);
         }
-        setResponse({...response, ok: true});
-        console.log("response", response)
+
+        setResponse({ ...response, ok: true });
+        console.log("response", response);
+
         if (response.ok === true) {
           Cookies.set("user_email", userLogin.email);
+        }
+
+        const userStatusResponse = await axios.get(
+          apiServer + "/users/me",
+          formData,
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${json_res.access_token}`,
+            },
+          }
+        );
+
+        const userStatus = await userStatusResponse.json();
+
+        if (!userStatus.is_verified) {
+          //  show a banner and prevent any next action
+          //  take to LoginEmailUnverifiedError
+        } else {
+          //  normal user operations
+          //  check for the first_time_user, if it is false take to repeated user
+          //  else take to the repeated user page
         }
       } catch (err) {
         console.error("Error: ", err);
       }
-
     };
-      fetchData();
+    fetchData();
   };
 
   return (
     <div>
       <Header user={user} />
-      {emailVerified?<div className="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>{email}</strong> You have verified successfully.
-        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>:null}
+      {emailVerified ? (
+        <div
+          className="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>{email}</strong> You have verified successfully.
+          <button
+            type="button"
+            className="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      ) : null}
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
           <div className="container-fluid">
@@ -182,33 +221,48 @@ const LogIn = () => {
                       </div>
                       <form className="sign-up-form" onSubmit={handleSubmit}>
                         <div className="mb-3">
-                          <input type="email" className="w-100" autoComplete="off" value={!email?userLogin.email:email}
-                                 onChange={handleInput} name="email" placeholder="Enter your email" id="email"/>
+                          <input
+                            type="email"
+                            className="w-100"
+                            autoComplete="off"
+                            value={!email ? userLogin.email : email}
+                            onChange={handleInput}
+                            name="email"
+                            placeholder="Enter your email"
+                            id="email"
+                          />
                         </div>
                         <div className="mb-3 password-input">
-                          <input type={showPass ? "text" : "password"} className="w-100" autoComplete="off"
-                                 value={userLogin.password} onChange={handleInput} name="password"
-                                 placeholder="Enter your password" id="password"/>
+                          <input
+                            type={showPass ? "text" : "password"}
+                            className="w-100"
+                            autoComplete="off"
+                            value={userLogin.password}
+                            onChange={handleInput}
+                            name="password"
+                            placeholder="Enter your password"
+                            id="password"
+                          />
                           <Link to="" onClick={handlePassClick}>
                             <img
-                                src="assets/images/combined-eye.png"
-                                style={{
-                                  position: "absolute",
-                                  top: "13px",
-                                  right: "10px",
-                                }}
+                              src="assets/images/combined-eye.png"
+                              style={{
+                                position: "absolute",
+                                top: "13px",
+                                right: "10px",
+                              }}
                             />
                           </Link>
                         </div>
                         <div className="mb-1 d-block d-md-flex justify-content-end">
                           <p>
                             <Link
-                                to="#"
-                                // to="/resetPassword"
-                                // onClick={() =>
-                                //   Cookies.set("forgot_email", form.email)
-                                // }
-                                className="small text-secondary"
+                              to="#"
+                              // to="/resetPassword"
+                              // onClick={() =>
+                              //   Cookies.set("forgot_email", form.email)
+                              // }
+                              className="small text-secondary"
                             >
                               Forgot your password?
                             </Link>

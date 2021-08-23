@@ -165,12 +165,23 @@ const SignUp = () => {
   return (
     <div className="container-body">
       <Header user={user} />
-      {response.ok === true?<div className="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>{userRegistration.email}</strong> please check your email for verification.
-        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>:null}
+      {response.ok === true ? (
+        <div
+          className="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>{userRegistration.email}</strong> please check your email for
+          verification.
+          <button
+            type="button"
+            className="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      ) : null}
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
           <div className="container-fluid">

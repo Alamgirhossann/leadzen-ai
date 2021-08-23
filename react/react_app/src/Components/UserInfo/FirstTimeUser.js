@@ -32,6 +32,7 @@ const FirstTimeUser = () => {
     return () => {
       document.body.removeChild(script);
     };
+    //  TODO: store a cookie that the user has been to this page. Say first_time_user=false
   }, []);
 
   function handleCSVFile() {}
@@ -88,7 +89,7 @@ const FirstTimeUser = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
-              <BulkSearch/>
+              <BulkSearch />
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
