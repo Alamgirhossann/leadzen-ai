@@ -1,5 +1,8 @@
 import os
 
+API_CONFIG_PIPL_BASE_URL = os.getenv(
+    "API_CONFIG_PIPL_BASE_URL", "https://api.pipl.com/search"
+)
 API_CONFIG_PIPL_API_KEY = os.getenv(
     "API_CONFIG_PIPL_API_KEY", "x8tent752npf5q26l7w9fv95"
 )
@@ -101,3 +104,6 @@ API_CONFIG_ALLOWED_CONTENT_TYPES = [
 API_CONFIG_ALLOWED_FILE_TYPE = os.getenv("API_CONFIG_ALLOWED_FILE_TYPE", ".csv")
 API_CONFIG_PORT_NUM = int(os.getenv("API_CONFIG_PORT_NUM", "12005"))
 API_CONFIG_TEXAU_LINKEDIN_EMAIL_SEARCH_URL = f"http://localhost:{API_CONFIG_PORT_NUM}/api/texau/find_email_and_phone_for_linkedin_profile_url"
+API_CONFIG_PIPL_EMAIL_SEARCH_URL = (
+    f"http://localhost:" f"{API_CONFIG_PORT_NUM}/api/pipl/find_details_for_email"
+)
