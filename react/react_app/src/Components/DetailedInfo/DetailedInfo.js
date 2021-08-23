@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import SpecificUser from "./SpecificUser";
 import { Link } from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
@@ -11,47 +11,47 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import CustomizeButton from "../SharedComponent/CustomizeButton";
 
 const DetailedInfo = () => {
-  const [resultData, setSearchResult] = useState({ data: null });
-  const [loading, setLoading] = useState(true);
-  let data = {};
-  useEffect(async () => {
-    fetchData();
-  }, []);
-  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-  const fetchData = async () => {
-    let response = null;
-    let json_res = null;
-    try {
-      response = await fetch(apiServer);
-      json_res = await response.json();
-      json_res
-        ? setSearchResult({ ...resultData, data: json_res })
-        : setLoading(true);
-      json_res ? setLoading(false) : setLoading(true);
-    } catch (err) {
-      console.error("error : ", err);
-    }
-  };
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2, "0");
-  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  var yyyy = today.getFullYear();
-  today = dd + "/" + mm + "/" + yyyy;
-  const [customSearch, setCustomSearch] = useState({
-    location: null,
-    industry: null,
-    job_title: null,
-    education: null,
-    company_name: null,
-    keywords: null,
-    csv_file: null,
-  });
-  const [searchText, setSearchText] = useState();
-  const [socialMediaType, setSocialMediaType] = useState({
-    url: null,
-    type: [],
-  });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
+    const [resultData, setSearchResult] = useState({ data: null });
+    const [loading, setLoading] = useState(true);
+    let data = {};
+    useEffect(async () => {
+        fetchData();
+    }, []);
+    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+    const fetchData = async () => {
+        let response = null;
+        let json_res = null;
+        try {
+            response = await fetch(apiServer);
+            json_res = await response.json();
+            json_res
+                ? setSearchResult({ ...resultData, data: json_res })
+                : setLoading(true);
+            json_res ? setLoading(false) : setLoading(true);
+        } catch (err) {
+            console.error("error : ", err);
+        }
+    };
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = today.getFullYear();
+    today = dd + "/" + mm + "/" + yyyy;
+    const [customSearch, setCustomSearch] = useState({
+        location: null,
+        industry: null,
+        job_title: null,
+        education: null,
+        company_name: null,
+        keywords: null,
+        csv_file: null,
+    });
+    const [searchText, setSearchText] = useState();
+    const [socialMediaType, setSocialMediaType] = useState({
+        url: null,
+        type: [],
+    });
+    const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
 
     const handleHeadSearch = (e) => {
         setSearchText(e.target.value);
@@ -61,34 +61,34 @@ const DetailedInfo = () => {
         console.log(searchText);
     };
     const handleLocation = (e) => {
-        setCustomSearch({...customSearch, location: e.target.value});
+        setCustomSearch({ ...customSearch, location: e.target.value });
     };
     const handleIndustry = (e) => {
-        setCustomSearch({...customSearch, industry: e.target.value});
+        setCustomSearch({ ...customSearch, industry: e.target.value });
     };
     const handleJob = (e) => {
-        setCustomSearch({...customSearch, job_title: e.target.value});
+        setCustomSearch({ ...customSearch, job_title: e.target.value });
     };
     const handleEducation = (e) => {
-        setCustomSearch({...customSearch, education: e.target.value});
+        setCustomSearch({ ...customSearch, education: e.target.value });
     };
     const handleCompany = (e) => {
-        setCustomSearch({...customSearch, company_name: e.target.value});
+        setCustomSearch({ ...customSearch, company_name: e.target.value });
     };
     const handleKeywords = (e) => {
-        setCustomSearch({...customSearch, keywords: e.target.value});
+        setCustomSearch({ ...customSearch, keywords: e.target.value });
     };
     const handleCustomSubmit = (e) => {
         console.log(customSearch);
     };
     const handleCSVFile = (e) => {
-        setCustomSearch({...customSearch, csv_file: e.target.files[0]});
+        setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
     };
     const handleType = (e) => {
-        setSocialMediaType({...socialMediaType, type: e.target.value});
+        setSocialMediaType({ ...socialMediaType, type: e.target.value });
     };
     const handleSocialMedia = (e) => {
-        setSocialMediaSearch({...socialMediaSearch, text: e.target.value});
+        setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
     };
     const handleTypeSubmit = (e) => {
         e.preventDefault();
@@ -124,12 +124,12 @@ const DetailedInfo = () => {
         },
         email: ["Chris07@hexagon.com", "chris12@gmail.com", "chris2194@apple.com"],
         phone_num: [
-            {number: "404-786-5546", type: "telephone"},
-            {number: "404-786-4732", type: "mobile"},
-            {number: "421-230-3235", type: "mobile"},
-            {number: "123-456-7890", type: "mobile"},
+            { number: "404-786-5546", type: "telephone" },
+            { number: "404-786-4732", type: "mobile" },
+            { number: "421-230-3235", type: "mobile" },
+            { number: "123-456-7890", type: "mobile" },
         ],
-        username: [{name: "christophe.heyman", since: "23-12-2010"}],
+        username: [{ name: "christophe.heyman", since: "23-12-2010" }],
         urls: ["Prizmgoogle.net", "john.hexagon.com", "prizma2.google.com"],
         gender: "Male",
         age: "35",
@@ -195,16 +195,16 @@ const DetailedInfo = () => {
             "Atlanta, Georgia",
         ],
         related_profiles: [
-            {name: "Stan Joseph", url: "stan_joseph.com"},
-            {name: "Robert Brown", url: "robert_brown.com"},
-            {name: "Dan Schmitt", url: "banschmitt.in"},
-            {name: "Lan Bey", url: "labney.com"},
-            {name: "Stan Joseph", url: "stanjosepy.io"},
-            {name: "Lanre Bey", url: "lanrebey.in"},
+            { name: "Stan Joseph", url: "stan_joseph.com" },
+            { name: "Robert Brown", url: "robert_brown.com" },
+            { name: "Dan Schmitt", url: "banschmitt.in" },
+            { name: "Lan Bey", url: "labney.com" },
+            { name: "Stan Joseph", url: "stanjosepy.io" },
+            { name: "Lanre Bey", url: "lanrebey.in" },
         ],
         rating: 4.5,
     };
-    const searchData = {count: 12, total: 250};
+    const searchData = { count: 12, total: 250 };
     const [myLeads, setMyLeads] = useState([
         {
             name: "John Smith",
@@ -226,7 +226,7 @@ const DetailedInfo = () => {
 
     return (
         <div>
-            <Header user={user}/>
+            <Header user={user} />
             <div className="modal" id="bulkmodal">
                 <button
                     type="button"
@@ -253,14 +253,14 @@ const DetailedInfo = () => {
                                 <button type="button" className="dz-button">
                                     Drag and Drop File
                                 </button>
-                                <br/>
+                                <br />
                                 <button type="button" className="dz-button">
                                     OR{" "}
                                 </button>
-                                <br/>
+                                <br />
                                 <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
-                </span>
+                                    <input type="file" accept=".csv" onChange={handleCSVFile} />
+                                </span>
                             </div>
                         </form>
                     </div>
@@ -274,11 +274,11 @@ const DetailedInfo = () => {
                             <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                                 <h6 className="text-danger mb-3">Customize your search</h6>
                                 <div className="px-4">
-                                    <CustomizeButton/>
+                                    <CustomizeButton />
                                 </div>
-                                <Filters/>
+                                <Filters />
                             </div>
-                            <SidebarExtractContact/>
+                            <SidebarExtractContact />
                         </div>
                         <div className="col-md-8 col-lg-9">
                             <div className="user-search-wrapper">
@@ -295,72 +295,73 @@ const DetailedInfo = () => {
                                             <button
                                                 className="btn text-white w-auto d-flex ms-3"
                                                 onClick={handleHeadSearchSubmit}
-                                                style={{background: "#FB3E3E"}}
+                                                style={{ background: "#FB3E3E" }}
                                                 type="submit"
                                             >
-                        <span className="pe-1">
-                          <FontAwesomeIcon icon={faSearch}/>
-                        </span>{" "}
-                        Search
-                      </button>
-                    </form>
-                  </div>
-                  <div>
-                    <small>Last Updated: {today}</small>
-                  </div>
-                </div>
-              </div>
+                                                <span className="pe-1">
+                                                    <FontAwesomeIcon icon={faSearch} />
+                                                </span>{" "}
+                                                Search
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <small>Last Updated: {today}</small>
+                                    </div>
+                                </div>
+                            </div>
 
-              {!loading ? (
-                <div className="user-widget-box  mt-3">
-                  <div className="info-container">
-                    <div className="user-info-container">
-                      <input
-                        className="info-box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <p className="info-author text-danger">
-                        <img src="assets/images/author-image.png" alt="" />
-                      </p>
-                      <div className="info-user">
-                        <p>{resultData.data.names[0]._display}</p>
-                      </div>
-                      <div className="info-location">
-                        <small className="d-block">
-                          Works at {resultData.data.jobs[0].organization}
-                        </small>
-                        <small className="d-block">
-                          {resultData.data.addresses[0]._display}
-                        </small>
-                      </div>
-                      <div className="info-email text-center">
-                        <small className="d-block">
-                          {resultData.data.emails[1].address}
-                        </small>
-                      </div>
-                      <p className="info-download-btn">
-                        <img src="assets/images/Group 1899.png" alt="" />
-                      </p>
-                      <p className="info-up-btn">
-                        <img src="assets/images/Group 1900.png" alt="" />
-                      </p>
-                      <p className="info-plus-btn">
-                        <img src="assets/images/Group 1863.png" alt="" />
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-              <div
-                style={{
-                  background: "white",
-                  borderRadius: "20px",
-                  padding: "20px",
-                }}
-              >
-                <SpecificUser details={details} />
-              </div>
+                            {!loading ? (
+                                <div className="user-widget-box  mt-3">
+                                    <div className="info-container">
+                                        <div className="user-info-container">
+                                            <input
+                                                className="info-box ms-3 me-3"
+                                                type="checkbox"
+                                                id="checkbox"
+                                            />
+                                            <p className="info-author text-danger">
+                                                <img src="assets/images/author-image.png" alt="" />
+                                            </p>
+                                            <div className="info-user">
+                                                <p>{resultData.data.names[0]._display}</p>
+                                            </div>
+                                            <div className="info-location">
+                                                <small className="d-block">
+                                                    Works at {resultData.data.jobs[0].organization}
+                                                </small>
+                                                <small className="d-block">
+                                                    {resultData.data.addresses[0]._display}
+                                                </small>
+                                            </div>
+                                            <div className="info-email text-center">
+                                                <small className="d-block">
+                                                    {resultData.data.emails[1].address}
+                                                </small>
+                                            </div>
+                                            <p className="info-download-btn">
+                                                <img src="assets/images/Group 1899.png" alt="" />
+                                            </p>
+                                            <p className="info-up-btn">
+                                                <img src="assets/images/Group 1900.png" alt="" />
+                                            </p>
+                                            <p className="info-plus-btn">
+                                                <img src="assets/images/Group 1863.png" alt="" />
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : null}
+                            <div
+                                style={{
+                                    background: "white",
+                                    borderRadius: "20px",
+                                    padding: "20px",
+                                    marginTop:"20px",
+                                }}
+                            >
+                                <SpecificUser details={details} />
+                            </div>
 
                             <div className="user-widget-box  my-3">
                                 {myLeads.map((data) => (
@@ -372,7 +373,7 @@ const DetailedInfo = () => {
                                                 id="checkbox"
                                             />
                                             <p className="search-author text-danger">
-                                                <img src="assets/images/author-image.png" alt=""/>
+                                                <img src="assets/images/author-image.png" alt="" />
                                             </p>
                                             <div className="search-user">
                                                 <p>{data.name}</p>
@@ -389,18 +390,18 @@ const DetailedInfo = () => {
                                             </div>
                                             <p className="search-view-btn ">
                                                 <a href="" className="button">
-                                                    View Profile
+                                                    Unlock Profile
                                                 </a>
                                             </p>
                                             <p className="search-close-btn">
-                                                <img src="assets/images/Group 1863.png" alt=""/>
+                                                <img src="assets/images/Group 1863.png" alt="" />
                                             </p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                             <div>
-                                <AskJarvis/>
+                                <AskJarvis />
                             </div>
                         </div>
                     </div>
