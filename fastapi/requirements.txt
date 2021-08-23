@@ -75,6 +75,7 @@ six==1.16.0
 sniffio==1.2.0
 sortedcontainers==2.4.0
 SQLAlchemy==1.3.24
+sse-starlette==0.7.2
 starlette==0.14.2
 Strip==0.0.1.dev14
 toml==0.10.2

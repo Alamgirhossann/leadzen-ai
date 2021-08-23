@@ -42,6 +42,20 @@ const BulkSearch = () => {
 
       console.log(json);
       alert("Search results are sent in an email to the User as a CSV file");
+
+      const eventSource = new EventSource(
+        `${apiServer}/bulk_upload/status/stream?filename=${json.output_filename}`
+      );
+      eventSource.addEventListener("update", (event) => {
+        console.log(event);
+      });
+      eventSource.addEventListener("end", (event) => {
+        console.log(event);
+        const data = JSON.parse(event.data);
+        console.log(data);
+        alert(`Fetch Search Results from ${apiServer}${data.url}`);
+        eventSource.close();
+      });
     } catch (err) {
       console.error("Error: ", err);
       alert("Error Uploading File, Please Try Again Later");

@@ -1,15 +1,25 @@
 import asyncio
+import json
 import os
 import tempfile
 import uuid
+from datetime import datetime
 from typing import List, Dict
 
 import httpx
 import pandas as pd
-from fastapi import APIRouter
-from fastapi import UploadFile, File, status, HTTPException, BackgroundTasks
+from fastapi import (
+    UploadFile,
+    File,
+    status,
+    HTTPException,
+    BackgroundTasks,
+    APIRouter,
+    Request,
+)
 from loguru import logger
 from pydantic import BaseModel
+from sse_starlette.sse import EventSourceResponse
 
 from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
@@ -225,3 +235,64 @@ async def upload_csv_file(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="emails or linkedin_profile_urls columns not preset in file",
             )
+
+
+async def status_event_generator(
+    filename: str, request: Request, max_timeout_in_seconds: int = 90
+):
+    start_time = datetime.now()
+
+    while True:
+        if await request.is_disconnected():
+            logger.debug("Request disconnected")
+            break
+
+        if (datetime.now() - start_time).total_seconds() > max_timeout_in_seconds:
+            yield {
+                "event": "end",
+                "data": json.dumps(
+                    {
+                        "filename": filename,
+                        "ready": False,
+                        "errored": True,
+                        "url": None,
+                    }
+                ),
+            }
+            break
+
+        if os.path.exists(filename):
+            logger.success(f"found {filename=}")
+            yield {
+                "event": "end",
+                "data": json.dumps(
+                    {
+                        "filename": filename,
+                        "ready": True,
+                        "errored": False,
+                        "url": filename.removeprefix("."),
+                    }
+                ),
+            }
+            break
+        else:
+            logger.warning(f"{filename=} not found, waiting")
+            yield {
+                "event": "update",
+                "data": json.dumps(
+                    {
+                        "filename": filename,
+                        "ready": False,
+                        "errored": False,
+                        "url": None,
+                    }
+                ),
+            }
+
+        await asyncio.sleep(API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL)
+
+
+@router.get("/status/stream")
+async def send_status_stream(filename: str, request: Request):
+    event_generator = status_event_generator(filename=filename, request=request)
+    return EventSourceResponse(event_generator)
