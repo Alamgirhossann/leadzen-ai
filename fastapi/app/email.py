@@ -41,7 +41,8 @@ async def send_account_verification_email(
 
     email_text = (
         f"Dear {request.name}, \nPlease click the link to verify your email {API_CONFIG_SELF_BASE_EXTERNAL_URL}/api"
-        f"/email/verify/account/{request.token} \n--- \nThanks \n Analystt Team "
+        f"/email/verify/account/{request.token}?emailVerified=true&email={request.email} \n--- \nThanks \n Analystt "
+        f"Team "
     )
 
     message = MessageSchema(
