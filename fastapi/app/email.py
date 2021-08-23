@@ -10,6 +10,7 @@ from app.config import (
     API_CONFIG_GSUITE_PASSWORD,
     API_CONFIG_REACT_LOGIN_PAGE_URL,
     API_CONFIG_SELF_BASE_URL,
+API_CONFIG_SELF_BASE_EXTERNAL_URL,
 )
 
 
@@ -39,7 +40,7 @@ async def send_account_verification_email(
     logger.debug(f"{request=}")
 
     email_text = (
-        f"Dear {request.name}, \nPlease click the link to verify your email {API_CONFIG_SELF_BASE_URL}/api"
+        f"Dear {request.name}, \nPlease click the link to verify your email {API_CONFIG_SELF_BASE_EXTERNAL_URL}/api"
         f"/email/verify/account/{request.token} \n--- \nThanks \n Analystt Team "
     )
 
