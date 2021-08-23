@@ -23,6 +23,13 @@ const LogIn = () => {
       mail_credits: "",
     },
   };
+  var url_string = window.location.href;
+  // var url_string = "localhost:12002/login?emailVerified=true&email=piyush.jaiswal@kapso.in";
+  var url = new URL(url_string);
+  var emailVerified = url.searchParams.get("emailVerified");
+  var email = url.searchParams.get("email");
+  console.log("emailVerified",emailVerified)
+  console.log("email",email)
 
   const [userLogin, setUserLogin] = useState({
     email: "",
@@ -152,6 +159,12 @@ const LogIn = () => {
   return (
     <div>
       <Header user={user} />
+      {emailVerified?<div className="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{email}</strong> You have verified successfully.
+        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>:null}
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
           <div className="container-fluid">
@@ -169,7 +182,7 @@ const LogIn = () => {
                       </div>
                       <form className="sign-up-form" onSubmit={handleSubmit}>
                         <div className="mb-3">
-                          <input type="email" className="w-100" autoComplete="off" value={userLogin.email}
+                          <input type="email" className="w-100" autoComplete="off" value={!email?userLogin.email:email}
                                  onChange={handleInput} name="email" placeholder="Enter your email" id="email"/>
                         </div>
                         <div className="mb-3 password-input">
