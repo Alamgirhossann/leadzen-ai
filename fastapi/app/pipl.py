@@ -23,9 +23,7 @@ class PiplRequest(BaseModel):
     url: Optional[str] = None
 
 
-@router.post(
-    "/search",
-)
+@router.post("/search")
 async def people_search(request: PiplRequest):
     print("Request...", request)
     response_data = None

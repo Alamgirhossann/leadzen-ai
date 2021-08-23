@@ -30,6 +30,12 @@ async def send_email(email_id: str, filename: str):
     pass
 
 
+async def handle_pipl_emails(
+    emails: List[str], filename: str, max_timeout_counter: int = 18
+):
+    pass
+
+
 async def handle_linkedin_profile_urls(
     urls: List[str], filename: str, max_timeout_counter: int = 18
 ):
@@ -134,7 +140,12 @@ async def upload_csv_file(
         df.fillna("", inplace=True)
 
         if "emails" in df.columns:
-            pass
+            filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
+            background_tasks.add_task(
+                handle_pipl_emails,
+                emails=list(df.emails),
+                filename=filename,
+            )
         elif "linkedin_profile_urls" in df.columns:
             filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             background_tasks.add_task(
