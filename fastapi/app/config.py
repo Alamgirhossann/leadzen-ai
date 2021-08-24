@@ -11,8 +11,8 @@ API_CONFIG_PROXY_USER = os.getenv("PROXY_USER", "malharlakdawala")
 API_CONFIG_PROXY_PASS = os.getenv("PROXY_PASS", "AsHhgbZE")
 
 API_CONFIG_LINKEDIN_CSV_FILE = os.getenv("CSV_FILE", "linkedin_cookies.csv")
-API_CONFIG_LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME", "kaylaklug2021@gmail.com")
-API_CONFIG_LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD", "Q5$&%bD7d$&4*%^bs^3j")
+API_CONFIG_LINKEDIN_USERNAME = os.getenv("API_CONFIG_LINKEDIN_USERNAME", "tareiljess@yahoo.com")
+API_CONFIG_LINKEDIN_PASSWORD = os.getenv("API_CONFIG_LINKEDIN_PASSWORD", "Challenge123$")
 API_CONFIG_LINKEDIN_LOGIN_URL = os.getenv(
     "LINKEDIN_LOGIN_URL",
     "https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin",
@@ -68,3 +68,21 @@ API_CONFIG_FACEBOOK_LOGIN_PASSWORD = os.getenv("API_CONFIG_FACEBOOK_LOGIN_PASSWO
 API_CONFIG_INSTA_LOGIN_PASSWORD = os.getenv("API_CONFIG_INSTA_LOGIN_PASSWORD","Challenge123$")
 API_CONFIG_TWITTER_LOGIN_PASSWORD = os.getenv("API_CONFIG_TWITTER_LOGIN_PASSWORD","Challenge$123")
 API_CONFIG_FACEBOOK_TWITTER_INSTA_USERNAME = os.getenv("CONFIG_FACEBOOK_TWITTER_INSTA_USERNAME","kaylaklug2021@gmail.com")
+
+
+API_CONFIG_GSUITE_EMAIL = os.getenv("GSUITE_EMAIL", "malhar@analystt.ai")
+API_CONFIG_GSUITE_PASSWORD = os.getenv("GSUITE_PASSWORD", "Malhar123##")
+API_CONFIG_REACT_LOGIN_PAGE_URL = os.getenv(
+    "API_CONFIG_REACT_LOGIN_PAGE", "http://localhost:3000/login"
+)
+API_CONFIG_REACT_SIGNUP_PAGE_URL = os.getenv(
+    "API_CONFIG_REACT_SIGNUP_PAGE", "http://localhost:3000/signUp"
+)
+API_CONFIG_SELF_BASE_URL = os.getenv(
+    "API_CONFIG_SELF_BASE_URL", "http://localhost:12005"
+)
+
+API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv("API_CONFIG_SELF_BASE_EXTERNAL_URL","http://localhost:12005")
+
+API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
+API_CONFIG_DATABASE_URL = "sqlite:///./test.db"

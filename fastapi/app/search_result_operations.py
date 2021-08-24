@@ -53,7 +53,7 @@ class SearchResultIn(BaseModel):
     email_is_verified: Optional[bool] = False
     email_credit_used: Optional[bool] = False
     additional_data: Optional[str] = None
-    created_On: Optional[datetime.datetime] = datetime.datetime.now()
+    created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
 class SearchResult(BaseModel):
@@ -68,7 +68,7 @@ class SearchResult(BaseModel):
     email_is_verified: Optional[bool] = False
     email_credit_used: Optional[bool] = False
     additional_data: Optional[str] = None
-    created_On: Optional[datetime.datetime]
+    created_on: Optional[datetime.datetime]
 
 
 @router.get("/get_search_result", response_model=List[SearchResult])

@@ -5,7 +5,7 @@ import uuid
 from typing import Optional, List, Dict
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from loguru import logger
 from pydantic import BaseModel
 from starlette import status
@@ -26,6 +26,7 @@ from app.config import (
 )
 from app.config import API_CONFIG_TEXAU_URL as url
 from app.linkedin import query_url_builder as linkedin_query_url_builder
+from app.users import fastapi_users
 
 
 class TexAuRequest(BaseModel):
@@ -76,12 +77,12 @@ async def check_execution_status(execution_id: str):
             if response.status_code == 200:
                 if data := response.json():
                     if (
-                        data["execution"]["status"] == "completed"
-                        and data["execution"].get("output") is not None
+                            data["execution"]["status"] == "completed"
+                            and data["execution"].get("output") is not None
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
-                        logger.debug("TexAu Response>>>"+str(result))
+                        logger.debug("TexAu Response>>>" + str(result))
                         return TexAuResponse(data=result)
                     if data["execution"]["status"] == "cookieError":
                         logger.debug("Result Cookie Error")
@@ -123,8 +124,8 @@ async def wait_and_check_execution_status(execution_id: str) -> Optional[TexAuRe
             if response.status_code == 200:
                 if data := response.json():
                     if (
-                        data["execution"]["status"] == "completed"
-                        and data["execution"].get("output") is not None
+                            data["execution"]["status"] == "completed"
+                            and data["execution"].get("output") is not None
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
@@ -193,8 +194,10 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
 
 
 @router.post("/search", response_model=TexAuExecutionResponse)
-async def search_using_texau(request: TexAuRequest):
-    logger.info(f"{request=}")
+async def search_using_texau(
+        request: TexAuRequest, user=Depends(fastapi_users.get_current_active_user)
+):
+    logger.info(f"{request=}, {user=}")
 
     try:
         if not (query_url := linkedin_query_url_builder(request.dict())):
@@ -213,9 +216,9 @@ async def search_using_texau(request: TexAuRequest):
             )
 
         if not (
-            execution_id := await send_spice_request(
-                cookie=cookie, linkedin_url=query_url
-            )
+                execution_id := await send_spice_request(
+                    cookie=cookie, linkedin_url=query_url
+                )
         ):
             logger.warning("Invalid Task Id")
             raise HTTPException(
@@ -225,6 +228,7 @@ async def search_using_texau(request: TexAuRequest):
 
         logger.debug("Execution Id in main>>>>>" + execution_id)
         return TexAuExecutionResponse(execution_id=execution_id)
+        # return {"execution_id": execution_id}
     except Exception as e:
         logger.critical(str(e))
         raise HTTPException(

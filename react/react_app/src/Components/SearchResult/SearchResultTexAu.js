@@ -7,6 +7,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
+import Cookies from "js-cookie";
 import { func } from "prop-types";
 
 const SearchResult = (props) => {
@@ -22,12 +23,14 @@ const SearchResult = (props) => {
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
-
+  const [resultData, setSearchResult] = useState({ data: null });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   const [searchType, setSearchType] = useState("");
+  const [activeIndexProfile, setActiveIndexProfile] = useState(false);
+
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -39,7 +42,9 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
+      myLeads.length > 0
+        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+        : 0
     );
   };
   today = dd + "/" + mm + "/" + yyyy;
@@ -104,11 +109,12 @@ const SearchResult = (props) => {
         setLoading(true);
       }
       try {
-        const response = await fetch(apiServer + "/texau/search?", {
+        const response = await fetch(apiServer + "/texau/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(requestForTexAu),
         });
@@ -131,7 +137,11 @@ const SearchResult = (props) => {
         }
 
         let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
+        console.log(
+          "Data>>>>> execution_id >>>>>>",
+          json_res,
+          json_res.execution_id
+        );
         if (!json_res.execution_id) {
           setLoading(false);
           setMyLeads({});
@@ -314,6 +324,7 @@ const SearchResult = (props) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(reqJsonPipl),
         });
