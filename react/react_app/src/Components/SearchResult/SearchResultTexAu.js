@@ -162,6 +162,7 @@ const SearchResult = (props) => {
           }
         );
 
+        console.log("response>>>>",response)
         function handleError() {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
@@ -261,6 +262,30 @@ const SearchResult = (props) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
+  const saveSearchedRecord =async(response,searchType) => {
+    console.log("In saveSearchedRecord")
+    let requestForSaveSearch={
+        "result": response.toString(),
+        "search_type": searchType
+    }
+    console.log("In saveSearchedRecord...",requestForSaveSearch)
+   try{
+       const response = await fetch(apiServer + "/search_result", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(requestForSaveSearch),
+        });
+
+   }catch (e) {
+        console.error("Exception>>", e);
+      }
+
+
+
+   }
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
       email: "",
@@ -291,11 +316,13 @@ const SearchResult = (props) => {
 
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res);
+        await saveSearchedRecord(json_res,props.location.state.customSearch.search_type)
         if (json_res) {
           setSpecificUserDetails((prev) => [
             ...prev,
             { index: `${currentPage}${index}`, details: json_res[0] },
           ]);
+
         } else {
           console.log("In setSpecificUserDetails else");
           setSpecificUserDetails((prev) => [
@@ -321,6 +348,7 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
+
 
   return (
     <div>

@@ -59,3 +59,4 @@ API_CONFIG_TRUEMAIL_API_KEY = os.getenv("API_CONFIG_TRUEMAIL_API_KEY", "QRnroC9k
 API_CONFIG_TRUEMAIL_API_URL = os.getenv("API_CONFIG_TRUEMAIL_API_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
 API_CONFIG_SELF_URL = os.getenv("API_CONFIG_SELF_URL", 'http://localhost:8000/api/refresh_linkedin_cookie')
 API_CONFIG_PROXY_URL = os.getenv("API_CONFIG_PROXY_URL", 'http://168.81.41.43:47192')
+API_CONFIG_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./people.db")
