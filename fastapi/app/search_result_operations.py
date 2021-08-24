@@ -79,8 +79,6 @@ async def read_search_results():
 
 @router.post("/save_search_result", response_model=SearchResult)
 async def create_search_result(search_results: SearchResultIn):
-    current_time = datetime.datetime.now()
-    logger.debug("current_time>>>" + str(current_time))
 
     query = search_result.insert().values(result=search_results.result,
                                           search_type=search_results.search_type,
@@ -93,6 +91,6 @@ async def create_search_result(search_results: SearchResultIn):
                                           email_credit_used=search_results.email_credit_used,
                                           additional_data=search_results.additional_data,
                                           created_on=datetime.datetime.now())
-    logger.debug("Query>>>>>" + str(query))
+
     last_record_id = await database.execute(query)
     return {**search_results.dict(), "id": last_record_id}

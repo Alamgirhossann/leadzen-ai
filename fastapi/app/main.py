@@ -81,16 +81,6 @@ app.include_router(router=email_router, prefix="/api")
 
 
 # @app.on_event("startup")
-# async def startup():
-#     await database.connect()
-#
-#
-# @app.on_event("shutdown")
-# async def shutdown():
-#     await database.disconnect()
-
-
-# @app.on_event("startup")
 # @repeat_every(seconds=60 * 60)
 # def refresh_linkedin_cookie():
 #     logger.debug("linkedin cookie...")
@@ -125,6 +115,8 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     await database.disconnect()
+
+
 @app.get("/test_auth")
 def test_auth(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"test auth, {user=}")

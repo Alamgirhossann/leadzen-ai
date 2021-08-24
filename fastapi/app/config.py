@@ -85,4 +85,4 @@ API_CONFIG_SELF_BASE_URL = os.getenv(
 API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv("API_CONFIG_SELF_BASE_EXTERNAL_URL","http://localhost:12005")
 
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
-API_CONFIG_DATABASE_URL = "sqlite:///./test.db"
+
