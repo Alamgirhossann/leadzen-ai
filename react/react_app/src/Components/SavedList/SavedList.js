@@ -75,7 +75,8 @@ const SavedList = () => {
         <div className="user-lead-top mb-2 head-btn-style">
           <div className="d-flex align-items-center">
             <h5 className="m-0">
-              <img src="assets/images/back-union.png" alt="" /> Saved Leads
+              <a href="/repeatedUser"><img src="assets/images/back-union.png" alt="" /></a>
+                Saved Leads
             </h5>
           </div>
           <form className="search-form-sm">
@@ -194,7 +195,7 @@ const SavedList = () => {
 
                       <p className="save-view-btn">
                         <a href="/detailedInfo" className="button">
-                          View Profile
+                          Unlock Profile
                         </a>
                       </p>
                       <a
@@ -308,7 +309,7 @@ const SavedList = () => {
 
                       <p className="save-view-btn">
                         <a href="/detailedInfo" className="button">
-                          View Profile
+                        Unlock Profile
                         </a>
                       </p>
                       <p className="save-close-btn">

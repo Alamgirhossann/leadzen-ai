@@ -13,7 +13,7 @@ const AskJarvis = () => {
   return (
     <div className="user-widget-box text-center p-4 my-3">
       <div className="user-promote-logo">
-        <img src="assets/images/user-company-brand.png" alt="title" />
+        <img src="assets/images/Group 2117 (1).png" alt="title" />
       </div>
       <div className="user-promote-slider">
         <div className="item">

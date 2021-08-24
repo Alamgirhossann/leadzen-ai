@@ -59,7 +59,7 @@ const Pricing = () => {
 
       <div className="container">
         <div className="row">
-          <div className="col-md-3 mt-1">
+          <div className="col-md-6 col-sm-6 col-lg-3 mt-3">
             <div className="card card-height">
               <div className="card-body">
                 <h5 className="text-danger">Free Analystt</h5>
@@ -79,7 +79,7 @@ const Pricing = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-3 mt-1">
+          <div className="col-md-6 col-sm-6 col-lg-3 mt-3">
             <div className="card card-height">
               <div className="card-body">
                 <h5 className="card-title text-danger">Solo Jarvis</h5>
@@ -99,7 +99,7 @@ const Pricing = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-3 mt-1">
+          <div className="col-md-6 col-sm-6 col-lg-3 mt-3">
             <div className="card card-height">
               <div className="card-body">
                 <h5 className="card-title text-danger">Team of Jarvis</h5>
@@ -121,7 +121,7 @@ const Pricing = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-3 mt-1">
+          <div className="col-md-6 col-sm-6 col-lg-3 mt-3">
             <div className="card card-height">
               <div className="card-body">
                 <h5 className="card-title text-danger">Tony Stark Mode</h5>

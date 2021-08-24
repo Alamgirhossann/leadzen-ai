@@ -126,6 +126,9 @@ const ResetPassword = () => {
                 </button>
               </form>
               {isValid ? <Redirect to="/resetLink" /> : null}
+              <div className='text-center pb-2'>
+                <a href="login" className='text-danger text-decoration-none'>Back</a>
+              </div>
             </div>
           </div>
         </div>
