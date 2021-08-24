@@ -87,6 +87,8 @@ async def send_success_email(user: User, filename: str):
                 return
 
             logger.success(f"Email Sent Successfully, {user.email=}, {filename=}")
+    except httpx.ReadTimeout as e:
+        logger.warning(f"ReadTimeout - can be ignored: {str(e)}")
     except Exception as e:
         logger.critical(f"Exception Sending Email: {str(e)}")
 
@@ -114,6 +116,8 @@ async def send_failure_email(user: User, filename: str):
                 return
 
             logger.success(f"Email Sent Successfully, {user.email=}, {filename=}")
+    except httpx.ReadTimeout as e:
+        logger.warning(f"ReadTimeout - can be ignored: {str(e)}")
     except Exception as e:
         logger.critical(f"Exception Sending Email: {str(e)}")
 
