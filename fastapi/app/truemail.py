@@ -5,11 +5,11 @@ from fastapi import APIRouter
 
 from app.config import API_CONFIG_TRUEMAIL_API_URL, API_CONFIG_TRUEMAIL_API_KEY
 
-router = APIRouter(prefix="/verification_email", tags=["Customize verification"])
+router = APIRouter(prefix="/truemail", tags=["Truemail"])
 
 
-@router.get("/truemail/{email_id}")
-async def truemail_single(email_id):
+@router.get("/verify/{email_id}")
+async def verify_email(email_id):
     try:
         apiKey = API_CONFIG_TRUEMAIL_API_KEY
         apiUrl = API_CONFIG_TRUEMAIL_API_URL + apiKey + "&email=" + email_id

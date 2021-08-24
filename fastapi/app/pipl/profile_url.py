@@ -12,7 +12,7 @@ class PiplDetailsFromProfileUrlRequest(BaseModel):
     filename: Optional[str] = None
 
 
-class PiplFindDetailsFromProfileUrlResponse(BaseModel):
+class PiplDetailsFromProfileUrlResponse(BaseModel):
     filename: str
 
 

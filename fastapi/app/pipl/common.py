@@ -6,7 +6,13 @@ from typing import Dict, List, Optional
 import httpx
 import jmespath
 import pandas as pd
+from aiolimiter import AsyncLimiter
 from loguru import logger
+
+from app.config import (
+    API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT,
+    API_CONFIG_PIPL_RATE_LIMIT_DURATION_IN_SECONDS,
+)
 
 
 def filter_data(person: Dict, slug: str) -> Dict:
@@ -89,35 +95,36 @@ async def write_to_file(responses: List[Dict], filename: str):
 
 
 async def search_one(
-    url: str, client: httpx.AsyncClient, slug: str
+    url: str, client: httpx.AsyncClient, slug: str, limiter: AsyncLimiter
 ) -> Optional[List[Dict]]:
     try:
         logger.debug(url)
 
-        response = await client.get(url)
+        async with limiter:
+            response = await client.get(url)
 
-        if not response.status_code == 200:
-            logger.warning(
-                f"Invalid Status Code: {response.status_code=}, {response.text=}"
-            )
-            return None
+            if not response.status_code == 200:
+                logger.warning(
+                    f"Invalid Status Code: {response.status_code=}, {response.text=}"
+                )
+                return None
 
-        if not (data := response.json()):
-            logger.warning(f"Empty Response")
-            return None
+            if not (data := response.json()):
+                logger.warning(f"Empty Response")
+                return None
 
-        logger.debug(data.keys())
+            logger.debug(data.keys())
 
-        if data["@persons_count"] == 1 and data.get("person"):
-            return [filter_data(person=data.get("person"), slug=slug)]
-        elif data["@persons_count"] > 1 and data.get("possible_persons"):
-            return [
-                filter_data(person=x, slug=slug)
-                for x in data.get("possible_persons")
-                if x
-            ]
-        else:
-            return None
+            if data["@persons_count"] == 1 and data.get("person"):
+                return [filter_data(person=data.get("person"), slug=slug)]
+            elif data["@persons_count"] > 1 and data.get("possible_persons"):
+                return [
+                    filter_data(person=x, slug=slug)
+                    for x in data.get("possible_persons")
+                    if x
+                ]
+            else:
+                return None
     except Exception as e:
         logger.critical(f"Exception in PIPL search: {str(e)}")
         return None
@@ -129,12 +136,23 @@ async def search_all(urls: List[str], slugs: List[str]) -> Optional[List[Dict]]:
         return None
 
     try:
+        rate_limiter = AsyncLimiter(
+            API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT,
+            API_CONFIG_PIPL_RATE_LIMIT_DURATION_IN_SECONDS,
+        )
+
         async with httpx.AsyncClient() as client:
             coroutines = [
-                search_one(url=urls[p], client=client, slug=slugs[p])
+                search_one(
+                    url=urls[p], client=client, slug=slugs[p], limiter=rate_limiter
+                )
                 for p, v in enumerate(urls)
             ]
             results = await asyncio.gather(*coroutines)
+
+            results = [
+                x for x in results if x
+            ]  # remove the None's else chain/flatten operation will fail
 
             return list(itertools.chain(*results))
     except Exception as e:

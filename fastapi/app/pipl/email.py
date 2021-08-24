@@ -12,7 +12,7 @@ class PiplDetailsFromEmailRequest(BaseModel):
     filename: Optional[str] = None
 
 
-class PiplFindDetailsFromEmailResponse(BaseModel):
+class PiplDetailsFromEmailResponse(BaseModel):
     filename: str
 
 

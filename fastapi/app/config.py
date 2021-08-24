@@ -154,3 +154,11 @@ API_CONFIG_EMAIL_SEND_URL = (
 API_CONFIG_BULK_MAX_ROWS_IN_CSV = int(
     os.getenv("API_CONFIG_BULK_MAX_ROWS_IN_CSV", "50")
 )
+
+# https://docs.pipl.com/docs/rate-limiting-your-queries
+API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT = int(
+    os.getenv("API_CONFIG_PIPL_RATE_LIMIT_MAX_CALLS", "10")
+)
+API_CONFIG_PIPL_RATE_LIMIT_DURATION_IN_SECONDS = int(
+    os.getenv("API_CONFIG_PIPL_RATE_LIMIT_DURATION", "30")
+)

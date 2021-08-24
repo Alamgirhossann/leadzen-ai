@@ -6,7 +6,7 @@ from loguru import logger
 
 from app.bulk.common import BulkUploadResponse
 from app.config import API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL
-from test.common import TEST_CONFIG_API_BASE_URL
+from test.common import TEST_CONFIG_API_BASE_URL, TEST_CONFIG_API_USER_HEADERS
 
 
 def test_bulk_csv_upload_linkedin_profile_urls_pass():
@@ -21,7 +21,11 @@ def test_bulk_csv_upload_linkedin_profile_urls_pass():
     }
 
     response = requests.post(
-        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv",
+        files=files,
+        headers={
+            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiY2FjMWNhZTEtMWFmNC00MTEwLWIwYzYtZWJlZjM1NWM5M2I5IiwiYXVkIjpbImZhc3RhcGktdXNlcnM6YXV0aCJdLCJleHAiOjE2Mjk4NDY0NDh9.IzrLBcq2TydPv3Ull_tboR8j7hJ4rui9UfaPGzHdJfU"
+        },
     )
     assert response
     assert response.status_code == 200
@@ -65,7 +69,9 @@ def test_bulk_csv_upload_linkedin_profile_urls_fail_with_invalid_column_name():
     }
 
     response = requests.post(
-        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv",
+        files=files,
+        headers=TEST_CONFIG_API_USER_HEADERS,
     )
     logger.debug(f"{response.text=}")
     assert response.status_code == 400
@@ -83,7 +89,9 @@ def test_bulk_csv_upload_linkedin_profile_urls_fail_with_non_csv():
     }
 
     response = requests.post(
-        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv",
+        files=files,
+        headers=TEST_CONFIG_API_USER_HEADERS,
     )
     logger.debug(f"{response.text=}")
     assert response.status_code == 400
@@ -101,7 +109,9 @@ def test_bulk_csv_upload_emails_pass():
     }
 
     response = requests.post(
-        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv",
+        files=files,
+        headers=TEST_CONFIG_API_USER_HEADERS,
     )
     assert response
     assert response.status_code == 200

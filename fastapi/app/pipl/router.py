@@ -15,12 +15,12 @@ from app.config import (
 from app.pipl.email import (
     execute_task as execute_email_task,
     PiplDetailsFromEmailRequest,
-    PiplFindDetailsFromEmailResponse,
+    PiplDetailsFromEmailResponse,
 )
 from app.pipl.profile_url import (
     execute_task as execute_profile_task,
     PiplDetailsFromProfileUrlRequest,
-    PiplFindDetailsFromProfileUrlResponse,
+    PiplDetailsFromProfileUrlResponse,
 )
 
 router = APIRouter(prefix="/pipl", tags=["PIPL"])
@@ -82,7 +82,7 @@ async def people_search(request: PiplRequest):
         )
 
 
-@router.post("/bulk/email", response_model=PiplFindDetailsFromEmailResponse)
+@router.post("/bulk/email", response_model=PiplDetailsFromEmailResponse)
 async def bulk_find_details_for_email(
     request: PiplDetailsFromEmailRequest, background_tasks: BackgroundTasks
 ):
@@ -97,12 +97,12 @@ async def bulk_find_details_for_email(
 
     background_tasks.add_task(execute_email_task, request=request)
 
-    return PiplFindDetailsFromEmailResponse(filename=request.filename)
+    return PiplDetailsFromEmailResponse(filename=request.filename)
 
 
 @router.post(
     "/bulk/profile_url",
-    response_model=PiplFindDetailsFromProfileUrlResponse,
+    response_model=PiplDetailsFromProfileUrlResponse,
 )
 async def bulk_find_details_for_profile_url(
     request: PiplDetailsFromProfileUrlRequest, background_tasks: BackgroundTasks
@@ -118,4 +118,4 @@ async def bulk_find_details_for_profile_url(
 
     background_tasks.add_task(execute_profile_task, request=request)
 
-    return PiplFindDetailsFromProfileUrlResponse(filename=request.filename)
+    return PiplDetailsFromProfileUrlResponse(filename=request.filename)
