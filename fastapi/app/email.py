@@ -1,3 +1,6 @@
+from crypt import methods
+from urllib.parse import urlencode
+
 import httpx
 from fastapi import APIRouter, BackgroundTasks
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
@@ -33,16 +36,40 @@ conf = ConnectionConfig(
 router = APIRouter(prefix="/email", tags=["Email"])
 
 
-@router.post("/verify/account")
+class UserEmailSendRequest(BaseModel):
+    email: EmailStr
+    text: str
+
+
+@router.post("/send", response_model=bool)
+async def send_email(request: UserEmailSendRequest, background_tasks: BackgroundTasks):
+    logger.debug(f"{request=}")
+
+    message = MessageSchema(
+        subject="Analystt Email Verification",
+        recipients=[request.email],
+        body=request.text,
+    )
+
+    fast_mail = FastMail(conf)
+    background_tasks.add_task(fast_mail.send_message, message)
+    logger.success(f"Email Sent, {request.email=}")
+    return True
+
+
+@router.post("/verify/account", response_model=bool)
 async def send_account_verification_email(
-        request: UserEmailVerificationEmailRequest, background_tasks: BackgroundTasks
-) -> JSONResponse:
+    request: UserEmailVerificationEmailRequest, background_tasks: BackgroundTasks
+):
     logger.debug(f"{request=}")
 
     email_text = (
-        f"Dear {request.name}, \nPlease click the link to verify your email {API_CONFIG_SELF_BASE_EXTERNAL_URL}/api"
-        f"/email/verify/account/{request.token} \n--- \nThanks \n Analystt "
-        f"Team "
+        f"Dear {request.name}, \n"
+        f"Please click the link below to verify your email: \n"
+        f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
+        f"--- \n"
+        f"Thanks \n"
+        f"Analystt Team"
     )
 
     message = MessageSchema(
@@ -54,7 +81,7 @@ async def send_account_verification_email(
     fast_mail = FastMail(conf)
     background_tasks.add_task(fast_mail.send_message, message)
     logger.success(f"Verification Email Sent, {request.email=}")
-    return JSONResponse(status_code=200, content={"message": "email has been sent"})
+    return True
 
 
 @router.get("/verify/account/{token}")
@@ -77,8 +104,8 @@ async def verify_email_by_token(token: str):
             logger.debug(data)
 
             if (
-                    response.status_code == 400
-                    and data["detail"] == "VERIFY_USER_ALREADY_VERIFIED"
+                response.status_code == 400
+                and data["detail"] == "VERIFY_USER_ALREADY_VERIFIED"
             ):
                 logger.warning("Email Already Verified, Redirect to Login")
                 return RedirectResponse(
@@ -99,9 +126,10 @@ async def verify_email_by_token(token: str):
             logger.success("User Verified, Redirecting to login page")
             print(type(data))
             print("data.email", data.get("email"))
-            return RedirectResponse(
-                f"{API_CONFIG_REACT_LOGIN_PAGE_URL}?emailVerified=true&email={data.get('email')}"
-            )
+
+            params = urlencode({"email": data.get("email"), "emailVerified": "true"})
+
+            return RedirectResponse(f"{API_CONFIG_REACT_LOGIN_PAGE_URL}?{params}")
     except Exception as e:
         logger.critical(f"Exception Verifying Email, {str(e)}")
         return JSONResponse(

@@ -14,12 +14,12 @@ from app.config import (
 )
 from app.pipl.email import (
     execute_task as execute_email_task,
-    PiplFindDetailsFromEmailRequest,
+    PiplDetailsFromEmailRequest,
     PiplFindDetailsFromEmailResponse,
 )
 from app.pipl.profile_url import (
     execute_task as execute_profile_task,
-    PiplFindDetailsFromProfileUrlRequest,
+    PiplDetailsFromProfileUrlRequest,
     PiplFindDetailsFromProfileUrlResponse,
 )
 
@@ -84,7 +84,7 @@ async def people_search(request: PiplRequest):
 
 @router.post("/bulk/email", response_model=PiplFindDetailsFromEmailResponse)
 async def bulk_find_details_for_email(
-    request: PiplFindDetailsFromEmailRequest, background_tasks: BackgroundTasks
+    request: PiplDetailsFromEmailRequest, background_tasks: BackgroundTasks
 ):
     logger.debug(f"{request=}")
 
@@ -105,7 +105,7 @@ async def bulk_find_details_for_email(
     response_model=PiplFindDetailsFromProfileUrlResponse,
 )
 async def bulk_find_details_for_profile_url(
-    request: PiplFindDetailsFromProfileUrlRequest, background_tasks: BackgroundTasks
+    request: PiplDetailsFromProfileUrlRequest, background_tasks: BackgroundTasks
 ):
     logger.debug(f"{request=}")
 

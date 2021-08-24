@@ -10,7 +10,7 @@ from app.config import (
     API_CONFIG_LINKEDIN_CSV_FILE,
     API_CONFIG_TEXAU_KEY,
     API_CONFIG_TEXAU_EXECUTION_URL,
-    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL,
+    API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL,
 )
 
 
@@ -68,14 +68,12 @@ async def check_execution_status(
                                 f'{data["execution"]["status"]=}, {execution_id=}'
                             )
 
-                await asyncio.sleep(
-                    API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL
-                )
+                await asyncio.sleep(API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL)
 
                 timeout_counter = timeout_counter - 1
 
             logger.warning(
-                f"No results in {max_timeout_counter*API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL}s"
+                f"No results in {max_timeout_counter * API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL}s"
             )
 
             return None

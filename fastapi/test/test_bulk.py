@@ -4,8 +4,8 @@ from time import sleep
 import requests
 from loguru import logger
 
-from app.bulk_upload import BulkUploadResponse
-from app.config import API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL
+from app.bulk.common import BulkUploadResponse
+from app.config import API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL
 from test.common import TEST_CONFIG_API_BASE_URL
 
 
@@ -44,7 +44,7 @@ def test_bulk_csv_upload_linkedin_profile_urls_pass():
 
         logger.warning(f"{data.output_filename=} not found, waiting")
 
-        sleep(API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL)
+        sleep(API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL)
 
         timeout_counter = timeout_counter - 1
 
@@ -124,7 +124,7 @@ def test_bulk_csv_upload_emails_pass():
 
         logger.warning(f"{data.output_filename=} not found, waiting")
 
-        sleep(API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL)
+        sleep(API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL)
 
         timeout_counter = timeout_counter - 1
 

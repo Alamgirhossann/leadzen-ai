@@ -7,11 +7,9 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from starlette import status
 
-from app.bulk_upload import router as bulk_router
-from app.config import API_CONFIG_LINKEDIN_CSV_FILE
+from app.bulk.router import router as bulk_router
 from app.customize_filter import router as filter_router
 from app.pipl.router import router as pipl_router
-from app.scraper import fetch_linkedin_cookie
 from app.texau.router import router as texau_router
 from app.truemail import router as email_verification
 from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET

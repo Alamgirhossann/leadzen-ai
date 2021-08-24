@@ -7,7 +7,7 @@ from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY
 from app.pipl.common import write_to_file, search_all
 
 
-class PiplFindDetailsFromProfileUrlRequest(BaseModel):
+class PiplDetailsFromProfileUrlRequest(BaseModel):
     profile_urls: List[str]
     filename: Optional[str] = None
 
@@ -16,7 +16,7 @@ class PiplFindDetailsFromProfileUrlResponse(BaseModel):
     filename: str
 
 
-async def execute_task(request: PiplFindDetailsFromProfileUrlRequest):
+async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     profile_urls = list(set(request.profile_urls))  # remove duplicates
     profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import Cookies from "js-cookie";
 
 const BulkSearch = () => {
   const [uploadedCSV, setUploadedCSV] = useState("");
@@ -32,6 +33,9 @@ const BulkSearch = () => {
       const response = await fetch(apiServer + "/bulk_upload/csv", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
       });
 
       const json = await response.json();
@@ -41,21 +45,24 @@ const BulkSearch = () => {
       }
 
       console.log(json);
-      alert("Search results are sent in an email to the User as a CSV file");
-
-      const eventSource = new EventSource(
-        `${apiServer}/bulk_upload/status/stream?filename=${json.output_filename}`
+      alert(
+        "Search results are sent the User's email as a CSV file. Please check your spam filter if our email has" +
+          " not arrived in a reasonable time. Cheers!"
       );
-      eventSource.addEventListener("update", (event) => {
-        console.log(event);
-      });
-      eventSource.addEventListener("end", (event) => {
-        console.log(event);
-        const data = JSON.parse(event.data);
-        console.log(data);
-        alert(`Fetch Search Results from ${apiServer}${data.url}`);
-        eventSource.close();
-      });
+
+      // const eventSource = new EventSource(
+      //   `${apiServer}/bulk_upload/status/stream?filename=${json.output_filename}`
+      // );
+      // eventSource.addEventListener("update", (event) => {
+      //   console.log(event);
+      // });
+      // eventSource.addEventListener("end", (event) => {
+      //   console.log(event);
+      //   const data = JSON.parse(event.data);
+      //   console.log(data);
+      //   alert(`Fetch Search Results from ${apiServer}${data.url}`);
+      //   eventSource.close();
+      // });
     } catch (err) {
       console.error("Error: ", err);
       alert("Error Uploading File, Please Try Again Later");
