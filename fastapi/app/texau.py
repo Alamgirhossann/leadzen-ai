@@ -5,7 +5,7 @@ import uuid
 from typing import Optional, List, Dict
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from loguru import logger
 from pydantic import BaseModel
 from starlette import status
@@ -26,6 +26,7 @@ from app.config import (
 )
 from app.config import API_CONFIG_TEXAU_URL as url
 from app.linkedin import query_url_builder as linkedin_query_url_builder
+from app.users import fastapi_users
 
 
 class TexAuRequest(BaseModel):
@@ -192,9 +193,11 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
         return None
 
 
-@router.post("/search", response_model=TexAuExecutionResponse)
-async def search_using_texau(request: TexAuRequest):
-    logger.info(f"{request=}")
+@router.post("/search", response_model=TexAuResponse)
+async def search_using_texau(
+    request: TexAuRequest, user=Depends(fastapi_users.get_current_active_user)
+):
+    logger.info(f"{request=}, {user=}")
 
     try:
         if not (query_url := linkedin_query_url_builder(request.dict())):
