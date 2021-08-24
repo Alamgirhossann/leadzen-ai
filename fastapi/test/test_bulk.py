@@ -6,6 +6,7 @@ from loguru import logger
 
 from app.bulk_upload import BulkUploadResponse
 from app.config import API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL
+from test.common import TEST_CONFIG_API_BASE_URL
 
 
 def test_bulk_csv_upload_linkedin_profile_urls_pass():
@@ -19,7 +20,9 @@ def test_bulk_csv_upload_linkedin_profile_urls_pass():
         )
     }
 
-    response = requests.post("http://localhost:12005/api/bulk_upload/csv", files=files)
+    response = requests.post(
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+    )
     assert response
     assert response.status_code == 200
 
@@ -61,7 +64,9 @@ def test_bulk_csv_upload_linkedin_profile_urls_fail_with_invalid_column_name():
         )
     }
 
-    response = requests.post("http://localhost:12005/api/bulk_upload/csv", files=files)
+    response = requests.post(
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+    )
     logger.debug(f"{response.text=}")
     assert response.status_code == 400
 
@@ -77,7 +82,9 @@ def test_bulk_csv_upload_linkedin_profile_urls_fail_with_non_csv():
         )
     }
 
-    response = requests.post("http://localhost:12005/api/bulk_upload/csv", files=files)
+    response = requests.post(
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+    )
     logger.debug(f"{response.text=}")
     assert response.status_code == 400
 
@@ -93,7 +100,9 @@ def test_bulk_csv_upload_emails_pass():
         )
     }
 
-    response = requests.post("http://localhost:12005/api/bulk_upload/csv", files=files)
+    response = requests.post(
+        f"{TEST_CONFIG_API_BASE_URL}/api/bulk_upload/csv", files=files
+    )
     assert response
     assert response.status_code == 200
 

@@ -26,9 +26,17 @@ from app.config import (
     API_CONFIG_ALLOWED_CONTENT_TYPES,
     API_CONFIG_TEXAU_LINKEDIN_EMAIL_SEARCH_URL,
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
-    API_CONFIG_PIPL_EMAIL_SEARCH_URL,
+    API_CONFIG_BULK_PIPL_EMAIL_SEARCH_URL,
+    API_CONFIG_BULK_PIPL_PROFILE_SEARCH_URL,
 )
-from app.pipl import PiplFindDetailsFromEmailRequest, PiplFindDetailsFromEmailResponse
+from app.pipl.email import (
+    PiplFindDetailsFromEmailRequest,
+    PiplFindDetailsFromEmailResponse,
+)
+from app.pipl.profile_url import (
+    PiplFindDetailsFromProfileUrlRequest,
+    PiplFindDetailsFromProfileUrlResponse,
+)
 from app.texau.linkedin.email_phone import (
     TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     TexAuFindEmailAndPhoneForLinkedInProfileResponse,
@@ -52,12 +60,10 @@ async def update_history(user_id: str, data: List[Dict]):
     pass
 
 
-async def handle_pipl_emails(
-    emails: List[str], filename: str, max_timeout_counter: int = 18
-):
+async def handle_bulk_emails(emails: List[str], filename: str):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            API_CONFIG_PIPL_EMAIL_SEARCH_URL,
+            API_CONFIG_BULK_PIPL_EMAIL_SEARCH_URL,
             json=PiplFindDetailsFromEmailRequest(
                 emails=emails, filename=filename
             ).dict(),
@@ -69,87 +75,66 @@ async def handle_pipl_emails(
             )
             return
 
-        if not (json := response.json()):
+        if not (json_data := response.json()):
             logger.error("Invalid Response")
             return
 
-        data = PiplFindDetailsFromEmailResponse(**json)
+        data = PiplFindDetailsFromEmailResponse(**json_data)
 
-        timeout_counter = max_timeout_counter
-
-        while timeout_counter > 0:
-            if os.path.exists(data.filename):
-                logger.success(f"found {data.filename=}")
-                # send email
-                df = pd.read_csv(data.filename)
-                logger.debug(df.head())
-
-                await update_history(user_id="---", data=[])
-
-                return await send_success_email("", data.filename)
-
-            logger.warning(f"{data.filename=} not found, waiting")
-
-            await asyncio.sleep(API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL)
-
-            timeout_counter = timeout_counter - 1
-
-        logger.critical(
-            f"unable to find {data.filename=} in "
-            f"{timeout_counter*API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL}s"
-        )
-        return await send_failure_email("", data.filename)
+        return await wait_and_check_for_filename(filename=data.filename)
 
 
-async def handle_linkedin_profile_urls(
-    urls: List[str], filename: str, max_timeout_counter: int = 18
-):
+async def handle_bulk_linkedin_profile_urls(urls: List[str], filename: str):
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            API_CONFIG_TEXAU_LINKEDIN_EMAIL_SEARCH_URL,
-            json=TexAuFindEmailAndPhoneForLinkedInProfileRequest(
-                urls=urls,
-                filename=filename,  # TODO: remove this cookie in production
-                cookie="AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7hCKx0k4AeljWlYLJWzMzPyxIRAjQSo6OK5dVCVSSBXpy2J0DZrt9uyOICBu64noYRNWpJUHXEOm20kpdqFB5JFh6Az2QHDSH4_YwdnPjnqXEjJ8ihhF0Mo8D",
+            API_CONFIG_BULK_PIPL_PROFILE_SEARCH_URL,
+            json=PiplFindDetailsFromProfileUrlRequest(
+                profile_urls=urls, filename=filename
             ).dict(),
         )
 
         if response.status_code != 200:
             logger.error(
-                f"Error handling linkedin profile url, {response.status_code=}, {response.text=}"
+                f"Error handling pipl search, {response.status_code=}, {response.text=}"
             )
             return
 
-        if not (json := response.json()):
+        if not (json_data := response.json()):
             logger.error("Invalid Response")
             return
 
-        data = TexAuFindEmailAndPhoneForLinkedInProfileResponse(**json)
+        data = PiplFindDetailsFromProfileUrlResponse(**json_data)
 
-        timeout_counter = max_timeout_counter
+        return await wait_and_check_for_filename(filename=data.filename)
 
-        while timeout_counter > 0:
-            if os.path.exists(data.filename):
-                logger.success(f"found {data.filename=}")
-                # send email
-                df = pd.read_csv(data.filename)
-                logger.debug(df.head())
 
-                await update_history(user_id="---", data=[])
+async def wait_and_check_for_filename(filename: str, max_timeout_counter: int = 18):
+    timeout_counter = max_timeout_counter
 
-                return await send_success_email("", data.filename)
+    while timeout_counter > 0:
+        if os.path.exists(filename):
+            logger.success(f"found {filename=}")
 
-            logger.warning(f"{data.filename=} not found, waiting")
+            # send email
+            df = pd.read_csv(filename)
+            logger.debug(df.head())
 
-            await asyncio.sleep(API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL)
+            await update_history(user_id="---", data=[])
 
-            timeout_counter = timeout_counter - 1
+            return await send_success_email("", filename)
 
-        logger.critical(
-            f"unable to find {data.filename=} in "
-            f"{timeout_counter*API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL}s"
-        )
-        return await send_failure_email("", data.filename)
+        logger.warning(f"{filename=} not found, waiting")
+
+        await asyncio.sleep(API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL)
+
+        timeout_counter = timeout_counter - 1
+
+    logger.critical(
+        f"unable to find {filename=} in "
+        f"{timeout_counter * API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL}s"
+    )
+
+    return await send_failure_email("", filename)
 
 
 class BulkUploadResponse(BaseModel):
@@ -211,7 +196,7 @@ async def upload_csv_file(
             logger.warning("Performing Email Searches")
             filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             background_tasks.add_task(
-                handle_pipl_emails,
+                handle_bulk_emails,
                 emails=list(df.emails),
                 filename=filename,
             )
@@ -222,7 +207,7 @@ async def upload_csv_file(
             logger.warning("Performing LinkedIn Profile Searches")
             filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             background_tasks.add_task(
-                handle_linkedin_profile_urls,
+                handle_bulk_linkedin_profile_urls,
                 urls=list(df.linkedin_profile_urls),
                 filename=filename,
             )

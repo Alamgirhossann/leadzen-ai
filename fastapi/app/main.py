@@ -2,19 +2,18 @@ import csv
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_utils.tasks import repeat_every
+from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from starlette import status
+
+from app.bulk_upload import router as bulk_router
 from app.config import API_CONFIG_LINKEDIN_CSV_FILE
 from app.customize_filter import router as filter_router
-from app.pipl import router as pipl_router
+from app.pipl.router import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau.router import router as texau_router
-from app.email_truemail import router as email_verification
-from app.bulk_upload import router as bulk_router
-
+from app.truemail import router as email_verification
 
 app = FastAPI()
 load_dotenv()
@@ -68,6 +67,3 @@ def refresh_linkedin_cookie_manually():
 
     logger.debug(header)
     return status.HTTP_200_OK
-
-
-

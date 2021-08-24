@@ -5,7 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from loguru import logger
 
 from app.config import API_CONFIG_BULK_OUTGOING_DIRECTORY
-from app.texau.common import TexAuResponse, read_linkedin_cookie
+from app.texau.common import read_linkedin_cookie
 from app.texau.linkedin.email_phone import (
     TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     handle_find_email_and_phone_for_linkedin_profile_url,
@@ -14,12 +14,13 @@ from app.texau.linkedin.email_phone import (
 from app.texau.linkedin.search_profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest,
+    TexAuExecutionResponse,
 )
 
 router = APIRouter(prefix="/texau", tags=["TexAu"])
 
 
-@router.post("/find_matching_linkedin_profiles", response_model=TexAuResponse)
+@router.post("/find_matching_linkedin_profiles", response_model=TexAuExecutionResponse)
 async def find_matching_linkedin_profiles(request: TexAuFindProfileRequest):
     logger.info(f"{request=}")
 

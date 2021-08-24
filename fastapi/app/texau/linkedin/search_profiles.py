@@ -82,10 +82,13 @@ class TexAuFindProfileRequest(BaseModel):
     pastCompany: List[str] = []
 
 
-@router.post("/search", response_model=TexAuExecutionResponse)
+class TexAuExecutionResponse(BaseModel):
+    execution_id: str
+
+
 async def handle_find_matching_linkedin_profiles(
     request: TexAuFindProfileRequest, cookie: str
-) -> Optional[TexAuResponse]:
+) -> Optional[TexAuExecutionResponse]:
     try:
         if not (query_url := linkedin_query_url_builder(request.dict())):
             raise HTTPException(
