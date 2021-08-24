@@ -6,6 +6,8 @@ import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
+import BulkSearch from "../SharedComponent/BulkSearch";
+import { func } from "prop-types";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -20,12 +22,11 @@ const SearchResult = (props) => {
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
-  const [resultData, setSearchResult] = useState({ data: null });
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
-  const [activeIndexProfile, setActiveIndexProfile] = useState(false);
 
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -37,7 +38,6 @@ const SearchResult = (props) => {
   const paginate = (pageNumber) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
-
     setCurrentLeads(
       myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
     );
@@ -56,11 +56,13 @@ const SearchResult = (props) => {
           props.location.state.requestTexAu
         );
         requestForTexAu = props.location.state.requestTexAu;
+        setLoading(true);
       }
       let keyword = null;
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
+        setCustomSearch(props.location.state.customSearch);
         console.log(
           "from advance.customSearch filters .....",
           props.location.state.customSearch
@@ -80,8 +82,8 @@ const SearchResult = (props) => {
         requestForTexAu = {
           firstName: "",
           lastName: "",
-          title: props.location.state.customSearch.title
-            ? props.location.state.customSearch.title
+          title: props.location.state.customSearch.job_title
+            ? props.location.state.customSearch.job_title
             : "",
           keywords: keyword ? keyword : "",
           industry: props.location.state.customSearch.industry
@@ -96,6 +98,7 @@ const SearchResult = (props) => {
           pastCompany: [],
         };
         console.log("request....", requestForTexAu);
+        setLoading(true);
       }
       try {
         const response = await fetch(apiServer + "/texau/search?", {
@@ -106,36 +109,135 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(requestForTexAu),
         });
-        let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res);
-        setLoading(false);
-        if (json_res) setMyLeads(json_res.data);
-        if (json_res.detail) {
-          setMyLeads("");
+
+        if (response.status === 400) {
+          // handle 400
+          setLoading(false);
+          setMyLeads({});
         }
-        // json_res
-        //   ? setSearchResult({ ...resultData, data: json_res })
-        //   : setLoading(true);
-        // json_res ? setLoading(false) : setLoading(true);
-        console.log("MyLeads before paginate>>>>>", myLeads);
+
+        if (response.status === 500) {
+          // handle 500
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 404) {
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        let json_res = await response.json();
+        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
+        if (!json_res.execution_id) {
+          setLoading(false);
+          setMyLeads({});
+        }
+        checkExecutionStatus(json_res.execution_id);
       } catch (err) {
         console.error("Error: ", err);
       }
     }
-  }, []);
+  }, [props.location.state.customSearch]);
+
+  const checkExecutionStatus = (executionId = null) => {
+    if (!executionId) {
+      console.log("executionId is Null");
+      return;
+    }
+
+    let timeoutId;
+
+    const intervalId = setInterval(async () => {
+      console.log("In interval.....");
+      try {
+        const response = await fetch(
+          apiServer + `/texau/check_status/${executionId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
+
+        function handleError() {
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+          
+          setLoading(false);
+          setMyLeads("");
+        }
+
+        if (response.status === 403) {
+          // got cookie error - no need to check again, results will not change
+          console.log("Response cookie error", response.statusText);
+          handleError();
+          return;
+        }
+
+        if (response.status === 200) {
+          // got the response
+          const data = await response.json();
+          console.log("Data>>>>", data, ">>>>>", response);
+          if (!data) {
+            console.warn(`Invalid Data`);
+            handleError()
+            return;
+          }
+  
+          setLoading(false);
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+
+          if (data.data) setMyLeads(data.data);
+          
+          return;
+        }
+      } catch (e) {
+        console.error("Exception>>", e);
+      }
+    }, 5 * 1000);
+
+    timeoutId = setTimeout(function () {
+      console.error("record not found within 5 Min");
+      clearInterval(intervalId);
+      // TODO: show appropriate ui actions like stop spinners and show error message etc
+    }, 5 * 60 * 1000);
+  };
+
+  useEffect(() => {}, [loading]);
 
   useEffect(async () => {
     paginate(1);
   }, [myLeads]);
+
   useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
   console.log("myLeads>>>>>>>>>>>", myLeads);
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState();
   const [selected, setSelected] = useState(false);
-  const showClick = (e) => {
+  const showClick = (e, index) => {
     e.preventDefault();
-    if (!show) setShow(true);
+    console.log("inside showClick");
+    if (!show[index]) {
+      console.log(show);
+      console.log("inside showClick if");
+      setShow(
+        show.map((value, i) => {
+          if (index === i) return true;
+          else return value;
+        })
+      );
+      console.log(show);
+    }
   };
+
+  useEffect(() => {
+    setShow(new Array(myLeads.length).fill().map((item) => false));
+  }, [currentLeads]);
+
   const clickSelect = (e) => {
     e.preventDefault();
     if (!selected) setSelected(true);
@@ -154,8 +256,6 @@ const SearchResult = (props) => {
       mail_credits: 1000,
     },
   };
-
-  let searchData = { count: 12, total: 250 };
 
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
@@ -270,10 +370,11 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <div className="sidebar-search-for sidebar-widget p-4 my-3">
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
-                <Filters />
+                <Filters customSearch={customSearch} />
               </div>
+              <BulkSearch />
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
@@ -329,9 +430,10 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads && myLeads.length === 0 ? (
+                    {myLeads &&
+                    (myLeads.length === 0) ? (
                       <div>
-                        <h5>Record not found</h5>
+                        <h5>Records not found</h5>
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
@@ -363,11 +465,13 @@ const SearchResult = (props) => {
                             </div>
                             <div className="search-email text-center">
                               <small
-                                className={show ? "d-block" : "d-block blur"}
+                                className={
+                                  show[index] ? "d-block" : "d-block blur"
+                                }
                               >
-                                alamgirhossann
+                                abc@xyz.com
                               </small>
-                              <a href="#">
+                              <a href="#" onClick={(e) => showClick(e, index)}>
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>
