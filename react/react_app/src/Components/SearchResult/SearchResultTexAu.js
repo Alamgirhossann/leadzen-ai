@@ -319,8 +319,13 @@ const SearchResult = (props) => {
         });
 
         let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res.toString(), ">>>>", searchType);
-        saveSearchedRecord(json_res, searchType);
+        console.log(
+          "Data>>>>>>>>>>>",
+          JSON.stringify(json_res),
+          ">>>>",
+          searchType
+        );
+        saveSearchedRecord(JSON.stringify(json_res), searchType);
         if (json_res) {
           setSpecificUserDetails((prev) => [
             ...prev,
