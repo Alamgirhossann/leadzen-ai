@@ -172,21 +172,28 @@ const LogIn = () => {
 
         const userStatus = await userStatusResponse;
         console.log("userStatus>>>>>>>>",userStatus)
-        if (!userStatus.is_verified) {
+        console.log("usersdcbfcb.....",userStatus.data.is_verified===false)
+        if (userStatus.data.is_verified===false) {
           console.log("in if")
           setUserVerifiedStatus(false)
           //  show a banner and prevent any next action
           //  take to LoginEmailUnverifiedError
         } else {
-          console.log("userStatus.is_verified",userStatus.is_verified)
           //  normal user operations
           //  check for the first_time_user, if it is false take to repeated user
           //  else take to the repeated user page
           const first_time_user = Cookies.get("first_time_user")
           console.log("first_time_user",first_time_user)
-           // history.push({
-           //  pathname: "/firstTimeUser",
-           // });
+          if (first_time_user===true){
+            history.push({
+            pathname: "/firstTimeUser",
+           });
+          }else {
+            history.push({
+            pathname: "/repeatedUser",
+           });
+          }
+
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -237,7 +244,7 @@ const LogIn = () => {
                             type="email"
                             className="w-100"
                             autoComplete="off"
-                            value={!email ? userLogin.email : email}
+                            value={userLogin.email}
                             onChange={handleInput}
                             name="email"
                             placeholder="Enter your email"

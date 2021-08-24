@@ -154,6 +154,7 @@ const SignUp = () => {
 
         if (response.ok === true) {
           Cookies.set("user_email", data.email);
+          Cookies.set("first_time_user", true);
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -189,6 +190,7 @@ const SignUp = () => {
               <div className="signup-wrapper py-3 px-md-6">
                 <div className="row align-items-center">
                   <Robot />
+                  {response.ok ? <Redirect to="/login" /> : null}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center pt-1">
