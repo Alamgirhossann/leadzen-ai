@@ -38,7 +38,8 @@ router = APIRouter(prefix="/email", tags=["Email"])
 
 class UserEmailSendRequest(BaseModel):
     email: EmailStr
-    text: str
+    message: str
+    subject: str
 
 
 @router.post("/send", response_model=bool)
@@ -46,9 +47,9 @@ async def send_email(request: UserEmailSendRequest, background_tasks: Background
     logger.debug(f"{request=}")
 
     message = MessageSchema(
-        subject="Analystt Email Verification",
+        subject=request.subject,
         recipients=[request.email],
-        body=request.text,
+        body=request.message,
     )
 
     fast_mail = FastMail(conf)

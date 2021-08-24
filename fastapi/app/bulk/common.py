@@ -63,7 +63,7 @@ class BulkUploadResponse(BaseModel):
 
 
 async def send_success_email(user: User, filename: str):
-    email_text = (
+    message = (
         f"Dear {user.username}, \n"
         f"Your Bulk Search results are ready. \n"
         f"Please click on the link below to download the results:\n"
@@ -77,7 +77,11 @@ async def send_success_email(user: User, filename: str):
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
-                json=UserEmailSendRequest(email=user.email, text=email_text).dict(),
+                json=UserEmailSendRequest(
+                    email=user.email,
+                    message=message,
+                    subject="Bulk Search Results Ready",
+                ).dict(),
             )
 
             if response.status_code != 200:
@@ -94,7 +98,7 @@ async def send_success_email(user: User, filename: str):
 
 
 async def send_failure_email(user: User, filename: str):
-    email_text = (
+    message = (
         f"Dear {user.username}, \n"
         f"Your Bulk Search request for {filename} has failed. \n "
         f"--- \n"
@@ -106,7 +110,9 @@ async def send_failure_email(user: User, filename: str):
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
-                json=UserEmailSendRequest(email=user.email, text=email_text).dict(),
+                json=UserEmailSendRequest(
+                    email=user.email, message=message, subject="Bulk Search Failed"
+                ).dict(),
             )
 
             if response.status_code != 200:
