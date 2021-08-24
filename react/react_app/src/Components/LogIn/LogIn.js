@@ -4,8 +4,14 @@ import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import validator from "validator";
 import Header from "../SharedComponent/Header";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+
+
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const LogIn = () => {
+  const history = useHistory();
   const user = {
     name: "",
     email: "",
@@ -20,8 +26,14 @@ const LogIn = () => {
       mail_credits: "",
     },
   };
+  var url_string = window.location.href;
+  // var url_string = "localhost:12002/login?emailVerified=true&email=piyush.jaiswal@kapso.in";
+  var url = new URL(url_string);
+  var emailVerified = url.searchParams.get("emailVerified");
+  var email = url.searchParams.get("email");
 
-  const [form, setForm] = useState({
+
+  const [userLogin, setUserLogin] = useState({
     email: "",
     password: "",
     error: "",
@@ -30,13 +42,13 @@ const LogIn = () => {
   const [isValid, setValid] = useState(false);
   const [response, setResponse] = useState({ ok: null, message: null });
   const [showPass, setShowPass] = useState(false);
+  const [userVerifiedStatus,setUserVerifiedStatus] = useState(true);
 
-  const handleBlur = (e) => {
-    setForm({ ...form, email: e.target.value });
-  };
 
-  const handleBlurPass = (e) => {
-    setForm({ ...form, password: e.target.value });
+  const handleInput = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setUserLogin({ ...userLogin, [name]: value });
   };
 
   const handlePassClick = (e) => {
@@ -85,20 +97,24 @@ const LogIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) {
-      setForm({ ...form, error: "Email and Password cannot be blank!" });
+    console.log("userLogin", userLogin);
+    if (!userLogin.email || !userLogin.password) {
+      setUserLogin({
+        ...userLogin,
+        error: "Email and Password cannot be blank!",
+      });
       alert("Email and Password cannot be blank!");
     } else {
       setValid(true);
-      setForm({ ...form, error: "" });
+      setUserLogin({ ...userLogin, error: "" });
     }
-    if (!validator.isEmail(form.email)) {
-      setForm({ ...form, error: "Invalid Email" });
+    if (!validator.isEmail(userLogin.email)) {
+      setUserLogin({ ...userLogin, error: "Invalid Email" });
       setValid(false);
       alert("Invalid Email");
     }
     if (
-      !validator.isStrongPassword(form.password, {
+      !validator.isStrongPassword(userLogin.password, {
         minLength: 8,
         minLowercase: 1,
         maxlength: 50,
@@ -107,33 +123,113 @@ const LogIn = () => {
         minSymbols: 1,
       })
     ) {
-      setForm({ ...form, error: "Invalid Password" });
+      setUserLogin({ ...userLogin, error: "Invalid Password" });
       setValid(false);
       alert("Invalid Password!");
     }
+    const formData = new FormData();
+    formData.set("username", userLogin.email);
+    formData.set("password", userLogin.password);
+    console.log("formData", formData);
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
     const fetchData = async () => {
-      // const apiHost = ;
-      // TODO: Complete async function to use the form to check login credentials using api
-      setResponse({ ...response, ok: true });
-      if (response.ok === true) {
-        Cookies.set("user_email", form.email);
+      try {
+        const fetchResponse = await axios.post(
+          apiServer + "/auth/jwt/login",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("urlll>>>", apiServer + "/auth/jwt/login");
+        let json_res = await fetchResponse.data;
+        console.log("json_res", json_res);
+
+        if (json_res.access_token) {
+          Cookies.set("user_email", userLogin.email);
+          Cookies.set("user_token", json_res.access_token);
+        }
+
+        setResponse({ ...response, ok: true });
+        console.log("response", response);
+
+        if (response.ok === true) {
+          // Cookies.set("user_email", userLogin.email);
+        }
+        console.log("json_res.access_token,,,,,,",json_res.access_token)
+        const userStatusResponse = await axios.get(
+          apiServer + "/users/me",
+          {
+            headers: {
+              Authorization: `Bearer ${json_res.access_token}`,
+            },
+          }
+        );
+
+        const userStatus = await userStatusResponse;
+        console.log("userStatus>>>>>>>>",userStatus)
+        console.log("usersdcbfcb.....",userStatus.data.is_verified===false)
+        if (userStatus.data.is_verified===false) {
+          console.log("in if")
+          setUserVerifiedStatus(false)
+          //  show a banner and prevent any next action
+          //  take to LoginEmailUnverifiedError
+        } else {
+          //  normal user operations
+          //  check for the first_time_user, if it is false take to repeated user
+          //  else take to the repeated user page
+          const first_time_user = Cookies.get("first_time_user")
+          console.log("first_time_user",first_time_user)
+          if (first_time_user===true){
+            history.push({
+            pathname: "/firstTimeUser",
+           });
+          }else {
+            history.push({
+            pathname: "/repeatedUser",
+           });
+          }
+
+        }
+      } catch (err) {
+        console.error("Error: ", err);
       }
     };
-    if (isValid) {
-      fetchData();
-    }
+    fetchData();
   };
 
+  // console.log("userStatus",userStatus)
   return (
     <div>
       <Header user={user} />
+      {emailVerified ? (
+        <div
+          className="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>{email}</strong> You have verified successfully.
+          <button
+            type="button"
+            className="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      ) : null}
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
           <div className="container-fluid">
             <div className="form-container">
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
-                  {response.ok ? <Redirect to="/repeatedUser" /> : null}
+                  {!userVerifiedStatus?<Redirect to="/unverified" /> : null}
+                  {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center">
@@ -142,27 +238,31 @@ const LogIn = () => {
                           Most Intelligent Lead Generation Platform
                         </h5>
                       </div>
-                      <form className="sign-up-form">
+                      <form className="sign-up-form" onSubmit={handleSubmit}>
                         <div className="mb-3">
                           <input
                             type="email"
-                            name="email"
                             className="w-100"
+                            autoComplete="off"
+                            value={userLogin.email}
+                            onChange={handleInput}
+                            name="email"
                             placeholder="Enter your email"
                             id="email"
-                            onBlur={handleBlur}
                           />
                         </div>
                         <div className="mb-3 password-input">
                           <input
                             type={showPass ? "text" : "password"}
-                            name="password"
                             className="w-100"
+                            autoComplete="off"
+                            value={userLogin.password}
+                            onChange={handleInput}
+                            name="password"
                             placeholder="Enter your password"
                             id="password"
-                            onBlur={handleBlurPass}
                           />
-                          <a href="" onClick={handlePassClick}>
+                          <Link to="" onClick={handlePassClick}>
                             <img
                               src="assets/images/combined-eye.png"
                               style={{
@@ -171,26 +271,23 @@ const LogIn = () => {
                                 right: "10px",
                               }}
                             />
-                          </a>
+                          </Link>
                         </div>
                         <div className="mb-1 d-block d-md-flex justify-content-end">
                           <p>
                             <Link
-                              to="/resetPassword"
-                              onClick={() =>
-                                Cookies.set("forgot_email", form.email)
-                              }
+                              to="#"
+                              // to="/resetPassword"
+                              // onClick={() =>
+                              //   Cookies.set("forgot_email", form.email)
+                              // }
                               className="small text-secondary"
                             >
                               Forgot your password?
                             </Link>
                           </p>
                         </div>
-                        <button
-                          type="submit"
-                          onClick={handleSubmit}
-                          className="btn text-white w-100"
-                        >
+                        <button type="submit" className="btn text-white w-100">
                           Sign In
                         </button>
                         <div className="text-center mt-2">

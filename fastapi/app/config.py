@@ -110,3 +110,29 @@ API_CONFIG_BULK_PIPL_EMAIL_SEARCH_URL = (
 API_CONFIG_BULK_PIPL_PROFILE_SEARCH_URL = (
     f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/pipl/bulk/profile_url"
 )
+API_CONFIG_SELF_URL = os.getenv("API_CONFIG_SELF_URL", 'http://localhost:8000/api/refresh_linkedin_cookie')
+API_CONFIG_FACEBOOK_LOGIN_URL = os.getenv("API_CONFIG_FACEBOOK_LOGIN_URL","https://www.facebook.com/")
+API_CONFIG_TWITTER_LOGIN_URL = os.getenv("API_CONFIG_TWITTER_LOGIN_URL","https://twitter.com/login")
+API_CONFIG_INSTA_LOGIN_URL = os.getenv("API_CONFIG_INSTA_LOGIN_URL","https://www.instagram.com/")
+API_CONFIG_FACEBOOK_LOGIN_PASSWORD = os.getenv("API_CONFIG_FACEBOOK_LOGIN_PASSWORD","Challenge123$")
+API_CONFIG_INSTA_LOGIN_PASSWORD = os.getenv("API_CONFIG_INSTA_LOGIN_PASSWORD","Challenge123$")
+API_CONFIG_TWITTER_LOGIN_PASSWORD = os.getenv("API_CONFIG_TWITTER_LOGIN_PASSWORD","Challenge$123")
+API_CONFIG_FACEBOOK_TWITTER_INSTA_USERNAME = os.getenv("CONFIG_FACEBOOK_TWITTER_INSTA_USERNAME","kaylaklug2021@gmail.com")
+
+
+API_CONFIG_GSUITE_EMAIL = os.getenv("GSUITE_EMAIL", "malhar@analystt.ai")
+API_CONFIG_GSUITE_PASSWORD = os.getenv("GSUITE_PASSWORD", "Malhar123##")
+API_CONFIG_REACT_LOGIN_PAGE_URL = os.getenv(
+    "API_CONFIG_REACT_LOGIN_PAGE", "http://localhost:3000/login"
+)
+API_CONFIG_REACT_SIGNUP_PAGE_URL = os.getenv(
+    "API_CONFIG_REACT_SIGNUP_PAGE", "http://localhost:3000/signUp"
+)
+API_CONFIG_SELF_BASE_URL = os.getenv(
+    "API_CONFIG_SELF_BASE_URL", "http://localhost:12005"
+)
+
+API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv("API_CONFIG_SELF_BASE_EXTERNAL_URL","http://localhost:12005")
+
+API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
+API_CONFIG_DATABASE_URL = "sqlite:///./test.db"

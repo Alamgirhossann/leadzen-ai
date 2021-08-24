@@ -17,6 +17,10 @@ services:
         environment:
             - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
             - API_CONFIG_PORT_NUM_INTERNAL=5000
+            - API_CONFIG_SELF_BASE_URL=http://localhost:5000
+            - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:12001
+            - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12002/login
+            - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12002/signUp
         depends_on: 
             - selenium
     

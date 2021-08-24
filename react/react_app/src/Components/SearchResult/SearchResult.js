@@ -7,6 +7,7 @@ import Header from "../SharedComponent/Header";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
+import Cookies from "js-cookie";
 
 const SearchResult = (props) => {
   useEffect(() => {
@@ -61,6 +62,7 @@ const SearchResult = (props) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(props.location.state.reqJsonPipl),
         });
