@@ -13557,7 +13557,6 @@ a:hover {
 
 .sign-up-form button {
   background: #fb3e3e;
-  height: 42px;
   border-radius: 15px;
   padding: 10px 30px;
   font-weight: 700;
@@ -13938,9 +13937,9 @@ a:hover {
 
 .search-form4 button {
   background: #fb3e3e;
-  border-radius: 2rem !important;
+  border-radius: 3rem !important;
   white-space: nowrap;
-  padding: 7px 20px;
+  padding: .7rem 1rem;
 }
 .search-form4 button img {
   width: 11px;
@@ -14365,6 +14364,14 @@ a:hover {
     padding: 10px 25px !important;
   }
 }
+@media only screen and (max-width: 1024px){
+  .save-list-container, .history-container{
+    width: 800px;
+  }
+ .container-style{
+   overflow-x: scroll;
+ }
+}
 
 /* ============================================== 
   Media Query : 991px
@@ -14417,19 +14424,15 @@ a:hover {
   .search-form4 .input-placeholder {
     margin-bottom: 0px;
   }
-  .search-form4 button {
+  /* .search-form4 button {
     border-radius: 2rem !important;
     white-space: nowrap;
     padding: 0px 15px;
-  }
+  } */
   .sign-up-robot::before {
     width: 91px;
     height: 246px;
     right: -50px;
-  }
-
-  .container-style {
-    overflow-x: scroll;
   }
 }
 
@@ -14616,6 +14619,7 @@ a:hover {
 .buy-btn {
   background: #fb3e3e;
   border-radius: 15px;
+  height: 45px;
 }
 .learn-container-align {
   background: #ffffff;
@@ -14636,8 +14640,9 @@ a:hover {
   background: #fb3e3e;
   border: none;
   outline: none;
-  border-radius: 20px;
-  padding: 2px 10px;
+  border-radius: 15px;
+  padding: 0px 15px;
+  height: 30px;
 }
 
 .try-it-btn {
@@ -14700,7 +14705,6 @@ a:hover {
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas: "p n n n d d c c c v v b";
   align-items: center;
-  width: 800px;
 }
 .profile {
   grid-area: p;
@@ -14734,7 +14738,7 @@ a:hover {
 .button {
   border: 1px solid #fb3e3e;
   color: #fb3e3e;
-  padding: 3px 5px;
+  padding: 5px 15px;
   border-radius: 5px;
 }
 .detailed-search {
@@ -14746,7 +14750,6 @@ a:hover {
   grid-template-columns: repeat(12, 1fr);
   grid-template-areas: "sp sn sn sn ss ss ss sd sd sv sv sb";
   align-items: center;
-  width: 800px;
 }
 .save-profile {
   grid-area: sp;

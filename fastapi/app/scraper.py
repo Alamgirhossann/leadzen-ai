@@ -111,7 +111,7 @@ def fetch_linkedin_cookie():
         element_id.submit()
         time.sleep(3)
         cookie_list = browser.get_cookies()
-        logger.debug("cookie_list", cookie_list)
+        logger.debug("cookie_list" + str(cookie_list))
         cookie = ""
         for cookie_dict in cookie_list:
             if cookie_dict["name"] == "li_at":

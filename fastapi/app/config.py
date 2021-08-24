@@ -22,12 +22,8 @@ API_CONFIG_TEXAU_PROXY_PASS = os.getenv("API_CONFIG_TEXAU_PROXY_PASS", "AsHhgbZE
 API_CONFIG_LINKEDIN_CSV_FILE = os.getenv(
     "API_CONFIG_LINKEDIN_CSV_FILE", "linkedin_cookies.csv"
 )
-API_CONFIG_LINKEDIN_USERNAME = os.getenv(
-    "API_CONFIG_LINKEDIN_USERNAME", "kaylaklug2021@gmail.com"
-)
-API_CONFIG_LINKEDIN_PASSWORD = os.getenv(
-    "API_CONFIG_LINKEDIN_PASSWORD", "Q5$&%bD7d$&4*%^bs^3j"
-)
+API_CONFIG_LINKEDIN_USERNAME = os.getenv("API_CONFIG_LINKEDIN_USERNAME", "tareiljess@yahoo.com")
+API_CONFIG_LINKEDIN_PASSWORD = os.getenv("API_CONFIG_LINKEDIN_PASSWORD", "Challenge123$")
 API_CONFIG_LINKEDIN_LOGIN_URL = os.getenv(
     "API_CONFIG_LINKEDIN_LOGIN_URL",
     "https://www.linkedin.com/login?fromSignIn=true&trk=guest_homepage-basic_nav-header-signin",

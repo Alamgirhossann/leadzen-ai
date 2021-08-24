@@ -23,13 +23,14 @@ from app.texau.common import TexAuResponse, read_linkedin_cookie, check_executio
 
 
 async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
+    logger.debug("send_spice_request id>>>>>>>>>", linkedin_url)
     payload = json.dumps(
         {
             "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
             "spiceId": API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
             "inputs": {
                 "search": linkedin_url,
-                "numberOfPage": "1",
+                "numberOfPage": "10",
                 "li_at": cookie,
                 "proxy": {
                     "proxyName": API_CONFIG_TEXAU_PROXY_NAME,
@@ -59,11 +60,11 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
             if not (data := response.json()):
                 logger.error(f"Invalid Data")
                 return None
-
+            logger.debug("ExecutionId>>>>" + data.get("executionId"))
             if not (task_id := data.get("executionId")):
                 logger.error(f"Invalid Data")
                 return None
-
+            logger.debug("task_id>>>>" + task_id)
             return task_id
     except Exception as e:
         logger.critical(f"Exception sending to texau: {str(e)}")
@@ -81,6 +82,7 @@ class TexAuFindProfileRequest(BaseModel):
     pastCompany: List[str] = []
 
 
+@router.post("/search", response_model=TexAuExecutionResponse)
 async def handle_find_matching_linkedin_profiles(
     request: TexAuFindProfileRequest, cookie: str
 ) -> Optional[TexAuResponse]:
@@ -104,13 +106,8 @@ async def handle_find_matching_linkedin_profiles(
                 detail=str("TexAu: Invalid Task Id"),
             )
 
-        if not (data := await check_execution_status(execution_id=execution_id)):
-            logger.error("Invalid Data")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=str("TexAu: Invalid Data for Task-Id"),
-            )
-        return TexAuResponse(data=data)
+        logger.debug("Execution Id in main>>>>>" + execution_id)
+        return TexAuExecutionResponse(execution_id=execution_id)
     except Exception as e:
         logger.critical(str(e))
         raise HTTPException(

@@ -94,10 +94,10 @@ const UserGuide = () => {
               <UserSearch />
               <div className="user-widget-box text-center p-4 my-3">
                 <div className="user-widget-title">
-                  <p className="small text-danger">
+                  {/* <p className="small text-danger">
                     <u>Hide</u>{" "}
                     <img src="assets/images/user-eye-off.png" alt="title" />
-                  </p>
+                  </p> */}
                   <h5>Getting Started</h5>
                   <h6 className="text-muted mb-4">
                     Check out some example queries to get familiar with

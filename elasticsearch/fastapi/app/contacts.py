@@ -7,7 +7,10 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks,
 from loguru import logger
 from starlette import status
 
-from app.config import API_CONFIG_MAX_RECORDS_UPLOADED_PER_CALL
+from app.config import (
+    API_CONFIG_MAX_RECORDS_UPLOADED_PER_CALL,
+    API_CONFIG_ALLOWED_CONTENT_TYPES,
+)
 from app.elasticsearch.database import add as database_add
 from app.elasticsearch.database import delete as database_delete
 from app.elasticsearch.database import delete_index as database_delete_index
@@ -127,11 +130,28 @@ async def upload_csv_file(
     username: str = Depends(get_current_username),
 ):
     assert username
-    if file.content_type != "text/csv":
-        logger.warning("Not a CSV File")
+    if file.content_type not in API_CONFIG_ALLOWED_CONTENT_TYPES:
+        logger.warning(
+            f"Uploaded File does not contain CSV Content: {file.content_type=}, {API_CONFIG_ALLOWED_CONTENT_TYPES=}"
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded File does not contain CSV Content",
+        )
+
+    if not file.filename.endswith(".csv"):
+        logger.warning(f"Not a CSV File: {file.filename=}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Uploaded File is Not a CSV File",
+        )
+
+    chars_not_allowed_in_filename = [" ", '"', "*", "\\", "<", "|", ",", ">", "/", "?"]
+    if any([x in file.filename for x in chars_not_allowed_in_filename]):
+        logger.warning(f"Invalid Filename: {file.filename=}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Filename cannot contain any of these: {chars_not_allowed_in_filename}",
         )
 
     # this is due to a known defect in the SpooledTemporary file library
@@ -143,7 +163,7 @@ async def upload_csv_file(
         lines = file.file.readlines()
         temp_file.writelines(lines)
         temp_file.seek(0)
-        df = pd.read_csv(temp_file)
+        df = pd.read_csv(temp_file, encoding="ISO-8859-1")
 
         logger.debug(df.head())
 

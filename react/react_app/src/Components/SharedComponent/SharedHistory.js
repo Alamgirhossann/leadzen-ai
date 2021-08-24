@@ -62,9 +62,7 @@ const SharedHistory = () => {
     console.log(searchText);
   };
   return (
-    <div>
-      <div>
-        <div className="text-center p-4 my-3 container">
+        <div className="text-center p-4 my-3 container-fluid">
           <div className="user-lead-top mb-2 head-btn-style">
             <div className="d-flex align-items-center">
               <h5 className="m-0">
@@ -119,7 +117,7 @@ const SharedHistory = () => {
                   </div>
                   <p className="view-btn" align="right">
                     <a href="/detailedInfo" className="button">
-                      View Profile
+                    Unlock Profile
                     </a>
                   </p>
                   <a
@@ -167,7 +165,7 @@ const SharedHistory = () => {
                   </div>
                   <p className="view-btn" align="right">
                     <a href="/detailedInfo" className="button">
-                      View Profile
+                    Unlock Profile
                     </a>
                   </p>
                   <p className="close-btn">
@@ -178,8 +176,7 @@ const SharedHistory = () => {
             ))}
           </div>
         </div>
-      </div>
-    </div>
+     
   );
 };
 
