@@ -5,10 +5,13 @@ import Cookies from "js-cookie";
 import validator from "validator";
 import Header from "../SharedComponent/Header";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
+
 
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const LogIn = () => {
+  const history = useHistory();
   const user = {
     name: "",
     email: "",
@@ -28,8 +31,7 @@ const LogIn = () => {
   var url = new URL(url_string);
   var emailVerified = url.searchParams.get("emailVerified");
   var email = url.searchParams.get("email");
-  console.log("emailVerified", emailVerified);
-  console.log("email", email);
+
 
   const [userLogin, setUserLogin] = useState({
     email: "",
@@ -40,6 +42,8 @@ const LogIn = () => {
   const [isValid, setValid] = useState(false);
   const [response, setResponse] = useState({ ok: null, message: null });
   const [showPass, setShowPass] = useState(false);
+  const [userVerifiedStatus,setUserVerifiedStatus] = useState(true);
+
 
   const handleInput = (e) => {
     const name = e.target.name;
@@ -154,29 +158,35 @@ const LogIn = () => {
         console.log("response", response);
 
         if (response.ok === true) {
-          Cookies.set("user_email", userLogin.email);
+          // Cookies.set("user_email", userLogin.email);
         }
-
+        console.log("json_res.access_token,,,,,,",json_res.access_token)
         const userStatusResponse = await axios.get(
           apiServer + "/users/me",
-          formData,
           {
             headers: {
-              Accept: "application/json",
               Authorization: `Bearer ${json_res.access_token}`,
             },
           }
         );
 
-        const userStatus = await userStatusResponse.json();
-
+        const userStatus = await userStatusResponse;
+        console.log("userStatus>>>>>>>>",userStatus)
         if (!userStatus.is_verified) {
+          console.log("in if")
+          setUserVerifiedStatus(false)
           //  show a banner and prevent any next action
           //  take to LoginEmailUnverifiedError
         } else {
+          console.log("userStatus.is_verified",userStatus.is_verified)
           //  normal user operations
           //  check for the first_time_user, if it is false take to repeated user
           //  else take to the repeated user page
+          const first_time_user = Cookies.get("first_time_user")
+          console.log("first_time_user",first_time_user)
+           // history.push({
+           //  pathname: "/firstTimeUser",
+           // });
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -185,6 +195,7 @@ const LogIn = () => {
     fetchData();
   };
 
+  // console.log("userStatus",userStatus)
   return (
     <div>
       <Header user={user} />
@@ -210,7 +221,8 @@ const LogIn = () => {
             <div className="form-container">
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
-                  {response.ok ? <Redirect to="/repeatedUser" /> : null}
+                  {!userVerifiedStatus?<Redirect to="/unverified" /> : null}
+                  {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center">

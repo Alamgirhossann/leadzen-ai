@@ -30,6 +30,7 @@ import DashboardOne from "./Components/AdminDashboard/DashboardOne";
 import SearchResultTexAu from "./Components/SearchResult/SearchResultTexAu";
 import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
+import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 
 const App = () => {
   return (
@@ -90,6 +91,7 @@ const App = () => {
         <Route path="/result_by_name" component={SearchResultTexAu} />
         <Route path="/advanceSearch" component={SearchResultTexAu} />
         <Route path="/verification" component={Verification} />
+        <Route path="/unverified" component={LoginEmailUnverifiedError} />
 
         <Route path="/loginEmailError">
           <LoginEmailError />

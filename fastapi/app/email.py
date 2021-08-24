@@ -35,13 +35,13 @@ router = APIRouter(prefix="/email", tags=["Email"])
 
 @router.post("/verify/account")
 async def send_account_verification_email(
-    request: UserEmailVerificationEmailRequest, background_tasks: BackgroundTasks
+        request: UserEmailVerificationEmailRequest, background_tasks: BackgroundTasks
 ) -> JSONResponse:
     logger.debug(f"{request=}")
 
     email_text = (
         f"Dear {request.name}, \nPlease click the link to verify your email {API_CONFIG_SELF_BASE_EXTERNAL_URL}/api"
-        f"/email/verify/account/{request.token}?emailVerified=true&email={request.email} \n--- \nThanks \n Analystt "
+        f"/email/verify/account/{request.token} \n--- \nThanks \n Analystt "
         f"Team "
     )
 
@@ -77,8 +77,8 @@ async def verify_email_by_token(token: str):
             logger.debug(data)
 
             if (
-                response.status_code == 400
-                and data["detail"] == "VERIFY_USER_ALREADY_VERIFIED"
+                    response.status_code == 400
+                    and data["detail"] == "VERIFY_USER_ALREADY_VERIFIED"
             ):
                 logger.warning("Email Already Verified, Redirect to Login")
                 return RedirectResponse(
@@ -97,8 +97,10 @@ async def verify_email_by_token(token: str):
                 )
 
             logger.success("User Verified, Redirecting to login page")
+            print(type(data))
+            print("data.email", data.get("email"))
             return RedirectResponse(
-                f"{API_CONFIG_REACT_LOGIN_PAGE_URL}?emailVerified=true&email={data.email}"
+                f"{API_CONFIG_REACT_LOGIN_PAGE_URL}?emailVerified=true&email={data.get('email')}"
             )
     except Exception as e:
         logger.critical(f"Exception Verifying Email, {str(e)}")
