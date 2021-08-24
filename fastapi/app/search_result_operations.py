@@ -21,17 +21,43 @@ search_result = sqlalchemy.Table(
 
     metadata,
 
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("search_id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("user_id", sqlalchemy.String),
     sqlalchemy.Column("result", sqlalchemy.String),
     sqlalchemy.Column("search_type", sqlalchemy.String),
+    sqlalchemy.Column("additional_data", sqlalchemy.String),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
+
+)
+
+search_result_phone = sqlalchemy.Table(
+
+    "search_result_phone",
+
+    metadata,
+
+    sqlalchemy.Column("phone_id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("search_id", sqlalchemy.Integer),
     sqlalchemy.Column("phone_number", sqlalchemy.Integer),
-    sqlalchemy.Column("email_id", sqlalchemy.String),
     sqlalchemy.Column("phone_is_verified", sqlalchemy.Boolean),
     sqlalchemy.Column("phone_credit_used", sqlalchemy.Boolean),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
+
+)
+
+search_result_email = sqlalchemy.Table(
+
+    "search_result_email",
+
+    metadata,
+
+    sqlalchemy.Column("email_id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("search_id", sqlalchemy.Integer),
+    sqlalchemy.Column("email", sqlalchemy.String),
     sqlalchemy.Column("email_is_verified", sqlalchemy.Boolean),
     sqlalchemy.Column("email_credit_used", sqlalchemy.Boolean),
-    sqlalchemy.Column("additional_data", sqlalchemy.String),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
 
 )
@@ -46,29 +72,55 @@ class SearchResultIn(BaseModel):
     result: str
     search_type: Optional[str]
     user_id: Optional[str] = None
-    phone_number: Optional[int] = None
-    email_id: Optional[str] = None
-    phone_is_verified: Optional[bool] = False
-    phone_credit_used: Optional[bool] = False
-    email_is_verified: Optional[bool] = False
-    email_credit_used: Optional[bool] = False
     additional_data: Optional[str] = None
     created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
 class SearchResult(BaseModel):
-    id: int
+    search_id: int
     result: str
     search_type: Optional[str]
     user_id: Optional[str] = None
-    phone_number: Optional[int] = None
-    email_id: Optional[str] = None
-    phone_is_verified: Optional[bool] = False
-    phone_credit_used: Optional[bool] = False
-    email_is_verified: Optional[bool] = False
-    email_credit_used: Optional[bool] = False
     additional_data: Optional[str] = None
     created_on: Optional[datetime.datetime]
+
+
+class SearchResultPhoneIn(BaseModel):
+    search_id: Optional[int] = None
+    user_id: Optional[str] = None
+    phone_number: Optional[int] = None
+    phone_is_verified: Optional[bool] = False
+    phone_credit_used: Optional[bool] = False
+    created_on: Optional[datetime.datetime] = datetime.datetime.now()
+
+
+class SearchResultPhone(BaseModel):
+    phone_id: int
+    search_id: Optional[int] = None
+    user_id: Optional[str] = None
+    phone_number: Optional[int] = None
+    phone_is_verified: Optional[bool] = False
+    phone_credit_used: Optional[bool] = False
+    created_on: Optional[datetime.datetime] = datetime.datetime.now()
+
+
+class SearchResultEmailIn(BaseModel):
+    user_id: Optional[str] = None
+    search_id: Optional[int] = None
+    email: Optional[str] = None
+    email_is_verified: Optional[bool] = False
+    email_credit_used: Optional[bool] = False
+    created_on: Optional[datetime.datetime] = datetime.datetime.now()
+
+
+class SearchResultEmail(BaseModel):
+    email_id: int
+    search_id: Optional[int] = None
+    user_id: Optional[str] = None
+    email: Optional[str] = None
+    email_is_verified: Optional[bool] = False
+    email_credit_used: Optional[bool] = False
+    created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
 @router.get("/get_search_result", response_model=List[SearchResult])
@@ -77,20 +129,53 @@ async def read_search_results():
     return await database.fetch_all(query)
 
 
+@router.get("/get_search_result_phone", response_model=List[SearchResultPhone])
+async def read_search_results_phone():
+    query = search_result_phone.select()
+    return await database.fetch_all(query)
+
+
+@router.get("/get_search_result_email", response_model=List[SearchResultEmail])
+async def read_search_results_email():
+    query = search_result_email.select()
+    return await database.fetch_all(query)
+
+
 @router.post("/save_search_result", response_model=SearchResult)
 async def create_search_result(search_results: SearchResultIn):
-
     query = search_result.insert().values(result=search_results.result,
                                           search_type=search_results.search_type,
                                           user_id=search_results.user_id,
-                                          phone_number=search_results.phone_number,
-                                          email_id=search_results.email_id,
-                                          phone_is_verified=search_results.phone_is_verified,
-                                          phone_credit_used=search_results.phone_credit_used,
-                                          email_is_verified=search_results.email_is_verified,
-                                          email_credit_used=search_results.email_credit_used,
                                           additional_data=search_results.additional_data,
                                           created_on=datetime.datetime.now())
 
     last_record_id = await database.execute(query)
-    return {**search_results.dict(), "id": last_record_id}
+    return {**search_results.dict(), "search_id": last_record_id}
+
+
+@router.post("/save_search_result_phone", response_model=SearchResultPhone)
+async def create_search_result(search_results: SearchResultPhoneIn):
+    query = search_result_phone.insert().values(
+        user_id=search_results.user_id,
+        search_id=search_results.search_id,
+        phone_number=search_results.phone_number,
+        phone_is_verified=search_results.phone_is_verified,
+        phone_credit_used=search_results.phone_credit_used,
+        created_on=datetime.datetime.now())
+
+    last_record_id = await database.execute(query)
+    return {**search_results.dict(), "phone_id": last_record_id}
+
+
+@router.post("/save_search_result_email", response_model=SearchResultEmail)
+async def create_search_result(search_results: SearchResultEmailIn):
+    query = search_result_email.insert().values(
+        user_id=search_results.user_id,
+        search_id=search_results.search_id,
+        email=search_results.email,
+        email_is_verified=search_results.email_is_verified,
+        email_credit_used=search_results.email_credit_used,
+        created_on=datetime.datetime.now())
+
+    last_record_id = await database.execute(query)
+    return {**search_results.dict(), "email_id": last_record_id}
