@@ -51,13 +51,13 @@ class SearchResult(BaseModel):
     search_type: Optional[str]
 
 
-@router.get("/", response_model=List[SearchResult])
+@router.get("/get_search_result", response_model=List[SearchResult])
 async def read_search_results():
     query = search_result.select()
     return await database.fetch_all(query)
 
 
-@router.post("/", response_model=SearchResult)
+@router.post("/save_search_result", response_model=SearchResult)
 async def create_search_result(search_results: SearchResultIn):
     query = search_result.insert().values(result=search_results.result, search_type=search_results.search_type)
     last_record_id = await database.execute(query)

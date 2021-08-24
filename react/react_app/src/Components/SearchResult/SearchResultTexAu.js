@@ -27,7 +27,7 @@ const SearchResult = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
-
+  const [searchType, setSearchType] = useState("");
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -57,6 +57,7 @@ const SearchResult = (props) => {
         );
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
+        setSearchType(props.location.state.requestTexAu.searchType);
       }
       let keyword = null;
       let isKeyword,
@@ -67,6 +68,8 @@ const SearchResult = (props) => {
           "from advance.customSearch filters .....",
           props.location.state.customSearch
         );
+        if (props.location.state.customSearch.search_type)
+          setSearchType(props.location.state.customSearch.search_type);
         if (props.location.state.customSearch.keywords) isKeyword = true;
         if (props.location.state.customSearch.education) isEducation = true;
         if (isKeyword && isEducation)
@@ -162,11 +165,11 @@ const SearchResult = (props) => {
           }
         );
 
-        console.log("response>>>>",response)
+        console.log("response>>>>", response);
         function handleError() {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
-          
+
           setLoading(false);
           setMyLeads("");
         }
@@ -184,16 +187,16 @@ const SearchResult = (props) => {
           console.log("Data>>>>", data, ">>>>>", response);
           if (!data) {
             console.warn(`Invalid Data`);
-            handleError()
+            handleError();
             return;
           }
-  
+
           setLoading(false);
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
           if (data.data) setMyLeads(data.data);
-          
+
           return;
         }
       } catch (e) {
@@ -262,30 +265,31 @@ const SearchResult = (props) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-  const saveSearchedRecord =async(response,searchType) => {
-    console.log("In saveSearchedRecord")
-    let requestForSaveSearch={
-        "result": response.toString(),
-        "search_type": searchType
-    }
-    console.log("In saveSearchedRecord...",requestForSaveSearch)
-   try{
-       const response = await fetch(apiServer + "/search_result", {
+  const saveSearchedRecord = async (response, searchType) => {
+    console.log("In saveSearchedRecord");
+    let requestForSaveSearch = {
+      result: response.toString(),
+      search_type: searchType,
+    };
+    console.log("In saveSearchedRecord...", requestForSaveSearch);
+    try {
+      const response = await fetch(
+        apiServer + "/search_result/save_search_result",
+        {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
           body: JSON.stringify(requestForSaveSearch),
-        });
+        }
+      );
+      console.log("response from saveResult>>>", response);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
 
-   }catch (e) {
-        console.error("Exception>>", e);
-      }
-
-
-
-   }
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
       email: "",
@@ -315,14 +319,13 @@ const SearchResult = (props) => {
         });
 
         let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res);
-        await saveSearchedRecord(json_res,props.location.state.customSearch.search_type)
+        console.log("Data>>>>>>>>>>>", json_res.toString(), ">>>>", searchType);
+        saveSearchedRecord(json_res, searchType);
         if (json_res) {
           setSpecificUserDetails((prev) => [
             ...prev,
             { index: `${currentPage}${index}`, details: json_res[0] },
           ]);
-
         } else {
           console.log("In setSpecificUserDetails else");
           setSpecificUserDetails((prev) => [
@@ -348,7 +351,6 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
-
 
   return (
     <div>
@@ -458,8 +460,7 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads &&
-                    (myLeads.length === 0) ? (
+                    {myLeads && myLeads.length === 0 ? (
                       <div>
                         <h5>Records not found</h5>
                       </div>

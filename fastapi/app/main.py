@@ -12,7 +12,7 @@ from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau import router as texau_router
 from app.email_truemail import router as email_verification
-from app.search_result_operations import router as search_operations
+from app.search_result_operations import router as search_operations, database
 
 app = FastAPI()
 load_dotenv()
@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-database = databases.Database(API_CONFIG_DATABASE_URL)
+
 
 
 @app.get("/")
@@ -69,6 +69,7 @@ def refresh_linkedin_cookie_manually():
 
 @app.on_event("startup")
 async def startup():
+    logger.debug("In database Connectin....")
     await database.connect()
 
 
