@@ -30,7 +30,7 @@ search_result = sqlalchemy.Table(
     sqlalchemy.Column("phone_credit_used", sqlalchemy.Boolean),
     sqlalchemy.Column("email_is_verified", sqlalchemy.Boolean),
     sqlalchemy.Column("email_credit_used", sqlalchemy.Boolean),
-    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
 
 )
 
@@ -43,7 +43,7 @@ metadata.create_all(engine)
 class SearchResultIn(BaseModel):
     result: str
     search_type: Optional[str]
-    user_id: Optional[str] =None
+    user_id: Optional[str] = None
     phone_is_verified: Optional[bool] = False
     phone_credit_used: Optional[bool] = False
     email_is_verified: Optional[bool] = False
@@ -65,6 +65,7 @@ class SearchResult(BaseModel):
     additional_data: Optional[str] = None
     created_On: Optional[datetime.datetime]
 
+
 @router.get("/get_search_result", response_model=List[SearchResult])
 async def read_search_results():
     query = search_result.select()
@@ -75,10 +76,14 @@ async def read_search_results():
 async def create_search_result(search_results: SearchResultIn):
     current_time = datetime.datetime.now()
     logger.debug("current_time>>>" + str(current_time))
+
     query = search_result.insert().values(result=search_results.result, search_type=search_results.search_type,
-                                          user_id=search_results.user_id, phone_is_verified=search_results.phone_is_verified,
-                                          phone_credit_used=search_results.phone_credit_used, email_is_verified=search_results.email_is_verified,
-                                          email_credit_used=search_results.email_credit_used, additional_data=search_results.additional_data,
+                                          user_id=search_results.user_id,
+                                          phone_is_verified=search_results.phone_is_verified,
+                                          phone_credit_used=search_results.phone_credit_used,
+                                          email_is_verified=search_results.email_is_verified,
+                                          email_credit_used=search_results.email_credit_used,
+                                          additional_data=search_results.additional_data,
                                           created_on=datetime.datetime.now())
     logger.debug("Query>>>>>" + str(query))
     last_record_id = await database.execute(query)
