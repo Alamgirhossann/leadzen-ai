@@ -43,8 +43,8 @@ async def people_search(request: PiplRequest):
     try:
         request = SearchAPIRequest(
             email=request.email,
-            first_name=request.name.first_name,
-            last_name=request.name.last_name,
+            first_name=request.name.first_name if request.name else None,
+            last_name=request.name.last_name if request.name else None,
             url=request.url,
             match_requirements="phones",
             api_key=API_CONFIG_PIPL_API_KEY,
