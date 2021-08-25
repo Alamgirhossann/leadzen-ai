@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -8,26 +8,28 @@ from piplapis.search import SearchAPIRequest
 from pydantic import BaseModel
 
 from app.config import API_CONFIG_PIPL_API_KEY
+from app.users import fastapi_users
 
-router = APIRouter(prefix="/pipl", tags=["PIPL Search"])
+router = APIRouter(prefix="/pipl", tags=["PIPL"])
 
 
-class Name(BaseModel):
+class PiplName(BaseModel):
     first_name: str
     last_name: str
 
 
 class PiplRequest(BaseModel):
     email: Optional[str] = None
-    name: Optional[Name] = None
+    name: Optional[PiplName] = None
     url: Optional[str] = None
 
 
-@router.post(
-    "/search",
-)
-async def people_search(request: PiplRequest):
-    print("Request...", request)
+@router.post("/search")
+async def people_search(
+    request: PiplRequest, user=Depends(fastapi_users.get_current_active_user)
+):
+    logger.debug(f"{request=}, {user=}")
+
     response_data = None
     json_compatible_item_data = None
     try:

@@ -1,8 +1,6 @@
 from fastapi import APIRouter
 
 from app.config import API_CONFIG_TRUEMAIL_API_URL, API_CONFIG_TRUEMAIL_API_KEY
-
-import requests
 import httpx
 
 import json

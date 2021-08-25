@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Link, Redirect, useHistory} from "react-router-dom";
 import SavedList from "../SavedList/SavedList";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Filters from "../SharedComponent/Filters";
@@ -9,6 +9,7 @@ import SharedHistory from "../SharedComponent/SharedHistory";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Header from "../SharedComponent/Header";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+import Cookies from "js-cookie";
 
 const RepeatedUser = () => {
   const history = useHistory();
@@ -72,24 +73,30 @@ const RepeatedUser = () => {
     },
   };
   const recommendations = [
-    { name: "Robert Brown", role: "Product Manager", comp: "Flipkart" },
-    { name: "Lan Bey", role: "CEO", comp: "Amazon UK" },
-    { name: "John Smith", role: "Designer", comp: "Flipkart" },
-    { name: "Chirs Apple", role: "CFO", comp: "Apple INC" },
-    { name: "Stan Joseph", role: "Developer", comp: "Amazon IN" },
-    { name: "Stan Joseph", role: "Developer", comp: "Amazon IN" },
+    {name: "Robert Brown", role: "Product Manager", comp: "Flipkart"},
+    {name: "Lan Bey", role: "CEO", comp: "Amazon UK"},
+    {name: "John Smith", role: "Designer", comp: "Flipkart"},
+    {name: "Chirs Apple", role: "CFO", comp: "Apple INC"},
+    {name: "Stan Joseph", role: "Developer", comp: "Amazon IN"},
+    {name: "Stan Joseph", role: "Developer", comp: "Amazon IN"},
   ];
-
+  const handleLogout = (event) => {
+    console.log("document.cookie()...handle", document.cookie)
+    Cookies.remove('user_token', {path: ''})
+    Cookies.remove('user_email', {path: ''})
+    console.log("document.cookie()...", document.cookie)
+  }
+// console.log("document.cookie()...",Cookies.get("user_token"))
   const handleHeadSearch = (e) => {
-    setSearchText({ ...searchText, text: e.target.value });
+    setSearchText({...searchText, text: e.target.value});
   };
   const handleHeadSubmit = (e) => {
     e.preventDefault();
     console.log("search Text>>>>>>>>>>>>", searchText);
     if (
-      !searchText.text
-      // searchText.text === undefined ||
-      // searchText.text.toString().length <= 0
+        !searchText.text
+        // searchText.text === undefined ||
+        // searchText.text.toString().length <= 0
     ) {
       alert("Enter details");
       return;
@@ -264,9 +271,9 @@ const RepeatedUser = () => {
                   ))}
                 </div>
                 <img
-                  src="assets/images/user-robot-icon.png"
-                  alt="#"
-                  className="user-author-shape"
+                    src="assets/images/user-robot-icon.png"
+                    alt="#"
+                    className="user-author-shape"
                 />
                 <a href="/searchResult" className="text-danger">
                   View List

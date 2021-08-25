@@ -8,6 +8,7 @@ import UserSearch from "../SharedComponent/UserSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+import Cookies from "js-cookie";
 
 const FirstTimeUser = () => {
   const user = {
@@ -29,10 +30,13 @@ const FirstTimeUser = () => {
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
     script.async = true;
+    Cookies.set("first_time_user", false);
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
     };
+
+    //  TODO: store a cookie that the user has been to this page. Say first_time_user=false
   }, []);
 
   function handleCSVFile() {}
@@ -90,7 +94,7 @@ const FirstTimeUser = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
-              <BulkSearch/>
+              <BulkSearch />
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
