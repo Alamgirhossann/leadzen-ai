@@ -275,11 +275,12 @@ const SearchResult = (props) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-  const saveSearchedRecord = async (response, searchType) => {
+  const saveSearchedRecord = async (response, searchType, url) => {
     console.log("In saveSearchedRecord");
     let requestForSaveSearch = {
       result: response.toString(),
       search_type: searchType,
+      search_param: url,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
     try {
@@ -290,6 +291,7 @@ const SearchResult = (props) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(requestForSaveSearch),
         }
@@ -336,8 +338,9 @@ const SearchResult = (props) => {
           ">>>>",
           searchType
         );
-        saveSearchedRecord(JSON.stringify(json_res), searchType);
+
         if (json_res) {
+          saveSearchedRecord(JSON.stringify(json_res), searchType, data.url);
           setSpecificUserDetails((prev) => [
             ...prev,
             { index: `${currentPage}${index}`, details: json_res[0] },
