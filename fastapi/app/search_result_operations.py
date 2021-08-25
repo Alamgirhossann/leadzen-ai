@@ -78,7 +78,7 @@ class SearchResultIn(BaseModel):
 
 class SearchResult(BaseModel):
     search_id: int
-    result: str
+    result: Optional[str]
     search_type: Optional[str]
     user_id: Optional[str] = None
     additional_data: Optional[str] = None
@@ -124,21 +124,44 @@ class SearchResultEmail(BaseModel):
 
 
 @router.get("/get_search_result", response_model=List[SearchResult])
-async def read_search_results():
-    query = search_result.select()
-    return await database.fetch_all(query)
+async def read_search_results(search_id: Optional[int] = None):
+    print("search_id>>>", search_id)
+    if search_id:
+        query = "SELECT * FROM search_result WHERE search_id = :search_id"
+        result = await database.fetch_all(query=query, values={"search_id": search_id})
+    else:
+        query = "SELECT * FROM search_result"
+        result = await database.fetch_all(query=query)
+    return result
+
+
+@router.get("/get_search_result_by_user_id", response_model=List[SearchResult])
+async def read_search_results(user_id: str):
+    print("search_id>>>", user_id)
+    result = None
+    if user_id:
+        query = "SELECT * FROM search_result WHERE user_id = :user_id"
+        result = await database.fetch_all(query=query, values={"user_id": user_id})
+
+    return result
 
 
 @router.get("/get_search_result_phone", response_model=List[SearchResultPhone])
-async def read_search_results_phone():
-    query = search_result_phone.select()
-    return await database.fetch_all(query)
+async def read_search_results_phone(phone_id: int):
+    result = None
+    if phone_id:
+        query = "SELECT * FROM search_result_phone WHERE phone_id = :phone_id"
+        result = await database.fetch_all(query=query, values={"phone_id": phone_id})
+    return result
 
 
 @router.get("/get_search_result_email", response_model=List[SearchResultEmail])
-async def read_search_results_email():
-    query = search_result_email.select()
-    return await database.fetch_all(query)
+async def read_search_results_email(email_id: int):
+    result = None
+    if email_id:
+        query = "SELECT * FROM search_result_email WHERE email_id = :email_id"
+        result = await database.fetch_all(query=query, values={"email_id": email_id})
+    return result
 
 
 @router.post("/save_search_result", response_model=SearchResult)

@@ -134,6 +134,7 @@ async def wait_and_check_execution_status(execution_id: str) -> Optional[TexAuRe
                         # async with httpx.AsyncClient() as cookie_client:
                         #     r = await cookie_client.get('/refresh_linkedin_cookie')
                         result = data["execution"]["output"]
+
                         return TexAuResponse(data=result)
                     else:
                         logger.warning(f'{data["execution"]["status"]=}')
