@@ -1,16 +1,16 @@
 import uuid
 from typing import Optional
+from urllib.parse import urlencode
 
+import httpx
 from fastapi import APIRouter, HTTPException, status, BackgroundTasks
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from loguru import logger
-from piplapis.search import SearchAPIRequest
 from pydantic import BaseModel
 
 from app.config import (
     API_CONFIG_PIPL_API_KEY,
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
+    API_CONFIG_PIPL_BASE_URL,
 )
 from app.pipl.email import (
     execute_task as execute_email_task,
@@ -27,8 +27,8 @@ router = APIRouter(prefix="/pipl", tags=["PIPL"])
 
 
 class PiplName(BaseModel):
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
 
 
 class PiplRequest(BaseModel):
@@ -40,46 +40,72 @@ class PiplRequest(BaseModel):
 @router.post("/search")
 async def people_search(request: PiplRequest):
     logger.debug(f"{request=}")
+
     try:
-        request = SearchAPIRequest(
-            email=request.email,
-            first_name=request.name.first_name if request.name else None,
-            last_name=request.name.last_name if request.name else None,
-            url=request.url,
-            match_requirements="phones",
-            api_key=API_CONFIG_PIPL_API_KEY,
-        )
+        logger.debug(request)
 
-        if not (response := request.send()):
-            logger.warning("No Results")
+        params = {}
+
+        if request.email:
+            params["email"] = request.email
+
+        if request.name:
+            if request.name.first_name:
+                params["first_name"] = request.name.first_name
+            if request.name.last_name:
+                params["last_name"] = request.name.last_name
+
+        if request.url:
+            params["url"] = request.url
+
+        if not params:
+            logger.warning("No Valid Request Parameters")
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="No Results"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
             )
 
-        response_data = None
+        params["key"] = API_CONFIG_PIPL_API_KEY
 
-        if response.person:
-            logger.success("single rec")
-            response_data = [response.person]
-        elif response.possible_persons:
-            logger.success("multiple records")
-            response_data = response.possible_persons
+        url = f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode(params)}"
 
-        logger.success(f"{response_data=}")
+        logger.debug(f"{url=}")
 
-        if not response_data:
-            logger.warning("Invalid Response")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No Results",
-            )
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
 
-        return JSONResponse(content=jsonable_encoder(response_data))
+            if not response.status_code == 200:
+                logger.warning(
+                    f"Invalid Status Code: {response.status_code=}, {response.text=}"
+                )
+                raise HTTPException(
+                    status_code=response.status_code, detail="Error Searching PIPL"
+                )
+
+            if not (data := response.json()):
+                logger.warning(f"Empty Response")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Empty Response",
+                )
+
+            logger.debug(data.keys())
+
+            if data["@persons_count"] == 1 and data.get("person"):
+                return [data.get("person")]
+            elif data["@persons_count"] > 1 and data.get("possible_persons"):
+                return [x for x in data.get("possible_persons") if x]
+            else:
+                logger.warning(f"Invalid Response")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Invalid Response",
+                )
+    except HTTPException as e:
+        logger.warning("HTTPException - Re-Raising")
+        raise e
     except Exception as e:
-        logger.critical(f"Exception Searching PIPL: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Error Searching PIPL"
-        )
+        logger.critical(f"Exception in PIPL search: {str(e)}")
+        return None
 
 
 @router.post("/bulk/email", response_model=PiplDetailsFromEmailResponse)

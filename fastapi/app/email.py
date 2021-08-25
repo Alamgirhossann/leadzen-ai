@@ -125,8 +125,6 @@ async def verify_email_by_token(token: str):
                 )
 
             logger.success("User Verified, Redirecting to login page")
-            print(type(data))
-            print("data.email", data.get("email"))
 
             params = urlencode({"email": data.get("email"), "emailVerified": "true"})
 
