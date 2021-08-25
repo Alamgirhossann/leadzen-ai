@@ -177,7 +177,7 @@ async def create_search_result(search_results: SearchResultIn):
 
 
 @router.post("/save_search_result_phone", response_model=SearchResultPhone)
-async def create_search_result(search_results: SearchResultPhoneIn):
+async def create_search_result_phone(search_results: SearchResultPhoneIn):
     query = search_result_phone.insert().values(
         user_id=search_results.user_id,
         search_id=search_results.search_id,
@@ -191,7 +191,7 @@ async def create_search_result(search_results: SearchResultPhoneIn):
 
 
 @router.post("/save_search_result_email", response_model=SearchResultEmail)
-async def create_search_result(search_results: SearchResultEmailIn):
+async def create_search_result_email(search_results: SearchResultEmailIn):
     query = search_result_email.insert().values(
         user_id=search_results.user_id,
         search_id=search_results.search_id,
