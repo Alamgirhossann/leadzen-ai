@@ -41,7 +41,9 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
+      myLeads && Array.isArray(myLeads)
+        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+        : 0
     );
   };
   today = dd + "/" + mm + "/" + yyyy;

@@ -94,8 +94,10 @@ async def people_search(
             logger.debug(data.keys())
 
             if data["@persons_count"] == 1 and data.get("person"):
+                logger.success("found 1 person")
                 return [data.get("person")]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
+                logger.success(f'found {data["@persons_count"]} persons')
                 return [x for x in data.get("possible_persons") if x]
             else:
                 logger.warning(f"Invalid Response")

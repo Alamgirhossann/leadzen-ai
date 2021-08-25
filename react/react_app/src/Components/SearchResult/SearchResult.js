@@ -306,20 +306,23 @@ const SearchResult = (props) => {
                             </p>
                             <div className="search-user">
                               <p>
-                                {data.names.length === 0
+                                {data.names === undefined ||
+                                data.names.length === 0
                                   ? null
-                                  : data.names[0]._display}
+                                  : data.names[0].display}
                               </p>
                               <small className="d-block">
                                 Works at{" "}
-                                {data.jobs.length === 0
+                                {data.jobs === undefined ||
+                                data.jobs.length === 0
                                   ? null
-                                  : data.jobs[0]._display}
+                                  : data.jobs[0].display}
                               </small>
                               <small className="d-block">
-                                {data.addresses.length === 0
+                                {data.addresses === undefined ||
+                                data.addresses.length === 0
                                   ? null
-                                  : data.addresses[0]._display}
+                                  : data.addresses[0].display}
                               </small>
                             </div>
                             <div className="search-email text-center">
