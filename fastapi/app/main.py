@@ -10,6 +10,7 @@ from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET
 from app.customize_filter import router as filter_router
 from app.email import router as email_router
 from app.email_truemail import router as email_verification
+from app.proxy_curl import router as proxy_curl
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau import router as texau_router
@@ -46,6 +47,7 @@ app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
+app.include_router(router=proxy_curl, prefix="/api")
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
     prefix="/api/auth/jwt",
