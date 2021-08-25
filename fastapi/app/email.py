@@ -70,11 +70,11 @@ async def send_account_verification_email(
         f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
         f"--- \n"
         f"Thanks \n"
-        f"Analystt Team"
+        f"LeadZen Team"
     )
 
     message = MessageSchema(
-        subject="Analystt Email Verification",
+        subject="LeadZen Email Verification",
         recipients=[request.email],
         body=email_text,
     )

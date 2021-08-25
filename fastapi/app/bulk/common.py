@@ -66,11 +66,13 @@ async def send_success_email(user: User, filename: str):
     message = (
         f"Dear {user.username}, \n"
         f"Your Bulk Search results are ready. \n"
-        f"Please click on the link below to download the results:\n"
+        f"Please click on the link below to download the results. The download should start automatically, "
+        f"however in case it doesn't kindly right click on the link and download the linked file. Get your lead "
+        f"details as you open the file in Excel.\n"
         f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{filename.removeprefix('./')} \n"
         f"--- \n"
         f"Thanks \n"
-        f"Analystt Team "
+        f"LeadZen Team "
     )
 
     try:
@@ -103,7 +105,7 @@ async def send_failure_email(user: User, filename: str):
         f"Your Bulk Search request for {filename} has failed. \n "
         f"--- \n"
         f"Thanks \n"
-        f"Analystt Team "
+        f"LeadZen Team "
     )
 
     try:
