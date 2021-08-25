@@ -8,6 +8,7 @@ import UserSearch from "../SharedComponent/UserSearch";
 import SharedHistory from "../SharedComponent/SharedHistory";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Header from "../SharedComponent/Header";
+import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const RepeatedUser = () => {
   const history = useHistory();
@@ -217,6 +218,7 @@ const RepeatedUser = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
+              <SpecificSearchBtn/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />

@@ -7,6 +7,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
+import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { func } from "prop-types";
 
 const SearchResult = (props) => {
@@ -370,6 +371,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
+              <SpecificSearchBtn/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
