@@ -3,7 +3,7 @@ from typing import Optional
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, HTTPException, status, BackgroundTasks, Depends
 from loguru import logger
 from pydantic import BaseModel
 
@@ -22,6 +22,7 @@ from app.pipl.profile_url import (
     PiplDetailsFromProfileUrlRequest,
     PiplDetailsFromProfileUrlResponse,
 )
+from app.users import fastapi_users
 
 router = APIRouter(prefix="/pipl", tags=["PIPL"])
 
@@ -38,8 +39,10 @@ class PiplRequest(BaseModel):
 
 
 @router.post("/search")
-async def people_search(request: PiplRequest):
-    logger.debug(f"{request=}")
+async def people_search(
+    request: PiplRequest, user=Depends(fastapi_users.get_current_active_user)
+):
+    logger.debug(f"{request=}, {user=}")
 
     try:
         logger.debug(request)
@@ -110,9 +113,11 @@ async def people_search(request: PiplRequest):
 
 @router.post("/bulk/email", response_model=PiplDetailsFromEmailResponse)
 async def bulk_find_details_for_email(
-    request: PiplDetailsFromEmailRequest, background_tasks: BackgroundTasks
+    request: PiplDetailsFromEmailRequest,
+    background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{request=}")
+    logger.debug(f"{request=}, {user=}")
 
     if not request.filename:
         request.filename = (
@@ -131,9 +136,11 @@ async def bulk_find_details_for_email(
     response_model=PiplDetailsFromProfileUrlResponse,
 )
 async def bulk_find_details_for_profile_url(
-    request: PiplDetailsFromProfileUrlRequest, background_tasks: BackgroundTasks
+    request: PiplDetailsFromProfileUrlRequest,
+    background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{request=}")
+    logger.debug(f"{request=}, {user=}")
 
     if not request.filename:
         request.filename = (

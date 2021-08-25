@@ -1,4 +1,3 @@
-from crypt import methods
 from urllib.parse import urlencode
 
 import httpx

@@ -1,17 +1,16 @@
 import uuid
 from http.client import HTTPException
-from typing import Dict, List
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, status, Depends
 from loguru import logger
 
 from app.config import API_CONFIG_BULK_OUTGOING_DIRECTORY
+from app.texau.common import TexAuExecutionResponse, TexAuResult
 from app.texau.linkedin.commenters import (
     handle_find_post_commenters,
     TexAuFindLinkedInPostCommentersRequest,
 )
 from app.texau.linkedin.cookie import read_linkedin_cookie
-from app.texau.status import get_status_once
 from app.texau.linkedin.email import (
     TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     handle_find_email_and_phone_for_linkedin_profile_url,
@@ -25,14 +24,18 @@ from app.texau.linkedin.profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest,
 )
-from app.texau.common import TexAuExecutionResponse, TexAuResult
+from app.texau.status import get_status_once
+from app.users import fastapi_users
 
 router = APIRouter(prefix="/texau", tags=["TexAu"])
 
 
 @router.post("/linkedin/matching_profiles", response_model=TexAuExecutionResponse)
-async def find_matching_linkedin_profiles(request: TexAuFindProfileRequest):
-    logger.info(f"{request=}")
+async def find_matching_linkedin_profiles(
+    request: TexAuFindProfileRequest,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{request=}, {user=}")
 
     if not request.cookie:
         if not (cookie := read_linkedin_cookie()):
@@ -53,8 +56,9 @@ async def find_matching_linkedin_profiles(request: TexAuFindProfileRequest):
 async def find_email_for_linkedin_profile_url(
     request: TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.info(f"{request=}")
+    logger.info(f"{request=}, {user=}")
 
     if not request.cookie:
         if not (cookie := read_linkedin_cookie()):
@@ -81,8 +85,11 @@ async def find_email_for_linkedin_profile_url(
 
 
 @router.post("/linkedin/post_likers", response_model=TexAuExecutionResponse)
-async def find_linkedin_post_likers(request: TexAuFindLinkedInPostLikersRequest):
-    logger.info(f"{request=}")
+async def find_linkedin_post_likers(
+    request: TexAuFindLinkedInPostLikersRequest,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{request=}, {user=}")
 
     if not request.cookie:
         if not (cookie := read_linkedin_cookie()):
@@ -100,8 +107,9 @@ async def find_linkedin_post_likers(request: TexAuFindLinkedInPostLikersRequest)
 @router.post("/linkedin/post_commenters", response_model=TexAuExecutionResponse)
 async def find_linkedin_post_commenters(
     request: TexAuFindLinkedInPostCommentersRequest,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.info(f"{request=}")
+    logger.info(f"{request=}, {user=}")
 
     if not request.cookie:
         if not (cookie := read_linkedin_cookie()):
@@ -117,7 +125,9 @@ async def find_linkedin_post_commenters(
 
 
 @router.get("/result/{execution_id}", response_model=TexAuResult)
-async def get_execution_results(execution_id):
-    logger.info(f"{execution_id=}")
+async def get_execution_results(
+    execution_id, user=Depends(fastapi_users.get_current_active_user)
+):
+    logger.info(f"{execution_id=}, {user=}")
 
     return await get_status_once(execution_id=execution_id)
