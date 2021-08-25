@@ -48,7 +48,7 @@ app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
-app.include_router(router=search_operations, prefix="/api")
+app.include_router(router=search_operations, prefix="/api", dependencies=[Depends(fastapi_users.get_current_active_user)])
 
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
