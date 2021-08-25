@@ -81,6 +81,7 @@ const SearchResult = (props) => {
           keyword = props.location.state.customSearch.keywords;
         if (!isKeyword && isEducation)
           keyword = props.location.state.customSearch.education;
+
         requestForTexAu = {
           firstName: "",
           lastName: "",
@@ -103,15 +104,21 @@ const SearchResult = (props) => {
         setLoading(true);
       }
       try {
-        const response = await fetch(apiServer + "/texau/search?", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(requestForTexAu),
-        });
+        requestForTexAu.cookie =
+          "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7hCKx0k4AeljWlYLJWzMzPyxIRAjQSo6OK5dVCVSSBXpy2J0DZrt9uyOICBu64noYRNWpJUHXEOm20kpdqFB5JFh6Az2QHDSH4_YwdnPjnqXEjJ8ihhF0Mo8D";
+
+        const response = await fetch(
+          apiServer + "/texau/linkedin/matching_profiles",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(requestForTexAu),
+          }
+        );
 
         if (response.status === 400) {
           // handle 400
@@ -155,12 +162,13 @@ const SearchResult = (props) => {
       console.log("In interval.....");
       try {
         const response = await fetch(
-          apiServer + `/texau/check_status/${executionId}`,
+          apiServer + `/texau/result/${executionId}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
             },
           }
         );
