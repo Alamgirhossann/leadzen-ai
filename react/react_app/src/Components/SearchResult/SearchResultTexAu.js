@@ -28,6 +28,7 @@ const SearchResult = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
+  const [searchType, setSearchType] = useState("");
   const [activeIndexProfile, setActiveIndexProfile] = useState(false);
 
   let today = new Date();
@@ -61,6 +62,7 @@ const SearchResult = (props) => {
         );
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
+        setSearchType(props.location.state.requestTexAu.searchType);
       }
       let keyword = null;
       let isKeyword,
@@ -71,6 +73,8 @@ const SearchResult = (props) => {
           "from advance.customSearch filters .....",
           props.location.state.customSearch
         );
+        if (props.location.state.customSearch.search_type)
+          setSearchType(props.location.state.customSearch.search_type);
         if (props.location.state.customSearch.keywords) isKeyword = true;
         if (props.location.state.customSearch.education) isEducation = true;
         if (isKeyword && isEducation)
@@ -83,7 +87,6 @@ const SearchResult = (props) => {
           keyword = props.location.state.customSearch.keywords;
         if (!isKeyword && isEducation)
           keyword = props.location.state.customSearch.education;
-
         requestForTexAu = {
           firstName: "",
           lastName: "",
@@ -138,7 +141,7 @@ const SearchResult = (props) => {
           setLoading(false);
           setMyLeads({});
         }
-
+        
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
         if (!json_res.execution_id) {
@@ -274,6 +277,34 @@ const SearchResult = (props) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
+  const saveSearchedRecord = async (response, searchType, url) => {
+    console.log("In saveSearchedRecord");
+    let requestForSaveSearch = {
+      result: response.toString(),
+      search_type: searchType,
+      search_param: url,
+    };
+    console.log("In saveSearchedRecord...", requestForSaveSearch);
+    try {
+      const response = await fetch(
+        apiServer + "/search_result/save_search_result",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveSearch),
+        }
+      );
+      console.log("response from saveResult>>>", response);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
+
+
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
       email: "",
@@ -306,6 +337,7 @@ const SearchResult = (props) => {
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res);
         if (json_res) {
+          saveSearchedRecord(JSON.stringify(json_res), searchType, data.url);
           setSpecificUserDetails((prev) => [
             ...prev,
             { index: `${currentPage}${index}`, details: json_res[0] },
@@ -339,6 +371,7 @@ const SearchResult = (props) => {
   return (
     <div>
       <Header user={user} />
+
 
       <div className="modal" id="bulkmodal">
         <button
