@@ -1,5 +1,3 @@
-import requests
-import json
 import httpx
 from starlette import status
 from fastapi import APIRouter, HTTPException, Depends
