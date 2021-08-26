@@ -31,8 +31,6 @@ import SearchResultTexAu from "./Components/SearchResult/SearchResultTexAu";
 import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
-// import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
-// import ExcelFileSave from "./Components/ExportExcel/ExcelFileSave";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
 
 const App = () => {

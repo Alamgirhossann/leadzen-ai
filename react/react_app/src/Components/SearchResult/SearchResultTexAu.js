@@ -21,15 +21,16 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    { index: null, details: null },
+    {index: null, details: null},
   ]);
-  const [resultData, setSearchResult] = useState({ data: null });
+  const [resultData, setSearchResult] = useState({data: null});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   const [searchType, setSearchType] = useState("");
-  const [activeIndexProfile, setActiveIndexProfile] = useState(false);
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [isCheck, setIsCheck] = useState([]);
 
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -361,9 +362,9 @@ const SearchResult = (props) => {
       console.log("specificUser>>>>>>>", specificUserDetails);
       specificUserDetails?.map((spec) => {
         console.log(
-          "Check details>>>>",
-          spec.index,
-          spec.details === "Record Not Found"
+            "Check details>>>>",
+            spec.index,
+            spec.details === "Record Not Found"
         );
       });
     } catch (err) {
@@ -371,16 +372,55 @@ const SearchResult = (props) => {
     }
   };
 
-  return (
-    <div>
-      <Header user={user} />
+  const handleChange = e => {
+    const {id, checked} = e.target;
+    setIsCheck([...isCheck, id]);
+    if (!checked) {
+      setIsCheck(isCheck.filter(item => item !== id));
+    }
+  };
 
-      <div className="modal" id="bulkmodal">
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
+  const handleSelectAll = e => {
+    setIsCheckAll(!isCheckAll);
+    setIsCheck(currentLeads.map(li => li.url));
+    if (isCheckAll) {
+      setIsCheck([]);
+    }
+  };
+  const handleExcel = e => {
+    e.preventDefault()
+    const fetchData = async () => {
+      try {
+        console.log("go", isCheck)
+        const fetchResponse = await fetch(apiServer + "/exportExcel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(isCheck),
+        });
+
+        const data = await fetchResponse.json();
+        console.log("Data>>>>>>>>>>>", data);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    };
+
+    fetchData();
+  }
+  console.log("isCheck....", isCheck)
+  return (
+      <div>
+        <Header user={user}/>
+
+        <div className="modal" id="bulkmodal">
+          <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
         />
         <div className="modal-dialog">
           <div className="modal-message">
@@ -438,9 +478,12 @@ const SearchResult = (props) => {
                 <div className="d-flex align-items-center justify-content-between py-3">
                   <div className="d-flex align-items-center ">
                     <input
-                      className="ms-3 me-3"
-                      type="checkbox"
-                      id="checkbox"
+                        className="ms-3 me-3"
+                        type="checkbox"
+                        id="selectAll"
+                        name="selectAll"
+                        onChange={handleSelectAll}
+                        checked={isCheckAll}
                     />
                     <small className="">
                       <b>{currentLeads.length}</b> of{" "}
@@ -459,19 +502,20 @@ const SearchResult = (props) => {
                     <small className="unlock-btn">
                       Unlock Mails{" "}
                       <img
-                        className="ps-3"
-                        src="assets/images/Group 1617.png"
-                        alt=""
+                          className="ps-3"
+                          src="assets/images/Group 1617.png"
+                          alt=""
                       />
                     </small>
-                    <small className="export-btn">
+                    <button onClick={handleExcel} className="export-btn">
                       Export{" "}
                       <img
-                        className="ps-3"
-                        src="assets/images/export.png"
-                        alt=""
+                          className="ps-3"
+                          src="assets/images/export.png"
+                          alt=""
+
                       />
-                    </small>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -488,18 +532,22 @@ const SearchResult = (props) => {
                         <div>
                           <div className="user-container py-2" key={index}>
                             <input
-                              className="box ms-3 me-3"
-                              type="checkbox"
-                              id="checkbox"
+                                className="box ms-3 me-3"
+                                id={data.url}
+                                type="checkbox"
+                                name={data.name}
+                                checked={isCheck.includes(data.url)}
+                                onChange={handleChange}
+
                             />
                             <p className="search-author text-danger">
                               <img
-                                src={
-                                  data.profilePicture
-                                    ? data.profilePicture
-                                    : "assets/images/author-image.png"
-                                }
-                                alt=""
+                                  src={
+                                    data.profilePicture
+                                        ? data.profilePicture
+                                        : "assets/images/author-image.png"
+                                  }
+                                  alt=""
                               />
                             </p>
                             <div className="search-user">
