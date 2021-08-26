@@ -179,3 +179,27 @@ API_CONFIG_TEXAU_LINKEDIN_FIND_POST_COMMENTERS_FUNC_ID = os.getenv(
     "API_CONFIG_TEXAU_LINKEDIN_FIND_POST_COMMENTERS_FUNC_ID",
     "texau-automation-1-dev-linkedinPostCommenters",
 )
+API_CONFIG_PROXY_CURL_ENDPOINT = os.getenv(
+    "API_PROXY_CURL_ENDPOINT", "https://nubela.co/proxycurl/api/v2/linkedin"
+)
+API_CONFIG_PROXY_CURL_API_KEY = os.getenv(
+    "API_PROXY_CURL_API_KEY", "0cb3769e-f2b4-45ea-a745-d3b7119be966"
+)
+API_CONFIG_SNOV_GRANT_TYPE = os.getenv(
+    "API_CONFIG_SNOV_GRANT_TYPE", "client_credentials"
+)
+API_CONFIG_SNOV_CLIENT_ID = os.getenv(
+    "API_CONFIG_SNOV_CLIENT_ID", "ca0da7ac0d5bb551ee2963f5c9805c57"
+)
+API_CONFIG_SNOV_CLIENT_SECRET = os.getenv(
+    "API_CONFIG_SNOV_CLIENT_SECRET", "c2d048ef0203d52e67eeea8c8d6bd6e0"
+)
+API_CONFIG_SNOV_OAUTH_ACESS_TOKEN = os.getenv(
+    "API_CONFIG_SNOV_OAUTH_ACESS_TOKEN", "https://api.snov.io/v1/oauth/access_token"
+)
+API_CONFIG_SNOV_ADD_URL_SEARCH = os.getenv(
+    "API_CONFIG_SNOV_ADD_URL_SEARCH", "https://api.snov.io/v1/add-url-for-search"
+)
+API_CONFIG_SNOV_GET_EMAIL = os.getenv(
+    "API_CONFIG_SNOV_GET_EMAIL", "https://api.snov.io/v1/get-emails-from-url"
+)

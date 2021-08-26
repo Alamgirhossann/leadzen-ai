@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import HTTPException
 from loguru import logger
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 from starlette import status
 
 from app.config import (
@@ -15,7 +15,7 @@ from app.texau.spice import send_spice_request
 
 
 class TexAuFindLinkedInPostCommentersRequest(BaseModel):
-    url: str
+    url: HttpUrl
     cookie: Optional[str] = None
 
 

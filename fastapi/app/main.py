@@ -1,4 +1,5 @@
 import csv
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,20 +7,18 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from starlette import status
 
-# from app.bulk.router import router as bulk_router
-from app.customize_filter import router as filter_router
-
-# from app.pipl.router import router as pipl_router
-# from app.texau.router import router as texau_router
-from app.truemail import router as email_verification
+from app.bulk.router import router as bulk_router
 from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET
+from app.customize_filter import router as filter_router
 from app.email import router as email_router
+from app.pipl.router import router as pipl_router
+from app.utils.proxy_curl import router as proxycurl_router
 from app.scraper import fetch_linkedin_cookie
-from app.search_history import router as search_operations, database
-from app.users import fastapi_users
 from app.search_result_operations import router as search_operations, database
+from app.utils.snov import router as snov_router
+from app.texau.router import router as texau_router
+from app.utils.truemail import router as truemail_router
 from app.users import fastapi_users
-from app.proxy_curl import router as proxy_curl
 from app.users import (
     jwt_authentication,
     on_after_register,
@@ -50,13 +49,18 @@ async def root():
     return {"message": "Analyst People API Endpoint"}
 
 
-# app.include_router(router=pipl_router, prefix="/api")
+app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=bulk_router, prefix="/api")
-app.include_router(router=email_verification, prefix="/api")
-app.include_router(router=snov_email, prefix="/api")
-app.include_router(router=search_operations, prefix="/api", dependencies=[Depends(fastapi_users.get_current_active_user)])
+app.include_router(router=truemail_router, prefix="/api")
+app.include_router(router=snov_router, prefix="/api")
+app.include_router(router=proxycurl_router, prefix="/api")
+app.include_router(
+    router=search_operations,
+    prefix="/api",
+    dependencies=[Depends(fastapi_users.get_current_active_user)],
+)
 
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),

@@ -10,7 +10,7 @@ from app.texau.linkedin.email import (
 )
 from app.texau.linkedin.likers import TexAuFindLinkedInPostLikersRequest
 from app.texau.status import get_status_waiting
-from test.common import TEST_CONFIG_LINKEDIN_COOKIE
+from test.common import TEST_CONFIG_LINKEDIN_COOKIE, TEST_CONFIG_HEADERS
 
 
 @pytest.mark.asyncio
@@ -79,6 +79,7 @@ async def test_texau_find_commenters_of_linkedin_post():
                 "=iUSRpLE2Dt56CYpqppezgA%3D%3D",
                 cookie=TEST_CONFIG_LINKEDIN_COOKIE,
             ).dict(),
+            headers=TEST_CONFIG_HEADERS,
         )
 
         assert response

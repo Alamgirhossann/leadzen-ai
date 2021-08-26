@@ -1,28 +1,27 @@
+import json
+from typing import List
+
+import httpx
+import requests
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import  List
+from loguru import logger
+from pydantic import BaseModel, HttpUrl
+from starlette import status
+
 from app.config import (
     API_CONFIG_SNOV_GRANT_TYPE,
     API_CONFIG_SNOV_CLIENT_ID,
     API_CONFIG_SNOV_CLIENT_SECRET,
-    API_CONFIG_TRUEMAIL_API_URL,
-    API_CONFIG_TRUEMAIL_API_KEY,
     API_CONFIG_SNOV_ADD_URL_SEARCH,
     API_CONFIG_SNOV_GET_EMAIL,
-    API_CONFIG_TRUEMAIL_API_URL,
     API_CONFIG_SNOV_OAUTH_ACESS_TOKEN,
 )
-import requests
-import httpx
-import json
-from loguru import logger
-from starlette import status
 
-router = APIRouter(prefix="/get_email", tags=["Customize Email"])
+router = APIRouter(prefix="/snov", tags=["Snov"])
 
 
 class SnovIoRequest(BaseModel):
-    url: List[str] = []
+    url: List[HttpUrl] = []
 
 
 def get_access_token():
@@ -37,14 +36,14 @@ def get_access_token():
 
 
 def add_url_for_search(url):
-    print("url2",url)
+    print("url2", url)
     token = get_access_token()
     params = {"access_token": token, "url": url}
     res = requests.post(API_CONFIG_SNOV_ADD_URL_SEARCH, data=params)
     return json.loads(res.text)
 
 
-@router.post("/snov/")
+@router.post("/emails_for_url")
 async def get_emails_from_url(request: SnovIoRequest):
     try:
         url = request.url[0]
