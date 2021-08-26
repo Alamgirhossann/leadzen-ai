@@ -59,6 +59,8 @@ API_CONFIG_TRUEMAIL_API_KEY = os.getenv("API_CONFIG_TRUEMAIL_API_KEY", "QRnroC9k
 API_CONFIG_TRUEMAIL_API_URL = os.getenv("API_CONFIG_TRUEMAIL_API_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
 API_CONFIG_SELF_URL = os.getenv("API_CONFIG_SELF_URL", 'http://localhost:8000/api/refresh_linkedin_cookie')
 API_CONFIG_PROXY_URL = os.getenv("API_CONFIG_PROXY_URL", 'http://168.81.41.43:47192')
+API_CONFIG_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./people.db")
+
 API_CONFIG_FACEBOOK_LOGIN_URL = os.getenv("API_CONFIG_FACEBOOK_LOGIN_URL","https://www.facebook.com/")
 API_CONFIG_TWITTER_LOGIN_URL = os.getenv("API_CONFIG_TWITTER_LOGIN_URL","https://twitter.com/login")
 API_CONFIG_INSTA_LOGIN_URL = os.getenv("API_CONFIG_INSTA_LOGIN_URL","https://www.instagram.com/")
@@ -83,6 +85,5 @@ API_CONFIG_SELF_BASE_URL = os.getenv(
 API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv("API_CONFIG_SELF_BASE_EXTERNAL_URL","http://localhost:12005")
 
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
-API_CONFIG_DATABASE_URL = "sqlite:///./test.db"
 API_CONFIG_PROXY_CURL_ENDPOINT = os.getenv("API_PROXY_CURL_ENDPOINT", "https://nubela.co/proxycurl/api/v2/linkedin")
 API_CONFIG_PROXY_CURL_API_KEY = os.getenv("API_PROXY_CURL_API_KEY", '0cb3769e-f2b4-45ea-a745-d3b7119be966')
