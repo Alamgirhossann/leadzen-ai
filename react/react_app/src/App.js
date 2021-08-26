@@ -31,6 +31,9 @@ import SearchResultTexAu from "./Components/SearchResult/SearchResultTexAu";
 import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
+// import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
+// import ExcelFileSave from "./Components/ExportExcel/ExcelFileSave";
+import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
 
 const App = () => {
   return (
@@ -92,6 +95,7 @@ const App = () => {
         <Route path="/advanceSearch" component={SearchResultTexAu} />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />
+        <Route path="/excelDownload" component={ExcelDownload} />
 
         <Route path="/loginEmailError">
           <LoginEmailError />
