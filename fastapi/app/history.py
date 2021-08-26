@@ -1,7 +1,7 @@
-from datetime import datetime
 import json
 import uuid
-from typing import List, Optional, Dict
+from datetime import datetime
+from typing import List, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
@@ -11,7 +11,7 @@ from app.database import search_history
 from app.main import database
 from app.users import fastapi_users
 
-router = APIRouter(prefix="/history", tags=["History"])
+router = APIRouter(prefix="/history", tags=["Search History"])
 
 
 class SearchHistoryAddRequest(BaseModel):
@@ -31,22 +31,18 @@ class SearchHistoryGetMultipleRequest(BaseModel):
 
 class SearchHistoryShortResponse(BaseModel):
     id: str
-
     user_id: str
     search_type: str
     search_term: str
-
     created_on: datetime
 
 
 class SearchHistoryFullResponse(BaseModel):
     id: str
-
     user_id: str
     search_type: str
     search_term: str
     search_results: List[Dict]
-
     created_on: datetime
 
 
