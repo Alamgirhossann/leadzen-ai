@@ -7,7 +7,6 @@ import Header from "../SharedComponent/Header";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 
-
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const LogIn = () => {
@@ -32,7 +31,6 @@ const LogIn = () => {
   var emailVerified = url.searchParams.get("emailVerified");
   var email = url.searchParams.get("email");
 
-
   const [userLogin, setUserLogin] = useState({
     email: "",
     password: "",
@@ -42,8 +40,7 @@ const LogIn = () => {
   const [isValid, setValid] = useState(false);
   const [response, setResponse] = useState({ ok: null, message: null });
   const [showPass, setShowPass] = useState(false);
-  const [userVerifiedStatus,setUserVerifiedStatus] = useState(true);
-
+  const [userVerifiedStatus, setUserVerifiedStatus] = useState(true);
 
   const handleInput = (e) => {
     const name = e.target.name;
@@ -149,8 +146,20 @@ const LogIn = () => {
         let json_res = await fetchResponse.data;
         console.log("json_res", json_res);
 
+        const userStatusResponse = await axios.get(apiServer + "/users/me", {
+          headers: {
+            Authorization: `Bearer ${json_res.access_token}`,
+          },
+        });
+
+        const userStatus = await userStatusResponse;
+        console.log("userStatus>>>>>>>>", userStatus);
+
         if (json_res.access_token) {
+          console.log("token created.....");
+
           Cookies.set("user_email", userLogin.email);
+          Cookies.set("user_id", userStatus.data.id);
           Cookies.set("user_token", json_res.access_token);
         }
 
@@ -160,40 +169,29 @@ const LogIn = () => {
         if (response.ok === true) {
           // Cookies.set("user_email", userLogin.email);
         }
-        console.log("json_res.access_token,,,,,,",json_res.access_token)
-        const userStatusResponse = await axios.get(
-          apiServer + "/users/me",
-          {
-            headers: {
-              Authorization: `Bearer ${json_res.access_token}`,
-            },
-          }
-        );
+        console.log("json_res.access_token,,,,,,", json_res.access_token);
 
-        const userStatus = await userStatusResponse;
-        console.log("userStatus>>>>>>>>",userStatus)
-        console.log("usersdcbfcb.....",userStatus.data.is_verified===false)
-        if (userStatus.data.is_verified===false) {
-          console.log("in if")
-          setUserVerifiedStatus(false)
+        console.log("usersdcbfcb.....", userStatus.data.is_verified === false);
+        if (userStatus.data.is_verified === false) {
+          console.log("in if");
+          setUserVerifiedStatus(false);
           //  show a banner and prevent any next action
           //  take to LoginEmailUnverifiedError
         } else {
           //  normal user operations
           //  check for the first_time_user, if it is false take to repeated user
           //  else take to the repeated user page
-          const first_time_user = Cookies.get("first_time_user")
-          console.log("first_time_user",first_time_user)
-          if (first_time_user===true){
+          const first_time_user = Cookies.get("first_time_user");
+          console.log("first_time_user", first_time_user);
+          if (first_time_user === true) {
             history.push({
-            pathname: "/firstTimeUser",
-           });
-          }else {
+              pathname: "/firstTimeUser",
+            });
+          } else {
             history.push({
-            pathname: "/repeatedUser",
-           });
+              pathname: "/repeatedUser",
+            });
           }
-
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -228,7 +226,7 @@ const LogIn = () => {
             <div className="form-container">
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
-                  {!userVerifiedStatus?<Redirect to="/unverified" /> : null}
+                  {!userVerifiedStatus ? <Redirect to="/unverified" /> : null}
                   {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">

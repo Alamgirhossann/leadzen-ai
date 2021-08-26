@@ -9,6 +9,7 @@ import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { func } from "prop-types";
+import { v4 as uuidv4 } from "uuid";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -23,14 +24,16 @@ const SearchResult = (props) => {
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
-  const [resultData, setSearchResult] = useState({ data: null });
+  const [UnlockEmailDetails, setunlockEmailDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [searchTerm, setSearchTerm] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   const [searchType, setSearchType] = useState("");
-  const [activeIndexProfile, setActiveIndexProfile] = useState(false);
-
+  const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -60,6 +63,7 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
+        setSearchTerm(props.location.state.requestTexAu);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
         setSearchType(props.location.state.requestTexAu.searchType);
@@ -68,6 +72,7 @@ const SearchResult = (props) => {
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
+        setSearchTerm(props.location.state.customSearch);
         setCustomSearch(props.location.state.customSearch);
         console.log(
           "from advance.customSearch filters .....",
@@ -205,7 +210,10 @@ const SearchResult = (props) => {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
-          if (data.data) setMyLeads(data.data);
+          if (data.data) {
+            setMyLeads(data.data);
+            saveSearchedRecord(data.data);
+          }
 
           return;
         }
@@ -232,20 +240,62 @@ const SearchResult = (props) => {
 
   const [show, setShow] = useState();
   const [selected, setSelected] = useState(false);
-  const showClick = (e, index) => {
+  const handleUnlockEmail = async (e, index, data) => {
     e.preventDefault();
-    console.log("inside showClick");
-    if (!show[index]) {
-      console.log(show);
-      console.log("inside showClick if");
-      setShow(
-        show.map((value, i) => {
-          if (index === i) return true;
-          else return value;
-        })
+    console.log("in handle unlock>>>>", data);
+    // try {
+    //   let isDuplicate = false;
+    //
+    //   UnlockEmailDetails.map((spec) => {
+    //     console.log("spec>>>", spec.index);
+    //     if (spec.index === `${currentPage}${index}`) {
+    //       isDuplicate = true;
+    //     }
+    //   });
+    //   console.log("isDuplicate>>>>", isDuplicate);
+    //   if (isDuplicate === false) {
+    let requestForSaveEmailCredit = {
+      user_id: Cookies.get("user_id"),
+      search_id: searchId,
+      email: ["sff", "ddsg"],
+      search_index: parseInt(`${currentPage}${index}`),
+    };
+    try {
+      const response = await fetch(
+        apiServer + "/search_result/save_email_credit_history",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveEmailCredit),
+        }
       );
-      console.log(show);
+
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
+    } catch (e) {
+      console.error("Exception>>", e);
     }
+    //   }
+    //
+    //   console.log("specificUser>>>>>>>", specificUserDetails);
+    //   specificUserDetails?.map((spec) => {
+    //     console.log(
+    //       "Check details>>>>",
+    //       spec.index,
+    //       spec.details === "Record Not Found"
+    //     );
+    //   });
+    // } catch (err) {
+    //   console.error("Error: ", err);
+    // }
   };
 
   useEffect(() => {
@@ -275,17 +325,20 @@ const SearchResult = (props) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-  const saveSearchedRecord = async (response, searchType, url) => {
+  const saveSearchedRecord = async (response) => {
     console.log("In saveSearchedRecord");
+
     let requestForSaveSearch = {
-      result: response.toString(),
-      search_type: searchType,
-      search_param: url,
+      user_id: Cookies.get("user_id"),
+      search_id: Cookies.get("user_email") + uuidv4(),
+      search_type: "texAu",
+      search_term: JSON.stringify(searchTerm),
+      results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
     try {
       const response = await fetch(
-        apiServer + "/search_result/save_search_result",
+        apiServer + "/search_result/save_search_history",
         {
           method: "POST",
           headers: {
@@ -296,7 +349,13 @@ const SearchResult = (props) => {
           body: JSON.stringify(requestForSaveSearch),
         }
       );
-      console.log("response from saveResult>>>", response);
+
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
     } catch (e) {
       console.error("Exception>>", e);
     }
@@ -332,15 +391,50 @@ const SearchResult = (props) => {
         });
 
         let json_res = await response.json();
-        console.log(
-          "Data>>>>>>>>>>>",
-          JSON.stringify(json_res),
-          ">>>>",
-          searchType
-        );
-
+        console.log("Data Pipl..>>>>>>>>>>>", json_res, ">>>>", searchType);
+        let phones = [];
         if (json_res) {
-          saveSearchedRecord(JSON.stringify(json_res), searchType, data.url);
+          for (let i = 0; i < json_res.length; i++) {
+            let obj = json_res[i];
+            console.log("in for loop pipl>>>", obj, ">>>>", obj.phones.length);
+            for (let j = 0; j < obj.phones.length; j++) {
+              phones.push(obj.phones[j].number);
+            }
+          }
+          console.log("Phones>>>>>>", phones);
+          let requestForSaveProfileCredit = {
+            user_id: Cookies.get("user_id"),
+            search_id: searchId,
+            phone: phones,
+            search_index: `${currentPage}${index}`,
+          };
+          try {
+            const response = await fetch(
+              apiServer + "/search_result/save_profile_credit_history",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                  Authorization: `Bearer ${Cookies.get("user_token")}`,
+                },
+                body: JSON.stringify(requestForSaveProfileCredit),
+              }
+            );
+
+            const result = response.json();
+            result.then((value) => {
+              console.log("value >>>>> ", value);
+              setSearchId(value.search_id);
+            });
+            console.log(
+              "response from saveResult>>>",
+              result,
+              result.search_id
+            );
+          } catch (e) {
+            console.error("Exception>>", e);
+          }
           setSpecificUserDetails((prev) => [
             ...prev,
             { index: `${currentPage}${index}`, details: json_res[0] },
@@ -519,7 +613,12 @@ const SearchResult = (props) => {
                               >
                                 abc@xyz.com
                               </small>
-                              <a href="#" onClick={(e) => showClick(e, index)}>
+                              <a
+                                href="#"
+                                onClick={(e) =>
+                                  handleUnlockEmail(e, index, data)
+                                }
+                              >
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>
