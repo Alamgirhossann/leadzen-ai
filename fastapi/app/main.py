@@ -9,13 +9,14 @@ from starlette import status
 from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_DATABASE_URL, API_CONFIG_JWT_SECRET
 from app.customize_filter import router as filter_router
 from app.email import router as email_router
-from app.email_truemail import router as email_verification
+from app.snov import router as snov_email
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau import router as texau_router
 from app.email_truemail import router as email_verification
 from app.search_result_operations import router as search_operations, database
 from app.users import fastapi_users
+from app.proxy_curl import router as proxy_curl
 from app.users import (
     jwt_authentication,
     on_after_register,
@@ -48,8 +49,9 @@ app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
+app.include_router(router=snov_email, prefix="/api")
 app.include_router(router=search_operations, prefix="/api", dependencies=[Depends(fastapi_users.get_current_active_user)])
-# app.include_router(router=search_operations, prefix="/api")
+
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
     prefix="/api/auth/jwt",
@@ -80,6 +82,16 @@ app.include_router(
 app.include_router(router=email_router, prefix="/api")
 
 
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
+
+
 # @app.on_event("startup")
 # @repeat_every(seconds=60 * 60)
 # def refresh_linkedin_cookie():
@@ -104,17 +116,6 @@ def refresh_linkedin_cookie_manually():
         writer.writerow([data])
     logger.debug(header)
     return status.HTTP_200_OK
-
-
-@app.on_event("startup")
-async def startup():
-    logger.debug("In database Connectin....")
-    await database.connect()
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
 
 
 @app.get("/test_auth")
