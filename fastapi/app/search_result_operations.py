@@ -1,4 +1,6 @@
 import json
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 
 import sqlalchemy
 from fastapi import APIRouter
@@ -15,50 +17,48 @@ metadata = sqlalchemy.MetaData()
 
 database = databases.Database(API_CONFIG_DATABASE_URL)
 
-search_result = sqlalchemy.Table(
+search_history = sqlalchemy.Table(
 
-    "search_result",
+    "search_history",
 
     metadata,
 
-    sqlalchemy.Column("search_id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("search_param", sqlalchemy.String, unique=True),
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True, default=uuid.uuid4),
+    sqlalchemy.Column("search_id", sqlalchemy.String, unique=True),
     sqlalchemy.Column("user_id", sqlalchemy.String),
-    sqlalchemy.Column("result", sqlalchemy.String),
+    sqlalchemy.Column("results", sqlalchemy.String),
     sqlalchemy.Column("search_type", sqlalchemy.String),
-    sqlalchemy.Column("additional_data", sqlalchemy.String),
+    sqlalchemy.Column("search_term", sqlalchemy.String),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
 
 )
 
-search_result_phone = sqlalchemy.Table(
+profile_credit_history = sqlalchemy.Table(
 
-    "search_result_phone",
+    "profile_credit_history",
 
     metadata,
 
-    sqlalchemy.Column("phone_id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True, default=uuid.uuid4),
     sqlalchemy.Column("user_id", sqlalchemy.String),
-    sqlalchemy.Column("search_param", sqlalchemy.String),
-    sqlalchemy.Column("phone_number", sqlalchemy.Integer),
-    sqlalchemy.Column("phone_is_verified", sqlalchemy.Boolean),
-    sqlalchemy.Column("phone_credit_used", sqlalchemy.Boolean),
+    sqlalchemy.Column("search_id", sqlalchemy.String),
+    sqlalchemy.Column("phone_number", sqlalchemy.String),
+    sqlalchemy.Column("search_index", sqlalchemy.Integer),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
 
 )
 
-search_result_email = sqlalchemy.Table(
+email_credit_history = sqlalchemy.Table(
 
-    "search_result_email",
+    "email_credit_history",
 
     metadata,
 
-    sqlalchemy.Column("email_id", sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True, default=uuid.uuid4),
     sqlalchemy.Column("user_id", sqlalchemy.String),
-    sqlalchemy.Column("search_param", sqlalchemy.String),
-    sqlalchemy.Column("email", sqlalchemy.String),
-    sqlalchemy.Column("email_is_verified", sqlalchemy.Boolean),
-    sqlalchemy.Column("email_credit_used", sqlalchemy.Boolean),
+    sqlalchemy.Column("search_id", sqlalchemy.String),
+    sqlalchemy.Column("email_address", sqlalchemy.String),
+    sqlalchemy.Column("search_index", sqlalchemy.Integer),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime, default=datetime.datetime.now()),
 
 )
@@ -69,73 +69,69 @@ engine = sqlalchemy.create_engine(
 metadata.create_all(engine)
 
 
-class SearchResultIn(BaseModel):
-    result: str
-    search_param: str
-    search_type: Optional[str]
-    user_id: Optional[str] = None
-    additional_data: Optional[str] = None
+class SearchHistoryRequest(BaseModel):
+    user_id: str
+    search_id: str
+    search_type: str
+    search_term: str
+    results: List[Dict]
     created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
-class SearchResult(BaseModel):
-    search_id: int
-    search_param: str
-    result: Optional[str]
-    search_type: Optional[str]
-    user_id: Optional[str] = None
-    additional_data: Optional[str] = None
-    created_on: Optional[datetime.datetime]
-
-
-class SearchResultPhoneIn(BaseModel):
-    search_param: Optional[str] = None
-    user_id: Optional[str] = None
-    phone_number: Optional[int] = None
-    phone_is_verified: Optional[bool] = False
-    phone_credit_used: Optional[bool] = False
+class EmailCreditHistoryRequest(BaseModel):
+    user_id: str
+    search_id: str
+    email: List[str]
+    search_index: int
     created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
-class SearchResultPhone(BaseModel):
-    phone_id: int
-    search_param: Optional[str] = None
-    user_id: Optional[str] = None
-    phone_number: Optional[int] = None
-    phone_is_verified: Optional[bool] = False
-    phone_credit_used: Optional[bool] = False
+class ProfileCreditHistoryRequest(BaseModel):
+    user_id: str
+    search_id: str
+    phone: List[str]
+    search_index: int
     created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
-class SearchResultEmailIn(BaseModel):
-    user_id: Optional[str] = None
-    search_param: Optional[str] = None
-    email: Optional[str] = None
-    email_is_verified: Optional[bool] = False
-    email_credit_used: Optional[bool] = False
+class SearchHistoryResponse(BaseModel):
+    id: str
+    user_id: str
+    search_id: str
+    search_type: str
+    search_term: str
+    results: List[Dict]
     created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
-class SearchResultEmail(BaseModel):
-    email_id: int
-    search_param: Optional[str] = None
-    user_id: Optional[str] = None
-    email: Optional[str] = None
-    email_is_verified: Optional[bool] = False
-    email_credit_used: Optional[bool] = False
+class EmailCreditHistoryResponse(BaseModel):
+    id: Optional[str]
+    user_id: Optional[str]
+    search_id: Optional[str]
+    email_address: Optional[str]
+    search_index: Optional[int]
     created_on: Optional[datetime.datetime] = datetime.datetime.now()
 
 
-@router.get("/get_search_result", response_model=List[SearchResult])
-async def read_search_results(search_id: Optional[int] = None):
+class ProfileCreditHistoryResponse(BaseModel):
+    id: Optional[str]
+    user_id: Optional[str]
+    search_id: Optional[str]
+    phone_number: Optional[str]
+    search_index: Optional[int]
+    created_on: Optional[datetime.datetime] = datetime.datetime.now()
+
+
+@router.get("/get_search_history", response_model=List[SearchHistoryResponse])
+async def read_search_history(search_id: Optional[str] = None):
     result = None
     print("search_id>>>", search_id)
     try:
         if search_id:
-            query = "SELECT * FROM search_result WHERE search_id = :search_id"
+            query = "SELECT * FROM search_history WHERE search_id = :search_id"
             result = await database.fetch_all(query=query, values={"search_id": search_id})
         else:
-            query = "SELECT * FROM search_result"
+            query = "SELECT * FROM search_history"
             result = await database.fetch_all(query=query)
     except Exception as e:
         logger.critical("Error>>>" + str(e))
@@ -143,112 +139,160 @@ async def read_search_results(search_id: Optional[int] = None):
     return result
 
 
-@router.get("/get_search_result_by_user_id", response_model=List[SearchResult])
-async def read_search_results(user_id: str):
+@router.get("/get_search_history_by_user_id", response_model=List[SearchHistoryResponse])
+async def read_search_history_by_user_id(user_id: str):
     print("search_id>>>", user_id)
     result = None
     try:
         if user_id:
-            query = "SELECT * FROM search_result WHERE user_id = :user_id"
+            query = "SELECT * FROM search_history WHERE user_id = :user_id"
             result = await database.fetch_all(query=query, values={"user_id": user_id})
-    # result = {lst[i]: lst[i + 1] for i in range(0, len(lst), 2)}
-    except Exception as e:
-        logger.critical("Error>>>" + str(e))
-    return result
-
-
-@router.get("/get_search_result_by_id_and_param", response_model=List[SearchResult])
-async def read_search_results(user_id: str, search_param: str):
-    print("param>>>", search_param)
-    result = None
-    try:
-        if search_param:
-            query = "SELECT * FROM search_result WHERE search_param = :search_param AND user_id = :user_id"
-            result = await database.fetch_all(query=query, values={"search_param": search_param, "user_id": user_id})
 
     except Exception as e:
         logger.critical("Error>>>" + str(e))
     return result
 
 
-@router.get("/get_search_result_phone", response_model=List[SearchResultPhone])
-async def read_search_results_phone(phone_id: int):
+@router.get("/get_profile_history_by_user_id", response_model=List[ProfileCreditHistoryResponse])
+async def read_profile_history_by_user_id(user_id: str):
     result = None
     try:
-        if phone_id:
-            query = "SELECT * FROM search_result_phone WHERE phone_id = :phone_id"
-            result = await database.fetch_all(query=query, values={"phone_id": phone_id})
+        if user_id:
+            query = "SELECT * FROM profile_credit_history WHERE user_id = :user_id"
+            result = await database.fetch_all(query=query, values={"user_id": user_id})
     except Exception as e:
         logger.critical("Error>>>" + str(e))
     return result
 
 
-@router.get("/get_search_result_email", response_model=List[SearchResultEmail])
-async def read_search_results_email(email_id: int):
+@router.get("/get_profile_credit_history_by_search_id_and_user_id", response_model=List[ProfileCreditHistoryResponse])
+async def read_profile_history_by_search_id_and_user_id(search_id: str, user_id: str):
     result = None
     try:
-        if email_id:
-            query = "SELECT * FROM search_result_email WHERE email_id = :email_id"
-            result = await database.fetch_all(query=query, values={"email_id": email_id})
+        if search_id and user_id:
+            query = "SELECT * FROM profile_credit_history WHERE search_id = :search_id AND user_id = :user_id"
+            result = await database.fetch_all(query=query, values={"search_id": search_id, "user_id": user_id})
     except Exception as e:
         logger.critical("Error>>>" + str(e))
     return result
 
 
-@router.post("/save_search_result", response_model=SearchResult)
-async def create_search_result(search_results: SearchResultIn):
+@router.get("/get_email_credit_history_by_user_id", response_model=List[EmailCreditHistoryResponse])
+async def read_search_results_email(user_id: int):
     result = None
     try:
-        query = search_result.insert().values(result=search_results.result,
-                                              search_type=search_results.search_type,
-                                              search_param=search_results.search_param,
-                                              user_id=search_results.user_id,
-                                              additional_data=search_results.additional_data,
-                                              created_on=datetime.datetime.now())
-
-        last_record_id = await database.execute(query)
-        result = {**search_results.dict(), "search_id": last_record_id}
-
+        if user_id:
+            query = "SELECT * FROM email_credit_history WHERE user_id = :user_id"
+            result = await database.fetch_all(query=query, values={"user_id": user_id})
     except Exception as e:
         logger.critical("Error>>>" + str(e))
-
     return result
 
 
-@router.post("/save_search_result_phone", response_model=SearchResultPhone)
-async def create_search_result_phone(search_results: SearchResultPhoneIn):
+@router.get("/get_email_credit_history_by_search_id_and_user_id", response_model=List[EmailCreditHistoryResponse])
+async def read_email_history_by_search_id_and_user_id(search_id: str, user_id: str):
     result = None
     try:
-        query = search_result_phone.insert().values(
+        if search_id and user_id:
+            query = "SELECT * FROM email_credit_history WHERE search_id = :search_id AND user_id = :user_id"
+            result = await database.fetch_all(query=query, values={"search_id": search_id, "user_id": user_id})
+    except Exception as e:
+        logger.critical("Error>>>" + str(e))
+    return result
+
+
+@router.post("/save_search_history", response_model=SearchHistoryResponse)
+async def create_search_history(search_results: SearchHistoryRequest):
+    result = None
+    id = uuid.uuid4()
+    logger.debug("Id>>>>>>>>" + str(id), search_results)
+    print(type(search_results.results))
+    # logger.debug("Result..."+json.dumps(search_results.results))
+
+    try:
+        query = search_history.insert().values(
+            id=str(id),
             user_id=search_results.user_id,
-            search_param=search_results.search_param,
-            phone_number=search_results.phone_number,
-            phone_is_verified=search_results.phone_is_verified,
-            phone_credit_used=search_results.phone_credit_used,
+            search_id=search_results.search_id,
+            search_type=search_results.search_type,
+            search_term=search_results.search_term,
+            results=str(json.dumps(search_results.results)),
             created_on=datetime.datetime.now())
 
         last_record_id = await database.execute(query)
-        result = {**search_results.dict(), "phone_id": last_record_id}
+        result = {**search_results.dict(), "id": last_record_id}
+
     except Exception as e:
         logger.critical("Error>>>" + str(e))
 
     return result
 
 
-@router.post("/save_search_result_email", response_model=SearchResultEmail)
-async def create_search_result_email(search_results: SearchResultEmailIn):
-    result = None
-    try:
-        query = search_result_email.insert().values(
-            user_id=search_results.user_id,
-            search_param=search_results.search_param,
-            email=search_results.email,
-            email_is_verified=search_results.email_is_verified,
-            email_credit_used=search_results.email_credit_used,
-            created_on=datetime.datetime.now())
+# @router.post("/save_profile_credit_history", response_model=ProfileCreditHistoryResponse)
+# async def create_profile_credit_history(search_results: ProfileCreditHistoryRequest):
+#     result = None
+#     try:
+#         query = profile_credit_history.insert().values(
+#             id=str(uuid.uuid4()),
+#             user_id=search_results.user_id,
+#             search_id=search_results.search_id,
+#             phone_number=search_results.phone,
+#             search_index=search_results.search_index,
+#             created_on=datetime.datetime.now())
+#
+#         last_record_id = await database.execute(query)
+#         result = {**search_results.dict(), "id": last_record_id}
+#     except Exception as e:
+#         logger.critical("Error>>>" + str(e))
+#
+#     return result
 
-        last_record_id = await database.execute(query)
-        result = {**search_results.dict(), "email_id": last_record_id}
+@router.post("/save_profile_credit_history", response_model=ProfileCreditHistoryResponse)
+async def create_profile_credit_history(search_results: ProfileCreditHistoryRequest):
+    result = None
+    logger.debug("Request>>>>" + str(search_results.phone))
+
+    values = [{"id": str(uuid.uuid4()),
+               "user_id": search_results.user_id,
+               "search_id": search_results.search_id,
+               "phone_number": k,
+               "search_index": search_results.search_index,
+               "created_on": datetime.datetime.now()
+               } for k in [search_results.phone[i] for i in range(0, len(search_results.phone))]]
+    print("values>>>>",values)
+
+
+    try:
+        query = "INSERT INTO profile_credit_history(id, user_id, search_id, phone_number, search_index, created_on) VALUES(:id, :user_id, :search_id, :phone_number, :search_index, :created_on)"
+
+        last_record_id = await database.execute_many(query=query, values=values)
+        result = {**search_results.dict(), "id": last_record_id}
+    except Exception as e:
+        logger.critical("Error>>>" + str(e))
+
+    return result
+
+
+@router.post("/save_email_credit_history", response_model=EmailCreditHistoryResponse)
+async def create_email_credit_history(search_results: EmailCreditHistoryRequest):
+
+    result = None
+    logger.debug("Request>>>>" + str(search_results.email))
+
+    values = [{"id": str(uuid.uuid4()),
+               "user_id": search_results.user_id,
+               "search_id": search_results.search_id,
+               "email_address": k,
+               "search_index": search_results.search_index,
+               "created_on": datetime.datetime.now()
+               } for k in [search_results.email[i] for i in range(0, len(search_results.email))]]
+    print("values>>>>", values)
+
+    try:
+        query = "INSERT INTO email_credit_history(id, user_id, search_id, email_address, search_index, created_on) VALUES(:id, :user_id, :search_id, :email_address, :search_index, :created_on)"
+
+        last_record_id = await database.execute_many(query=query, values=values)
+        result = {**search_results.dict(), "id": last_record_id}
     except Exception as e:
         logger.critical("Error>>>" + str(e))
 

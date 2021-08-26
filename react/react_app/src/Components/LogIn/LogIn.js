@@ -146,8 +146,20 @@ const LogIn = () => {
         let json_res = await fetchResponse.data;
         console.log("json_res", json_res);
 
+        const userStatusResponse = await axios.get(apiServer + "/users/me", {
+          headers: {
+            Authorization: `Bearer ${json_res.access_token}`,
+          },
+        });
+
+        const userStatus = await userStatusResponse;
+        console.log("userStatus>>>>>>>>", userStatus);
+
         if (json_res.access_token) {
+          console.log("token created.....");
+
           Cookies.set("user_email", userLogin.email);
+          Cookies.set("user_id", userStatus.data.id);
           Cookies.set("user_token", json_res.access_token);
         }
 
@@ -158,14 +170,6 @@ const LogIn = () => {
           // Cookies.set("user_email", userLogin.email);
         }
         console.log("json_res.access_token,,,,,,", json_res.access_token);
-        const userStatusResponse = await axios.get(apiServer + "/users/me", {
-          headers: {
-            Authorization: `Bearer ${json_res.access_token}`,
-          },
-        });
-
-        const userStatus = await userStatusResponse;
-        console.log("userStatus>>>>>>>>", userStatus);
         console.log("usersdcbfcb.....", userStatus.data.is_verified === false);
         if (userStatus.data.is_verified === false) {
           console.log("in if");
