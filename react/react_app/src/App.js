@@ -40,7 +40,7 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/">
-          <Home />
+          <LogIn />
         </Route>
         <Route path="/resetPassword">
           <ResetPassword />
