@@ -16,6 +16,7 @@ from app.texau import router as texau_router
 from app.email_truemail import router as email_verification
 from app.search_result_operations import router as search_operations, database
 from app.users import fastapi_users
+from app.proxy_curl import router as proxy_curl
 from app.users import (
     jwt_authentication,
     on_after_register,
@@ -50,7 +51,7 @@ app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
 app.include_router(router=snov_email, prefix="/api")
 app.include_router(router=search_operations, prefix="/api", dependencies=[Depends(fastapi_users.get_current_active_user)])
-
+app.include_router(router=proxy_curl, prefix="/api")
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
     prefix="/api/auth/jwt",
