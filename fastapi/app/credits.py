@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic.main import BaseModel
 
-from app.database import profile_credit_history, email_credit_history
-from app.main import database
+from app.database import profile_credit_history, email_credit_history, database
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/credits", tags=["Credits"])

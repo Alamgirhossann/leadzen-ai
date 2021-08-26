@@ -7,8 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel, conlist
 
-from app.database import search_history
-from app.main import database
+from app.database import search_history, database
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/history", tags=["Search History"])
@@ -81,49 +80,49 @@ async def get_search_history_by_id(
         )
 
 
-@router.post("/ids", response_model=List[SearchHistoryFullResponse])
-async def get_search_history_by_multiple_ids(
-    request: SearchHistoryGetMultipleRequest,
-    user=Depends(fastapi_users.get_current_active_user),
-):
-    logger.debug(f"{request=}, {user=}")
-    try:
-        search_ids = ", ".join(["'" + x + "'" for x in request.search_ids])
-        query = (
-            f"SELECT * FROM search_history WHERE id IN ({search_ids}) AND "
-            "user_id = :user_id"
-        )
-
-        logger.debug(f"{query=}")
-        if not (
-            rows := await database.fetch_all(
-                query=query,
-                values={
-                    "user_id": str(user.id),
-                },
-            )
-        ):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-
-        logger.debug(f"{rows=}")
-
-        processed_rows = [dict(x) for x in rows]
-        processed_rows = [
-            x | {"search_results": json.loads(x["search_results"])}
-            for x in processed_rows
-        ]
-
-        return [SearchHistoryFullResponse(**x) for x in processed_rows if x]
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        logger.critical(f"Exception Querying Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
-        )
+# @router.post("/ids", response_model=List[SearchHistoryFullResponse])
+# async def get_search_history_by_multiple_ids(
+#     request: SearchHistoryGetMultipleRequest,
+#     user=Depends(fastapi_users.get_current_active_user),
+# ):
+#     logger.debug(f"{request=}, {user=}")
+#     try:
+#         search_ids = ", ".join(["'" + x + "'" for x in request.search_ids])
+#         query = (
+#             f"SELECT * FROM search_history WHERE id IN ({search_ids}) AND "
+#             "user_id = :user_id"
+#         )
+#
+#         logger.debug(f"{query=}")
+#         if not (
+#             rows := await database.fetch_all(
+#                 query=query,
+#                 values={
+#                     "user_id": str(user.id),
+#                 },
+#             )
+#         ):
+#             logger.warning("Invalid Query Results")
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+#             )
+#
+#         logger.debug(f"{rows=}")
+#
+#         processed_rows = [dict(x) for x in rows]
+#         processed_rows = [
+#             x | {"search_results": json.loads(x["search_results"])}
+#             for x in processed_rows
+#         ]
+#
+#         return [SearchHistoryFullResponse(**x) for x in processed_rows if x]
+#     except HTTPException as e:
+#         raise e
+#     except Exception as e:
+#         logger.critical(f"Exception Querying Database: {str(e)}")
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
+#         )
 
 
 @router.get("/all", response_model=List[SearchHistoryShortResponse])
