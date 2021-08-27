@@ -507,7 +507,7 @@ const SearchResult = (props) => {
                           alt=""
                       />
                     </small>
-                    <button onClick={handleExcel} className="export-btn">
+                    <button onClick={handleExcel} className="export-btn" disabled={isCheck.length === 0 ? true : false}>
                       Export{" "}
                       <img
                           className="ps-3"
