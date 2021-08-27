@@ -10,6 +10,7 @@ from app.config import (
     API_CONFIG_TEXAU_KEY,
     API_CONFIG_TEXAU_EXECUTION_URL,
     API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL,
+    API_CONFIG_MAX_RESULTS_PER_CALL,
 )
 from app.texau.common import TexAuResult
 
@@ -49,7 +50,9 @@ async def get_status_once(execution_id: str) -> TexAuResult:
                 if not isinstance(data["execution"]["output"], list):
                     return TexAuResult(data=[data["execution"]["output"]])
 
-                return TexAuResult(data=data["execution"]["output"])
+                return TexAuResult(
+                    data=data["execution"]["output"][:API_CONFIG_MAX_RESULTS_PER_CALL]
+                )
             elif data["execution"]["status"] == "cookieError":
                 logger.error(f"Cookie Error, Cannot Proceed, {execution_id=}")
                 raise HTTPException(
@@ -105,9 +108,19 @@ async def get_status_waiting(
                             )
 
                             if not isinstance(data["execution"]["output"], list):
-                                return TexAuResult(data=[data["execution"]["output"]])
+                                return TexAuResult(
+                                    data=[
+                                        data["execution"]["output"][
+                                            :API_CONFIG_MAX_RESULTS_PER_CALL
+                                        ]
+                                    ]
+                                )
 
-                            return TexAuResult(data=data["execution"]["output"])
+                            return TexAuResult(
+                                data=data["execution"]["output"][
+                                    :API_CONFIG_MAX_RESULTS_PER_CALL
+                                ]
+                            )
                         elif data["execution"]["status"] == "cookieError":
                             logger.error(
                                 f"Cookie Error, Cannot Proceed, {execution_id=}"
