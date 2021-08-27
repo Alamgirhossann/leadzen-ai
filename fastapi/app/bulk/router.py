@@ -1,5 +1,6 @@
 import tempfile
 import uuid
+from typing import List
 
 import pandas as pd
 from fastapi import (
@@ -14,6 +15,7 @@ from fastapi import (
 )
 from fastapi_cache.decorator import cache
 from loguru import logger
+from pydantic import BaseModel, HttpUrl
 from sse_starlette.sse import EventSourceResponse
 
 from app.bulk.common import BulkUploadResponse
@@ -129,3 +131,28 @@ async def upload_csv_file(
 async def send_status_stream(filename: str, request: Request):
     event_generator = status_event_generator(filename=filename, request=request)
     return EventSourceResponse(event_generator)
+
+
+class BulkExportToExcelRequest(BaseModel):
+    profile_urls: List[str]
+
+
+@router.post("/export/excel", response_model=BulkUploadResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
+async def export_excel_file(
+    app_request: BulkExportToExcelRequest,
+    background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    outgoing_filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
+
+    background_tasks.add_task(
+        handle_bulk_profile_urls,
+        request=BulkProfileUrlRequest(
+            urls=app_request.profile_urls,
+            outgoing_filename=outgoing_filename,
+            user=user,
+        ),
+    )
+
+    return BulkUploadResponse(input_filename="-", output_filename=outgoing_filename)

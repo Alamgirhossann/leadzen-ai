@@ -85,7 +85,10 @@ async def write_to_file(responses: List[Dict], filename: str):
         df = pd.DataFrame([x for x in responses if x])
         logger.debug(df.head())
 
-        df.to_csv(filename, index=False)
+        if filename.endswith(".xlsx"):
+            df.to_excel(filename, index=False)
+        else:
+            df.to_csv(filename, index=False)
 
         os.sync()
 
