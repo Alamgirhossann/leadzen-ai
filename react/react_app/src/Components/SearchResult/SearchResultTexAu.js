@@ -35,8 +35,7 @@ const SearchResult = (props) => {
   const [searchType, setSearchType] = useState("");
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
-  const tempCookie =
-    "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7qCvLu04AcqhIb82grlYAcZhj_-h2n29gx0DaQeazGVcQu4OAyCmP_fgyH47Ial6nZOGcIuivmbjNPDnFHaaOR1EbEcJioDrM_xMpE-rHNd44Rwwno2VEaJK2";
+  const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
   let today = new Date();

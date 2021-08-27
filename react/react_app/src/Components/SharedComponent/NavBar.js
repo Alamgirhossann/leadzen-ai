@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const NavBar = (props) => {
   const [user, setUser] = useState(props.user);
+
+  function handleSetLinkedInCookie() {
+    const cookie = prompt("Please paste your LinkedIn cookie here");
+    if (!cookie) {
+      alert("Invalid Cookie");
+    }
+    Cookies.set("user_linkedin_cookie", cookie);
+  }
+
   return (
     <div style={{ paddingRight: "0px" }}>
       <nav
@@ -136,8 +146,12 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/history">
-                      Export History
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={handleSetLinkedInCookie}
+                    >
+                      Set LinkedIn Cookie
                     </a>
                   </li>
                   <li>
