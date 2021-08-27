@@ -129,7 +129,7 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/pricing">
+                    <a className="dropdown-item" href="https://leadzen.ai/pricing/">
                       Buy Credits
                     </a>
                   </li>
