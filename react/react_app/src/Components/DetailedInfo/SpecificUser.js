@@ -12,84 +12,80 @@ const SpecificUser = (props) => {
         document.body.removeChild(script);
     }
 }, []);
+   useEffect(async () => {
+   console.log("props>>>>>",props)
+ })
   return (
     <div>
-
-            <section className="item-section">
-                <div className="phone-child-div">
-                    <div className=''>
-                        <h6>Probable Phone Number Associated</h6>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
+      {" "}
+      {props.details === "Record Not Found" || props.details === "Item not found"|| props.details === null ? (
+        <div>
+          {" "}
+          <section className="item-section" style={{ textAlign: "center" }}>
+            Record Not found
+          </section>
+        </div>
+      ) : (
+        <div>
+          <section className="item-section">
+            <div className="phone-child-div">
+              <div className="">
+                {props.details.phones.length !== 0 ? (
+                  <h6>Associated Phone Numbers</h6>
+                ) : null}
+                {props.details.phones
+                  ? props.details.phones.map((number) => (
+                      <div className="ms-2 d-flex align-items-center mb-3">
+                        <div className="d-flex align-items-center">
+                          <img src="assets/images/Group 1338.png" alt="" />
+                          <small className="ms-2">{number.number}</small>
                         </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
+                        <div className="d-flex align-items-center">
+                          <small className="me-2 ms-2">{number.type}</small>
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigator.clipboard.writeText(number.number);
+                              alert("Phone Number Copied!");
+                            }}
+                          >
+                            <img
+                              style={{ height: "10px" }}
+                              src="assets/images/Union.png"
+                              alt=""
+                            />
+                          </a>
                         </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
+                      </div>
+                    ))
+                  : null}
+              </div>
+              <div>
+                {props.details.emails.length !== 0 ? (
+                  <h6>Associated Email Addresses</h6>
+                ) : null}
+                {props.details.emails
+                  ? props.details.emails.map((email) => (
+                      <div
+                        className="ms-2 d-flex align-items-center mb-3"
+                        align="left"
+                      >
+                        <div className="d-flex align-items-center">
+                          <small className="ms-2">{email.address}</small>
+                          <img
+                            className="ms-2"
+                            style={{ height: "10px" }}
+                            src="assets/images/Union.png"
+                            alt=""
+                          />
                         </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <img src="assets/images/Group 1338.png" alt="" />
-                                <small className='ms-2'>404-786-5546</small>
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <small className='me-2 ms-2'>mobile</small>
-                                <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h6>Probable Email Associated</h6>
-                        <div className='ms-2 d-flex align-items-center mb-3'>
-                            <div className="d-flex align-items-center">
-                                <small className='ms-2'>Chris07@XXXX.com</small>
-                                <img className='ms-2' style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
-                            </div>
-                            <div className="d-flex align-items-center">
-                                <img className='ms-2' src="assets/images/Vector.png" alt="" />
-                            </div>
+                        <div className="d-flex align-items-center">
+                          <img
+                            className="ms-2"
+                            src="assets/images/Vector.png"
+                            alt=""
+                          />
                         </div>
                         <div className='ms-2 d-flex align-items-center mb-3'>
                             <div className="d-flex align-items-center">
