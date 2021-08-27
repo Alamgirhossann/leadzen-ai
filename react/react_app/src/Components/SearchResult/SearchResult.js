@@ -9,6 +9,8 @@ import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 
+import { v4 as uuidv4 } from "uuid";
+
 const SearchResult = (props) => {
   useEffect(() => {
     const script = document.createElement("script");
@@ -28,7 +30,15 @@ const SearchResult = (props) => {
     keywords: null,
     csv_file: null,
   });
-
+  const [specificUserDetails, setSpecificUserDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [unlockEmailDetails, setUnlockEmailDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [searchTerm, setSearchTerm] = useState({});
+  const [searchType, setSearchType] = useState("");
+  const [searchId, setSearchId] = useState();
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
@@ -56,6 +66,7 @@ const SearchResult = (props) => {
   useEffect(async () => {
     if (props.location.state) {
       console.log("Request..", props.location.state.reqJsonPipl);
+      setSearchTerm(props.location.state.reqJsonPipl);
       try {
         const response = await fetch(apiServer + "/pipl/search", {
           method: "POST",
@@ -73,6 +84,7 @@ const SearchResult = (props) => {
         setLoading(false);
         if (!json_res.detail) {
           setMyLeads(json_res);
+          await saveSearchedRecord(json_res, "PIPL");
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -128,6 +140,176 @@ const SearchResult = (props) => {
 
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
+  };
+
+  const saveSearchedRecord = async (response, searchType) => {
+    console.log("In saveSearchedRecord");
+
+    let requestForSaveSearch = {
+      search_id: uuidv4(),
+      search_type: searchType,
+      search_term: JSON.stringify(searchTerm),
+      search_results: response,
+    };
+    console.log("In saveSearchedRecord...", requestForSaveSearch);
+    try {
+      const response = await fetch(apiServer + "/history/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(requestForSaveSearch),
+      });
+
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
+
+  const handleUnlockEmail = async (e, index, data) => {
+    e.preventDefault();
+    console.log("in handle unlock>>>>", data);
+    // try {
+    let isDuplicate = false;
+
+    unlockEmailDetails.map((spec) => {
+      console.log("spec email>>>", spec.index);
+      if (spec.index === `${currentPage}${index}`) {
+        isDuplicate = true;
+      }
+    });
+    console.log("isDuplicate>>>>", isDuplicate);
+    if (isDuplicate === false) {
+      let requestForSaveEmailCredit = {
+        user_id: Cookies.get("user_id"),
+        search_id: searchId,
+        email_addresses: ["sff", "ddsg"],
+        search_index: parseInt(`${currentPage}${index}`),
+      };
+      try {
+        const response = await fetch(apiServer + "/credits/email/bulk_add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveEmailCredit),
+        });
+
+        const result = response.json();
+
+        console.log("response from saveResult>>>", result, result.search_id);
+      } catch (e) {
+        console.error("Exception>>", e);
+      }
+
+      setUnlockEmailDetails((prev) => [
+        ...prev,
+        {
+          index: `${currentPage}${index}`,
+          details: { email: `email_${currentPage}${index}@test.com` },
+        },
+      ]);
+    } else {
+      unlockEmailDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
+      });
+    }
+  };
+
+  const handleProfile = async (index, data) => {
+    console.log(
+      "in Handle profile...",
+      `${currentPage}${index}`,
+      "DAta>>>",
+      data
+    );
+    try {
+      let isDuplicate = false;
+
+      specificUserDetails.map((spec) => {
+        console.log("spec>>>", spec.index);
+        if (spec.index === `${currentPage}${index}`) {
+          isDuplicate = true;
+        }
+      });
+      console.log("isDuplicate>>>>", isDuplicate);
+      if (isDuplicate === false) {
+        let phones = [];
+        if (data) {
+          console.log("in data>>>>", data.phones);
+          if (data.phones) {
+            for (let j = 0; j < data.phones.length; j++) {
+              phones.push(data.phones[j].number);
+            }
+            console.log("Phones>>>>>>", phones);
+            let requestForSaveProfileCredit = {
+              search_id: searchId,
+              phone_numbers: phones,
+              search_index: `${currentPage}${index}`,
+            };
+            try {
+              const response = await fetch(
+                apiServer + "/credits/profile/bulk_add",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                  },
+                  body: JSON.stringify(requestForSaveProfileCredit),
+                }
+              );
+
+              const result = response.json();
+
+              console.log("response from saveResult>>>", result);
+            } catch (e) {
+              console.error("Exception>>", e);
+            }
+          }
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: data },
+          ]);
+        } else {
+          console.log("In setSpecificUserDetails else");
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: "Record Not Found" },
+          ]);
+          console.log(
+            "In setSpecificUserDetails else ress....",
+            specificUserDetails
+          );
+        }
+      }
+
+      console.log("specificUser>>>>>>>", specificUserDetails);
+      specificUserDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
+      });
+    } catch (err) {
+      console.error("Error: ", err);
+    }
   };
 
   return (
@@ -327,13 +509,25 @@ const SearchResult = (props) => {
                             </div>
                             <div className="search-email text-center">
                               <small
-                                className={
-                                  show[index] ? "d-block" : "d-block blur"
+                              // className={
+                              //   show[index] ? "d-block" : "d-block blur"
+                              // }
+                              >
+                                {unlockEmailDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}`
+                                      ? spec.details.email
+                                      : null}
+                                  </span>
+                                ))}
+                              </small>
+
+                              <a
+                                href="#"
+                                onClick={(e) =>
+                                  handleUnlockEmail(e, index, data)
                                 }
                               >
-                                abc@xyz.com
-                              </small>
-                              <a href="#" onClick={(e) => showClick(e, index)}>
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>
@@ -352,6 +546,7 @@ const SearchResult = (props) => {
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="collapseExample"
+                                onClick={() => handleProfile(index, data)}
                               >
                                 View Profile
                               </a>

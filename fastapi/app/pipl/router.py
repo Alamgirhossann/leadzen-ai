@@ -60,6 +60,7 @@ async def people_search(
 
         if request.url:
             params["url"] = request.url
+        params["match_requirements"] = "phones"
 
         if not params:
             logger.warning("No Valid Request Parameters")
