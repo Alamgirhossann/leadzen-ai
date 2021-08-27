@@ -7,6 +7,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
+import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 
@@ -32,6 +33,11 @@ const SearchResult = (props) => {
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   const [searchType, setSearchType] = useState("");
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const tempCookie =
+    "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7qCvLu04AcqhIb82grlYAcZhj_-h2n29gx0DaQeazGVcQu4OAyCmP_fgyH47Ial6nZOGcIuivmbjNPDnFHaaOR1EbEcJioDrM_xMpE-rHNd44Rwwno2VEaJK2";
+
   const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -52,6 +58,7 @@ const SearchResult = (props) => {
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
+
     if (
       props.location.pathname.includes("/result_by_name") ||
       props.location.pathname.includes("/advanceSearch")
@@ -114,6 +121,7 @@ const SearchResult = (props) => {
       }
       const endpoint = "/texau/linkedin/matching_profiles";
       const inputData = requestForTexAu;
+      inputData.cookie = tempCookie;
       await sendForExecution(endpoint, inputData);
     }
 
@@ -137,10 +145,13 @@ const SearchResult = (props) => {
   const sendForExecution = async (endpoint, inputData) => {
     function handleError(status) {
       setLoading(false);
-      setMyLeads({});
+      setMyLeads([]);
       console.error(`Got HTTP Error ${status}`);
       alert("Error Searching For Leads");
     }
+
+    console.log(`endpoint: ${endpoint}, inputData: ${inputData}`);
+    console.log(inputData);
 
     try {
       const response = await fetch(apiServer + endpoint, {
@@ -153,34 +164,30 @@ const SearchResult = (props) => {
         body: JSON.stringify(inputData),
       });
 
-      function handleUnAuthorized(response) {
+      function handleUnAuthorized(response = null) {
         console.log("User is UnAuthorized");
         alert("Please Logout and LogIn Again");
+        setLoading(false);
+        setMyLeads([]);
       }
 
       async function handleSuccess(response) {
         let json = await response.json();
-
         if (!json || !json.execution_id) {
           handleError(response);
         }
+
         console.log(`Got Response ${json}`);
         checkExecutionStatus(json.execution_id);
       }
 
       switch (response.status) {
         case 200:
-          await handleSuccess(response);
-          break;
+          return await handleSuccess(response);
         case 401:
-          handleUnAuthorized(response);
-          break;
-        case 400:
-        case 500:
-        case 404:
+          return handleUnAuthorized(response);
         default:
-          handleError(response);
-          break;
+          return handleError(response);
       }
     } catch (err) {
       console.error(`Exception Getting Data from ${endpoint}`);
@@ -220,33 +227,50 @@ const SearchResult = (props) => {
           setMyLeads("");
         }
 
-        if (response.status === 403) {
-          // got cookie error - no need to check again, results will not change
-          console.log("Response cookie error", response.statusText);
-          handleError();
-          return;
-        }
-
-        if (response.status === 200) {
-          // got the response
-          const data = await response.json();
-          console.log("Data>>>>", data, ">>>>>", response);
-          if (!data) {
+        async function handleSuccess(response) {
+          const json = await response.json();
+          if (!json || !json.data) {
             console.warn(`Invalid Data`);
-            handleError();
-            return;
+            return handleError();
           }
+
+          console.log(json);
 
           setLoading(false);
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
-          if (data.data) {
-            setMyLeads(data.data);
-            await saveSearchedRecord(data.data, "texAu");
-          }
+          setMyLeads(json.data);
+          await saveSearchedRecord(json.data, "texAu");
+        }
 
-          return;
+        function handleUnAuthorized(response = null) {
+          console.log("User is UnAuthorized");
+          handleError();
+          alert("Please Logout and LogIn Again");
+        }
+
+        function handleCookieError() {
+          // got cookie error - no need to check again, results will not change
+          console.log("Response cookie error", response.statusText);
+          handleError();
+        }
+
+        function handleNotFound() {
+          console.log("Not Found Yet, Waiting...");
+        }
+
+        switch (response.status) {
+          case 200:
+            return handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 403:
+            return handleCookieError();
+          case 404:
+            return handleNotFound();
+          default:
+            return handleError();
         }
       } catch (e) {
         console.error("Exception>>", e);
@@ -262,7 +286,7 @@ const SearchResult = (props) => {
 
   useEffect(() => {}, [loading]);
 
-  useEffect(async () => {
+  useEffect(() => {
     paginate(1);
   }, [myLeads]);
 
@@ -483,6 +507,86 @@ const SearchResult = (props) => {
     }
   };
 
+  const handleLeadSelectionChange = (e) => {
+    const { id, checked } = e.target;
+    setSelectedLeads([...selectedLeads, id]);
+    if (!checked) {
+      setSelectedLeads(selectedLeads.filter((item) => item !== id));
+    }
+  };
+
+  const handleLeadSelectAll = (e) => {
+    setIsCheckAll(!isCheckAll);
+    setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
+    if (isCheckAll) {
+      setSelectedLeads([]);
+    }
+  };
+
+  const handleLeadSelectionExportExcel = (e) => {
+    e.preventDefault();
+
+    const executeExport = async () => {
+      function handleError(response = null) {
+        console.error(`Error, Status Code: ${response?.status}`);
+        alert("Error Exporting File");
+      }
+
+      try {
+        const inputData = { profile_urls: selectedLeads };
+        console.log(inputData);
+
+        const response = await fetch(apiServer + "/bulk_upload/export/excel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(inputData),
+        });
+
+        async function handleSuccess(response) {
+          const data = await response.json();
+          if (!data) {
+            return handleError();
+          }
+          console.log(data);
+          alert(
+            "Exported excel file is sent to your email. Please check your spam filter if our email has" +
+              " not arrived in a reasonable time. Cheers!"
+          );
+        }
+
+        function handleUnAuthorized(response = null) {
+          console.log("User is UnAuthorized");
+          alert("Please Logout and LogIn Again");
+        }
+
+        switch (response.status) {
+          case 200:
+            return await handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          default:
+            return handleError(response);
+        }
+      } catch (err) {
+        console.error("Error: ", err);
+        handleError();
+      }
+    };
+
+    if (!selectedLeads) {
+      console.warn("No Selected Leads");
+      return;
+    }
+
+    executeExport();
+  };
+
+  console.log("isCheck....", selectedLeads);
+
   return (
     <div>
       <Header user={user} />
@@ -531,6 +635,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
+              <SpecificSearchBtn />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
@@ -552,7 +657,10 @@ const SearchResult = (props) => {
                     <input
                       className="ms-3 me-3"
                       type="checkbox"
-                      id="checkbox"
+                      id="selectAll"
+                      name="selectAll"
+                      onChange={handleLeadSelectAll}
+                      checked={isCheckAll}
                     />
                     <small className="">
                       <b>{currentLeads.length}</b> of{" "}
@@ -576,14 +684,18 @@ const SearchResult = (props) => {
                         alt=""
                       />
                     </small>
-                    <small className="export-btn">
+                    <button
+                      onClick={handleLeadSelectionExportExcel}
+                      className="export-btn"
+                      disabled={selectedLeads.length === 0 ? true : false}
+                    >
                       Export{" "}
                       <img
                         className="ps-3"
                         src="assets/images/export.png"
                         alt=""
                       />
-                    </small>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -601,8 +713,13 @@ const SearchResult = (props) => {
                           <div className="user-container py-2" key={index}>
                             <input
                               className="box ms-3 me-3"
+                              id={data.url || data.profileLink}
                               type="checkbox"
-                              id="checkbox"
+                              name={data.name}
+                              checked={selectedLeads.includes(
+                                data.url || data.profileLink
+                              )}
+                              onChange={handleLeadSelectionChange}
                             />
                             <p className="search-author text-danger">
                               <img
@@ -612,6 +729,7 @@ const SearchResult = (props) => {
                                     : "assets/images/author-image.png"
                                 }
                                 alt=""
+                                // style="border-radius: 50%;"
                               />
                             </p>
                             <div className="search-user">

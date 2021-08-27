@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Link, Redirect, useHistory} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import SavedList from "../SavedList/SavedList";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Filters from "../SharedComponent/Filters";
@@ -11,7 +11,6 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
 import Header from "../SharedComponent/Header";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
-import Cookies from "js-cookie";
 
 const RepeatedUser = () => {
   const history = useHistory();
@@ -75,12 +74,12 @@ const RepeatedUser = () => {
     },
   };
   const recommendations = [
-    {name: "Robert Brown", role: "Product Manager", comp: "Flipkart"},
-    {name: "Lan Bey", role: "CEO", comp: "Amazon UK"},
-    {name: "John Smith", role: "Designer", comp: "Flipkart"},
-    {name: "Chirs Apple", role: "CFO", comp: "Apple INC"},
-    {name: "Stan Joseph", role: "Developer", comp: "Amazon IN"},
-    {name: "Stan Joseph", role: "Developer", comp: "Amazon IN"},
+    { name: "Robert Brown", role: "Product Manager", comp: "Flipkart" },
+    { name: "Lan Bey", role: "CEO", comp: "Amazon UK" },
+    { name: "John Smith", role: "Designer", comp: "Flipkart" },
+    { name: "Chirs Apple", role: "CFO", comp: "Apple INC" },
+    { name: "Stan Joseph", role: "Developer", comp: "Amazon IN" },
+    { name: "Stan Joseph", role: "Developer", comp: "Amazon IN" },
   ];
   const handleLogout = (event) => {
     console.log("document.cookie()...handle", document.cookie);
@@ -90,15 +89,15 @@ const RepeatedUser = () => {
   };
   // console.log("document.cookie()...",Cookies.get("user_token"))
   const handleHeadSearch = (e) => {
-    setSearchText({...searchText, text: e.target.value});
+    setSearchText({ ...searchText, text: e.target.value });
   };
   const handleHeadSubmit = (e) => {
     e.preventDefault();
     console.log("search Text>>>>>>>>>>>>", searchText);
     if (
-        !searchText.text
-        // searchText.text === undefined ||
-        // searchText.text.toString().length <= 0
+      !searchText.text
+      // searchText.text === undefined ||
+      // searchText.text.toString().length <= 0
     ) {
       alert("Enter details");
       return;
@@ -181,28 +180,28 @@ const RepeatedUser = () => {
     },
   ];
   return (
-      <div>
-        <Header user={user}/>
-        <div className="modal" id="bulkmodal">
-          <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-          ></button>
-          <div className="modal-dialog">
-            <div className="modal-message">
-              <p>
-                <i className="text-danger">Format to follow:</i> Ensure that the
-                first column has the unique values you’re searching for. Download
-                the sample below for better understanding.{" "}
-              </p>
-              <Link>
-                <i className="text-danger text-decoration-underline">
-                  Click here to download csv format
-                </i>
-              </Link>
-            </div>
+    <div>
+      <Header user={user} />
+      <div className="modal" id="bulkmodal">
+        <button
+          type="button"
+          className="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+        <div className="modal-dialog">
+          <div className="modal-message">
+            <p>
+              <i className="text-danger">Format to follow:</i> Ensure that the
+              first column has the unique values you’re searching for. Download
+              the sample below for better understanding.{" "}
+            </p>
+            <Link>
+              <i className="text-danger text-decoration-underline">
+                Click here to download csv format
+              </i>
+            </Link>
+          </div>
           <div className="modal-content">
             <form action="/upload" id="mydrop" className="dropzone">
               <div className="dz-message needsclick">
@@ -227,13 +226,13 @@ const RepeatedUser = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn/>
+              <SpecificSearchBtn />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
-                <Filters/>
+                <Filters />
               </div>
-              <BulkSearch/>
-              <SidebarExtractContact/>
+              <BulkSearch />
+              <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
