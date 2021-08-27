@@ -127,6 +127,7 @@ async def search_one(
                     if x
                 ]
             else:
+                logger.warning(f"{data=}")
                 return None
     except Exception as e:
         logger.critical(f"Exception in PIPL search: {str(e)}")
@@ -156,6 +157,10 @@ async def search_all(urls: List[str], slugs: List[str]) -> Optional[List[Dict]]:
             results = [
                 x for x in results if x
             ]  # remove the None's else chain/flatten operation will fail
+
+            if not any(results):
+                logger.warning("No Results Found")
+                return None
 
             return list(itertools.chain(*results))
     except Exception as e:
