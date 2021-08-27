@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import { GoogleApiWrapper, Map } from "google-maps-react";
 
-
-
 const SpecificUser = (props) => {
-   useEffect(async () => {
-   console.log("props>>>>>",props)
- })
+  useEffect(async () => {
+    console.log("props specific>>>>>", props);
+  });
   return (
     <div>
       {" "}
-      {props.details === "Record Not Found" || props.details === "Item not found"|| props.details === null ? (
+      {props.details === "Record Not Found" ||
+      props.details === "Item not found" ||
+      props.details === null ? (
         <div>
           {" "}
           <section className="item-section" style={{ textAlign: "center" }}>

@@ -8,6 +8,7 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
+import { v4 as uuidv4 } from "uuid";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const SearchResult = (props) => {
@@ -63,7 +64,7 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    if (props.location.state) {
+    if (props.location.pathname.includes("/searchResult")) {
       console.log("Request..", props.location.state.reqJsonPipl);
       setSearchTerm(props.location.state.reqJsonPipl);
       try {
@@ -88,7 +89,33 @@ const SearchResult = (props) => {
       } catch (err) {
         console.error("Error: ", err);
       }
-    } else {
+    }
+    if (props.location.pathname.includes("/search_by_history_type2")) {
+      console.log(
+        "in result from hisry pipl>>>>",
+        props.location.state.details
+      );
+      try {
+        const response = await fetch(
+          apiServer + `/history/id/${props.location.state.details.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+          }
+        );
+
+        let json_res = await response.json();
+
+        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setLoading(false);
+
+        setMyLeads(json_res.search_results);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
     }
   }, []);
 

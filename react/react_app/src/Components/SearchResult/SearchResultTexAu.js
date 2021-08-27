@@ -132,6 +132,30 @@ const SearchResult = (props) => {
 
       await sendForExecution(endpoint, inputData);
     }
+
+    if (props.location.pathname.includes("/result_by_history_type1")) {
+      try {
+        const response = await fetch(
+          apiServer + `/history/id/${props.location.state.details.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+          }
+        );
+
+        let json_res = await response.json();
+        setSearchId(json_res.search_id);
+        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setLoading(false);
+
+        setMyLeads(json_res.search_results);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    }
   }, [props.location.state.customSearch]);
 
   const sendForExecution = async (endpoint, inputData) => {
