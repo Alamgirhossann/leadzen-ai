@@ -1,12 +1,15 @@
-from typing import List
-
 import httpx
 from fastapi import APIRouter, HTTPException
+from fastapi_cache.decorator import cache
 from loguru import logger
 from pydantic import BaseModel, HttpUrl
 from starlette import status
 
-from app.config import API_CONFIG_PROXY_CURL_ENDPOINT, API_CONFIG_PROXY_CURL_API_KEY
+from app.config import (
+    API_CONFIG_PROXY_CURL_ENDPOINT,
+    API_CONFIG_PROXY_CURL_API_KEY,
+    API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
+)
 
 router = APIRouter(prefix="/proxycurl", tags=["ProxyCurl"])
 
@@ -20,6 +23,7 @@ class ProxyCurlRequest(BaseModel):
 
 
 @router.post("/search")
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def search(request: ProxyCurlRequest):
     logger.info(f"{request=}")
     try:

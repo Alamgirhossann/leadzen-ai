@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
@@ -29,9 +30,13 @@ from app.users import (
 )
 from app.utils.proxy_curl import router as proxycurl_router
 
-# from app.search_result_operations import router as search_operations
 from app.utils.snov import router as snov_router
 from app.utils.truemail import router as truemail_router
+
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
+
 
 current_active_user = fastapi_users.current_user(active=True)
 
@@ -132,15 +137,25 @@ def refresh_linkedin_cookie_manually():
 async def startup():
     logger.info("Connecting to Database")
     await database.connect()
+    logger.info("Initializing In Memory Cache")
+    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
 
 
 @app.on_event("shutdown")
 async def shutdown():
     logger.info("Disconnecting from Database")
     await database.disconnect()
+    logger.info("Clearing Memory Cache")
+    await FastAPICache.clear()
 
 
 @app.get("/test_auth")
-def test_auth(user=Depends(fastapi_users.get_current_active_user)):
+@cache(expire=10)
+async def test_auth_with_10s_cache(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"test auth, {user=}")
-    return True
+    return datetime.utcnow().timestamp()
+
+
+@cache()
+async def get_cache():
+    return 1

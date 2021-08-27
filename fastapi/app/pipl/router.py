@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 
 import httpx
 from fastapi import APIRouter, HTTPException, status, BackgroundTasks, Depends
+from fastapi_cache.decorator import cache
 from loguru import logger
 from pydantic import BaseModel
 
@@ -11,6 +12,7 @@ from app.config import (
     API_CONFIG_PIPL_API_KEY,
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
     API_CONFIG_PIPL_BASE_URL,
+    API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
 )
 from app.pipl.email import (
     execute_task as execute_email_task,
@@ -39,27 +41,28 @@ class PiplRequest(BaseModel):
 
 
 @router.post("/search")
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def people_search(
-    request: PiplRequest, user=Depends(fastapi_users.get_current_active_user)
+    app_request: PiplRequest, user=Depends(fastapi_users.get_current_active_user)
 ):
-    logger.debug(f"{request=}, {user=}")
+    logger.debug(f"{app_request=}, {user=}")
 
     try:
-        logger.debug(request)
+        logger.debug(app_request)
 
         params = {}
 
-        if request.email:
-            params["email"] = request.email
+        if app_request.email:
+            params["email"] = app_request.email
 
-        if request.name:
-            if request.name.first_name:
-                params["first_name"] = request.name.first_name
-            if request.name.last_name:
-                params["last_name"] = request.name.last_name
+        if app_request.name:
+            if app_request.name.first_name:
+                params["first_name"] = app_request.name.first_name
+            if app_request.name.last_name:
+                params["last_name"] = app_request.name.last_name
 
-        if request.url:
-            params["url"] = request.url
+        if app_request.url:
+            params["url"] = app_request.url
         params["match_requirements"] = "phones"
 
         if not params:
@@ -115,43 +118,45 @@ async def people_search(
 
 
 @router.post("/bulk/email", response_model=PiplDetailsFromEmailResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def bulk_find_details_for_email(
-    request: PiplDetailsFromEmailRequest,
+    app_request: PiplDetailsFromEmailRequest,
     background_tasks: BackgroundTasks,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{request=}, {user=}")
+    logger.debug(f"{app_request=}, {user=}")
 
-    if not request.filename:
-        request.filename = (
+    if not app_request.filename:
+        app_request.filename = (
             f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
         )
 
-    logger.debug(f"{request.filename=}")
+    logger.debug(f"{app_request.filename=}")
 
-    background_tasks.add_task(execute_email_task, request=request)
+    background_tasks.add_task(execute_email_task, request=app_request)
 
-    return PiplDetailsFromEmailResponse(filename=request.filename)
+    return PiplDetailsFromEmailResponse(filename=app_request.filename)
 
 
 @router.post(
     "/bulk/profile_url",
     response_model=PiplDetailsFromProfileUrlResponse,
 )
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def bulk_find_details_for_profile_url(
-    request: PiplDetailsFromProfileUrlRequest,
+    app_request: PiplDetailsFromProfileUrlRequest,
     background_tasks: BackgroundTasks,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{request=}, {user=}")
+    logger.debug(f"{app_request=}, {user=}")
 
-    if not request.filename:
-        request.filename = (
+    if not app_request.filename:
+        app_request.filename = (
             f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
         )
 
-    logger.debug(f"{request.filename=}")
+    logger.debug(f"{app_request.filename=}")
 
-    background_tasks.add_task(execute_profile_task, request=request)
+    background_tasks.add_task(execute_profile_task, request=app_request)
 
-    return PiplDetailsFromProfileUrlResponse(filename=request.filename)
+    return PiplDetailsFromProfileUrlResponse(filename=app_request.filename)

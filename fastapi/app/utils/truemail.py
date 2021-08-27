@@ -1,14 +1,19 @@
 import json
-from app.config import API_CONFIG_TRUEMAIL_API_URL, API_CONFIG_TRUEMAIL_API_KEY
+from fastapi_cache.decorator import cache
 import httpx
 from fastapi import APIRouter
 
-from app.config import API_CONFIG_TRUEMAIL_API_URL, API_CONFIG_TRUEMAIL_API_KEY
+from app.config import (
+    API_CONFIG_TRUEMAIL_API_URL,
+    API_CONFIG_TRUEMAIL_API_KEY,
+    API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
+)
 
 router = APIRouter(prefix="/truemail", tags=["Truemail"])
 
 
 @router.get("/verify/{email_id}")
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def verify_email(email_id):
     try:
         apiKey = API_CONFIG_TRUEMAIL_API_KEY

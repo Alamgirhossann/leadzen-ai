@@ -2,9 +2,13 @@ import uuid
 from http.client import HTTPException
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status, Depends
+from fastapi_cache.decorator import cache
 from loguru import logger
 
-from app.config import API_CONFIG_BULK_OUTGOING_DIRECTORY
+from app.config import (
+    API_CONFIG_BULK_OUTGOING_DIRECTORY,
+    API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
+)
 from app.texau.common import TexAuExecutionResponse, TexAuResult
 from app.texau.linkedin.commenters import (
     handle_find_post_commenters,
@@ -31,36 +35,38 @@ router = APIRouter(prefix="/texau", tags=["TexAu"])
 
 
 @router.post("/linkedin/matching_profiles", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def find_matching_linkedin_profiles(
-    request: TexAuFindProfileRequest,
+    app_request: TexAuFindProfileRequest,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.info(f"{request=}, {user=}")
+    logger.info(f"{app_request=}, {user=}")
 
-    if not request.cookie:
+    if not app_request.cookie:
         if not (cookie := read_linkedin_cookie()):
             logger.critical("Error Getting LinkedIn Cookie")
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Error Getting LinkedIn Cookie",
             )
-        request.cookie = cookie
+        app_request.cookie = cookie
 
-    return await handle_find_matching_linkedin_profiles(request=request)
+    return await handle_find_matching_linkedin_profiles(request=app_request)
 
 
 @router.post(
     "/linkedin/email_for_profile_url",
     response_model=TexAuFindEmailAndPhoneForLinkedInProfileResponse,
 )
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def find_email_for_linkedin_profile_url(
-    request: TexAuFindEmailAndPhoneForLinkedInProfileRequest,
+    app_request: TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     background_tasks: BackgroundTasks,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.info(f"{request=}, {user=}")
+    logger.info(f"{app_request=}, {user=}")
 
-    if not request.cookie:
+    if not app_request.cookie:
         if not (cookie := read_linkedin_cookie()):
             logger.critical("Error Getting LinkedIn Cookie")
             raise HTTPException(
@@ -68,30 +74,33 @@ async def find_email_for_linkedin_profile_url(
                 detail="Error Getting LinkedIn Cookie",
             )
 
-        request.cookie = cookie
+        app_request.cookie = cookie
 
-    if not request.filename:
+    if not app_request.filename:
         filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
-        request.filename = filename
+        app_request.filename = filename
 
-    logger.info(f"{request=}")
+    logger.info(f"{app_request=}")
 
     background_tasks.add_task(
         handle_find_email_and_phone_for_linkedin_profile_url,
-        request=request,
+        request=app_request,
     )
 
-    return TexAuFindEmailAndPhoneForLinkedInProfileResponse(filename=filename)
+    return TexAuFindEmailAndPhoneForLinkedInProfileResponse(
+        filename=app_request.filename
+    )
 
 
 @router.post("/linkedin/post_likers", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def find_linkedin_post_likers(
-    request: TexAuFindLinkedInPostLikersRequest,
+    app_request: TexAuFindLinkedInPostLikersRequest,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.info(f"{request=}, {user=}")
+    logger.info(f"{app_request=}, {user=}")
 
-    if not request.cookie:
+    if not app_request.cookie:
         if not (cookie := read_linkedin_cookie()):
             logger.critical("Error Getting LinkedIn Cookie")
             raise HTTPException(
@@ -99,19 +108,20 @@ async def find_linkedin_post_likers(
                 detail="Error Getting LinkedIn Cookie",
             )
 
-        request.cookie = cookie
+        app_request.cookie = cookie
 
-    return await handle_find_post_likers(request=request)
+    return await handle_find_post_likers(request=app_request)
 
 
 @router.post("/linkedin/post_commenters", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def find_linkedin_post_commenters(
-    request: TexAuFindLinkedInPostCommentersRequest,
+    app_request: TexAuFindLinkedInPostCommentersRequest,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.info(f"{request=}, {user=}")
+    logger.info(f"{app_request=}, {user=}")
 
-    if not request.cookie:
+    if not app_request.cookie:
         if not (cookie := read_linkedin_cookie()):
             logger.critical("Error Getting LinkedIn Cookie")
             raise HTTPException(
@@ -119,9 +129,9 @@ async def find_linkedin_post_commenters(
                 detail="Error Getting LinkedIn Cookie",
             )
 
-        request.cookie = cookie
+        app_request.cookie = cookie
 
-    return await handle_find_post_commenters(request=request)
+    return await handle_find_post_commenters(request=app_request)
 
 
 @router.get("/result/{execution_id}", response_model=TexAuResult)
