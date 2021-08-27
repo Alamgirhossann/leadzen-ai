@@ -58,7 +58,7 @@ async def find_matching_linkedin_profiles(
     "/linkedin/email_for_profile_url",
     response_model=TexAuFindEmailAndPhoneForLinkedInProfileResponse,
 )
-@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 2)
 async def find_email_for_linkedin_profile_url(
     app_request: TexAuFindEmailAndPhoneForLinkedInProfileRequest,
     background_tasks: BackgroundTasks,
@@ -93,7 +93,7 @@ async def find_email_for_linkedin_profile_url(
 
 
 @router.post("/linkedin/post_likers", response_model=TexAuExecutionResponse)
-@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 2)
 async def find_linkedin_post_likers(
     app_request: TexAuFindLinkedInPostLikersRequest,
     user=Depends(fastapi_users.get_current_active_user),
@@ -114,7 +114,7 @@ async def find_linkedin_post_likers(
 
 
 @router.post("/linkedin/post_commenters", response_model=TexAuExecutionResponse)
-@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 2)
 async def find_linkedin_post_commenters(
     app_request: TexAuFindLinkedInPostCommentersRequest,
     user=Depends(fastapi_users.get_current_active_user),
