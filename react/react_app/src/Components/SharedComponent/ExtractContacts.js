@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import Cookies from "js-cookie";
+import { useHistory } from "react-router-dom";
 
 const ExtractContacts = () => {
   const [socialMediaType, setSocialMediaType] = useState({
@@ -13,50 +14,23 @@ const ExtractContacts = () => {
   const handleType = (e) => {
     setSocialMediaType({ ...socialMediaType, type: e.target.value });
   };
+  const history = useHistory();
   const handleTypeSubmit = async (e) => {
     e.preventDefault();
     console.log(socialMediaSearch);
     console.log(socialMediaType.url);
 
-    const inputData = {
-      url:
-        "https://www.linkedin.com/pulse/developing-digital-talent-toronto-ravi-kumar-s/?trackingId=iUSRpLE2Dt56CYpqppezgA%3D%3D",
-      cookie:
-        "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7qCvLu04AcqhIb82grlYAcZhj_-h2n29gx0DaQeazGVcQu4OAyCmP_fgyH47Ial6nZOGcIuivmbjNPDnFHaaOR1EbEcJioDrM_xMpE-rHNd44Rwwno2VEaJK2",
-    };
-    try {
-      console.log(inputData);
-      const response = await fetch(apiServer + "/texau/linkedin/post_likers", {
-        method: "POST",
-        body: JSON.stringify(inputData),
-        headers: {
-          Authorization: `Bearer ${Cookies.get("user_token")}`,
+    history.push({
+      pathname: "/social_url_search",
+      state: {
+        endpoint: "/texau/linkedin/post_likers",
+        data: {
+          url: socialMediaType.url,
+          cookie:
+            "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7qCvLu04AcqhIb82grlYAcZhj_-h2n29gx0DaQeazGVcQu4OAyCmP_fgyH47Ial6nZOGcIuivmbjNPDnFHaaOR1EbEcJioDrM_xMpE-rHNd44Rwwno2VEaJK2",
         },
-      });
-
-      if (response.statusCode === 404) {
-        alert("No Post Likers");
-        return;
-      }
-
-      if (response.statusCode !== 200) {
-        alert("Error Finding Post Likers");
-        console.log(await response.json());
-        return;
-      }
-
-      const json = await response.json();
-      if (!json) {
-        alert("No Post Likers Found");
-        return;
-      }
-
-      console.log(json);
-      // checkExecutionStatus(json.execution_id);
-    } catch (err) {
-      console.error("Error: ", err);
-      alert("Error Uploading File, Please Try Again Later");
-    }
+      },
+    });
   };
 
   const handleURL = (e) => {

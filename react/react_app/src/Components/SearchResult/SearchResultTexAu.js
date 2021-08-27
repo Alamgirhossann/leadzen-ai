@@ -158,6 +158,57 @@ const SearchResult = (props) => {
         console.error("Error: ", err);
       }
     }
+
+    if (props.location.pathname.includes("/social_url_search")) {
+      if (!props.location.state) {
+        console.warn("no state found");
+        return;
+      }
+
+      console.log(`state data: ${props.location.state}`);
+
+      const inputData = props.location.state.data;
+      const endpoint = props.location.state.endpoint;
+
+      try {
+        const response = await fetch(apiServer + endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(inputData),
+        });
+
+        if (response.status === 400) {
+          // handle 400
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 500) {
+          // handle 500
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        if (response.status === 404) {
+          setLoading(false);
+          setMyLeads({});
+        }
+
+        let json_res = await response.json();
+        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
+        if (!json_res.execution_id) {
+          setLoading(false);
+          setMyLeads({});
+        }
+        checkExecutionStatus(json_res.execution_id);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    }
   }, [props.location.state.customSearch]);
 
   const checkExecutionStatus = (executionId = null) => {
