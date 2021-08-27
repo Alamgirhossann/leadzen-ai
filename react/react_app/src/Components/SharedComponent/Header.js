@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 
 const Header = (props) => {
-  const [user, setUser] = useState(props.user);
+   const user = props?.user;
   return (
     <div>
       <header className="header-area">
@@ -12,7 +12,7 @@ const Header = (props) => {
               <img src="assets/images/header-brand-black.png" alt="title" />
             </a>
 
-            {user.name !== "" && <NavBar user={user} />}
+            {user?.name !== undefined  && <NavBar user={user} />}
           </div>
         </nav>
       </header>
