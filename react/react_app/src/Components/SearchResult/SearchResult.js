@@ -8,36 +8,37 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
+import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const SearchResult = (props) => {
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-  const [customSearch, setCustomSearch] = useState({
-    location: null,
-    industry: null,
-    job_title: null,
-    education: null,
-    company_name: null,
-    keywords: null,
-    csv_file: null,
-  });
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "assets/js/app.js";
+        script.async = true;
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
+    const [customSearch, setCustomSearch] = useState({
+        location: null,
+        industry: null,
+        job_title: null,
+        education: null,
+        company_name: null,
+        keywords: null,
+        csv_file: null,
+    });
 
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentLeads, setCurrentLeads] = useState([]);
-  const [myLeads, setMyLeads] = useState([]);
-  let today = new Date();
-  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-  let dd = String(today.getDate()).padStart(2, "0");
-  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-  let yyyy = today.getFullYear();
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentLeads, setCurrentLeads] = useState([]);
+    const [myLeads, setMyLeads] = useState([]);
+    let today = new Date();
+    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+    let dd = String(today.getDate()).padStart(2, "0");
+    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    let yyyy = today.getFullYear();
 
   const paginate = (pageNumber) => {
     setCurrentLeads([]);
@@ -198,9 +199,9 @@ const SearchResult = (props) => {
                 <button type="button" className="dz-button">
                   OR
                 </button>
-                <br />
-                <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile} />
+                  <br/>
+                  <span className="note needsclick">
+                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
                 </span>
               </div>
             </form>
@@ -208,89 +209,90 @@ const SearchResult = (props) => {
         </div>
       </div>
 
-      <div className="main-content-area pb-6 pt-2">
-        <div className="main-wrapper container-fluid">
-          <div className="row">
-            <div className="col-md-4 col-lg-3">
-              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
-                <h6 className="text-danger mb-3">Customize your search</h6>
-                <Filters />
-              </div>
-              <BulkSearch />
-              <SidebarExtractContact />
-            </div>
-            <div className="col-md-8 col-lg-9">
-              <div className="user-search-wrapper">
-                <div className="detailed-search">
-                  <div>
-                    <small>Last Updated: {today}</small>
-                  </div>
-                </div>
-                <div>
-                  <p className="mt-3">
-                    Extracted Results for:{" "}
-                    <span className="link-style">
-                      <img src="assets/images/Vector (2).png" alt="" />{" "}
-                      https://www.instagram.com/
-                    </span>
-                    <span className="link-style">Followers</span>{" "}
-                    <a className="text-danger" href="#">
-                      Clear All
-                    </a>
-                  </p>
-                </div>
-              </div>
-              <div className="user-widget-box  my-3">
-                <div className="d-flex align-items-center justify-content-between py-3">
-                  <div className="d-flex align-items-center ">
-                    <input
-                      className="ms-3 me-3"
-                      type="checkbox"
-                      id="checkbox"
-                    />
-                    <small className="">
-                      <b>{currentLeads.length}</b> of{" "}
-                      <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
-                    </small>
-                  </div>
-                  <div className="d-flex">
-                    <small className="unlock-btn">
-                      Unlock Profile
-                      <img
-                        className="ps-3"
-                        src="assets/images/Group 1617.png"
-                        alt=""
-                      />
-                    </small>
-                    <small className="unlock-btn">
-                      Unlock Mails
-                      <img
-                        className="ps-3"
-                        src="assets/images/Group 1617.png"
-                        alt=""
-                      />
-                    </small>
-                    <small className="export-btn">
-                      Export
-                      <img
-                        className="ps-3"
-                        src="assets/images/export.png"
-                        alt=""
-                      />
-                    </small>
-                  </div>
-                </div>
-              </div>
+        <div className="main-content-area pb-6 pt-2">
+            <div className="main-wrapper container-fluid">
+                <div className="row">
+                    <div className="col-md-4 col-lg-3">
+                        <SpecificSearchBtn/>
+                        <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+                            <h6 className="text-danger mb-3">Customize your search</h6>
+                            <Filters/>
+                        </div>
+                        <BulkSearch/>
+                        <SidebarExtractContact/>
+                    </div>
+                    <div className="col-md-8 col-lg-9">
+                        <div className="user-search-wrapper">
+                            <div className="detailed-search">
+                                <div>
+                                    <small>Last Updated: {today}</small>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="mt-3">
+                                    Extracted Results for:{" "}
+                                    <span className="link-style">
+                                            <img src="assets/images/Vector (2).png" alt=""/>{" "}
+                                        https://www.instagram.com/
+                                        </span>
+                                    <span className="link-style">Followers</span>{" "}
+                                    <a className="text-danger" href="#">
+                                        Clear All
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div className="user-widget-box  my-3">
+                            <div className="d-flex align-items-center justify-content-between py-3">
+                                <div className="d-flex align-items-center ">
+                                    <input
+                                        className="ms-3 me-3"
+                                        type="checkbox"
+                                        id="checkbox"
+                                    />
+                                    <small className="">
+                                        <b>{currentLeads.length}</b> of{" "}
+                                        <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
+                                    </small>
+                                </div>
+                                <div className="d-flex">
+                                    <small className="unlock-btn">
+                                        Unlock Profile
+                                        <img
+                                            className="ps-3"
+                                            src="assets/images/Group 1617.png"
+                                            alt=""
+                                        />
+                                    </small>
+                                    <small className="unlock-btn">
+                                        Unlock Mails
+                                        <img
+                                            className="ps-3"
+                                            src="assets/images/Group 1617.png"
+                                            alt=""
+                                        />
+                                    </small>
+                                    <small className="export-btn">
+                                        Export
+                                        <img
+                                            className="ps-3"
+                                            src="assets/images/export.png"
+                                            alt=""
+                                        />
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
 
-              <div className="user-widget-box  my-3">
-                {loading === false ? (
-                  <div className="search-container mb-2">
-                    {myLeads.length === 0 ? (
-                      <div>
-                        <h5>Record not found</h5>
-                      </div>
-                    ) : currentLeads ? (
-                      currentLeads.map((data, index) => (
+                        <div className="user-widget-box  my-3">
+                            {loading === false ? (
+                                <div className="search-container mb-2">
+                                    {myLeads.length === 0 ? (
+                                        <div>
+                                            <h5>Record not found</h5>
+                                        </div>
+                                    ) : currentLeads ? (
+                                        currentLeads.map((data, index) => (
                         <div>
                           <div className="user-container py-2" key={index}>
                             <input

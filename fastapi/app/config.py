@@ -55,8 +55,16 @@ API_CONFIG_TEXAU_PROXY = os.getenv("API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pu
 API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL = float(
     os.getenv("API_CONFIG_TEXAU_LINKEDIN_TASK_STATUS_CHECK_INTERVAL", "5.0")
 )
-API_CONFIG_TRUEMAIL_API_KEY = os.getenv("API_CONFIG_TRUEMAIL_API_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
-API_CONFIG_TRUEMAIL_API_URL = os.getenv("API_CONFIG_TRUEMAIL_API_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
+API_CONFIG_TRUEMAIL_API_KEY = os.getenv("TRUEMAIL_API_ACCESS_KEY", "QRnroC9kz3oftU9TN5SAtjnF8wKMWBBphc4RKpBcFHNTXjOFgDijHE3lcvhBFRUn")
+API_CONFIG_TRUEMAIL_API_URL = os.getenv("TRUEMAIL_API_ACCESS_URL", 'https://truemail.io/api/v1/verify/single?address_info=1&timeout=100&access_token=')
+API_CONFIG_SNOV_GRANT_TYPE = os.getenv("API_CONFIG_SNOV_GRANT_TYPE", 'client_credentials')
+API_CONFIG_SNOV_CLIENT_ID = os.getenv("API_CONFIG_SNOV_CLIENT_ID", 'ca0da7ac0d5bb551ee2963f5c9805c57')
+API_CONFIG_SNOV_CLIENT_SECRET = os.getenv("API_CONFIG_SNOV_CLIENT_SECRET", 'c2d048ef0203d52e67eeea8c8d6bd6e0')
+API_CONFIG_SNOV_OAUTH_ACESS_TOKEN = os.getenv("API_CONFIG_SNOV_OAUTH_ACESS_TOKEN", 'https://api.snov.io/v1/oauth/access_token')
+API_CONFIG_SNOV_ADD_URL_SEARCH = os.getenv("API_CONFIG_SNOV_ADD_URL_SEARCH",'https://api.snov.io/v1/add-url-for-search')
+API_CONFIG_SNOV_GET_EMAIL = os.getenv("API_CONFIG_SNOV_GET_EMAIL",'https://api.snov.io/v1/get-emails-from-url')
+API_CONFIG_TRUEMAIL_API_URL= os.getenv("API_CONFIG_TRUEMAIL_API_URL",'http://127.0.0.1:12005/api/verification_email/truemail/')
+
 API_CONFIG_SELF_URL = os.getenv("API_CONFIG_SELF_URL", 'http://localhost:8000/api/refresh_linkedin_cookie')
 API_CONFIG_PROXY_URL = os.getenv("API_CONFIG_PROXY_URL", 'http://168.81.41.43:47192')
 API_CONFIG_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./people.db")
@@ -85,4 +93,5 @@ API_CONFIG_SELF_BASE_URL = os.getenv(
 API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv("API_CONFIG_SELF_BASE_EXTERNAL_URL","http://localhost:12005")
 
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
-
+API_CONFIG_PROXY_CURL_ENDPOINT = os.getenv("API_PROXY_CURL_ENDPOINT", "https://nubela.co/proxycurl/api/v2/linkedin")
+API_CONFIG_PROXY_CURL_API_KEY = os.getenv("API_PROXY_CURL_API_KEY", '0cb3769e-f2b4-45ea-a745-d3b7119be966')

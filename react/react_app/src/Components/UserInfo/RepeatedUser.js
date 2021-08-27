@@ -6,7 +6,9 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import UserSearch from "../SharedComponent/UserSearch";
 import SharedHistory from "../SharedComponent/SharedHistory";
+import BulkSearch from "../SharedComponent/BulkSearch";
 import Header from "../SharedComponent/Header";
+import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 
 const RepeatedUser = () => {
@@ -189,16 +191,16 @@ const RepeatedUser = () => {
           <div className="modal-dialog">
             <div className="modal-message">
               <p>
-              <i className="text-danger">Format to follow:</i> Ensure that the
-              first column has the unique values you’re searching for. Download
-              the sample below for better understanding.{" "}
-            </p>
-            <Link>
-              <i className="text-danger text-decoration-underline">
-                Click here to download csv format
-              </i>
-            </Link>
-          </div>
+                <i className="text-danger">Format to follow:</i> Ensure that the
+                first column has the unique values you’re searching for. Download
+                the sample below for better understanding.{" "}
+              </p>
+              <Link>
+                <i className="text-danger text-decoration-underline">
+                  Click here to download csv format
+                </i>
+              </Link>
+            </div>
           <div className="modal-content">
             <form action="/upload" id="mydrop" className="dropzone">
               <div className="dz-message needsclick">
@@ -223,11 +225,13 @@ const RepeatedUser = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
+              <SpecificSearchBtn/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
-                <Filters />
+                <Filters/>
               </div>
-              <SidebarExtractContact />
+              <BulkSearch/>
+              <SidebarExtractContact/>
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
@@ -248,7 +252,7 @@ const RepeatedUser = () => {
                   {" "}
                   Hey, Based on your latest search intrest, these are best magic
                   recommendation for you !!{" "}
-                  <span className="text-danger">~Jarvis</span>
+                  <span className="text-danger">~Jarv</span>
                 </p>
                 <div className="px-5 pxlg-7 mb-3 row">
                   {recommendations.map((data) => (
@@ -271,7 +275,7 @@ const RepeatedUser = () => {
                     alt="#"
                     className="user-author-shape"
                 />
-                <a href="/history" className="text-danger">
+                <a href="/searchResult" className="text-danger">
                   View List
                 </a>
               </div>
