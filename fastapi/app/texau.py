@@ -77,12 +77,12 @@ async def check_execution_status(execution_id: str):
             if response.status_code == 200:
                 if data := response.json():
                     if (
-                        data["execution"]["status"] == "completed"
-                        and data["execution"].get("output") is not None
+                            data["execution"]["status"] == "completed"
+                            and data["execution"].get("output") is not None
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
-                        logger.debug("TexAu Response>>>"+str(result))
+                        logger.debug("TexAu Response>>>" + str(result))
                         return TexAuResponse(data=result)
                     if data["execution"]["status"] == "cookieError":
                         logger.debug("Result Cookie Error")
@@ -124,8 +124,8 @@ async def wait_and_check_execution_status(execution_id: str) -> Optional[TexAuRe
             if response.status_code == 200:
                 if data := response.json():
                     if (
-                        data["execution"]["status"] == "completed"
-                        and data["execution"].get("output") is not None
+                            data["execution"]["status"] == "completed"
+                            and data["execution"].get("output") is not None
                     ):
                         logger.success(f"Got Task Results: {data=}")
                         result = data["execution"]["output"]
@@ -134,6 +134,7 @@ async def wait_and_check_execution_status(execution_id: str) -> Optional[TexAuRe
                         # async with httpx.AsyncClient() as cookie_client:
                         #     r = await cookie_client.get('/refresh_linkedin_cookie')
                         result = data["execution"]["output"]
+
                         return TexAuResponse(data=result)
                     else:
                         logger.warning(f'{data["execution"]["status"]=}')
@@ -193,9 +194,9 @@ async def send_spice_request(cookie, linkedin_url) -> Optional[str]:
         return None
 
 
-@router.post("/search", response_model=TexAuResponse)
+@router.post("/search", response_model=TexAuExecutionResponse)
 async def search_using_texau(
-    request: TexAuRequest, user=Depends(fastapi_users.get_current_active_user)
+        request: TexAuRequest, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.info(f"{request=}, {user=}")
 
@@ -216,9 +217,9 @@ async def search_using_texau(
             )
 
         if not (
-            execution_id := await send_spice_request(
-                cookie=cookie, linkedin_url=query_url
-            )
+                execution_id := await send_spice_request(
+                    cookie=cookie, linkedin_url=query_url
+                )
         ):
             logger.warning("Invalid Task Id")
             raise HTTPException(
@@ -228,6 +229,7 @@ async def search_using_texau(
 
         logger.debug("Execution Id in main>>>>>" + execution_id)
         return TexAuExecutionResponse(execution_id=execution_id)
+        # return {"execution_id": execution_id}
     except Exception as e:
         logger.critical(str(e))
         raise HTTPException(

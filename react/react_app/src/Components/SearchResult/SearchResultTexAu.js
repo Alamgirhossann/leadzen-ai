@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Pagination from "../SharedComponent/Pagination";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -10,6 +10,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { func } from "prop-types";
+import { v4 as uuidv4 } from "uuid";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -24,25 +25,30 @@ const SearchResult = (props) => {
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
-  const [resultData, setSearchResult] = useState({ data: null });
+  const [UnlockEmailDetails, setunlockEmailDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [searchTerm, setSearchTerm] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
-  const [activeIndexProfile, setActiveIndexProfile] = useState(false);
+  const [searchType, setSearchType] = useState("");
+  const [searchId, setSearchId] = useState();
+  let today = new Date();
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
-    let today = new Date();
-    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-
-    let dd = String(today.getDate()).padStart(2, "0");
-    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    let yyyy = today.getFullYear();
+  let dd = String(today.getDate()).padStart(2, "0");
+  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  let yyyy = today.getFullYear();
 
   const paginate = (pageNumber) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10) : 0
+      myLeads.length > 0
+        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+        : 0
     );
   };
   today = dd + "/" + mm + "/" + yyyy;
@@ -58,18 +64,23 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
+        setSearchTerm(props.location.state.requestTexAu);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
+        setSearchType(props.location.state.requestTexAu.searchType);
       }
       let keyword = null;
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
+        setSearchTerm(props.location.state.customSearch);
         setCustomSearch(props.location.state.customSearch);
         console.log(
           "from advance.customSearch filters .....",
           props.location.state.customSearch
         );
+        if (props.location.state.customSearch.search_type)
+          setSearchType(props.location.state.customSearch.search_type);
         if (props.location.state.customSearch.keywords) isKeyword = true;
         if (props.location.state.customSearch.education) isEducation = true;
         if (isKeyword && isEducation)
@@ -104,12 +115,12 @@ const SearchResult = (props) => {
         setLoading(true);
       }
       try {
-        const response = await fetch(apiServer + "/texau/search?", {
+        const response = await fetch(apiServer + "/texau/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(requestForTexAu),
         });
@@ -132,7 +143,11 @@ const SearchResult = (props) => {
         }
 
         let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
+        console.log(
+          "Data>>>>> execution_id >>>>>>",
+          json_res,
+          json_res.execution_id
+        );
         if (!json_res.execution_id) {
           setLoading(false);
           setMyLeads({});
@@ -166,6 +181,7 @@ const SearchResult = (props) => {
           }
         );
 
+        console.log("response>>>>", response);
         function handleError() {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
@@ -187,7 +203,7 @@ const SearchResult = (props) => {
           console.log("Data>>>>", data, ">>>>>", response);
           if (!data) {
             console.warn(`Invalid Data`);
-            handleError()
+            handleError();
             return;
           }
 
@@ -195,7 +211,10 @@ const SearchResult = (props) => {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
-          if (data.data) setMyLeads(data.data);
+          if (data.data) {
+            setMyLeads(data.data);
+            saveSearchedRecord(data.data);
+          }
 
           return;
         }
@@ -213,66 +232,145 @@ const SearchResult = (props) => {
 
   useEffect(() => {}, [loading]);
 
-    useEffect(async () => {
-        paginate(1);
-    }, [myLeads]);
+  useEffect(async () => {
+    paginate(1);
+  }, [myLeads]);
 
-    useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
-    console.log("myLeads>>>>>>>>>>>", myLeads);
+  useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
+  console.log("myLeads>>>>>>>>>>>", myLeads);
 
-    const [show, setShow] = useState();
-    const [selected, setSelected] = useState(false);
-    const showClick = (e, index) => {
-        e.preventDefault();
-        console.log('inside showClick');
-        if (!show[index]) {
-            console.log(show);
-            console.log('inside showClick if');
-            setShow(show.map((value, i) => {
-                    if (index === i) return true
-                    else return value
-                }
-            ))
-            console.log(show);
+  const [show, setShow] = useState();
+  const [selected, setSelected] = useState(false);
+  const handleUnlockEmail = async (e, index, data) => {
+    e.preventDefault();
+    console.log("in handle unlock>>>>", data);
+    // try {
+    //   let isDuplicate = false;
+    //
+    //   UnlockEmailDetails.map((spec) => {
+    //     console.log("spec>>>", spec.index);
+    //     if (spec.index === `${currentPage}${index}`) {
+    //       isDuplicate = true;
+    //     }
+    //   });
+    //   console.log("isDuplicate>>>>", isDuplicate);
+    //   if (isDuplicate === false) {
+    let requestForSaveEmailCredit = {
+      user_id: Cookies.get("user_id"),
+      search_id: searchId,
+      email: ["sff", "ddsg"],
+      search_index: parseInt(`${currentPage}${index}`),
+    };
+    try {
+      const response = await fetch(
+        apiServer + "/search_result/save_email_credit_history",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveEmailCredit),
         }
-    };
+      );
 
-    useEffect(() => {
-        setShow(new Array(myLeads.length).fill().map((item) => false));
-    }, [currentLeads]);
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+    //   }
+    //
+    //   console.log("specificUser>>>>>>>", specificUserDetails);
+    //   specificUserDetails?.map((spec) => {
+    //     console.log(
+    //       "Check details>>>>",
+    //       spec.index,
+    //       spec.details === "Record Not Found"
+    //     );
+    //   });
+    // } catch (err) {
+    //   console.error("Error: ", err);
+    // }
+  };
 
-    const clickSelect = (e) => {
-        e.preventDefault();
-        if (!selected) setSelected(true);
-    };
-    const user = {
-        name: "John Smith",
-        email: "Johnsmith087@hexagon.in",
-        subscription: {
-            product: "Free Analystt",
-            price: "100 INR",
-            period: "Yearly",
-            status: "Active",
-            last_renewal: "01/02/2020",
-            expiry_date: "02/08/2021",
-            profile_credits: 500,
-            mail_credits: 1000,
-        },
-    };
+  useEffect(() => {
+    setShow(new Array(myLeads.length).fill().map((item) => false));
+  }, [currentLeads]);
+
+  const clickSelect = (e) => {
+    e.preventDefault();
+    if (!selected) setSelected(true);
+  };
+  const user = {
+    name: "John Smith",
+    email: "Johnsmith087@hexagon.in",
+    subscription: {
+      product: "Free Analystt",
+      price: "100 INR",
+      period: "Yearly",
+      status: "Active",
+      last_renewal: "01/02/2020",
+      expiry_date: "02/08/2021",
+      profile_credits: 500,
+      mail_credits: 1000,
+    },
+  };
 
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-    const handleProfile = async (index, data) => {
-        let reqJsonPipl = {
-            email: "",
-            name: {first_name: "", last_name: ""},
-            url: data.url,
-        };
-        console.log("in Handle profile...", `${currentPage}${index}`, data);
-        try {
-            let isDuplicate = false;
+  const saveSearchedRecord = async (response) => {
+    console.log("In saveSearchedRecord");
+
+    let requestForSaveSearch = {
+      user_id: Cookies.get("user_id"),
+      search_id: Cookies.get("user_email") + uuidv4(),
+      search_type: "texAu",
+      search_term: JSON.stringify(searchTerm),
+      results: response,
+    };
+    console.log("In saveSearchedRecord...", requestForSaveSearch);
+    try {
+      const response = await fetch(
+        apiServer + "/search_result/save_search_history",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveSearch),
+        }
+      );
+
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
+
+  const handleProfile = async (index, data) => {
+    let reqJsonPipl = {
+      email: "",
+      name: { first_name: "", last_name: "" },
+      url: data.url,
+    };
+    console.log("in Handle profile...", `${currentPage}${index}`, data);
+    try {
+      let isDuplicate = false;
 
       specificUserDetails.map((spec) => {
         console.log("spec>>>", spec.index);
@@ -288,87 +386,129 @@ const SearchResult = (props) => {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(reqJsonPipl),
         });
 
-                let json_res = await response.json();
-                console.log("Data>>>>>>>>>>>", json_res);
-                if (json_res) {
-                    setSpecificUserDetails((prev) => [
-                        ...prev,
-                        {index: `${currentPage}${index}`, details: json_res[0]},
-                    ]);
-                } else {
-                    console.log("In setSpecificUserDetails else");
-                    setSpecificUserDetails((prev) => [
-                        ...prev,
-                        {index: `${currentPage}${index}`, details: "Record Not Found"},
-                    ]);
-                    console.log(
-                        "In setSpecificUserDetails else ress....",
-                        specificUserDetails
-                    );
-                }
+        let json_res = await response.json();
+        console.log("Data Pipl..>>>>>>>>>>>", json_res, ">>>>", searchType);
+        let phones = [];
+        if (json_res) {
+          for (let i = 0; i < json_res.length; i++) {
+            let obj = json_res[i];
+            console.log("in for loop pipl>>>", obj, ">>>>", obj.phones.length);
+            for (let j = 0; j < obj.phones.length; j++) {
+              phones.push(obj.phones[j].number);
             }
+          }
+          console.log("Phones>>>>>>", phones);
+          let requestForSaveProfileCredit = {
+            user_id: Cookies.get("user_id"),
+            search_id: searchId,
+            phone: phones,
+            search_index: `${currentPage}${index}`,
+          };
+          try {
+            const response = await fetch(
+              apiServer + "/search_result/save_profile_credit_history",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                  Authorization: `Bearer ${Cookies.get("user_token")}`,
+                },
+                body: JSON.stringify(requestForSaveProfileCredit),
+              }
+            );
 
-            console.log("specificUser>>>>>>>", specificUserDetails);
-            specificUserDetails?.map((spec) => {
-                console.log(
-                    "Check details>>>>",
-                    spec.index,
-                    spec.details === "Record Not Found"
-                );
+            const result = response.json();
+            result.then((value) => {
+              console.log("value >>>>> ", value);
+              setSearchId(value.search_id);
             });
-        } catch (err) {
-            console.error("Error: ", err);
+            console.log(
+              "response from saveResult>>>",
+              result,
+              result.search_id
+            );
+          } catch (e) {
+            console.error("Exception>>", e);
+          }
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: json_res[0] },
+          ]);
+        } else {
+          console.log("In setSpecificUserDetails else");
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: "Record Not Found" },
+          ]);
+          console.log(
+            "In setSpecificUserDetails else ress....",
+            specificUserDetails
+          );
         }
-    };
+      }
 
-    return (
-        <div>
-            <Header user={user}/>
+      console.log("specificUser>>>>>>>", specificUserDetails);
+      specificUserDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
+      });
+    } catch (err) {
+      console.error("Error: ", err);
+    }
+  };
 
-            <div className="modal" id="bulkmodal">
-                <button
-                    type="button"
-                    className="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                />
-                <div className="modal-dialog">
-                    <div className="modal-message">
-                        <p>
-                            <i className="text-danger">Format to follow:</i> Ensure that the
-                            first column has the unique values you’re searching for. Download
-                            the sample below for better understanding.{" "}
-                        </p>
-                        <Link>
-                            <i className="text-danger text-decoration-underline">
-                                Click here to download csv format
-                            </i>
-                        </Link>
-                    </div>
-                    <div className="modal-content">
-                        <form action="/upload" id="mydrop" className="dropzone">
-                            <div className="dz-message needsclick">
-                                <button type="button" className="dz-button">
-                                    Drag and Drop File
-                                </button>
-                                <br/>
-                                <button type="button" className="dz-button">
-                                    OR{" "}
-                                </button>
-                                <br/>
-                                <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
+  return (
+    <div>
+      <Header user={user} />
+
+      <div className="modal" id="bulkmodal">
+        <button
+          type="button"
+          className="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        />
+        <div className="modal-dialog">
+          <div className="modal-message">
+            <p>
+              <i className="text-danger">Format to follow:</i> Ensure that the
+              first column has the unique values you’re searching for. Download
+              the sample below for better understanding.{" "}
+            </p>
+            <Link>
+              <i className="text-danger text-decoration-underline">
+                Click here to download csv format
+              </i>
+            </Link>
+          </div>
+          <div className="modal-content">
+            <form action="/upload" id="mydrop" className="dropzone">
+              <div className="dz-message needsclick">
+                <button type="button" className="dz-button">
+                  Drag and Drop File
+                </button>
+                <br />
+                <button type="button" className="dz-button">
+                  OR{" "}
+                </button>
+                <br />
+                <span className="note needsclick">
+                  <input type="file" accept=".csv" onChange={handleCSVFile} />
                 </span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
 
       <div className="main-content-area pb-6 pt-2">
         <div className="main-wrapper container-fluid">
@@ -435,8 +575,7 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads &&
-                    (myLeads.length === 0) ? (
+                    {myLeads && myLeads.length === 0 ? (
                       <div>
                         <h5>Records not found</h5>
                       </div>
@@ -476,7 +615,12 @@ const SearchResult = (props) => {
                               >
                                 abc@xyz.com
                               </small>
-                              <a href="#" onClick={(e) => showClick(e, index)}>
+                              <a
+                                href="#"
+                                onClick={(e) =>
+                                  handleUnlockEmail(e, index, data)
+                                }
+                              >
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>

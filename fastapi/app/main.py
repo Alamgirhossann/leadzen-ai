@@ -1,19 +1,22 @@
 import csv
-
+import databases
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_utils.tasks import repeat_every
 from loguru import logger
 from starlette import status
-from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_JWT_SECRET
+from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_DATABASE_URL, API_CONFIG_JWT_SECRET
 from app.customize_filter import router as filter_router
 from app.email import router as email_router
-from app.email_truemail import router as email_verification
+from app.snov import router as snov_email
 from app.pipl import router as pipl_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau import router as texau_router
+from app.email_truemail import router as email_verification
+from app.search_result_operations import router as search_operations, database
 from app.users import fastapi_users
+from app.proxy_curl import router as proxy_curl
 from app.users import (
     jwt_authentication,
     on_after_register,
@@ -46,6 +49,9 @@ app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=email_verification, prefix="/api")
+app.include_router(router=snov_email, prefix="/api")
+app.include_router(router=search_operations, prefix="/api", dependencies=[Depends(fastapi_users.get_current_active_user)])
+
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
     prefix="/api/auth/jwt",
