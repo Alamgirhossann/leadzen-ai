@@ -77,7 +77,7 @@ const SidebarExtractContact = () => {
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              placeholder="Search your job"
+              placeholder="Search Likers, Commenters"
             />
 
             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">

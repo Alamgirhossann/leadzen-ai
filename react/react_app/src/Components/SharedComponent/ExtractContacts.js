@@ -24,7 +24,7 @@ const ExtractContacts = () => {
     <div className="user-widget-box p-4 my-3 text-center">
       <h5 className="text-danger">Now Extract contacts</h5>
       <p className="text-dark mb-3">
-        of Followers, Likers, Commentors & Group Members & Job Seekers From
+        of Followers, Likers, Commenters & Group Members & Job Seekers From
         Social Media
       </p>
       <ul className="user-widget-social mt-3 mb-4 list-inline">
@@ -122,7 +122,7 @@ const ExtractContacts = () => {
             id="inlineRadio4"
           />
           <label className="form-check-label" for="inlineRadio4">
-            Commentors
+            Commenters
           </label>
         </div>
         <div className="form-check form-check-inline">
