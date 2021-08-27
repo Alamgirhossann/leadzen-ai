@@ -7,6 +7,8 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import UserSearch from "../SharedComponent/UserSearch";
 import SharedHistory from "../SharedComponent/SharedHistory";
 import Cookies from "js-cookie";
+import BulkSearch from "../SharedComponent/BulkSearch";
+import ExtractContacts from "../SharedComponent/ExtractContacts";
 
 const RepeatedUser = () => {
   const history = useHistory();
@@ -379,61 +381,63 @@ const RepeatedUser = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
+              <BulkSearch />
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
+              <ExtractContacts />
               <div style={{ background: "white", borderRadius: "20px" }}>
                 <SharedHistory />
               </div>
 
-              <div className="user-widget-box text-center p-4 my-3">
-                <h6 className="user-magic-title">
-                  {" "}
-                  <img
-                    src="assets/images/start-user-magic.png"
-                    alt="title"
-                  />{" "}
-                  Magic Recommendations
-                </h6>
-                <p className="text-muted mb-3">
-                  {" "}
-                  Hey, Based on your latest search intrest, these are best magic
-                  recommendation for you !!{" "}
-                  <span className="text-danger">~Jarv</span>
-                </p>
-                <div className="px-5 pxlg-7 mb-3 row">
-                  {recommendations.map((data) => (
-                    <div className="col-6 col-sm-4 col-lg-3 col-xl-2">
-                      <div className="user-author-item my-2">
-                        <img
-                          src="assets/images/user-athor-pic.png"
-                          alt="title"
-                        />
-                        <h6 className="small m-0">{data.name}</h6>
-                        <small>{data.role}</small>
-                        <br></br>
-                        <small>{data.comp}</small>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <img
-                  src="assets/images/user-robot-icon.png"
-                  alt="#"
-                  className="user-author-shape"
-                />
-                <a href="/searchResult" className="text-danger">
-                  View List
-                </a>
-              </div>
+              {/*<div className="user-widget-box text-center p-4 my-3">*/}
+              {/*  <h6 className="user-magic-title">*/}
+              {/*    {" "}*/}
+              {/*    <img*/}
+              {/*      src="assets/images/start-user-magic.png"*/}
+              {/*      alt="title"*/}
+              {/*    />{" "}*/}
+              {/*    Magic Recommendations*/}
+              {/*  </h6>*/}
+              {/*  <p className="text-muted mb-3">*/}
+              {/*    {" "}*/}
+              {/*    Hey, Based on your latest search intrest, these are best magic*/}
+              {/*    recommendation for you !!{" "}*/}
+              {/*    <span className="text-danger">~Jarv</span>*/}
+              {/*  </p>*/}
+              {/*  <div className="px-5 pxlg-7 mb-3 row">*/}
+              {/*    {recommendations.map((data) => (*/}
+              {/*      <div className="col-6 col-sm-4 col-lg-3 col-xl-2">*/}
+              {/*        <div className="user-author-item my-2">*/}
+              {/*          <img*/}
+              {/*            src="assets/images/user-athor-pic.png"*/}
+              {/*            alt="title"*/}
+              {/*          />*/}
+              {/*          <h6 className="small m-0">{data.name}</h6>*/}
+              {/*          <small>{data.role}</small>*/}
+              {/*          <br></br>*/}
+              {/*          <small>{data.comp}</small>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    ))}*/}
+              {/*  </div>*/}
+              {/*  <img*/}
+              {/*    src="assets/images/user-robot-icon.png"*/}
+              {/*    alt="#"*/}
+              {/*    className="user-author-shape"*/}
+              {/*  />*/}
+              {/*  <a href="/searchResult" className="text-danger">*/}
+              {/*    View List*/}
+              {/*  </a>*/}
+              {/*</div>*/}
 
-              <div>
-                <AskJarvis />
-              </div>
-              <div style={{ background: "white", borderRadius: "20px" }}>
-                <SavedList />
-              </div>
+              {/*<div>*/}
+              {/*  <AskJarvis />*/}
+              {/*</div>*/}
+              {/*<div style={{ background: "white", borderRadius: "20px" }}>*/}
+              {/*  <SavedList />*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

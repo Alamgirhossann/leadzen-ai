@@ -8,7 +8,6 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
-import { func } from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 
 const SearchResult = (props) => {
@@ -113,50 +112,9 @@ const SearchResult = (props) => {
         console.log("request....", requestForTexAu);
         setLoading(true);
       }
-      try {
-        requestForTexAu.cookie =
-          "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7hCKx0k4AeljWlYLJWzMzPyxIRAjQSo6OK5dVCVSSBXpy2J0DZrt9uyOICBu64noYRNWpJUHXEOm20kpdqFB5JFh6Az2QHDSH4_YwdnPjnqXEjJ8ihhF0Mo8D";
-
-        const response = await fetch(
-          apiServer + "/texau/linkedin/matching_profiles",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("user_token")}`,
-            },
-            body: JSON.stringify(requestForTexAu),
-          }
-        );
-
-        if (response.status === 400) {
-          // handle 400
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        if (response.status === 500) {
-          // handle 500
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        if (response.status === 404) {
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
-        if (!json_res.execution_id) {
-          setLoading(false);
-          setMyLeads({});
-        }
-        checkExecutionStatus(json_res.execution_id);
-      } catch (err) {
-        console.error("Error: ", err);
-      }
+      const endpoint = "/texau/linkedin/matching_profiles";
+      const inputData = requestForTexAu;
+      await sendForExecution(endpoint, inputData);
     }
 
     if (props.location.pathname.includes("/social_url_search")) {
@@ -170,46 +128,66 @@ const SearchResult = (props) => {
       const inputData = props.location.state.data;
       const endpoint = props.location.state.endpoint;
 
-      try {
-        const response = await fetch(apiServer + endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(inputData),
-        });
+      setLoading(true);
 
-        if (response.status === 400) {
-          // handle 400
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        if (response.status === 500) {
-          // handle 500
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        if (response.status === 404) {
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        let json_res = await response.json();
-        console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
-        if (!json_res.execution_id) {
-          setLoading(false);
-          setMyLeads({});
-        }
-        checkExecutionStatus(json_res.execution_id);
-      } catch (err) {
-        console.error("Error: ", err);
-      }
+      await sendForExecution(endpoint, inputData);
     }
   }, [props.location.state.customSearch]);
+
+  const sendForExecution = async (endpoint, inputData) => {
+    function handleError(status) {
+      setLoading(false);
+      setMyLeads({});
+      console.error(`Got HTTP Error ${status}`);
+      alert("Error Searching For Leads");
+    }
+
+    try {
+      const response = await fetch(apiServer + endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(inputData),
+      });
+
+      function handleUnAuthorized(response) {
+        console.log("User is UnAuthorized");
+        alert("Please Logout and LogIn Again");
+      }
+
+      async function handleSuccess(response) {
+        let json = await response.json();
+
+        if (!json || !json.execution_id) {
+          handleError(response);
+        }
+        console.log(`Got Response ${json}`);
+        checkExecutionStatus(json.execution_id);
+      }
+
+      switch (response.status) {
+        case 200:
+          await handleSuccess(response);
+          break;
+        case 401:
+          handleUnAuthorized(response);
+          break;
+        case 400:
+        case 500:
+        case 404:
+        default:
+          handleError(response);
+          break;
+      }
+    } catch (err) {
+      console.error(`Exception Getting Data from ${endpoint}`);
+      console.error(err);
+      handleError(500);
+    }
+  };
 
   const checkExecutionStatus = (executionId = null) => {
     if (!executionId) {
@@ -746,134 +724,134 @@ const SearchResult = (props) => {
                   paginate={paginate}
                 />
               </div>
-              <div className="user-widget-box text-center p-4 my-3">
-                <div className="user-promote-logo">
-                  <img src="assets/images/user-company-brand.png" alt="title" />
-                </div>
-                <div className="user-promote-slider">
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a list of companies in semi-conductor space with
-                        1000+ employees in US?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a detailed list of all the people working for
-                        Flipkart?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a detailed list of all the people working for
-                        Flipkart?
-                      </p>
+              {/*<div className="user-widget-box text-center p-4 my-3">*/}
+              {/*  <div className="user-promote-logo">*/}
+              {/*    <img src="assets/images/user-company-brand.png" alt="title" />*/}
+              {/*  </div>*/}
+              {/*  <div className="user-promote-slider">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Want to extract contacts of group members in a LinkedIn*/}
+              {/*          group?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Need a list of companies in semi-conductor space with*/}
+              {/*          1000+ employees in US?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Need a detailed list of all the people working for*/}
+              {/*          Flipkart?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Want to extract contacts of group members in a LinkedIn*/}
+              {/*          group?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Need a detailed list of all the people working for*/}
+              {/*          Flipkart?*/}
+              {/*        </p>*/}
 
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Want to extract contacts of group members in a LinkedIn*/}
+              {/*          group?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>
