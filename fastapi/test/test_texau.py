@@ -75,8 +75,7 @@ async def test_texau_find_commenters_of_linkedin_post():
         response = await client.post(
             "/api/texau/linkedin/post_commenters",
             json=TexAuFindLinkedInPostCommentersRequest(
-                url="https://www.linkedin.com/pulse/developing-digital-talent-toronto-ravi-kumar-s/?trackingId"
-                "=iUSRpLE2Dt56CYpqppezgA%3D%3D",
+                url="https://www.linkedin.com/pulse/developing-digital-talent-toronto-ravi-kumar-s/?trackingId=iUSRpLE2Dt56CYpqppezgA%3D%3D",
                 cookie=TEST_CONFIG_LINKEDIN_COOKIE,
             ).dict(),
             headers=TEST_CONFIG_HEADERS,

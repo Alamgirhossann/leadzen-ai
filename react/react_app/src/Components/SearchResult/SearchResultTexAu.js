@@ -146,7 +146,7 @@ const SearchResult = (props) => {
           setLoading(false);
           setMyLeads({});
         }
-        
+
         let json_res = await response.json();
         console.log("Data>>>>>>>>>>>", json_res, json_res.execution_id);
         if (!json_res.execution_id) {
@@ -214,7 +214,7 @@ const SearchResult = (props) => {
 
           if (data.data) {
             setMyLeads(data.data);
-            saveSearchedRecord(data.data);
+            await saveSearchedRecord(data.data);
           }
 
           return;
