@@ -135,7 +135,7 @@ const SavedList = () => {
             </h2>
             <div
               id="collapseOne"
-              className="accordion-collapse collapse show"
+              className="accordion-collapse collapse"
               data-bs-parent="#accordionExample2"
             >
               <div className="accordion-body">

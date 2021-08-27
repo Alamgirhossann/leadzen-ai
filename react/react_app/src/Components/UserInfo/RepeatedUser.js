@@ -275,15 +275,15 @@ const RepeatedUser = () => {
                     alt="#"
                     className="user-author-shape"
                 />
-                <a href="/searchResult" className="text-danger">
+                <a href="/searchResult" style={{"pointerEvents":"none"}} className="text-danger">
                   View List
                 </a>
               </div>
 
-              <div>
+              <div style={{"pointerEvents":"none"}}>
                 <AskJarvis />
               </div>
-              <div style={{ background: "white", borderRadius: "20px" }}>
+              <div style={{ background: "white", borderRadius: "20px" , pointerEvents:"none" }}>
                 <SavedList />
               </div>
             </div>

@@ -26,7 +26,7 @@ const NavBar = (props) => {
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="/savedList">
+              <a className="nav-icon-menu nav-link disabled" href="/savedList">
                 <img src="assets/images/menu-saved-list.png" alt="saved here" />
                 Saved lists
               </a>
@@ -129,7 +129,7 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/pricing">
+                    <a className="dropdown-item" href="https://leadzen.ai/pricing/">
                       Buy Credits
                     </a>
                   </li>
@@ -139,7 +139,7 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/history">
+                    <a className="dropdown-item disabled" href="/history">
                       Export History
                     </a>
                   </li>
