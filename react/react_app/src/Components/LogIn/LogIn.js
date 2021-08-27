@@ -136,11 +136,11 @@ const LogIn = () => {
         const fetchResponse = await axios.post(
           apiServer + "/auth/jwt/login",
           formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
         );
         console.log("urlll>>>", apiServer + "/auth/jwt/login");
         let json_res = await fetchResponse.data;
@@ -163,7 +163,7 @@ const LogIn = () => {
           Cookies.set("user_token", json_res.access_token);
         }
 
-        setResponse({ ...response, ok: true });
+        setResponse({...response, ok: true});
         console.log("response", response);
 
         if (response.ok === true) {
@@ -226,7 +226,7 @@ const LogIn = () => {
             <div className="form-container">
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
-                  {!userVerifiedStatus ? <Redirect to="/unverified" /> : null}
+                  {!userVerifiedStatus ? <Redirect to="/unverified"/> : null}
                   {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">

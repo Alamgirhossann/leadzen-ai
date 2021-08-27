@@ -9,8 +9,8 @@ import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
-import { func } from "prop-types";
-import { v4 as uuidv4 } from "uuid";
+import {func} from "prop-types";
+import {v4 as uuidv4} from "uuid";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -23,10 +23,10 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    { index: null, details: null },
+    {index: null, details: null},
   ]);
   const [UnlockEmailDetails, setunlockEmailDetails] = useState([
-    { index: null, details: null },
+    {index: null, details: null},
   ]);
   const [searchTerm, setSearchTerm] = useState({});
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,9 @@ const SearchResult = (props) => {
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   const [searchType, setSearchType] = useState("");
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [isCheck, setIsCheck] = useState([]);
+
   const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -61,8 +64,8 @@ const SearchResult = (props) => {
       let requestForTexAu = {};
       if (props.location.state.requestTexAu) {
         console.log(
-          "from advance. requestTexAu name.....",
-          props.location.state.requestTexAu
+            "from advance. requestTexAu name.....",
+            props.location.state.requestTexAu
         );
         setSearchTerm(props.location.state.requestTexAu);
         requestForTexAu = props.location.state.requestTexAu;
@@ -263,16 +266,16 @@ const SearchResult = (props) => {
     };
     try {
       const response = await fetch(
-        apiServer + "/search_result/save_email_credit_history",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(requestForSaveEmailCredit),
-        }
+          apiServer + "/search_result/save_email_credit_history",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(requestForSaveEmailCredit),
+          }
       );
 
       const result = response.json();
@@ -339,16 +342,16 @@ const SearchResult = (props) => {
     console.log("In saveSearchedRecord...", requestForSaveSearch);
     try {
       const response = await fetch(
-        apiServer + "/search_result/save_search_history",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(requestForSaveSearch),
-        }
+          apiServer + "/search_result/save_search_history",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(requestForSaveSearch),
+          }
       );
 
       const result = response.json();
@@ -411,16 +414,16 @@ const SearchResult = (props) => {
           };
           try {
             const response = await fetch(
-              apiServer + "/search_result/save_profile_credit_history",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                  Authorization: `Bearer ${Cookies.get("user_token")}`,
-                },
-                body: JSON.stringify(requestForSaveProfileCredit),
-              }
+                apiServer + "/search_result/save_profile_credit_history",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                  },
+                  body: JSON.stringify(requestForSaveProfileCredit),
+                }
             );
 
             const result = response.json();
@@ -429,16 +432,16 @@ const SearchResult = (props) => {
               setSearchId(value.search_id);
             });
             console.log(
-              "response from saveResult>>>",
-              result,
-              result.search_id
+                "response from saveResult>>>",
+                result,
+                result.search_id
             );
           } catch (e) {
             console.error("Exception>>", e);
           }
           setSpecificUserDetails((prev) => [
             ...prev,
-            { index: `${currentPage}${index}`, details: json_res[0] },
+            {index: `${currentPage}${index}`, details: json_res[0]},
           ]);
         } else {
           console.log("In setSpecificUserDetails else");
@@ -456,9 +459,9 @@ const SearchResult = (props) => {
       console.log("specificUser>>>>>>>", specificUserDetails);
       specificUserDetails?.map((spec) => {
         console.log(
-          "Check details>>>>",
-          spec.index,
-          spec.details === "Record Not Found"
+            "Check details>>>>",
+            spec.index,
+            spec.details === "Record Not Found"
         );
       });
     } catch (err) {
@@ -466,16 +469,55 @@ const SearchResult = (props) => {
     }
   };
 
-  return (
-    <div>
-      <Header user={user} />
+  const handleChange = e => {
+    const {id, checked} = e.target;
+    setIsCheck([...isCheck, id]);
+    if (!checked) {
+      setIsCheck(isCheck.filter(item => item !== id));
+    }
+  };
 
-      <div className="modal" id="bulkmodal">
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
+  const handleSelectAll = e => {
+    setIsCheckAll(!isCheckAll);
+    setIsCheck(currentLeads.map(li => li.url));
+    if (isCheckAll) {
+      setIsCheck([]);
+    }
+  };
+  const handleExcel = e => {
+    e.preventDefault()
+    const fetchData = async () => {
+      try {
+        console.log("go", isCheck)
+        const fetchResponse = await fetch(apiServer + "/exportExcel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(isCheck),
+        });
+
+        const data = await fetchResponse.json();
+        console.log("Data>>>>>>>>>>>", data);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
+    };
+
+    fetchData();
+  }
+  console.log("isCheck....", isCheck)
+  return (
+      <div>
+        <Header user={user}/>
+
+        <div className="modal" id="bulkmodal">
+          <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
         />
         <div className="modal-dialog">
           <div className="modal-message">
@@ -517,7 +559,7 @@ const SearchResult = (props) => {
               <SpecificSearchBtn/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
-                <Filters customSearch={customSearch} />
+                <Filters customSearch={customSearch}/>
               </div>
               <BulkSearch />
               <SidebarExtractContact />
@@ -534,9 +576,12 @@ const SearchResult = (props) => {
                 <div className="d-flex align-items-center justify-content-between py-3">
                   <div className="d-flex align-items-center ">
                     <input
-                      className="ms-3 me-3"
-                      type="checkbox"
-                      id="checkbox"
+                        className="ms-3 me-3"
+                        type="checkbox"
+                        id="selectAll"
+                        name="selectAll"
+                        onChange={handleSelectAll}
+                        checked={isCheckAll}
                     />
                     <small className="">
                       <b>{currentLeads.length}</b> of{" "}
@@ -555,19 +600,20 @@ const SearchResult = (props) => {
                     <small className="unlock-btn">
                       Unlock Mails{" "}
                       <img
-                        className="ps-3"
-                        src="assets/images/Group 1617.png"
-                        alt=""
+                          className="ps-3"
+                          src="assets/images/Group 1617.png"
+                          alt=""
                       />
                     </small>
-                    <small className="export-btn">
+                    <button onClick={handleExcel} className="export-btn" disabled={isCheck.length === 0 ? true : false}>
                       Export{" "}
                       <img
-                        className="ps-3"
-                        src="assets/images/export.png"
-                        alt=""
+                          className="ps-3"
+                          src="assets/images/export.png"
+                          alt=""
+
                       />
-                    </small>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -584,18 +630,22 @@ const SearchResult = (props) => {
                         <div>
                           <div className="user-container py-2" key={index}>
                             <input
-                              className="box ms-3 me-3"
-                              type="checkbox"
-                              id="checkbox"
+                                className="box ms-3 me-3"
+                                id={data.url}
+                                type="checkbox"
+                                name={data.name}
+                                checked={isCheck.includes(data.url)}
+                                onChange={handleChange}
+
                             />
                             <p className="search-author text-danger">
                               <img
-                                src={
-                                  data.profilePicture
-                                    ? data.profilePicture
-                                    : "assets/images/author-image.png"
-                                }
-                                alt=""
+                                  src={
+                                    data.profilePicture
+                                        ? data.profilePicture
+                                        : "assets/images/author-image.png"
+                                  }
+                                  alt=""
                               />
                             </p>
                             <div className="search-user">
@@ -609,17 +659,17 @@ const SearchResult = (props) => {
                             </div>
                             <div className="search-email text-center">
                               <small
-                                className={
-                                  show[index] ? "d-block" : "d-block blur"
-                                }
+                                  className={
+                                    show[index] ? "d-block" : "d-block blur"
+                                  }
                               >
                                 abc@xyz.com
                               </small>
                               <a
-                                href="#"
-                                onClick={(e) =>
-                                  handleUnlockEmail(e, index, data)
-                                }
+                                  href="#"
+                                  onClick={(e) =>
+                                      handleUnlockEmail(e, index, data)
+                                  }
                               >
                                 <small className="d-block text-danger">
                                   Unlock
@@ -628,9 +678,9 @@ const SearchResult = (props) => {
                             </div>
                             <p className="search-view-btn ">
                               <a
-                                className="btn"
-                                data-toggle="collapse"
-                                href={
+                                  className="btn"
+                                  data-toggle="collapse"
+                                  href={
                                   "#collapseExample_" + `${currentPage}${index}`
                                 }
                                 data-target={

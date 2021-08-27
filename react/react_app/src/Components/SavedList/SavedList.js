@@ -112,25 +112,25 @@ const SavedList = () => {
                 }}
               >
                 <div className=" first-grid head-align">
-                  <span className="me-3 fw-bold">My Leads</span>
-                  <button className='m-0'>
-                    <img className='m-0' src="assets/images/edit (4).png" alt="" />
-                  </button>
+                    <span className="me-3 fw-bold">My Leads</span>
+                    <button className='m-0'>
+                        <img className='m-0' src="assets/images/edit (4).png" alt=""/>
+                    </button>
                 </div>
-                <div className="second-grid">
-                  <input
-                    type="text"
-                    className="description"
-                    placeholder="Add Description..."
-                  />
-                </div>
-                <div className="third-grid">
-                  <div className="d-flex justify-content-end">
-                  <button className="m-0">
-                   <img className='m-0' src="assets/images/Delete.png" alt="" />
-                  </button>
+                  <div className="second-grid">
+                      <input
+                          type="text"
+                          className="description"
+                          placeholder="Add Description..."
+                      />
                   </div>
-                </div>
+                  <div className="third-grid">
+                      <div className="d-flex justify-content-end">
+                          <button className="m-0">
+                              <img className='m-0' src="assets/images/Delete.png" alt=""/>
+                          </button>
+                      </div>
+                  </div>
               </button>
             </h2>
             <div
@@ -193,27 +193,27 @@ const SavedList = () => {
                   padding: "10px",
                 }}
               >
-                <div className=" first-grid head-align">
-                  <span className="me-3 fw-bold">Product Designer Leads</span>
-                  <button className="m-0">
-                   <img className='m-0' src="assets/images/edit (4).png" alt="" />
-                  </button>
-                </div>
-                <div className="second-grid">
-                  <input
-                    type="text"
-                    className="description"
-                    placeholder="Add Description..."
-                  />
-                </div>
-                <div className="third-grid">
-                  <div className="d-flex justify-content-end">
-                  <button className="m-0">
-                   <img className='m-0' src="assets/images/Delete.png" alt="" />
-                  </button>
+                  <div className=" first-grid head-align">
+                      <span className="me-3 fw-bold">Product Designer Leads</span>
+                      <button className="m-0">
+                          <img className='m-0' src="assets/images/edit (4).png" alt=""/>
+                      </button>
                   </div>
-                  
-                </div>
+                  <div className="second-grid">
+                      <input
+                          type="text"
+                          className="description"
+                          placeholder="Add Description..."
+                      />
+                  </div>
+                  <div className="third-grid">
+                      <div className="d-flex justify-content-end">
+                          <button className="m-0">
+                              <img className='m-0' src="assets/images/Delete.png" alt=""/>
+                          </button>
+                      </div>
+
+                  </div>
               </button>
             </h2>
             <div
