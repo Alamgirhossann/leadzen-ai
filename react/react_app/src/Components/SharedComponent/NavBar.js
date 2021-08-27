@@ -136,6 +136,11 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
+                    <a className="dropdown-item" href="/history">
+                      Export History
+                    </a>
+                  </li>
+                  <li>
                     <a className="dropdown-item" href="/logIn">
                       <span className="text-muted me-3">Logout</span>
                       <img src="assets/images/logout-icon.png" alt="image" />
