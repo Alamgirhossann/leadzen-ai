@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState, useEffect} from "react";
 import "./Style/style.css";
 import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -9,7 +9,15 @@ import { useHistory } from "react-router-dom";
 
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
-const LogIn = () => {
+const LogIn = (props) => {
+  const [historyState, setHistoryState] = useState('')
+  useEffect(() => {
+    if (props.location.state !== undefined) {
+      // console.log("history",props.location.state)
+      setHistoryState(props.location.state.userRegistrationEmail)
+    }
+  }, [])
+
   const history = useHistory();
   const user = {
     name: "",
@@ -26,7 +34,6 @@ const LogIn = () => {
     },
   };
   var url_string = window.location.href;
-  // var url_string = "localhost:12002/login?emailVerified=true&email=piyush.jaiswal@kapso.in";
   var url = new URL(url_string);
   var emailVerified = url.searchParams.get("emailVerified");
   var email = url.searchParams.get("email");
@@ -55,23 +62,26 @@ const LogIn = () => {
   };
 
   const Robot = () => {
-    if (response.message === "user not found") {
+    if (response.message) {
       return (
-        <div className="col-md-6 robot-container order-md-12">
-          <div className="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
-            <img
-              style={{ width: "20px" }}
-              src="assets/images/Group 2221.png"
-              alt=""
-            />
-            <p className="fw-bold">
-              Hey Buddy, time to take <br /> the ‘lead’. User not found. <br />{" "}
-              <Link to="/signUp" className="text-danger text-decoration-none">
-                Sign up
-              </Link>{" "}
-              to begin.{" "}
-            </p>
-          </div>
+          <div className="col-md-6 robot-container order-md-12">
+            <div className="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
+              <img
+                  style={{width: "20px"}}
+                  src="assets/images/Group 2221.png"
+                  alt=""
+              />
+              {!userLogin.error ? <p className="fw-bold">
+                Hey Buddy, Time to take the lead.<br/> {!userLogin.error ? response.message : userLogin.error}
+                <br/>{" "}
+                <Link to="/signUp" className="text-danger text-decoration-none">
+                  Sign up
+                </Link>{" "}
+                to begin.{" "}
+              </p> : <p className="fw-bold">
+                Hey Buddy, Time to take the lead.<br/> {userLogin.error} <br/>{" "}
+              </p>}
+            </div>
         </div>
       );
     }
@@ -94,11 +104,10 @@ const LogIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("userLogin", userLogin);
     if (!userLogin.email || !userLogin.password) {
       setUserLogin({
         ...userLogin,
-        error: "Email and Password cannot be blank!",
+        error: "Email and Password cannot be blank!"
       });
       alert("Email and Password cannot be blank!");
     } else {
@@ -108,7 +117,7 @@ const LogIn = () => {
     if (!validator.isEmail(userLogin.email)) {
       setUserLogin({ ...userLogin, error: "Invalid Email" });
       setValid(false);
-      alert("Invalid Email");
+      // alert("Invalid Email");
     }
     if (
       !validator.isStrongPassword(userLogin.password, {
@@ -122,7 +131,7 @@ const LogIn = () => {
     ) {
       setUserLogin({ ...userLogin, error: "Invalid Password" });
       setValid(false);
-      alert("Invalid Password!");
+      // alert("Invalid Password!");
     }
     const formData = new FormData();
     formData.set("username", userLogin.email);
@@ -158,9 +167,9 @@ const LogIn = () => {
         if (json_res.access_token) {
           console.log("token created.....");
 
-          Cookies.set("user_email", userLogin.email);
+          Cookies.set("user_email", userLogin.email, {expires: 0.04});
           Cookies.set("user_id", userStatus.data.id);
-          Cookies.set("user_token", json_res.access_token);
+          Cookies.set("user_token", json_res.access_token, {expires: 0.04});
         }
 
         setResponse({...response, ok: true});
@@ -194,31 +203,48 @@ const LogIn = () => {
           }
         }
       } catch (err) {
-        console.error("Error: ", err);
+        console.error(err);
+        setResponse({...response, message: "user not found"});
       }
     };
     fetchData();
   };
 
-  // console.log("userStatus",userStatus)
   return (
     <div>
       <Header user={user} />
       {emailVerified ? (
-        <div
-          className="alert alert-warning alert-dismissible fade show"
-          role="alert"
-        >
-          <strong>{email}</strong> You have verified successfully.
-          <button
-            type="button"
-            className="close"
-            data-dismiss="alert"
-            aria-label="Close"
+          <div
+              className="alert alert-warning alert-dismissible fade show"
+              role="alert"
           >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+            <strong>{email}</strong> You have verified successfully.
+            <button
+                type="button"
+                className="close"
+                data-dismiss="alert"
+                aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+      ) : null}
+      {historyState !== '' ? (
+          <div
+              className="alert alert-warning alert-dismissible fade show"
+              role="alert"
+          >
+            <strong>{historyState}</strong> please check your email for
+            verification.
+            <button
+                type="button"
+                className="close"
+                data-dismiss="alert"
+                aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
       ) : null}
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
@@ -227,7 +253,6 @@ const LogIn = () => {
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
                   {!userVerifiedStatus ? <Redirect to="/unverified"/> : null}
-                  {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center">
@@ -239,26 +264,28 @@ const LogIn = () => {
                       <form className="sign-up-form" onSubmit={handleSubmit}>
                         <div className="mb-3">
                           <input
-                            type="email"
-                            className="w-100"
-                            autoComplete="off"
-                            value={userLogin.email}
-                            onChange={handleInput}
-                            name="email"
-                            placeholder="Enter your email"
-                            id="email"
+                              type="email"
+                              className="w-100"
+                              autoComplete="off"
+                              value={userLogin.email}
+                              onChange={handleInput}
+                              name="email"
+                              placeholder="Enter your email"
+                              id="email"
+                              required
                           />
                         </div>
                         <div className="mb-3 password-input">
                           <input
-                            type={showPass ? "text" : "password"}
-                            className="w-100"
-                            autoComplete="off"
-                            value={userLogin.password}
-                            onChange={handleInput}
-                            name="password"
-                            placeholder="Enter your password"
-                            id="password"
+                              type={showPass ? "text" : "password"}
+                              className="w-100"
+                              autoComplete="off"
+                              value={userLogin.password}
+                              onChange={handleInput}
+                              name="password"
+                              placeholder="Enter your password"
+                              id="password"
+                              required
                           />
                           <Link to="" onClick={handlePassClick}>
                             <img

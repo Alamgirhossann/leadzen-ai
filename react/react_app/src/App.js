@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Home from "./Components/Home/Home";
 import LogIn from "./Components/LogIn/LogIn";
@@ -32,25 +33,21 @@ import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
+import NoPageFound from "./Components/SharedComponent/NoPageFound";
+import PrivateRoute from "./Components/SharedComponent/PrivateRoute"
 
 const App = () => {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <LogIn />
-        </Route>
-        <Route path="/resetPassword">
-          <ResetPassword />
-        </Route>
-        <Route path="/pricing">
-          <Pricing />
-        </Route>
+      <Router>
+        <Switch>
+          <Route path="/resetPassword">
+            <ResetPassword/>
+          </Route>
+          <Route path="/pricing">
+            <Pricing/>
+          </Route>
         <Route path="/howToUse">
           <HowToUse />
-        </Route>
-        <Route path="/profile">
-          <Profile />
         </Route>
         <Route path="/savedList">
           <SavedList />
@@ -64,46 +61,41 @@ const App = () => {
         <Route path="/loginError">
           <LoginError />
         </Route>
-        <Route path="/login">
-          <LogIn />
-        </Route>
         <Route path="/signUp">
           <SignUp />
         </Route>
-        <Route path="/signUpError">
-          <SignUpError />
-        </Route>
-        <Route path="/firstTimeUser">
-          <FirstTimeUser />
-        </Route>
-        <Route path="/history">
-          <History />
-        </Route>
-        <Route path="/repeatedUser">
-          <RepeatedUser />
-        </Route>
-        <Route path="/detailedInfo">
-          <DetailedInfo />
-        </Route>
-        <Route path="/signUpEmailError">
-          <SignUpEmailError />
-        </Route>
-        <Route path="/searchResult" component={SearchResult} />
-        <Route path="/result_by_name" component={SearchResultTexAu} />
-        <Route path="/advanceSearch" component={SearchResultTexAu} />
-        <Route path="/verification" component={Verification} />
-        <Route path="/unverified" component={LoginEmailUnverifiedError} />
-        <Route path="/excelDownload" component={ExcelDownload} />
+          <Route path="/signUpError">
+            <SignUpError/>
+          </Route>
 
-        <Route path="/loginEmailError">
-          <LoginEmailError />
-        </Route>
-        <Route path="/passwordInstruction">
-          <PasswordInstruction />
-        </Route>
-        <Route path="/paymentFailed">
-          <PaymentFailed />
-        </Route>
+          <Route path="/detailedInfo">
+            <DetailedInfo/>
+          </Route>
+          <Route path="/signUpEmailError">
+            <SignUpEmailError/>
+          </Route>
+          <PrivateRoute path="/searchResult" component={SearchResult} exact/>
+          <PrivateRoute path="/profile" component={Profile} exact/>
+          <PrivateRoute path="/history" component={History} exact/>
+          <PrivateRoute path="/result_by_name" component={SearchResultTexAu} exact/>
+          <PrivateRoute path="/advanceSearch" component={SearchResultTexAu} exact/>
+          <PrivateRoute path="/verification" component={Verification} exact/>
+          <PrivateRoute path="/repeatedUser" component={RepeatedUser} exact/>
+          <PrivateRoute path="/firstTimeUser" component={FirstTimeUser} exact/>
+          <Route path="/unverified" component={LoginEmailUnverifiedError} exact/>
+          <PrivateRoute path="/excelDownload" component={ExcelDownload}/>
+          <Route path="/login" component={LogIn}/>
+          <Route path="/" component={LogIn}/>
+
+          <Route path="/loginEmailError">
+            <LoginEmailError/>
+          </Route>
+          <Route path="/passwordInstruction">
+            <PasswordInstruction/>
+          </Route>
+          <Route path="/paymentFailed">
+            <PaymentFailed/>
+          </Route>
         <Route path="/resetLink">
           <ResetLink />
         </Route>

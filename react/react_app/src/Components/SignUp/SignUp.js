@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import "./Style/style.css";
-import { Link, Redirect } from "react-router-dom";
+import {Link} from "react-router-dom";
 import Cookies from "js-cookie";
 import validator from "validator";
 import CookieConsent from "react-cookie-consent";
 import Header from "../SharedComponent/Header";
+import {useHistory} from "react-router-dom";
 
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SignUp = () => {
+  const history = useHistory();
   const user = {
     name: "",
     email: "",
@@ -47,24 +49,32 @@ const SignUp = () => {
   };
 
   const Robot = () => {
-    if (response.message === "REGISTER_USER_ALREADY_EXISTS") {
+    if (response.message) {
       return (
-        <div className="col-md-6 order-md-12">
-          <div className="sign-up-page-robot">
-            <p className="fw-bold">
-              <img
-                style={{ width: "20px" }}
-                src="assets/images/Group 2221.png"
-                alt=""
-              />
-              Hey {userRegistration.email}, <br />
-              looks like you’ve been taking the ‘lead’ already. The username
-              already exists. Try{" "}
-              <Link to="/login" className="text-danger">
-                logging in
-              </Link>{" "}
-              in instead
-            </p>
+          <div className="col-md-6 order-md-12">
+            <div className="sign-up-page-robot">
+              {response.message === "User or Email already exists" ? <p className="fw-bold">
+                <img
+                    style={{width: "20px"}}
+                    src="assets/images/Group 2221.png"
+                    alt=""
+                />
+                Hey {userRegistration.email}, <br/>
+                looks like you’ve been taking the ‘lead’ already. <br/>
+                {response.message}<br/>Try{" "}
+                <Link to="/login" className="text-danger">
+                  logging in
+                </Link>{" "}
+                in instead
+              </p> : <p className="fw-bold">
+                <img
+                    style={{width: "20px"}}
+                    src="assets/images/Group 2221.png"
+                    alt=""
+                />
+                Hey {userRegistration.email}, <br/>
+                {response.message}<br/>Try Again{" "}
+              </p>}
           </div>
         </div>
       );
@@ -128,8 +138,6 @@ const SignUp = () => {
       setValid(false);
     }
     setUserRegistration({ ...userRegistration, error: error });
-    if (error) alert(error + "Invalid");
-
     const fetchData = async () => {
       console.info(userRegistration);
 
@@ -147,9 +155,16 @@ const SignUp = () => {
         console.log("Data>>>>>>>>>>>", data);
 
         if (data.detail === "REGISTER_USER_ALREADY_EXISTS") {
-          alert(data.detail);
-        } else {
-          setResponse({ ...response, ok: true });
+          // alert(data.detail);
+          setResponse({...response, message: "User or Email already exists"});
+        }
+        if ('id' in data) {
+          setResponse({...response, ok: true});
+          history.push({
+            state: {"userRegistrationEmail": userRegistration.email},
+            pathname: "/login"
+
+          })
         }
 
         if (response.ok === true) {
@@ -158,31 +173,22 @@ const SignUp = () => {
         }
       } catch (err) {
         console.error("Error: ", err);
+        alert("some thing goes wrong")
       }
     };
+    if (error) {
+      // alert(error + "Invalid")
+      setResponse({...response, message: error + "Invalid"});
+    } else {
+      fetchData();
+    }
+    ;
 
-    fetchData();
   };
   return (
     <div className="container-body">
       <Header user={user} />
-      {response.ok === true ? (
-        <div
-          className="alert alert-warning alert-dismissible fade show"
-          role="alert"
-        >
-          <strong>{userRegistration.email}</strong> please check your email for
-          verification.
-          <button
-            type="button"
-            className="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      ) : null}
+
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
           <div className="container-fluid">
@@ -190,7 +196,7 @@ const SignUp = () => {
               <div className="signup-wrapper py-3 px-md-6">
                 <div className="row align-items-center">
                   <Robot />
-                  {response.ok ? <Redirect to="/login" /> : null}
+                  {/*{response.ok ? <Redirect to="/login" /> : null}*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center pt-1">

@@ -92,17 +92,20 @@ async def shutdown():
     await database.disconnect()
 
 
-# @app.on_event("startup")
-# @repeat_every(seconds=60 * 60)
-# def refresh_linkedin_cookie():
-#     logger.debug("linkedin cookie...")
-#     data = fetch_linkedin_cookie()
-#     header = ["cookie"]
-#     with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
-#         writer = csv.writer(f)
-#         writer.writerow(header)
-#         writer.writerow([data])
-#     logger.debug(header)
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)
+def job():
+    print("linkedin delete cookie...")
+    # data = fetch_linkedin_cookie()
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "r") as f:
+        data = list(csv.reader(f))
+        logger.debug("data", data)
+    # header = ['cookie']
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, 'wb') as f:
+        writer = csv.writer(f)
+        for row in data:
+            if row[2] != "0":
+                writer.writerow(row)
 
 
 @app.get("/refresh_linkedin_cookie")
