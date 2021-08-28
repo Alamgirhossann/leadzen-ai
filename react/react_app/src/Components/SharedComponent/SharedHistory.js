@@ -134,7 +134,7 @@ const SharedHistory = () => {
             <div className="container-style mt-3">
               <div className="history-container">
                 <p className="Profile text-danger">Profile:</p>
-                <p className="name">{}</p>
+                <p className="name">{data.search_term}</p>
                 <div className="date">
                   <div>
                     <small className="d-block">Search Date</small>

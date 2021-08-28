@@ -66,7 +66,7 @@ const SearchResult = (props) => {
   useEffect(async () => {
     if (props.location.pathname.includes("/searchResult")) {
       console.log("Request..", props.location.state.reqJsonPipl);
-      setSearchTerm(props.location.state.reqJsonPipl.searchTerm);
+      setSearchTerm(props.location.state.reqJsonPipl);
       try {
         const response = await fetch(apiServer + "/pipl/search", {
           method: "POST",

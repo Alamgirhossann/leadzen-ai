@@ -49,9 +49,12 @@ const SearchResult = (props) => {
         : 0
     );
   };
+  //useEffect(async () => {
+  //  console.log("in search term...", searchTerm);
+  //}, [searchTerm]);
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    console.log(">>>>>>>>>>", props);
+    console.log("props>>>>>>>>>>", props);
     if (
       props.location.pathname.includes("/result_by_name") ||
       props.location.pathname.includes("/advanceSearch")
@@ -62,7 +65,8 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
-        setSearchTerm(props.location.state.requestTexAu.searchTerm);
+        setSearchTerm(props.location.state.requestTexAu);
+        console.log("serc", searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
         setSearchType(props.location.state.requestTexAu.searchType);
@@ -380,7 +384,7 @@ const SearchResult = (props) => {
   };
 
   const saveSearchedRecord = async (response, searchType) => {
-    console.log("In saveSearchedRecord");
+    console.log("In saveSearchedRecord...searchTerm", searchTerm);
 
     let requestForSaveSearch = {
       search_id: uuidv4(),
