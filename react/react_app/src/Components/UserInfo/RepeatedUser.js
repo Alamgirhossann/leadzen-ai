@@ -9,6 +9,7 @@ import SharedHistory from "../SharedComponent/SharedHistory";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
 import Header from "../SharedComponent/Header";
+import Cookies from "js-cookie";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const RepeatedUser = () => {
