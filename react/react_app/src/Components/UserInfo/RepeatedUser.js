@@ -10,7 +10,6 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
 import Header from "../SharedComponent/Header";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
-import Cookies from "js-cookie";
 
 const RepeatedUser = () => {
   const history = useHistory();

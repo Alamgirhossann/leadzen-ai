@@ -1,6 +1,6 @@
 import asyncio
 import os
-from typing import List, Dict
+from typing import List, Dict, Optional, Tuple
 
 import httpx
 import pandas as pd
@@ -17,7 +17,7 @@ from app.users import User
 
 
 class BulkRequest(BaseModel):
-    incoming_filename: str
+    incoming_filename: Optional[str] = None
     outgoing_filename: str
     user: User
 
@@ -31,8 +31,11 @@ async def wait_and_check_for_filename(
         if os.path.exists(request.outgoing_filename):
             logger.success(f"found {request.outgoing_filename=}")
 
-            # send email
-            df = pd.read_csv(request.outgoing_filename)
+            if request.outgoing_filename.endswith(".xlsx"):
+                df = pd.read_excel(request.outgoing_filename)
+            else:
+                df = pd.read_csv(request.outgoing_filename)
+
             logger.debug(df.head())
 
             await update_history(user_id="---", data=[])
@@ -52,6 +55,10 @@ async def wait_and_check_for_filename(
         f"{timeout_counter * API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL}s"
     )
 
+    if not request.incoming_filename:
+        logger.warning("Incoming filename is Invalid, Not Sending Error Email")
+        return
+
     return await send_failure_email(
         user=request.user, filename=request.incoming_filename
     )
@@ -62,10 +69,17 @@ class BulkUploadResponse(BaseModel):
     output_filename: str
 
 
-async def send_success_email(user: User, filename: str):
+def generate_email_message_for_file(user: User, filename: str) -> Tuple[str, str]:
+    if filename.endswith(".xlsx"):
+        operation = "Your Excel Export of contacts is ready."
+        subject = "Excel Export Results Ready"
+    else:
+        operation = "Your Bulk Search results are ready."
+        subject = "Bulk Search Results Ready"
+
     message = (
         f"Dear {user.username}, \n"
-        f"Your Bulk Search results are ready. \n"
+        f"{operation} \n"
         f"Please click on the link below to download the results. The download should start automatically, "
         f"however in case it doesn't kindly right click on the link and download the linked file. Get your lead "
         f"details as you open the file in Excel.\n"
@@ -75,6 +89,12 @@ async def send_success_email(user: User, filename: str):
         f"LeadZen Team "
     )
 
+    return message, subject
+
+
+async def send_success_email(user: User, filename: str):
+    message, subject = generate_email_message_for_file(user=user, filename=filename)
+
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -82,7 +102,7 @@ async def send_success_email(user: User, filename: str):
                 json=UserEmailSendRequest(
                     email=user.email,
                     message=message,
-                    subject="Bulk Search Results Ready",
+                    subject=subject,
                 ).dict(),
             )
 

@@ -1,4 +1,5 @@
 from typing import Optional, List
+from urllib.parse import urlencode
 
 from loguru import logger
 from pydantic import BaseModel
@@ -21,7 +22,7 @@ async def execute_task(request: PiplDetailsFromEmailRequest):
     emails = [x for x in emails if x]  # remove empty emails
 
     urls = [
-        f"{API_CONFIG_PIPL_BASE_URL}/?email={email}&key={API_CONFIG_PIPL_API_KEY}"
+        f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'email':email,'key':API_CONFIG_PIPL_API_KEY})}"
         for email in emails
         if email
     ]

@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
+
 const SearchResult = (props) => {
   useEffect(() => {
     const script = document.createElement("script");

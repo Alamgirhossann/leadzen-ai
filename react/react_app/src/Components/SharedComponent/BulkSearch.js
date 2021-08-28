@@ -29,6 +29,11 @@ const BulkSearch = () => {
     const formData = new FormData();
     formData.append("file", file);
 
+    function handleError(response = null) {
+      console.error(`Error Uploading File: status: ${response?.status}`);
+      alert("Error Uploading File, Please Try Again Later");
+    }
+
     try {
       const response = await fetch(apiServer + "/bulk_upload/csv", {
         method: "POST",
@@ -38,17 +43,28 @@ const BulkSearch = () => {
         },
       });
 
-      const json = await response.json();
-      if (!json) {
-        alert("Error Uploading File, Please Try Again Later");
-        return;
+      async function handleSuccess(response) {
+        const json = await response.json();
+        if (!json) {
+          return handleError();
+        }
+        console.log(json);
+        alert(
+          "Search results are sent to your email as a CSV file. Please check your spam filter if our email has" +
+            " not arrived in a reasonable time. Cheers!"
+        );
       }
 
-      console.log(json);
-      alert(
-        "Search results are sent the User's email as a CSV file. Please check your spam filter if our email has" +
-          " not arrived in a reasonable time. Cheers!"
-      );
+      function handleUnAuthorized(response = null) {}
+
+      switch (response.status) {
+        case 200:
+          return await handleSuccess(response);
+        case 401:
+          return handleUnAuthorized();
+        default:
+          return handleError(response);
+      }
 
       // const eventSource = new EventSource(
       //   `${apiServer}/bulk_upload/status/stream?filename=${json.output_filename}`
@@ -65,7 +81,7 @@ const BulkSearch = () => {
       // });
     } catch (err) {
       console.error("Error: ", err);
-      alert("Error Uploading File, Please Try Again Later");
+      handleError();
     }
   };
 

@@ -13,6 +13,7 @@ from app.config import (
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
     API_CONFIG_PIPL_BASE_URL,
     API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
+    API_CONFIG_MAX_RESULTS_PER_CALL,
 )
 from app.pipl.email import (
     execute_task as execute_email_task,
@@ -102,7 +103,9 @@ async def people_search(
                 return [data.get("person")]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
                 logger.success(f'found {data["@persons_count"]} persons')
-                return [x for x in data.get("possible_persons") if x]
+                return [x for x in data.get("possible_persons") if x][
+                    :API_CONFIG_MAX_RESULTS_PER_CALL
+                ]
             else:
                 logger.warning(f"Invalid Response")
                 raise HTTPException(
