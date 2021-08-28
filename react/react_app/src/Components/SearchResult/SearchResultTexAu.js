@@ -62,7 +62,7 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
-        setSearchTerm(props.location.state.requestTexAu);
+        setSearchTerm(props.location.state.requestTexAu.searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
         setSearchType(props.location.state.requestTexAu.searchType);
