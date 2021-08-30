@@ -12,7 +12,7 @@ const SidebarExtractContact = () => {
   });
   const history = useHistory();
   const allowedDomains = ["linkedin.com"];
-  const tempCookie = Cookies.get("user_linkedin_cookie", cookie);
+  const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const handleTypeChange = (e) => {
     setSocialMediaData({ ...socialMediaData, type: e.target.value });
