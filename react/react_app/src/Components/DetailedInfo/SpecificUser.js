@@ -11,7 +11,7 @@ const SpecificUser = (props) => {
       {" "}
       {props.details === "Record Not Found" ||
       props.details === "Item not found" ||
-      props.details === null ? (
+      !props.details ? (
         <div>
           {" "}
           <section className="item-section" style={{ textAlign: "center" }}>
@@ -23,8 +23,7 @@ const SpecificUser = (props) => {
           <section className="item-section">
             <div className="phone-child-div">
               <div className="">
-                {props.details.phones !== undefined &&
-                props.details.phones.length !== 0 ? (
+                {props.details.phones ? (
                   <h6>Associated Phone Numbers</h6>
                 ) : null}
                 {props.details.phones
