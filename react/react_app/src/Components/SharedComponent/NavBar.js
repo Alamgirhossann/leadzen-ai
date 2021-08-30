@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {NavLink} from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import Cookies from "js-cookie";
 
 const NavBar = (props) => {
   const [user, setUser] = useState(props.user);
+  const handleLogout = (event) => {
+    console.log("document.cookie()...handle", document.cookie)
+    Cookies.remove('user_token', {path: ''})
+    Cookies.remove('user_email', {path: ''})
+    console.log("document.cookie()...", document.cookie)
+  }
   return (
     <div style={{ paddingRight: "0px" }}>
       <nav
@@ -122,7 +131,7 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/pricing">
+                    <a className="dropdown-item" href="https://leadzen.ai/pricing/">
                       Buy Credits
                     </a>
                   </li>
@@ -132,15 +141,17 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/history">
+                    <a className="dropdown-item disabled" href="/history">
                       Export History
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="/logIn">
-                      <span className="text-muted me-3">Logout</span>
-                      <img src="assets/images/logout-icon.png" alt="image" />
-                    </a>
+                    <div onClick={(event) => handleLogout(event)}>
+                      <Link className="dropdown-item" to="/login">
+                        <span className="text-muted me-3">Logout</span>{" "}
+                        <img src="assets/images/logout-icon.png" alt="image"/>
+                      </Link>
+                    </div>
                   </li>
                 </ul>
               </li>

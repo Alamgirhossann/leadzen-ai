@@ -179,28 +179,28 @@ const RepeatedUser = () => {
     },
   ];
   return (
-    <div>
-      <Header user={user} />
-      <div className="modal" id="bulkmodal">
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-        <div className="modal-dialog">
-          <div className="modal-message">
-            <p>
-              <i className="text-danger">Format to follow:</i> Ensure that the
-              first column has the unique values you’re searching for. Download
-              the sample below for better understanding.{" "}
-            </p>
-            <Link>
-              <i className="text-danger text-decoration-underline">
-                Click here to download csv format
-              </i>
-            </Link>
-          </div>
+      <div>
+        <Header user={user}/>
+        <div className="modal" id="bulkmodal">
+          <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+          ></button>
+          <div className="modal-dialog">
+            <div className="modal-message">
+              <p>
+                <i className="text-danger">Format to follow:</i> Ensure that the
+                first column has the unique values you’re searching for. Download
+                the sample below for better understanding.{" "}
+              </p>
+              <Link>
+                <i className="text-danger text-decoration-underline">
+                  Click here to download csv format
+                </i>
+              </Link>
+            </div>
           <div className="modal-content">
             <form action="/upload" id="mydrop" className="dropzone">
               <div className="dz-message needsclick">
@@ -228,10 +228,10 @@ const RepeatedUser = () => {
               <SpecificSearchBtn/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
-                <Filters />
+                <Filters/>
               </div>
-              <BulkSearch />
-              <SidebarExtractContact />
+              <BulkSearch/>
+              <SidebarExtractContact/>
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
@@ -275,15 +275,15 @@ const RepeatedUser = () => {
                     alt="#"
                     className="user-author-shape"
                 />
-                <a href="/searchResult" className="text-danger">
+                <a href="/searchResult" style={{"pointerEvents":"none"}} className="text-danger">
                   View List
                 </a>
               </div>
 
-              <div>
+              <div style={{"pointerEvents":"none"}}>
                 <AskJarvis />
               </div>
-              <div style={{ background: "white", borderRadius: "20px" }}>
+              <div style={{ background: "white", borderRadius: "20px" , pointerEvents:"none" }}>
                 <SavedList />
               </div>
             </div>
