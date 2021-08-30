@@ -192,13 +192,11 @@ async def get_viewed_count(search_id: str, user=Depends(fastapi_users.get_curren
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
-        chh = [item for x in email for item in x]
-        print(chh[0])
         processed_rows_email = [item for x in email for item in x]
         processed_rows_profile = [item for x in profile for item in x]
         logger.debug(f"{processed_rows_email[0]=}>>>{processed_rows_profile[0]=}")
 
-        return ViewedCountResponse(profile_count=processed_rows_profile[0],unlock_email_count=processed_rows_email[0])
+        return ViewedCountResponse(profile_count=processed_rows_profile[0], unlock_email_count=processed_rows_email[0])
 
     except HTTPException as e:
         raise e
