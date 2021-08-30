@@ -18,5 +18,6 @@ echo "..."
 echo "> ============================="
 echo "> Starting FastAPI Server"
 echo "> ============================="
+mkdir "bulk" "bulk/incoming" "bulk/outgoing"
 exec uvicorn app.main:app --host 0.0.0.0 --port 5000 --root-path /api
 
