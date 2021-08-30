@@ -50,11 +50,6 @@ const RepeatedUser = () => {
     keywords: null,
     csv_file: null,
   });
-  const [socialMediaSearch, setSocialMediaSearch] = useState({ text: null });
-  const [socialMediaType, setSocialMediaType] = useState({
-    url: null,
-    type: [],
-  });
 
   const user = {
     name: "John Smith",
@@ -107,70 +102,12 @@ const RepeatedUser = () => {
       state: { searchText },
     });
   };
-  const handleLocation = (e) => {
-    setCustomSearch({ ...customSearch, location: e.target.value });
-  };
-  const handleIndustry = (e) => {
-    setCustomSearch({ ...customSearch, industry: e.target.value });
-  };
-  const handleJob = (e) => {
-    setCustomSearch({ ...customSearch, job_title: e.target.value });
-  };
-  const handleEducation = (e) => {
-    setCustomSearch({ ...customSearch, education: e.target.value });
-  };
-  const handleCompany = (e) => {
-    setCustomSearch({ ...customSearch, company_name: e.target.value });
-  };
-  const handleKeywords = (e) => {
-    setCustomSearch({ ...customSearch, keywords: e.target.value });
-  };
-  const handleCustomSubmit = (e) => {
-    console.log(customSearch);
-    return <Redirect to="/searchResult" />;
-  };
+
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
-  const handleSocial = (e) => {
-    setSocialMediaSearch({ ...socialMediaSearch, text: e.target.value });
-  };
-  const handleSocialSubmit = (e) => {
-    console.log(socialMediaSearch);
-  };
-  const handleType = (e) => {
-    setSocialMediaType({
-      ...socialMediaType,
-      type: [socialMediaType.type, e.target.value],
-    });
-  };
-  const handleURL = (e) => {
-    setSocialMediaType({ ...socialMediaType, url: e.target.value });
-  };
-  const handleTypeSubmit = (e) => {
-    e.preventDefault();
-    console.log(searchText);
-    console.log(customSearch);
-    console.log(socialMediaType);
-  };
-  const [myLeads, setMyLeads] = useState([
-    {
-      name: "John Smith",
-      desc: "English Speaker",
-      comp: "Hexagon AB",
-      search_date: "12/05/2021",
-      mail_used: 7,
-      profile_used: 5,
-    },
-    {
-      name: "Joe Mama",
-      desc: "English Speaker",
-      comp: "Apple INC",
-      search_date: "05/05/2021",
-      mail_used: 12,
-      profile_used: 9,
-    },
-  ]);
+
+  const [myLeads, setMyLeads] = useState([]);
   const myTags = [
     {
       tags: ["Tech", "MBA", "USA"],
@@ -188,7 +125,7 @@ const RepeatedUser = () => {
           className="btn-close"
           data-bs-dismiss="modal"
           aria-label="Close"
-        ></button>
+        />
         <div className="modal-dialog">
           <div className="modal-message">
             <p>
