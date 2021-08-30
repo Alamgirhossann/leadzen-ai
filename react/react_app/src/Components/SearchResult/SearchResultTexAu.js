@@ -32,7 +32,7 @@ const SearchResult = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
-  const [searchType, setSearchType] = useState("");
+
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const tempCookie = Cookies.get("user_linkedin_cookie");
@@ -54,9 +54,9 @@ const SearchResult = (props) => {
         : 0
     );
   };
-  //useEffect(async () => {
-  //  console.log("in search term...", searchTerm);
-  //}, [searchTerm]);
+  useEffect(async () => {
+    console.log("in search term useeffect...", searchTerm);
+  }, [searchTerm]);
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
@@ -74,7 +74,6 @@ const SearchResult = (props) => {
         console.log("serc", searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
-        setSearchType(props.location.state.requestTexAu.searchType);
       }
       let keyword = null;
       let isKeyword,
@@ -87,8 +86,7 @@ const SearchResult = (props) => {
           props.location.state.customSearch
         );
         if (props.location.state.customSearch.search_type)
-          setSearchType(props.location.state.customSearch.search_type);
-        if (props.location.state.customSearch.keywords) isKeyword = true;
+          if (props.location.state.customSearch.keywords) isKeyword = true;
         if (props.location.state.customSearch.education) isEducation = true;
         if (isKeyword && isEducation)
           keyword =
@@ -137,7 +135,7 @@ const SearchResult = (props) => {
 
       const inputData = props.location.state.data;
       const endpoint = props.location.state.endpoint;
-
+      setSearchTerm(props.location.state.data);
       setLoading(true);
 
       await sendForExecution(endpoint, inputData);
@@ -467,7 +465,7 @@ const SearchResult = (props) => {
         });
 
         let json_res = await response.json();
-        console.log("Data Pipl..>>>>>>>>>>>", json_res, ">>>>", searchType);
+        console.log("Data Pipl..>>>>>>>>>>>", json_res);
         let phones = [];
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {

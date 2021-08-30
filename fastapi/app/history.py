@@ -45,9 +45,14 @@ class SearchHistoryFullResponse(BaseModel):
     created_on: datetime
 
 
+class ViewedCountResponse(BaseModel):
+    profile_count: int
+    unlock_email_count: int
+
+
 @router.get("/id/{search_id}", response_model=SearchHistoryFullResponse)
 async def get_search_history_by_id(
-    search_id: str, user=Depends(fastapi_users.get_current_active_user)
+        search_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{search_id=}, {user=}")
     try:
@@ -56,9 +61,9 @@ async def get_search_history_by_id(
         )
 
         if not (
-            row := await database.fetch_one(
-                query=query, values={"search_id": search_id, "user_id": str(user.id)}
-            )
+                row := await database.fetch_one(
+                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -136,7 +141,7 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                     query=query, values={"user_id": str(user.id)}
                 )
         ):
-            print("ows>>>>",rows)
+            print("ows>>>>", rows)
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
@@ -158,10 +163,57 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
         )
 
 
+@router.get("/get_viewed_count", response_model=ViewedCountResponse)
+async def get_viewed_count(search_id: str, user=Depends(fastapi_users.get_current_active_user)):
+    logger.debug(f"{user=}")
+    try:
+        query_profile_count = "SELECT COUNT(*) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
+
+        if not (
+                profile := await database.fetch_all(
+                    query=query_profile_count, values={"user_id": str(user.id), "search_id": search_id}
+                )
+        ):
+            logger.debug("rows>>>>", profile)
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+
+        query_email_count = "SELECT COUNT(*) as email_count FROM email_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
+
+        if not (
+                email := await database.fetch_all(
+                    query=query_email_count, values={"user_id": str(user.id), "search_id": search_id}
+                )
+        ):
+            logger.debug("rows1>>>>", email, "rows>>>>>", profile)
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+        chh = [item for x in email for item in x]
+        print(chh[0])
+        processed_rows_email = [item for x in email for item in x]
+        processed_rows_profile = [item for x in profile for item in x]
+        logger.debug(f"{processed_rows_email[0]=}>>>{processed_rows_profile[0]=}")
+
+        return ViewedCountResponse(profile_count=processed_rows_profile[0],unlock_email_count=processed_rows_email[0])
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.critical(f"Exception Querying Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Querying Database",
+        )
+
+
 @router.post("/add", response_model=SearchHistoryAddResponse)
 async def add_search_history(
-    request: SearchHistoryAddRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        request: SearchHistoryAddRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 

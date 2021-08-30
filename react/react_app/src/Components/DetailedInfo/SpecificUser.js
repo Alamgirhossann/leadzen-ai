@@ -4,14 +4,15 @@ import { GoogleApiWrapper, Map } from "google-maps-react";
 
 const SpecificUser = (props) => {
   useEffect(async () => {
-    console.log("props specific>>>>>", props);
-  });
+    console.log("props specific>>>>>", props.details);
+  }, []);
   return (
     <div>
       {" "}
       {props.details === "Record Not Found" ||
       props.details === "Item not found" ||
-      props.details === null ? (
+      props.details === null ||
+      props.details === undefined ? (
         <div>
           {" "}
           <section className="item-section" style={{ textAlign: "center" }}>
