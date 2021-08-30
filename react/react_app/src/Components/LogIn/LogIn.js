@@ -11,10 +11,16 @@ const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const LogIn = (props) => {
   const [historyState, setHistoryState] = useState('')
+  const [userSession, setUserSession] = useState(false)
   useEffect(() => {
     if (props.location.state !== undefined) {
       // console.log("history",props.location.state)
-      setHistoryState(props.location.state.userRegistrationEmail)
+      if (props.location.state.userRegistrationEmail) {
+        setHistoryState(props.location.state.userRegistrationEmail)
+      }
+      if (props.location.state.userSession) {
+        setUserSession(true)
+      }
     }
   }, [])
 
@@ -167,9 +173,9 @@ const LogIn = (props) => {
         if (json_res.access_token) {
           console.log("token created.....");
 
-          Cookies.set("user_email", userLogin.email, {expires: 0.04});
+          Cookies.set("user_email", userLogin.email, {expires: 0.08});
           Cookies.set("user_id", userStatus.data.id);
-          Cookies.set("user_token", json_res.access_token, {expires: 0.04});
+          Cookies.set("user_token", json_res.access_token, {expires: 0.08});
         }
 
         setResponse({...response, ok: true});
@@ -236,6 +242,22 @@ const LogIn = (props) => {
           >
             <strong>{historyState}</strong> please check your email for
             verification.
+            <button
+                type="button"
+                className="close"
+                data-dismiss="alert"
+                aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+      ) : null}
+      {userSession ? (
+          <div
+              className="alert alert-warning alert-dismissible fade show"
+              role="alert"
+          >
+            Your session expired. Please Login again.
             <button
                 type="button"
                 className="close"
