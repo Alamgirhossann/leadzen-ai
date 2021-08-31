@@ -32,7 +32,8 @@ import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
-
+import RealTimePage from './Components/RealTimeInfo/RealTimePage';
+import RealTimePage2 from './Components/RealTimeInfo/RealTimePage2';
 const App = () => {
   return (
     <Router>
@@ -127,6 +128,12 @@ const App = () => {
         </Route>
         <Route path="/dashboardTwo">
           <DashboardTwo />
+        </Route>
+         <Route path='/realTimePage'>
+            <RealTimePage />
+        </Route>
+        <Route path='/realTimeListView'>
+            <RealTimePage2 />
         </Route>
       </Switch>
     </Router>
