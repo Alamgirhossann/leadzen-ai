@@ -10,7 +10,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 
-const FirstTimeUser = (props) => {
+const FirstTimeUser = () => {
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -27,7 +27,6 @@ const FirstTimeUser = (props) => {
   };
 
   useEffect(async () => {
-    console.log("props>>>>", props);
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
     script.async = true;

@@ -48,16 +48,6 @@ const SpecificSearchBtn = (details) => {
         <label htmlFor="switch" />
       </div>
     </div>
-
-    //this opt will not toglle
-
-    // <div className='btn-container'>
-    //     <div className="d-flex justify-content-between">
-    //         <button className='people-btn'>People</button>
-    //         <button className='company-btn'>Company</button>
-
-    //     </div>
-    // </div>
   );
 };
 
