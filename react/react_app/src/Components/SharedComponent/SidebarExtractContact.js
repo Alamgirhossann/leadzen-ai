@@ -3,6 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 import extractDomain from "extract-domain";
+import Cookies from "js-cookie";
 
 const SidebarExtractContact = () => {
   const [socialMediaData, setSocialMediaData] = useState({
@@ -11,8 +12,7 @@ const SidebarExtractContact = () => {
   });
   const history = useHistory();
   const allowedDomains = ["linkedin.com"];
-  const tempCookie =
-    "AQEDAQFGp0UCVdaAAAABe2AWLdIAAAF7qCvLu04AcqhIb82grlYAcZhj_-h2n29gx0DaQeazGVcQu4OAyCmP_fgyH47Ial6nZOGcIuivmbjNPDnFHaaOR1EbEcJioDrM_xMpE-rHNd44Rwwno2VEaJK2";
+  const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const handleTypeChange = (e) => {
     setSocialMediaData({ ...socialMediaData, type: e.target.value });
