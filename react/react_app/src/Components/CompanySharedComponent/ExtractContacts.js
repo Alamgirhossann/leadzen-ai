@@ -66,6 +66,7 @@ const ExtractContacts = () => {
             className="form-control"
             onBlur={handleURL}
             placeholder="Paste Social Media URL"
+            disabled={true}
           />
           <button
             className="btn btn-danger"
@@ -85,6 +86,7 @@ const ExtractContacts = () => {
             onChange={handleType}
             name="inlineRadioOptions"
             id="inlineRadio1"
+            disabled={true}
           />
           <label className="form-check-label" for="inlineRadio1">
             All
@@ -97,6 +99,7 @@ const ExtractContacts = () => {
             name="inlineRadioOptions"
             id="inlineRadio2"
             checked
+            disabled={true}
           />
           <label className="form-check-label" for="inlineRadio2">
             Followers
@@ -109,6 +112,7 @@ const ExtractContacts = () => {
             name="inlineRadioOptions"
             id="inlineRadio3"
             checked
+            disabled={true}
           />
           <label className="form-check-label" for="inlineRadio3">
             Likers
@@ -120,6 +124,7 @@ const ExtractContacts = () => {
             type="checkbox"
             name="inlineRadioOptions"
             id="inlineRadio4"
+            disabled={true}
           />
           <label className="form-check-label" for="inlineRadio4">
             Commentors
@@ -131,6 +136,7 @@ const ExtractContacts = () => {
             type="checkbox"
             name="inlineRadioOptions"
             id="inlineRadio5"
+            disabled={true}
           />
           <label className="form-check-label" for="inlineRadio5">
             Job Seekers
@@ -142,6 +148,7 @@ const ExtractContacts = () => {
             type="checkbox"
             name="inlineRadioOptions"
             id="inlineRadio6"
+            disabled={true}
           />
           <label className="form-check-label" for="inlineRadio6">
             Group Members

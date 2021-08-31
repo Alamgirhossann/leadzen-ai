@@ -68,6 +68,7 @@ const SidebarExtractContact = () => {
               className="form-control"
               onBlur={handleSocialMedia}
               placeholder="Enter Social media URL"
+              disabled={true}
             />
           </div>
           <div className="dropdown mb-3">
@@ -78,6 +79,7 @@ const SidebarExtractContact = () => {
               aria-haspopup="true"
               aria-expanded="false"
               placeholder="Search your job"
+              disabled={true}
             />
 
             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -90,6 +92,7 @@ const SidebarExtractContact = () => {
                     value="All"
                     onChange={handleType}
                     checked={socialMediaType.type.includes("All")}
+                    disabled={true}
                   />
                 </div>
                 <div className="radio-bg">
@@ -100,6 +103,7 @@ const SidebarExtractContact = () => {
                     value="Follower"
                     onChange={handleType}
                     checked={socialMediaType.type.includes("Follower")}
+                    disabled={true}
                   />
                 </div>
                 <div className="radio-bg">
@@ -110,6 +114,7 @@ const SidebarExtractContact = () => {
                     value="Likers"
                     onChange={handleType}
                     checked={socialMediaType.type.includes("Likers")}
+                    disabled={true}
                   />
                 </div>
                 <div className="radio-bg">
@@ -120,6 +125,7 @@ const SidebarExtractContact = () => {
                     value="Commentors"
                     onChange={handleType}
                     checked={socialMediaType.type.includes("Commentors")}
+                    disabled={true}
                   />
                 </div>
                 <div className="radio-bg">
@@ -130,6 +136,7 @@ const SidebarExtractContact = () => {
                     value="Job Seeker"
                     onChange={handleType}
                     checked={socialMediaType.type.includes("Job Seeker")}
+                    disabled={true}
                   />
                 </div>
                 <div className="radio-bg">
@@ -140,6 +147,7 @@ const SidebarExtractContact = () => {
                     value="Group Members"
                     onChange={handleType}
                     checked={socialMediaType.type.includes("Group Members")}
+                    disabled={true}
                   />
                 </div>
               </div>
