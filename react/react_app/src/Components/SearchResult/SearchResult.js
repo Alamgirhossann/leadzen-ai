@@ -11,7 +11,6 @@ import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
-
 const SearchResult = (props) => {
   useEffect(() => {
     const script = document.createElement("script");
@@ -112,6 +111,7 @@ const SearchResult = (props) => {
 
         console.log("Data>>>>>>>>>>>loading..", json_res, loading);
         setLoading(false);
+        setSearchId(json_res.id);
 
         setMyLeads(json_res.search_results);
       } catch (err) {
@@ -171,11 +171,15 @@ const SearchResult = (props) => {
 
   const saveSearchedRecord = async (response, searchType) => {
     console.log("In saveSearchedRecord");
+    let search_term = {};
+    if (props.location.pathname.includes("/searchResult")) {
+      search_term = props.location.state.reqJsonPipl;
+    }
 
     let requestForSaveSearch = {
       search_id: uuidv4(),
       search_type: searchType,
-      search_term: JSON.stringify(searchTerm),
+      search_term: JSON.stringify(search_term),
       search_results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
@@ -216,7 +220,6 @@ const SearchResult = (props) => {
     console.log("isDuplicate>>>>", isDuplicate);
     if (isDuplicate === false) {
       let requestForSaveEmailCredit = {
-        user_id: Cookies.get("user_id"),
         search_id: searchId,
         email_addresses: ["sff", "ddsg"],
         search_index: parseInt(`${currentPage}${index}`),
@@ -276,12 +279,12 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         let phones = [];
-        if (data) {
+        if (data && data.phones) {
           console.log("in data>>>>", data.phones);
-          if (data.phones) {
-            for (let j = 0; j < data.phones.length; j++) {
-              phones.push(data.phones[j].number);
-            }
+
+          for (let j = 0; j < data.phones.length; j++) {
+            phones.push(data.phones[j].number);
+
             console.log("Phones>>>>>>", phones);
             let requestForSaveProfileCredit = {
               search_id: searchId,

@@ -33,6 +33,8 @@ class SearchHistoryShortResponse(BaseModel):
     user_id: str
     search_type: str
     search_term: str
+    profile_count: int
+    email_count: int
     created_on: datetime
 
 
@@ -43,11 +45,6 @@ class SearchHistoryFullResponse(BaseModel):
     search_term: str
     search_results: List[Dict]
     created_on: datetime
-
-
-class ViewedCountResponse(BaseModel):
-    profile_count: int
-    unlock_email_count: int
 
 
 @router.get("/id/{search_id}", response_model=SearchHistoryFullResponse)
@@ -129,6 +126,17 @@ async def get_search_history_by_id(
 #             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
 #         )
 
+async def conv_list_to_str(values: list, data: list):
+    for val in values:
+        if isinstance(val, list):
+            await conv_list_to_str(val, data)
+        elif val:
+            if isinstance(val, dict):
+                if val:
+                    for k, v in val.items():
+                        val = str(v)
+            data.append(val)
+
 
 @router.get("/all", response_model=List[SearchHistoryShortResponse])
 async def get_all_search_history(user=Depends(fastapi_users.get_current_active_user)):
@@ -141,62 +149,61 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                     query=query, values={"user_id": str(user.id)}
                 )
         ):
-            print("ows>>>>", rows)
+
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
+        rows = [dict(x) for x in rows]
 
-        logger.debug(f"{rows=}")
+        for obj in rows:
+            if not obj:
+                continue
+            search_id = obj['id']
+            try:
 
-        processed_rows = [dict(x) for x in rows]
+                search_term: list = json.loads(obj['search_term']).values()
+                search_term_ls = []
 
-        return [SearchHistoryShortResponse(**x) for x in processed_rows if x]
+                await conv_list_to_str(search_term, search_term_ls)
+                if search_term:
+                    obj["search_term"] = ", ".join(search_term_ls)
+            except Exception as err:
+                logger.critical("JException "+ str(err))
+                obj["search_term"] = ""
 
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        logger.critical(f"Exception Querying Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Querying Database",
-        )
+            query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
 
-
-@router.get("/get_viewed_count", response_model=ViewedCountResponse)
-async def get_viewed_count(search_id: str, user=Depends(fastapi_users.get_current_active_user)):
-    logger.debug(f"{user=}")
-    try:
-        query_profile_count = "SELECT COUNT(*) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
-
-        if not (
-                profile := await database.fetch_all(
-                    query=query_profile_count, values={"user_id": str(user.id), "search_id": search_id}
+            if not (
+                    profile := await database.fetch_all(
+                        query=query_profile_count, values={"user_id": str(user.id), "search_id": search_id}
+                    )
+            ):
+                logger.debug("rows>>>>", profile)
+                logger.warning("Invalid Query Results")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
                 )
-        ):
-            logger.debug("rows>>>>", profile)
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
 
-        query_email_count = "SELECT COUNT(*) as email_count FROM email_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
+            query_email_count = "SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
 
-        if not (
-                email := await database.fetch_all(
-                    query=query_email_count, values={"user_id": str(user.id), "search_id": search_id}
+            if not (
+                    email := await database.fetch_all(
+                        query=query_email_count, values={"user_id": str(user.id), "search_id": search_id}
+                    )
+            ):
+                logger.debug("rows1>>>>", email, "rows>>>>>", profile)
+                logger.warning("Invalid Query Results")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
                 )
-        ):
-            logger.debug("rows1>>>>", email, "rows>>>>>", profile)
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-        processed_rows_email = [item for x in email for item in x]
-        processed_rows_profile = [item for x in profile for item in x]
-        logger.debug(f"{processed_rows_email[0]=}>>>{processed_rows_profile[0]=}")
+            processed_rows_email = [item for x in email for item in x]
+            processed_rows_profile = [item for x in profile for item in x]
+            obj['email_count'] = processed_rows_email[0]
+            obj['profile_count'] = processed_rows_profile[0]
+            logger.debug(f"{processed_rows_email[0]=}>>>{processed_rows_profile[0]=}")
 
-        return ViewedCountResponse(profile_count=processed_rows_profile[0], unlock_email_count=processed_rows_email[0])
+        return [SearchHistoryShortResponse(**x) for x in rows if x]
 
     except HTTPException as e:
         raise e
