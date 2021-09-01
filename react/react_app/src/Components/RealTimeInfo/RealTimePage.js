@@ -1,7 +1,8 @@
 import React, { useEffect,useState } from "react";
 import "./Style/style.css";
 import Header from "../SharedComponent/Header";
-
+import Cookies from "js-cookie"
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 const RealTimePage = () => {
  const [requirement, setRequirement] = useState();
   useEffect(() => {
@@ -30,8 +31,47 @@ const RealTimePage = () => {
 
    const handleUrlChange = (e) => {
     setRequirement(e.target.value)
-
   };
+
+  const handleSubmit=async()=>{
+    if(!requirement)
+    {
+        alert("Please tell us your requirement")
+    }
+    else
+    {
+        let email_from= Cookies.get("user_email")
+        const inputData = {
+        email:"malhar@analystt.ai",
+        message:"email_from: " + email_from +'\n' + "requriement: "+ requirement,
+        subject:"Request From RealTime"
+        };
+        try{
+             const response = await fetch(apiServer + "/email/send", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${Cookies.get("user_token")}`,
+              },
+              body: JSON.stringify(inputData),
+            });
+            if(response.ok)
+            {
+                var element = document.getElementById("real-time-request");
+                    element.value =""
+                alert("Request is send")
+            }
+            console.log(response)
+        }
+        catch(err){
+            console.log("error",err)
+        }
+    }
+
+
+
+  }
 console.log(requirement)
   return (
     <div>
@@ -272,8 +312,7 @@ console.log(requirement)
                   <div className="text-center d-flex justify-content-center">
                     <p>
                           <input
-                                id="social-media-url"
-                                type="url"
+                                id="real-time-request"
                                 className="form-control"
                               onBlur={handleUrlChange}
                                 placeholder="  Tell us your requirement"
@@ -349,7 +388,7 @@ console.log(requirement)
                     <button
                       className="trends-btn my-4"
                       style={{ width: "140px" }}
-//                      onClick={handleSubmit}
+                      onClick={handleSubmit}
                     >
                       Request
                     </button>
