@@ -1,29 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import Header from "../SharedComponent/Header";
-
+import axios from "axios";
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 const Profile = () => {
-  const fetchData = async () => {
-    // TODO:Create api calls to get user profile data from the backend
-  };
-  const user = {
-    name: "John Smith",
-    email: "Johnsmith087@hexagon.in",
-    subscription: {
-      product: "Free Analystt",
-      price: "100 INR",
-      period: "Yearly",
-      status: "Active",
-      last_renewal: "01/02/2020",
-      expiry_date: "02/08/2021",
-      profile_credits: 500,
-      mail_credits: 1000,
-    },
-  };
+  const acess_token = Cookies.get("user_token");
+  const [user, setUser] = useState();
+  useEffect(async () => {
+    try {
+      const userStatusResponse = await axios.get(apiServer + "/users/me", {
+        headers: {
+          Authorization: `Bearer ${acess_token}`,
+        },
+      });
+      const userStatus = await userStatusResponse;
+      if (userStatus.status == 200) {
+        console.log("kishan", userStatus);
+        setUser({
+          name: userStatus.data.username,
+          email: userStatus.data.email,
+          subscription: {
+            product: "Free Analystt",
+            price: "100 INR",
+            period: "Yearly",
+            status: "Active",
+            last_renewal: "01/02/2020",
+            expiry_date: "02/08/2021",
+            profile_credits: 500,
+            mail_credits: 1000,
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Error: ", err);
+    }
+  }, []);
+
   return (
     <div>
-      <Header user={user} />
+      <Header user={user?.name && user} />
 
       <div className="main-content-area pt-4">
         <div className="main-wrapper">
@@ -44,8 +60,8 @@ const Profile = () => {
                   <div className="main-profile mb-4">
                     <img src="assets/images/author-image5.png" alt="title" />
                     <div className="ms-4 ms-md-5">
-                      <h6>{user.name}</h6>
-                      <span className="word-wrap">{user.email}</span>
+                      <h6>{user?.name}</h6>
+                      <span className="word-wrap">{user?.email}</span>
                       <a href="/logIn">
                         <button
                           type="submit"
@@ -79,12 +95,12 @@ const Profile = () => {
                           <span className="text-muted">
                             Date of Last Renewal:{" "}
                           </span>
-                          &nbsp;{user.subscription.last_renewal}
+                          &nbsp;{user?.subscription.last_renewal}
                         </th>
                         <th className="text-center">
                           {" "}
                           <span className="text-muted">Plan Expiry Date:</span>
-                          &nbsp;{user.subscription.expiry_date}
+                          &nbsp;{user?.subscription.expiry_date}
                         </th>
                       </tr>
                     </thead>
@@ -93,25 +109,25 @@ const Profile = () => {
                         <td className="text-center">
                           <p>Product</p>{" "}
                           <span className="text-color">
-                            {user.subscription.product}
+                            {user?.subscription.product}
                           </span>
                         </td>
                         <td className="text-center">
                           <p>Price</p>{" "}
                           <span className="text-color">
-                            {user.subscription.price}
+                            {user?.subscription.price}
                           </span>
                         </td>
                         <td className="text-center">
                           <p>Period</p>{" "}
                           <span className="text-color">
-                            {user.subscription.period}
+                            {user?.subscription.period}
                           </span>
                         </td>
                         <td className="text-center">
                           <p>Status</p>{" "}
                           <span className="text-active">
-                            {user.subscription.status}
+                            {user?.subscription.status}
                           </span>
                         </td>
                       </tr>

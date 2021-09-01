@@ -130,10 +130,6 @@ const SignUp = () => {
                 })
             }
 
-            if (response.ok === true) {
-                Cookies.set("user_email", data.email);
-                Cookies.set("first_time_user", true);
-            }
         } catch (err) {
             console.error("Error: ", err);
             alert("some thing goes wrong")

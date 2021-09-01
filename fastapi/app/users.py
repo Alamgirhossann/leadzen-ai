@@ -1,8 +1,6 @@
 from typing import Optional
 
-import databases
 import httpx
-import sqlalchemy
 from fastapi import Request
 from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
@@ -14,8 +12,8 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from app.config import (
     API_CONFIG_SELF_BASE_URL,
     API_CONFIG_JWT_SECRET,
-    API_CONFIG_DATABASE_URL,
 )
+from app.database import database, engine
 from app.email import UserEmailVerificationEmailRequest
 
 
@@ -39,7 +37,6 @@ class UserDB(User, models.BaseUserDB):
     first_time: Optional[bool] = True
 
 
-database = databases.Database(API_CONFIG_DATABASE_URL)
 Base: DeclarativeMeta = declarative_base()
 
 
@@ -48,9 +45,6 @@ class UserTable(Base, SQLAlchemyBaseUserTable):
     first_time = Column(Boolean, default=True)
 
 
-engine = sqlalchemy.create_engine(
-    API_CONFIG_DATABASE_URL, connect_args={"check_same_thread": False}
-)
 Base.metadata.create_all(engine)
 
 users = UserTable.__table__

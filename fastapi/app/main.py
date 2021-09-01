@@ -1,29 +1,42 @@
 import csv
-import databases
+from datetime import datetime
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi_utils.tasks import repeat_every
 from loguru import logger
 from starlette import status
-from app.config import API_CONFIG_LINKEDIN_CSV_FILE, API_CONFIG_DATABASE_URL, API_CONFIG_JWT_SECRET
+
+from app.bulk.router import router as bulk_router
+from app.config import (
+    API_CONFIG_LINKEDIN_CSV_FILE,
+    API_CONFIG_JWT_SECRET,
+)
 from app.customize_filter import router as filter_router
+from app.database import database
 from app.email import router as email_router
-from app.snov import router as snov_email
-from app.pipl import router as pipl_router
+from app.pipl.router import router as pipl_router
+from app.history import router as history_router
+from app.credits import router as credits_router
 from app.scraper import fetch_linkedin_cookie
-from app.texau import router as texau_router
-from app.email_truemail import router as email_verification
-from app.search_result_operations import router as search_operations, database
+from app.texau.router import router as texau_router
 from app.users import fastapi_users
-from app.proxy_curl import router as proxy_curl
 from app.users import (
     jwt_authentication,
     on_after_register,
     on_after_forgot_password,
     after_verification_request,
-    database,
 )
+from app.utils.proxy_curl import router as proxycurl_router
+
+from app.utils.snov import router as snov_router
+from app.utils.truemail import router as truemail_router
+
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
 
 current_active_user = fastapi_users.current_user(active=True)
 
@@ -38,6 +51,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/api/bulk", StaticFiles(directory="bulk"), name="bulk")
+
 
 @app.get("/")
 async def root():
@@ -47,10 +62,17 @@ async def root():
 app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
-app.include_router(router=filter_router, prefix="/api")
-app.include_router(router=email_verification, prefix="/api")
-app.include_router(router=snov_email, prefix="/api")
-app.include_router(router=search_operations, prefix="/api", dependencies=[Depends(fastapi_users.get_current_active_user)])
+app.include_router(router=bulk_router, prefix="/api")
+app.include_router(router=history_router, prefix="/api")
+app.include_router(router=credits_router, prefix="/api")
+app.include_router(router=truemail_router, prefix="/api")
+app.include_router(router=snov_router, prefix="/api")
+app.include_router(router=proxycurl_router, prefix="/api")
+# app.include_router(
+#     router=search_operations,
+#     prefix="/api",
+#     dependencies=[Depends(fastapi_users.get_current_active_user)],
+# )
 
 app.include_router(
     fastapi_users.get_auth_router(jwt_authentication),
@@ -83,16 +105,6 @@ app.include_router(router=email_router, prefix="/api")
 
 
 @app.on_event("startup")
-async def startup():
-    await database.connect()
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
-
-
-@app.on_event("startup")
 @repeat_every(seconds=60 * 60)
 def job():
     print("linkedin delete cookie...")
@@ -113,15 +125,39 @@ def refresh_linkedin_cookie_manually():
     logger.debug("linkedin cookie...")
     data = fetch_linkedin_cookie()
     header = ["cookie"]
+
     with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
         writer.writerow([data])
+
     logger.debug(header)
     return status.HTTP_200_OK
 
 
+@app.on_event("startup")
+async def startup():
+    logger.info("Connecting to Database")
+    await database.connect()
+    logger.info("Initializing In Memory Cache")
+    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    logger.info("Disconnecting from Database")
+    await database.disconnect()
+    logger.info("Clearing Memory Cache")
+    await FastAPICache.clear()
+
+
 @app.get("/test_auth")
-def test_auth(user=Depends(fastapi_users.get_current_active_user)):
+@cache(expire=10)
+async def test_auth_with_10s_cache(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"test auth, {user=}")
-    return True
+    return datetime.utcnow().timestamp()
+
+
+@cache()
+async def get_cache():
+    return 1

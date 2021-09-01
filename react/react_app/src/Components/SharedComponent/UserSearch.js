@@ -31,16 +31,24 @@ const UserSearch = () => {
       return;
     }
     console.log("In else....");
-    if (/^[a-z0-9]+([\.-]?[a-z0-9]+)*@[a-z0-9]+([\.-]?\w+)*(\.[a-z0-9]{2,3})+$/.test(searchText.text.toLowerCase())){
-      isEmail=true;
-      searchType="email"
+    if (
+      /^[a-z0-9]+([\.-]?[a-z0-9]+)*@[a-z0-9]+([\.-]?\w+)*(\.[a-z0-9]{2,3})+$/.test(
+        searchText.text.toLowerCase()
+      )
+    ) {
+      isEmail = true;
+      searchType = "email";
     }
     // isEmail = searchText.text.includes("@");
     words = WordCount(searchText.text);
     // isMultiWords = searchText.text.includes(" ");
-    if (/^(http(s)?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,3}(\/[a-z0-9-]+)*\/?$/.test(searchText.text.toLowerCase())){
-      isUrl=true;
-      searchType="url"
+    if (
+      /^(http(s)?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,3}(\/[a-z0-9-]+)*\/?$/.test(
+        searchText.text.toLowerCase()
+      )
+    ) {
+      isUrl = true;
+      searchType = "url";
     }
     // /^(http:\/\/www.|https:\/\/www.|www.){1}linkedin\.com(\/\w+(\-{0,1}\w+)+)+\/{0,1}$/.test(searchText.text)
 
@@ -51,7 +59,7 @@ const UserSearch = () => {
     if (!isUrl && !isEmail) {
       console.log("Its sentence or multiple words");
       firstNameUser = searchText.text.split(" ")[0];
-      searchType="name"
+      searchType = "name";
       switch (words) {
         case 1:
           lastNameUser = "";
@@ -69,7 +77,7 @@ const UserSearch = () => {
     if (isUrl) {
       console.log("Its Url");
       urlUser = searchText.text;
-      searchType="url"
+      searchType = "url";
     }
 
     if (!emailUser) emailUser = "";
@@ -80,7 +88,8 @@ const UserSearch = () => {
       email: emailUser,
       name: { first_name: "", last_name: "" },
       url: urlUser,
-      searchType: searchType
+      searchType: searchType,
+      searchTerm: searchText.text,
     };
 
     if (isUrl || isEmail) {
@@ -98,7 +107,8 @@ const UserSearch = () => {
       location: [],
       currentCompany: [],
       pastCompany: [],
-      searchType: searchType
+      searchType: searchType,
+      searchTerm: searchText.text,
     };
     if (!isUrl && !isEmail) {
       history.push({

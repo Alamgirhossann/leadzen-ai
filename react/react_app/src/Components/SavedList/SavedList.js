@@ -75,8 +75,10 @@ const SavedList = () => {
         <div className="user-lead-top mb-2 head-btn-style">
           <div className="d-flex align-items-center">
             <h5 className="m-0">
-              <a href="/repeatedUser"><img src="assets/images/back-union.png" alt="" /></a>
-                Saved Leads
+              <a href="/repeatedUser">
+                <img src="assets/images/back-union.png" alt="" />
+              </a>
+              Saved Leads
             </h5>
           </div>
           <form className="search-form-sm">
@@ -112,30 +114,38 @@ const SavedList = () => {
                 }}
               >
                 <div className=" first-grid head-align">
-                    <span className="me-3 fw-bold">My Leads</span>
-                    <button className='m-0'>
-                        <img className='m-0' src="assets/images/edit (4).png" alt=""/>
-                    </button>
+                  <span className="me-3 fw-bold">My Leads</span>
+                  <button className="m-0">
+                    <img
+                      className="m-0"
+                      src="assets/images/edit (4).png"
+                      alt=""
+                    />
+                  </button>
                 </div>
-                  <div className="second-grid">
-                      <input
-                          type="text"
-                          className="description"
-                          placeholder="Add Description..."
+                <div className="second-grid">
+                  <input
+                    type="text"
+                    className="description"
+                    placeholder="Add Description..."
+                  />
+                </div>
+                <div className="third-grid">
+                  <div className="d-flex justify-content-end">
+                    <button className="m-0">
+                      <img
+                        className="m-0"
+                        src="assets/images/Delete.png"
+                        alt=""
                       />
+                    </button>
                   </div>
-                  <div className="third-grid">
-                      <div className="d-flex justify-content-end">
-                          <button className="m-0">
-                              <img className='m-0' src="assets/images/Delete.png" alt=""/>
-                          </button>
-                      </div>
-                  </div>
+                </div>
               </button>
             </h2>
             <div
               id="collapseOne"
-              className="accordion-collapse collapse show"
+              className="accordion-collapse collapse"
               data-bs-parent="#accordionExample2"
             >
               <div className="accordion-body">
@@ -193,27 +203,34 @@ const SavedList = () => {
                   padding: "10px",
                 }}
               >
-                  <div className=" first-grid head-align">
-                      <span className="me-3 fw-bold">Product Designer Leads</span>
-                      <button className="m-0">
-                          <img className='m-0' src="assets/images/edit (4).png" alt=""/>
-                      </button>
-                  </div>
-                  <div className="second-grid">
-                      <input
-                          type="text"
-                          className="description"
-                          placeholder="Add Description..."
+                <div className=" first-grid head-align">
+                  <span className="me-3 fw-bold">Product Designer Leads</span>
+                  <button className="m-0">
+                    <img
+                      className="m-0"
+                      src="assets/images/edit (4).png"
+                      alt=""
+                    />
+                  </button>
+                </div>
+                <div className="second-grid">
+                  <input
+                    type="text"
+                    className="description"
+                    placeholder="Add Description..."
+                  />
+                </div>
+                <div className="third-grid">
+                  <div className="d-flex justify-content-end">
+                    <button className="m-0">
+                      <img
+                        className="m-0"
+                        src="assets/images/Delete.png"
+                        alt=""
                       />
+                    </button>
                   </div>
-                  <div className="third-grid">
-                      <div className="d-flex justify-content-end">
-                          <button className="m-0">
-                              <img className='m-0' src="assets/images/Delete.png" alt=""/>
-                          </button>
-                      </div>
-
-                  </div>
+                </div>
               </button>
             </h2>
             <div
@@ -246,7 +263,7 @@ const SavedList = () => {
 
                       <p className="save-view-btn">
                         <a href="/detailedInfo" className="button">
-                        Unlock Profile
+                          Unlock Profile
                         </a>
                       </p>
                       <p className="save-close-btn">
