@@ -28,9 +28,8 @@
   .user-container{
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-areas: 'b a u u u u e e e v v c';
+    grid-template-areas: 'b a u u u l e e e v v c';
     align-items: center;
-    width: 900px;
   }
   .box{
       grid-area: b;
@@ -40,6 +39,9 @@
   }
   .search-user{
     grid-area: u;
+  }
+  .linkedin-icon{
+    grid-area: l;
   }
   .search-email{
     grid-area: e;
