@@ -33,20 +33,15 @@ const FirstTimeUser = () => {
         try {
             console.log("in update user")
 
-            const fetchResponse = await axios.patch(
-                apiServer + "/users/me",
-                {
-                    first_time: false,
+            const fetchResponse = await fetch(apiServer + "/users/me", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
                 },
-                {
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'accept': 'application/json',
-                        'Authorization': `Bearer ${Cookies.get("user_token")}`,
-                        "Content-Type": "application/json",
-                    },
-                },
-            );
+                body: JSON.stringify({"first_time": false}),
+            })
             let json_res = await fetchResponse.data;
             console.log("json_res for update user", json_res);
         } catch (err) {
