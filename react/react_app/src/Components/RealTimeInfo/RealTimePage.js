@@ -62,7 +62,9 @@ const RealTimePage = () => {
                     element.value =""
                 alert("Request is send")
             }
-            console.log(response)
+            else{
+                alert("Sorry request is not send try again")
+            }
         }
         catch(err){
             console.log("error",err)
