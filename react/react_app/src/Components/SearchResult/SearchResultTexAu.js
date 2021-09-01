@@ -75,10 +75,6 @@ const SearchResult = (props) => {
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
-        // let values = Object.values(props.location.state.customSearch);
-        // values = values.filter(Boolean).toString();
-        // console.log("Values Only.....>>>>", values);
-        // setSearchTerm(values);
         console.log("serchterm...after set custom search", searchTerm);
         setCustomSearch(props.location.state.customSearch);
         console.log(
@@ -135,7 +131,6 @@ const SearchResult = (props) => {
 
       const inputData = props.location.state.data;
       const endpoint = props.location.state.endpoint;
-      // setSearchTerm(props.location.state.data);
       console.log("serchterm...after set social search", searchTerm);
       setLoading(true);
 
