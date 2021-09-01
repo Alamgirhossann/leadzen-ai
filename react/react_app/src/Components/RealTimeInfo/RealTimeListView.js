@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Header from "../SharedComponent/Header";
 
-const RealTimePage2 = () => {
+const RealTimeListView = () => {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
@@ -370,4 +370,4 @@ const RealTimePage2 = () => {
   );
 };
 
-export default RealTimePage2;
+export default RealTimeListView;
