@@ -2,16 +2,24 @@ import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import Header from "../CompanySharedComponent/Header";
 import SidebarExtractContact from "../CompanySharedComponent/SidebarExtractContact";
-import CustomizeButton from "../CompanySharedComponent/CustomizeButton";
 import AskJarvis from "../CompanySharedComponent/AskJarvis";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
-
 import BulkSearch from "../CompanySharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
-const SearchResultCompany = () => {
+
+const SearchResultCompany = (props) => {
+  const [customSearch, setCustomSearch] = useState({
+    location: null,
+    industry: null,
+    job_title: null,
+    education: null,
+    company_name: null,
+    keywords: null,
+    csv_file: null,
+  });
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -26,6 +34,16 @@ const SearchResultCompany = () => {
       mail_credits: 1000,
     },
   };
+
+  useEffect(async () => {
+    if (props.location.state.customSearch) {
+      setCustomSearch(props.location.state.customSearch);
+      console.log(
+        "from advance.customSearch filters .....",
+        props.location.state.customSearch
+      );
+    }
+  }, []);
 
   return (
     <div>
@@ -114,10 +132,10 @@ const SearchResultCompany = () => {
                 <SpecificSearchBtn details={false} />
                 <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                   <h6 className="text-danger mb-3">Customize your search</h6>
-                  <div className="px-4">
-                    <CustomizeButton />
-                  </div>
-                  <CompanyFilters />
+                  {/*<div className="px-4">*/}
+                  {/*  <CustomizeButton />*/}
+                  {/*</div>*/}
+                  <CompanyFilters customSearch={customSearch} />
                 </div>
                 <BulkSearch />
                 <SidebarExtractContact />

@@ -139,9 +139,8 @@ const App = () => {
         <Route path="/firstTimeUserCompany">
           <FirstTimeUserCompany />
         </Route>
-        <Route path="/searchResultCompany">
-          <SearchResultCompany />
-        </Route>
+        <Route path="/searchResultCompany" component={SearchResultCompany} />
+
         <Route path="/detailInfoCompany">
           <DetailInfoCompany />
         </Route>
