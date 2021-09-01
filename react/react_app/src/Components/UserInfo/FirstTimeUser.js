@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
@@ -9,32 +9,61 @@ import ExtractContacts from "../SharedComponent/ExtractContacts";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
+import axios from "axios";
+
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+
 
 const FirstTimeUser = () => {
-  const user = {
-    name: "John Smith",
-    email: "Johnsmith087@hexagon.in",
-    subscription: {
-      product: "Free Analystt",
-      price: "100 INR",
-      period: "Yearly",
-      status: "Active",
-      last_renewal: "01/02/2020",
-      expiry_date: "02/08/2021",
-      profile_credits: 500,
-      mail_credits: 1000,
-    },
-  };
-
-  useEffect(async () => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    Cookies.set("first_time_user", false);
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
+    const user = {
+        name: "John Smith",
+        email: "Johnsmith087@hexagon.in",
+        subscription: {
+            product: "Free Analystt",
+            price: "100 INR",
+            period: "Yearly",
+            status: "Active",
+            last_renewal: "01/02/2020",
+            expiry_date: "02/08/2021",
+            profile_credits: 500,
+            mail_credits: 1000,
+        },
     };
+
+    const UpdateUser = async () => {
+        try {
+            console.log("in update user")
+
+            const fetchResponse = await axios.patch(
+                apiServer + "/users/me",
+                {
+                    first_time: false,
+                },
+                {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'accept': 'application/json',
+                        'Authorization': `Bearer ${Cookies.get("user_token")}`,
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+            let json_res = await fetchResponse.data;
+            console.log("json_res for update user", json_res);
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    useEffect(async () => {
+        const script = document.createElement("script");
+        script.src = "assets/js/app.js";
+        script.async = true;
+        UpdateUser()
+        document.body.appendChild(script);
+        return () => {
+            document.body.removeChild(script);
+        };
 
     //  TODO: store a cookie that the user has been to this page. Say first_time_user=false
   }, []);

@@ -8,7 +8,7 @@ from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from loguru import logger
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Boolean
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 from app.config import (
@@ -21,18 +21,22 @@ from app.email import UserEmailVerificationEmailRequest
 
 class User(models.BaseUser):
     username: Optional[str] = None
+    first_time: Optional[bool] = True
 
 
 class UserCreate(models.BaseUserCreate):
     username: Optional[str] = None
+    first_time: Optional[bool] = True
 
 
 class UserUpdate(User, models.BaseUserUpdate):
     username: Optional[str] = None
+    first_time: Optional[bool] = True
 
 
 class UserDB(User, models.BaseUserDB):
     username: Optional[str] = None
+    first_time: Optional[bool] = True
 
 
 database = databases.Database(API_CONFIG_DATABASE_URL)
@@ -41,6 +45,7 @@ Base: DeclarativeMeta = declarative_base()
 
 class UserTable(Base, SQLAlchemyBaseUserTable):
     username = Column(String(length=320), nullable=True)
+    first_time = Column(Boolean, default=True)
 
 
 engine = sqlalchemy.create_engine(

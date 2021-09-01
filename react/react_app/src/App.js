@@ -33,7 +33,6 @@ import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
-import NoPageFound from "./Components/SharedComponent/NoPageFound";
 import PrivateRoute from "./Components/SharedComponent/PrivateRoute"
 
 const App = () => {
