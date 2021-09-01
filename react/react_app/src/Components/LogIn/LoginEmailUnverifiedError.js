@@ -4,35 +4,35 @@ import { Link } from "react-router-dom";
 const LoginEmailUnverifiedError = () => {
   return (
     <div className="container-body">
-        <header className="header-area">
-            <nav className="header-navbar navbar navbar-expand-xl bg-light">
-                <div className="container-fluid">
-                    <a className="navbar-brand" href="index.html">
-                        <img src="assets/images/header-brand-black.png" alt=""/>
-                    </a>
-                </div>
-            </nav>
-        </header>
+      <header className="header-area">
+        <nav className="header-navbar navbar navbar-expand-xl bg-light">
+          <div className="container-fluid">
+            <a className="navbar-brand" href="index.html">
+              <img src="assets/images/header-brand-black.png" alt=""/>
+            </a>
+          </div>
+        </nav>
+      </header>
 
-        <div className="main-content-area overflow-hidden">
-            <div className="main-wrapper">
-                <div className="container-fluid">
-                    <div className="form-container">
-                        <div className="signup-wrapper py-4 px-md-6">
-                            <div className="row align-items-center">
-                                <div className="col-md-6 robot-container order-md-12">
-                                    <div className="sign-up-email-error">
-                                        <p className="fw-bold text-center">
-                                            <img
-                                                style={{width: "20px"}}
-                                                src="assets/images/Group 2221.png"
-                                                alt=""
-                                            />{" "}
-                                            <br/>
-                                            <span className="text-danger"> Sorry!</span>
-                                            <br/>
-                                            Please Verify your Email by clicking the link sent to
-                                            your Email
+      <div className="main-content-area overflow-hidden">
+        <div className="main-wrapper">
+          <div className="container-fluid">
+            <div className="form-container">
+              <div className="signup-wrapper py-4 px-md-6">
+                <div className="row align-items-center">
+                  <div className="col-md-6 robot-container order-md-12">
+                    <div className="sign-up-email-error">
+                      <p className="fw-bold text-center">
+                        <img
+                            style={{width: "20px"}}
+                            src="assets/images/Group 2221.png"
+                            alt=""
+                        />{" "}
+                        <br/>
+                        <span className="text-danger"> Sorry!</span>
+                        <br/>
+                        Please Verify your Email by clicking the link sent to
+                        your Email
                       </p>
                     </div>
                   </div>

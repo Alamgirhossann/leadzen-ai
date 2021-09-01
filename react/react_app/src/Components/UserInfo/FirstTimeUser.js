@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useHistory} from "react-router-dom";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
@@ -10,7 +10,6 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import axios from "axios";
-
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 
@@ -65,24 +64,24 @@ const FirstTimeUser = () => {
             document.body.removeChild(script);
         };
 
-    //  TODO: store a cookie that the user has been to this page. Say first_time_user=false
-  }, []);
+    }, []);
 
-  function handleCSVFile() {}
+    function handleCSVFile() {
+    }
 
-  return (
-    <div>
-      <Header user={user} />
+    return (
+        <div>
+            <Header user={user}/>
 
-      <div className="modal" id="bulkmodal">
-        <button
-          type="button"
-          className="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        />
-        <div className="modal-dialog">
-          <div className="modal-message">
+            <div className="modal" id="bulkmodal">
+                <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                />
+                <div className="modal-dialog">
+                    <div className="modal-message">
             <p>
               <i className="text-danger">Format to follow:</i> Ensure that the
               first column has the unique values you’re searching for. Download
