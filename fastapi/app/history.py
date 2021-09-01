@@ -126,18 +126,6 @@ async def get_search_history_by_id(
 #             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
 #         )
 
-async def conv_list_to_str(values: list, data: list):
-    for val in values:
-        if isinstance(val, list):
-            await conv_list_to_str(val, data)
-        elif val:
-            if isinstance(val, dict):
-                if val:
-                    for k, v in val.items():
-                        val = str(v)
-            data.append(val)
-
-
 @router.get("/all", response_model=List[SearchHistoryShortResponse])
 async def get_all_search_history(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
@@ -159,17 +147,6 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
             if not obj:
                 continue
             search_id = obj['id']
-            try:
-
-                search_term: list = json.loads(obj['search_term']).values()
-                search_term_ls = []
-
-                await conv_list_to_str(search_term, search_term_ls)
-                if search_term:
-                    obj["search_term"] = ", ".join(search_term_ls)
-            except Exception as err:
-                logger.critical("JException " + str(err))
-                obj["search_term"] = ""
 
             query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
 

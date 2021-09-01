@@ -7,9 +7,7 @@ import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
-import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
-import { v4 as uuidv4 } from "uuid";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -27,7 +25,7 @@ const SearchResult = (props) => {
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
   ]);
-  const [searchTerm, setSearchTerm] = useState({});
+  const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
@@ -68,7 +66,7 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
-        setSearchTerm((prev) => ({ ...props.location.state.requestTexAu }));
+        setSearchTerm(props.location.state.requestTexAu.searchTerm);
         console.log("serchterm...after set advance search", searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
@@ -77,7 +75,10 @@ const SearchResult = (props) => {
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
-        setSearchTerm(props.location.state.customSearch);
+        // let values = Object.values(props.location.state.customSearch);
+        // values = values.filter(Boolean).toString();
+        // console.log("Values Only.....>>>>", values);
+        // setSearchTerm(values);
         console.log("serchterm...after set custom search", searchTerm);
         setCustomSearch(props.location.state.customSearch);
         console.log(
@@ -134,7 +135,7 @@ const SearchResult = (props) => {
 
       const inputData = props.location.state.data;
       const endpoint = props.location.state.endpoint;
-      setSearchTerm(props.location.state.data);
+      // setSearchTerm(props.location.state.data);
       console.log("serchterm...after set social search", searchTerm);
       setLoading(true);
 
@@ -411,16 +412,18 @@ const SearchResult = (props) => {
 
   const saveSearchedRecord = async (response, searchType) => {
     console.log("In saveSearchedRecord...searchTerm", searchTerm);
-    let search_term = {};
+    let search_term = "";
     if (
       props.location.pathname.includes("/result_by_name") ||
       props.location.pathname.includes("/advanceSearch")
     ) {
       if (props.location.state.requestTexAu) {
-        search_term = props.location.state.requestTexAu;
+        search_term = props.location.state.requestTexAu.searchTerm;
       }
       if (props.location.state.customSearch) {
-        search_term = props.location.state.customSearch;
+        let values = Object.values(props.location.state.customSearch);
+        search_term = values.filter(Boolean).toString();
+        console.log("Values Only.....>>>>", search_term);
       }
     }
     if (props.location.pathname.includes("/social_url_search")) {
@@ -428,7 +431,7 @@ const SearchResult = (props) => {
     }
     let requestForSaveSearch = {
       search_type: searchType,
-      search_term: JSON.stringify(search_term),
+      search_term: search_term,
       search_results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
@@ -775,13 +778,13 @@ const SearchResult = (props) => {
                             />
                             <div className="search-author text-danger ">
                               <img
-                                  style={{borderRadius:"50%"}}
-                                  src={
-                                    data.profilePicture
-                                        ? data.profilePicture
-                                        : "assets/images/author-image.png"
-                                  }
-                                  alt=""
+                                style={{ borderRadius: "50%" }}
+                                src={
+                                  data.profilePicture
+                                    ? data.profilePicture
+                                    : "assets/images/author-image.png"
+                                }
+                                alt=""
                               />
                             </div>
                             <div className="search-user ps-3">
@@ -793,8 +796,15 @@ const SearchResult = (props) => {
                                 {data.length === 0 ? null : data.location}
                               </small>
                             </div>
-                            <div className='linkedin-icon d-flex justify-content-end'>
-                              <span><a href="#"><img src="assets/images/linkedin1.png" alt="" /></a></span>
+                            <div className="linkedin-icon d-flex justify-content-end">
+                              <span>
+                                <a href="#">
+                                  <img
+                                    src="assets/images/linkedin1.png"
+                                    alt=""
+                                  />
+                                </a>
+                              </span>
                             </div>
                             <div className="search-email text-center">
                               <small
@@ -824,9 +834,9 @@ const SearchResult = (props) => {
                             </div>
                             <p className="search-view-btn ">
                               <a
-                                  className="btn button"
-                                  data-toggle="collapse"
-                                  href={
+                                className="btn button"
+                                data-toggle="collapse"
+                                href={
                                   "#collapseExample_" + `${currentPage}${index}`
                                 }
                                 data-target={
