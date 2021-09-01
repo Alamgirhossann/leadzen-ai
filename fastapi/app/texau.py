@@ -63,7 +63,6 @@ def read_linkedin_cookie():
 
 @router.get("/check_status/{execution_id}", response_model=TexAuResponse)
 async def check_execution_status(execution_id: str):
-   
     try:
         async with httpx.AsyncClient() as client:
             headers = {
@@ -200,8 +199,7 @@ async def search_using_texau(
         request: TexAuRequest, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.info(f"{request=}, {user=}")
-   
-    return TexAuExecutionResponse(execution_id='execution_id')    
+
     try:
         if not (query_url := linkedin_query_url_builder(request.dict())):
             raise HTTPException(

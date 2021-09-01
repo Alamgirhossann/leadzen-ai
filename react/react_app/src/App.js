@@ -90,6 +90,9 @@ const App = () => {
         </Route>
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/result_by_name" component={SearchResultTexAu} />
+        <Route path="/search_by_history_type2" component={SearchResult} />
+        <Route path="/result_by_history_type1" component={SearchResultTexAu} />
+        <Route path="/social_url_search" component={SearchResultTexAu} />
         <Route path="/advanceSearch" component={SearchResultTexAu} />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />

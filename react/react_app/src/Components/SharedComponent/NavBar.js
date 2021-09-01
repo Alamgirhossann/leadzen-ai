@@ -4,22 +4,32 @@ import Cookies from "js-cookie";
 
 const NavBar = (props) => {
   const [user, setUser] = useState(props.user);
+
+  function handleSetLinkedInCookie() {
+    const cookie = prompt("Please paste your LinkedIn cookie here");
+    if (!cookie) {
+      alert("Invalid Cookie");
+    }
+    Cookies.set("user_linkedin_cookie", cookie);
+  }
+
   const handleLogout = (event) => {
     console.log("document.cookie()...handle", document.cookie)
     Cookies.remove('user_token', {path: ''})
     Cookies.remove('user_email', {path: ''})
     console.log("document.cookie()...", document.cookie)
   }
+
   return (
-      <div style={{paddingRight: "0px"}}>
-        <nav
-            className="header-navbar navbar navbar-expand-xl bg-light"
-            style={{paddingRight: "0px"}}
-        >
-          <div className="container-fluid">
-            <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
-              <li className="nav-item me-md-4 me-3">
-                <a className="nav-icon-menu nav-link" href="/repeatedUser">
+    <div style={{ paddingRight: "0px" }}>
+      <nav
+        className="header-navbar navbar navbar-expand-xl bg-light"
+        style={{ paddingRight: "0px" }}
+      >
+        <div className="container-fluid">
+          <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
+            <li className="nav-item me-md-4 me-3">
+              <a className="nav-icon-menu nav-link" href="/repeatedUser">
                 <img src="assets/images/menu-home.png" alt="home here" />
                 <span className="text-danger">Home</span>
               </a>
@@ -141,6 +151,15 @@ const NavBar = (props) => {
                   <li>
                     <a className="dropdown-item disabled" href="/history">
                       Export History
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={handleSetLinkedInCookie}
+                    >
+                      Set LinkedIn Cookie
                     </a>
                   </li>
                   <li>

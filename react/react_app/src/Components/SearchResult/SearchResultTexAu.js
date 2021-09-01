@@ -9,8 +9,7 @@ import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
-import {func} from "prop-types";
-import {v4 as uuidv4} from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -23,19 +22,20 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    {index: null, details: null},
+    { index: null, details: null },
   ]);
-  const [UnlockEmailDetails, setunlockEmailDetails] = useState([
-    {index: null, details: null},
+  const [unlockEmailDetails, setUnlockEmailDetails] = useState([
+    { index: null, details: null },
   ]);
   const [searchTerm, setSearchTerm] = useState({});
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
-  const [searchType, setSearchType] = useState("");
+
   const [isCheckAll, setIsCheckAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
   let today = new Date();
@@ -49,11 +49,14 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads.length > 0
+      myLeads && Array.isArray(myLeads)
         ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
         : 0
     );
   };
+  useEffect(async () => {
+    console.log("in search term useeffect...", searchTerm);
+  }, [searchTerm]);
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
@@ -64,13 +67,13 @@ const SearchResult = (props) => {
       let requestForTexAu = {};
       if (props.location.state.requestTexAu) {
         console.log(
-            "from advance. requestTexAu name.....",
-            props.location.state.requestTexAu
+          "from advance. requestTexAu name.....",
+          props.location.state.requestTexAu
         );
         setSearchTerm(props.location.state.requestTexAu);
+        console.log("serc", searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
-        setSearchType(props.location.state.requestTexAu.searchType);
       }
       let keyword = null;
       let isKeyword,
@@ -83,8 +86,7 @@ const SearchResult = (props) => {
           props.location.state.customSearch
         );
         if (props.location.state.customSearch.search_type)
-          setSearchType(props.location.state.customSearch.search_type);
-        if (props.location.state.customSearch.keywords) isKeyword = true;
+          if (props.location.state.customSearch.keywords) isKeyword = true;
         if (props.location.state.customSearch.education) isEducation = true;
         if (isKeyword && isEducation)
           keyword =
@@ -117,50 +119,106 @@ const SearchResult = (props) => {
         console.log("request....", requestForTexAu);
         setLoading(true);
       }
+      const endpoint = "/texau/linkedin/matching_profiles";
+      const inputData = requestForTexAu;
+      inputData.cookie = tempCookie;
+      await sendForExecution(endpoint, inputData);
+    }
+
+    if (props.location.pathname.includes("/social_url_search")) {
+      if (!props.location.state) {
+        console.warn("no state found");
+        return;
+      }
+
+      console.log(`state data: ${props.location.state}`);
+
+      const inputData = props.location.state.data;
+      const endpoint = props.location.state.endpoint;
+      setSearchTerm(props.location.state.data);
+      setLoading(true);
+
+      await sendForExecution(endpoint, inputData);
+    }
+
+    if (props.location.pathname.includes("/result_by_history_type1")) {
       try {
-        const response = await fetch(apiServer + "/texau/search", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(requestForTexAu),
-        });
-
-        if (response.status === 400) {
-          // handle 400
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        if (response.status === 500) {
-          // handle 500
-          setLoading(false);
-          setMyLeads({});
-        }
-
-        if (response.status === 404) {
-          setLoading(false);
-          setMyLeads({});
-        }
+        const response = await fetch(
+          apiServer + `/history/id/${props.location.state.details.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+          }
+        );
 
         let json_res = await response.json();
-        console.log(
-          "Data>>>>> execution_id >>>>>>",
-          json_res,
-          json_res.execution_id
-        );
-        if (!json_res.execution_id) {
-          setLoading(false);
-          setMyLeads({});
-        }
-        checkExecutionStatus(json_res.execution_id);
+        setSearchId(json_res.search_id);
+        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setLoading(false);
+
+        setMyLeads(json_res.search_results);
       } catch (err) {
         console.error("Error: ", err);
       }
     }
   }, [props.location.state.customSearch]);
+
+  const sendForExecution = async (endpoint, inputData) => {
+    function handleError(status) {
+      setLoading(false);
+      setMyLeads([]);
+      console.error(`Got HTTP Error ${status}`);
+      alert("Error Searching For Leads");
+    }
+
+    console.log(`endpoint: ${endpoint}, inputData: ${inputData}`);
+    console.log(inputData);
+
+    try {
+      const response = await fetch(apiServer + endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(inputData),
+      });
+
+      function handleUnAuthorized(response = null) {
+        console.log("User is UnAuthorized");
+        alert("Please Logout and LogIn Again");
+        setLoading(false);
+        setMyLeads([]);
+      }
+
+      async function handleSuccess(response) {
+        let json = await response.json();
+        if (!json || !json.execution_id) {
+          handleError(response);
+        }
+
+        console.log(`Got Response ${json}`);
+        checkExecutionStatus(json.execution_id);
+      }
+
+      switch (response.status) {
+        case 200:
+          return await handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        default:
+          return handleError(response);
+      }
+    } catch (err) {
+      console.error(`Exception Getting Data from ${endpoint}`);
+      console.error(err);
+      handleError(500);
+    }
+  };
 
   const checkExecutionStatus = (executionId = null) => {
     if (!executionId) {
@@ -174,17 +232,17 @@ const SearchResult = (props) => {
       console.log("In interval.....");
       try {
         const response = await fetch(
-          apiServer + `/texau/check_status/${executionId}`,
+          apiServer + `/texau/result/${executionId}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
             },
           }
         );
 
-        console.log("response>>>>", response);
         function handleError() {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
@@ -193,33 +251,50 @@ const SearchResult = (props) => {
           setMyLeads("");
         }
 
-        if (response.status === 403) {
-          // got cookie error - no need to check again, results will not change
-          console.log("Response cookie error", response.statusText);
-          handleError();
-          return;
-        }
-
-        if (response.status === 200) {
-          // got the response
-          const data = await response.json();
-          console.log("Data>>>>", data, ">>>>>", response);
-          if (!data) {
+        async function handleSuccess(response) {
+          const json = await response.json();
+          if (!json || !json.data) {
             console.warn(`Invalid Data`);
-            handleError();
-            return;
+            return handleError();
           }
+
+          console.log(json);
 
           setLoading(false);
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
-          if (data.data) {
-            setMyLeads(data.data);
-            saveSearchedRecord(data.data);
-          }
+          setMyLeads(json.data);
+          await saveSearchedRecord(json.data, "texAu");
+        }
 
-          return;
+        function handleUnAuthorized(response = null) {
+          console.log("User is UnAuthorized");
+          handleError();
+          alert("Please Logout and LogIn Again");
+        }
+
+        function handleCookieError() {
+          // got cookie error - no need to check again, results will not change
+          console.log("Response cookie error", response.statusText);
+          handleError();
+        }
+
+        function handleNotFound() {
+          console.log("Not Found Yet, Waiting...");
+        }
+
+        switch (response.status) {
+          case 200:
+            return handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 403:
+            return handleCookieError();
+          case 404:
+            return handleNotFound();
+          default:
+            return handleError();
         }
       } catch (e) {
         console.error("Exception>>", e);
@@ -235,71 +310,70 @@ const SearchResult = (props) => {
 
   useEffect(() => {}, [loading]);
 
-  useEffect(async () => {
+  useEffect(() => {
     paginate(1);
   }, [myLeads]);
 
   useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
   console.log("myLeads>>>>>>>>>>>", myLeads);
 
-  const [show, setShow] = useState();
+  const [show, setShow] = useState(false);
   const [selected, setSelected] = useState(false);
+
   const handleUnlockEmail = async (e, index, data) => {
     e.preventDefault();
     console.log("in handle unlock>>>>", data);
     // try {
-    //   let isDuplicate = false;
-    //
-    //   UnlockEmailDetails.map((spec) => {
-    //     console.log("spec>>>", spec.index);
-    //     if (spec.index === `${currentPage}${index}`) {
-    //       isDuplicate = true;
-    //     }
-    //   });
-    //   console.log("isDuplicate>>>>", isDuplicate);
-    //   if (isDuplicate === false) {
-    let requestForSaveEmailCredit = {
-      user_id: Cookies.get("user_id"),
-      search_id: searchId,
-      email: ["sff", "ddsg"],
-      search_index: parseInt(`${currentPage}${index}`),
-    };
-    try {
-      const response = await fetch(
-          apiServer + "/search_result/save_email_credit_history",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("user_token")}`,
-            },
-            body: JSON.stringify(requestForSaveEmailCredit),
-          }
-      );
+    let isDuplicate = false;
 
-      const result = response.json();
-      result.then((value) => {
-        console.log("value >>>>> ", value);
-        if (value) setSearchId(value.search_id);
+    unlockEmailDetails.map((spec) => {
+      console.log("spec email>>>", spec.index);
+      if (spec.index === `${currentPage}${index}`) {
+        isDuplicate = true;
+      }
+    });
+    console.log("isDuplicate>>>>", isDuplicate);
+    if (isDuplicate === false) {
+      let requestForSaveEmailCredit = {
+        user_id: Cookies.get("user_id"),
+        search_id: searchId,
+        email_addresses: ["sff", "ddsg"],
+        search_index: parseInt(`${currentPage}${index}`),
+      };
+      try {
+        const response = await fetch(apiServer + "/credits/email/bulk_add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveEmailCredit),
+        });
+
+        const result = response.json();
+
+        console.log("response from saveResult>>>", result, result.search_id);
+      } catch (e) {
+        console.error("Exception>>", e);
+      }
+
+      setUnlockEmailDetails((prev) => [
+        ...prev,
+        {
+          index: `${currentPage}${index}`,
+          details: { email: `email_${currentPage}${index}@test.com` },
+        },
+      ]);
+    } else {
+      unlockEmailDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
       });
-      console.log("response from saveResult>>>", result, result.search_id);
-    } catch (e) {
-      console.error("Exception>>", e);
     }
-    //   }
-    //
-    //   console.log("specificUser>>>>>>>", specificUserDetails);
-    //   specificUserDetails?.map((spec) => {
-    //     console.log(
-    //       "Check details>>>>",
-    //       spec.index,
-    //       spec.details === "Record Not Found"
-    //     );
-    //   });
-    // } catch (err) {
-    //   console.error("Error: ", err);
-    // }
   };
 
   useEffect(() => {
@@ -329,30 +403,26 @@ const SearchResult = (props) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
 
-  const saveSearchedRecord = async (response) => {
-    console.log("In saveSearchedRecord");
+  const saveSearchedRecord = async (response, searchType) => {
+    console.log("In saveSearchedRecord...searchTerm", searchTerm);
 
     let requestForSaveSearch = {
-      user_id: Cookies.get("user_id"),
-      search_id: Cookies.get("user_email") + uuidv4(),
-      search_type: "texAu",
+      search_id: uuidv4(),
+      search_type: searchType,
       search_term: JSON.stringify(searchTerm),
-      results: response,
+      search_results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
     try {
-      const response = await fetch(
-          apiServer + "/search_result/save_search_history",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-              Authorization: `Bearer ${Cookies.get("user_token")}`,
-            },
-            body: JSON.stringify(requestForSaveSearch),
-          }
-      );
+      const response = await fetch(apiServer + "/history/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(requestForSaveSearch),
+      });
 
       const result = response.json();
       result.then((value) => {
@@ -395,7 +465,7 @@ const SearchResult = (props) => {
         });
 
         let json_res = await response.json();
-        console.log("Data Pipl..>>>>>>>>>>>", json_res, ">>>>", searchType);
+        console.log("Data Pipl..>>>>>>>>>>>", json_res);
         let phones = [];
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
@@ -407,41 +477,33 @@ const SearchResult = (props) => {
           }
           console.log("Phones>>>>>>", phones);
           let requestForSaveProfileCredit = {
-            user_id: Cookies.get("user_id"),
             search_id: searchId,
-            phone: phones,
+            phone_numbers: phones,
             search_index: `${currentPage}${index}`,
           };
           try {
             const response = await fetch(
-                apiServer + "/search_result/save_profile_credit_history",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    Authorization: `Bearer ${Cookies.get("user_token")}`,
-                  },
-                  body: JSON.stringify(requestForSaveProfileCredit),
-                }
+              apiServer + "/credits/profile/bulk_add",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                  Authorization: `Bearer ${Cookies.get("user_token")}`,
+                },
+                body: JSON.stringify(requestForSaveProfileCredit),
+              }
             );
 
             const result = response.json();
-            result.then((value) => {
-              console.log("value >>>>> ", value);
-              setSearchId(value.search_id);
-            });
-            console.log(
-                "response from saveResult>>>",
-                result,
-                result.search_id
-            );
+
+            console.log("response from saveResult>>>", result);
           } catch (e) {
             console.error("Exception>>", e);
           }
           setSpecificUserDetails((prev) => [
             ...prev,
-            {index: `${currentPage}${index}`, details: json_res[0]},
+            { index: `${currentPage}${index}`, details: json_res[0] },
           ]);
         } else {
           console.log("In setSpecificUserDetails else");
@@ -459,9 +521,9 @@ const SearchResult = (props) => {
       console.log("specificUser>>>>>>>", specificUserDetails);
       specificUserDetails?.map((spec) => {
         console.log(
-            "Check details>>>>",
-            spec.index,
-            spec.details === "Record Not Found"
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
         );
       });
     } catch (err) {
@@ -469,55 +531,96 @@ const SearchResult = (props) => {
     }
   };
 
-  const handleChange = e => {
-    const {id, checked} = e.target;
-    setIsCheck([...isCheck, id]);
+  const handleLeadSelectionChange = (e) => {
+    const { id, checked } = e.target;
+    setSelectedLeads([...selectedLeads, id]);
     if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== id));
+      setSelectedLeads(selectedLeads.filter((item) => item !== id));
     }
   };
 
-  const handleSelectAll = e => {
+  const handleLeadSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
-    setIsCheck(currentLeads.map(li => li.url));
+    setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
     if (isCheckAll) {
-      setIsCheck([]);
+      setSelectedLeads([]);
     }
   };
-  const handleExcel = e => {
-    e.preventDefault()
-    const fetchData = async () => {
+
+  const handleLeadSelectionExportExcel = (e) => {
+    e.preventDefault();
+
+    const executeExport = async () => {
+      function handleError(response = null) {
+        console.error(`Error, Status Code: ${response?.status}`);
+        alert("Error Exporting File");
+      }
+
       try {
-        console.log("go", isCheck)
-        const fetchResponse = await fetch(apiServer + "/exportExcel", {
+        const inputData = { profile_urls: selectedLeads };
+        console.log(inputData);
+
+        const response = await fetch(apiServer + "/bulk_upload/export/excel", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
-          body: JSON.stringify(isCheck),
+          body: JSON.stringify(inputData),
         });
 
-        const data = await fetchResponse.json();
-        console.log("Data>>>>>>>>>>>", data);
+        async function handleSuccess(response) {
+          const data = await response.json();
+          if (!data) {
+            return handleError();
+          }
+          console.log(data);
+          alert(
+            "Exported excel file is sent to your email. Please check your spam filter if our email has" +
+              " not arrived in a reasonable time. Cheers!"
+          );
+        }
+
+        function handleUnAuthorized(response = null) {
+          console.log("User is UnAuthorized");
+          alert("Please Logout and LogIn Again");
+        }
+
+        switch (response.status) {
+          case 200:
+            return await handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          default:
+            return handleError(response);
+        }
       } catch (err) {
         console.error("Error: ", err);
+        handleError();
       }
     };
 
-    fetchData();
-  }
-  console.log("isCheck....", isCheck)
-  return (
-      <div>
-        <Header user={user}/>
+    if (!selectedLeads) {
+      console.warn("No Selected Leads");
+      return;
+    }
 
-        <div className="modal" id="bulkmodal">
-          <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
+    executeExport();
+  };
+
+  console.log("isCheck....", selectedLeads);
+
+  return (
+    <div>
+      <Header user={user} />
+
+      <div className="modal" id="bulkmodal">
+        <button
+          type="button"
+          className="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
         />
         <div className="modal-dialog">
           <div className="modal-message">
@@ -559,7 +662,7 @@ const SearchResult = (props) => {
               {/* <SpecificSearchBtn/> */}
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
-                <Filters customSearch={customSearch}/>
+                <Filters customSearch={customSearch} />
               </div>
               <BulkSearch />
               <SidebarExtractContact />
@@ -576,12 +679,12 @@ const SearchResult = (props) => {
                 <div className="d-flex align-items-center justify-content-between py-3">
                   <div className="d-flex align-items-center ">
                     <input
-                        className="ms-3 me-3"
-                        type="checkbox"
-                        id="selectAll"
-                        name="selectAll"
-                        onChange={handleSelectAll}
-                        checked={isCheckAll}
+                      className="ms-3 me-3"
+                      type="checkbox"
+                      id="selectAll"
+                      name="selectAll"
+                      onChange={handleLeadSelectAll}
+                      checked={isCheckAll}
                     />
                     <small className="">
                       <b>{currentLeads.length}</b> of{" "}
@@ -600,18 +703,21 @@ const SearchResult = (props) => {
                     <small className="unlock-btn">
                       Unlock Mails{" "}
                       <img
-                          className="ps-3"
-                          src="assets/images/Group 1617.png"
-                          alt=""
+                        className="ps-3"
+                        src="assets/images/Group 1617.png"
+                        alt=""
                       />
                     </small>
-                    <button onClick={handleExcel} className="export-btn" disabled={isCheck.length === 0 ? true : false}>
+                    <button
+                      onClick={handleLeadSelectionExportExcel}
+                      className="export-btn"
+                      disabled={selectedLeads.length === 0 ? true : false}
+                    >
                       Export{" "}
                       <img
-                          className="ps-3"
-                          src="assets/images/export.png"
-                          alt=""
-
+                        className="ps-3"
+                        src="assets/images/export.png"
+                        alt=""
                       />
                     </button>
                   </div>
@@ -630,13 +736,14 @@ const SearchResult = (props) => {
                         <div>
                           <div className="user-container py-2" key={index}>
                             <input
-                                className="box ms-3 me-3"
-                                id={data.url}
-                                type="checkbox"
-                                name={data.name}
-                                checked={isCheck.includes(data.url)}
-                                onChange={handleChange}
-
+                              className="box ms-3 me-3"
+                              id={data.url || data.profileLink}
+                              type="checkbox"
+                              name={data.name}
+                              checked={selectedLeads.includes(
+                                data.url || data.profileLink
+                              )}
+                              onChange={handleLeadSelectionChange}
                             />
                             <div className="search-author text-danger ">
                               <img
@@ -663,17 +770,24 @@ const SearchResult = (props) => {
                             </div>
                             <div className="search-email text-center">
                               <small
-                                  className={
-                                    show[index] ? "d-block" : "d-block blur"
-                                  }
+                              // className={
+                              //   show[index] ? "d-block" : "d-block blur"
+                              // }
                               >
-                                abc@xyz.com
+                                {unlockEmailDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}`
+                                      ? spec.details.email
+                                      : null}
+                                  </span>
+                                ))}
                               </small>
+
                               <a
-                                  href="#"
-                                  onClick={(e) =>
-                                      handleUnlockEmail(e, index, data)
-                                  }
+                                href="#"
+                                onClick={(e) =>
+                                  handleUnlockEmail(e, index, data)
+                                }
                               >
                                 <small className="d-block text-danger">
                                   Unlock
@@ -755,134 +869,134 @@ const SearchResult = (props) => {
                   paginate={paginate}
                 />
               </div>
-              <div className="user-widget-box text-center p-4 my-3">
-                <div className="user-promote-logo">
-                  <img src="assets/images/user-company-brand.png" alt="title" />
-                </div>
-                <div className="user-promote-slider">
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a list of companies in semi-conductor space with
-                        1000+ employees in US?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a detailed list of all the people working for
-                        Flipkart?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Need a detailed list of all the people working for
-                        Flipkart?
-                      </p>
+              {/*<div className="user-widget-box text-center p-4 my-3">*/}
+              {/*  <div className="user-promote-logo">*/}
+              {/*    <img src="assets/images/user-company-brand.png" alt="title" />*/}
+              {/*  </div>*/}
+              {/*  <div className="user-promote-slider">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Want to extract contacts of group members in a LinkedIn*/}
+              {/*          group?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Need a list of companies in semi-conductor space with*/}
+              {/*          1000+ employees in US?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Need a detailed list of all the people working for*/}
+              {/*          Flipkart?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Want to extract contacts of group members in a LinkedIn*/}
+              {/*          group?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Need a detailed list of all the people working for*/}
+              {/*          Flipkart?*/}
+              {/*        </p>*/}
 
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="item">
-                    <div className="user-promote-item">
-                      <p className="">
-                        Want to extract contacts of group members in a LinkedIn
-                        group?
-                      </p>
-                      <div
-                        className="px-3 pb-4"
-                        style={{
-                          position: "absolute",
-                          bottom: "5px",
-                          content: "",
-                        }}
-                      >
-                        <a href="/searchResult" className="small m-0">
-                          Try This
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="user-promote-item">*/}
+              {/*        <p className="">*/}
+              {/*          Want to extract contacts of group members in a LinkedIn*/}
+              {/*          group?*/}
+              {/*        </p>*/}
+              {/*        <div*/}
+              {/*          className="px-3 pb-4"*/}
+              {/*          style={{*/}
+              {/*            position: "absolute",*/}
+              {/*            bottom: "5px",*/}
+              {/*            content: "",*/}
+              {/*          }}*/}
+              {/*        >*/}
+              {/*          <a href="/searchResult" className="small m-0">*/}
+              {/*            Try This*/}
+              {/*          </a>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

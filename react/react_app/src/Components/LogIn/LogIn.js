@@ -25,14 +25,14 @@ const LogIn = () => {
       mail_credits: "",
     },
   };
-  var url_string = window.location.href;
+  const url_string = window.location.href;
   // var url_string = "localhost:12002/login?emailVerified=true&email=piyush.jaiswal@kapso.in";
-  var url = new URL(url_string);
-  var emailVerified = url.searchParams.get("emailVerified");
-  var email = url.searchParams.get("email");
+  const url = new URL(url_string);
+  const emailVerified = url.searchParams.get("emailVerified");
+  const email = url.searchParams.get("email");
 
   const [userLogin, setUserLogin] = useState({
-    email: "",
+    email: email || "",
     password: "",
     error: "",
   });
@@ -136,11 +136,11 @@ const LogIn = () => {
         const fetchResponse = await axios.post(
           apiServer + "/auth/jwt/login",
           formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         console.log("urlll>>>", apiServer + "/auth/jwt/login");
         let json_res = await fetchResponse.data;
@@ -163,14 +163,13 @@ const LogIn = () => {
           Cookies.set("user_token", json_res.access_token);
         }
 
-        setResponse({...response, ok: true});
+        setResponse({ ...response, ok: true });
         console.log("response", response);
 
         if (response.ok === true) {
           // Cookies.set("user_email", userLogin.email);
         }
         console.log("json_res.access_token,,,,,,", json_res.access_token);
-
         console.log("usersdcbfcb.....", userStatus.data.is_verified === false);
         if (userStatus.data.is_verified === false) {
           console.log("in if");
@@ -209,7 +208,7 @@ const LogIn = () => {
           className="alert alert-warning alert-dismissible fade show"
           role="alert"
         >
-          <strong>{email}</strong> You have verified successfully.
+          <strong>{email}</strong>, Your Email is Verified.
           <button
             type="button"
             className="close"
@@ -226,7 +225,7 @@ const LogIn = () => {
             <div className="form-container">
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
-                  {!userVerifiedStatus ? <Redirect to="/unverified"/> : null}
+                  {!userVerifiedStatus ? <Redirect to="/unverified" /> : null}
                   {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">

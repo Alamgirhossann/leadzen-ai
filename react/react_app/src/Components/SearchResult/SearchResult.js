@@ -8,37 +8,46 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
+import { v4 as uuidv4 } from "uuid";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const SearchResult = (props) => {
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "assets/js/app.js";
-        script.async = true;
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        };
-    }, []);
-    const [customSearch, setCustomSearch] = useState({
-        location: null,
-        industry: null,
-        job_title: null,
-        education: null,
-        company_name: null,
-        keywords: null,
-        csv_file: null,
-    });
-
-    const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentLeads, setCurrentLeads] = useState([]);
-    const [myLeads, setMyLeads] = useState([]);
-    let today = new Date();
-    const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-    let dd = String(today.getDate()).padStart(2, "0");
-    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    let yyyy = today.getFullYear();
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "assets/js/app.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+  const [customSearch, setCustomSearch] = useState({
+    location: null,
+    industry: null,
+    job_title: null,
+    education: null,
+    company_name: null,
+    keywords: null,
+    csv_file: null,
+  });
+  const [specificUserDetails, setSpecificUserDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [unlockEmailDetails, setUnlockEmailDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [searchTerm, setSearchTerm] = useState({});
+  const [searchType, setSearchType] = useState("");
+  const [searchId, setSearchId] = useState();
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLeads, setCurrentLeads] = useState([]);
+  const [myLeads, setMyLeads] = useState([]);
+  let today = new Date();
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+  let dd = String(today.getDate()).padStart(2, "0");
+  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  let yyyy = today.getFullYear();
 
   const paginate = (pageNumber) => {
     setCurrentLeads([]);
@@ -55,8 +64,9 @@ const SearchResult = (props) => {
   };
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
-    if (props.location.state) {
+    if (props.location.pathname.includes("/searchResult")) {
       console.log("Request..", props.location.state.reqJsonPipl);
+      setSearchTerm(props.location.state.reqJsonPipl);
       try {
         const response = await fetch(apiServer + "/pipl/search", {
           method: "POST",
@@ -74,11 +84,38 @@ const SearchResult = (props) => {
         setLoading(false);
         if (!json_res.detail) {
           setMyLeads(json_res);
+          await saveSearchedRecord(json_res, "PIPL");
         }
       } catch (err) {
         console.error("Error: ", err);
       }
-    } else {
+    }
+    if (props.location.pathname.includes("/search_by_history_type2")) {
+      console.log(
+        "in result from hisry pipl>>>>",
+        props.location.state.details
+      );
+      try {
+        const response = await fetch(
+          apiServer + `/history/id/${props.location.state.details.id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+          }
+        );
+
+        let json_res = await response.json();
+
+        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setLoading(false);
+
+        setMyLeads(json_res.search_results);
+      } catch (err) {
+        console.error("Error: ", err);
+      }
     }
   }, []);
 
@@ -129,6 +166,176 @@ const SearchResult = (props) => {
 
   const handleCSVFile = (e) => {
     setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
+  };
+
+  const saveSearchedRecord = async (response, searchType) => {
+    console.log("In saveSearchedRecord");
+
+    let requestForSaveSearch = {
+      search_id: uuidv4(),
+      search_type: searchType,
+      search_term: JSON.stringify(searchTerm),
+      search_results: response,
+    };
+    console.log("In saveSearchedRecord...", requestForSaveSearch);
+    try {
+      const response = await fetch(apiServer + "/history/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(requestForSaveSearch),
+      });
+
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
+
+  const handleUnlockEmail = async (e, index, data) => {
+    e.preventDefault();
+    console.log("in handle unlock>>>>", data);
+    // try {
+    let isDuplicate = false;
+
+    unlockEmailDetails.map((spec) => {
+      console.log("spec email>>>", spec.index);
+      if (spec.index === `${currentPage}${index}`) {
+        isDuplicate = true;
+      }
+    });
+    console.log("isDuplicate>>>>", isDuplicate);
+    if (isDuplicate === false) {
+      let requestForSaveEmailCredit = {
+        user_id: Cookies.get("user_id"),
+        search_id: searchId,
+        email_addresses: ["sff", "ddsg"],
+        search_index: parseInt(`${currentPage}${index}`),
+      };
+      try {
+        const response = await fetch(apiServer + "/credits/email/bulk_add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestForSaveEmailCredit),
+        });
+
+        const result = response.json();
+
+        console.log("response from saveResult>>>", result, result.search_id);
+      } catch (e) {
+        console.error("Exception>>", e);
+      }
+
+      setUnlockEmailDetails((prev) => [
+        ...prev,
+        {
+          index: `${currentPage}${index}`,
+          details: { email: `email_${currentPage}${index}@test.com` },
+        },
+      ]);
+    } else {
+      unlockEmailDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
+      });
+    }
+  };
+
+  const handleProfile = async (index, data) => {
+    console.log(
+      "in Handle profile...",
+      `${currentPage}${index}`,
+      "DAta>>>",
+      data
+    );
+    try {
+      let isDuplicate = false;
+
+      specificUserDetails.map((spec) => {
+        console.log("spec>>>", spec.index);
+        if (spec.index === `${currentPage}${index}`) {
+          isDuplicate = true;
+        }
+      });
+      console.log("isDuplicate>>>>", isDuplicate);
+      if (isDuplicate === false) {
+        let phones = [];
+        if (data) {
+          console.log("in data>>>>", data.phones);
+          if (data.phones) {
+            for (let j = 0; j < data.phones.length; j++) {
+              phones.push(data.phones[j].number);
+            }
+            console.log("Phones>>>>>>", phones);
+            let requestForSaveProfileCredit = {
+              search_id: searchId,
+              phone_numbers: phones,
+              search_index: `${currentPage}${index}`,
+            };
+            try {
+              const response = await fetch(
+                apiServer + "/credits/profile/bulk_add",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                  },
+                  body: JSON.stringify(requestForSaveProfileCredit),
+                }
+              );
+
+              const result = response.json();
+
+              console.log("response from saveResult>>>", result);
+            } catch (e) {
+              console.error("Exception>>", e);
+            }
+          }
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: data },
+          ]);
+        } else {
+          console.log("In setSpecificUserDetails else");
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: "Record Not Found" },
+          ]);
+          console.log(
+            "In setSpecificUserDetails else ress....",
+            specificUserDetails
+          );
+        }
+      }
+
+      console.log("specificUser>>>>>>>", specificUserDetails);
+      specificUserDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
+      });
+    } catch (err) {
+      console.error("Error: ", err);
+    }
   };
 
   return (
@@ -199,9 +406,9 @@ const SearchResult = (props) => {
                 <button type="button" className="dz-button">
                   OR
                 </button>
-                  <br/>
-                  <span className="note needsclick">
-                  <input type="file" accept=".csv" onChange={handleCSVFile}/>
+                <br />
+                <span className="note needsclick">
+                  <input type="file" accept=".csv" onChange={handleCSVFile} />
                 </span>
               </div>
             </form>
@@ -284,15 +491,15 @@ const SearchResult = (props) => {
                             </div>
                         </div>
 
-                        <div className="user-widget-box  my-3">
-                            {loading === false ? (
-                                <div className="search-container mb-2">
-                                    {myLeads.length === 0 ? (
-                                        <div>
-                                            <h5>Record not found</h5>
-                                        </div>
-                                    ) : currentLeads ? (
-                                        currentLeads.map((data, index) => (
+              <div className="user-widget-box  my-3">
+                {loading === false ? (
+                  <div className="search-container mb-2">
+                    {myLeads.length === 0 ? (
+                      <div>
+                        <h5>Record not found</h5>
+                      </div>
+                    ) : currentLeads ? (
+                      currentLeads.map((data, index) => (
                         <div>
                           <div className="user-container py-2" key={index}>
                             <input
@@ -309,20 +516,23 @@ const SearchResult = (props) => {
                             </p>
                             <div className="search-user pe-3">
                               <p>
-                                {data.names.length === 0
+                                {data.names === undefined ||
+                                data.names.length === 0
                                   ? null
-                                  : data.names[0]._display}
+                                  : data.names[0].display}
                               </p>
                               <small className="d-block">
                                 Works at{" "}
-                                {data.jobs.length === 0
+                                {data.jobs === undefined ||
+                                data.jobs.length === 0
                                   ? null
-                                  : data.jobs[0]._display}
+                                  : data.jobs[0].display}
                               </small>
                               <small className="d-block">
-                                {data.addresses.length === 0
+                                {data.addresses === undefined ||
+                                data.addresses.length === 0
                                   ? null
-                                  : data.addresses[0]._display}
+                                  : data.addresses[0].display}
                               </small>
                             </div>
                             <div className='linkedin-icon d-flex justify-content-end'>
@@ -330,13 +540,25 @@ const SearchResult = (props) => {
                             </div>
                             <div className="search-email text-center">
                               <small
-                                className={
-                                  show[index] ? "d-block" : "d-block blur"
+                              // className={
+                              //   show[index] ? "d-block" : "d-block blur"
+                              // }
+                              >
+                                {unlockEmailDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}`
+                                      ? spec.details.email
+                                      : null}
+                                  </span>
+                                ))}
+                              </small>
+
+                              <a
+                                href="#"
+                                onClick={(e) =>
+                                  handleUnlockEmail(e, index, data)
                                 }
                               >
-                                abc@xyz.com
-                              </small>
-                              <a href="#" onClick={(e) => showClick(e, index)}>
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>
@@ -355,6 +577,7 @@ const SearchResult = (props) => {
                                 role="button"
                                 aria-expanded="false"
                                 aria-controls="collapseExample"
+                                onClick={() => handleProfile(index, data)}
                               >
                                 View Profile
                               </a>
