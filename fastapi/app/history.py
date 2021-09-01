@@ -14,7 +14,7 @@ router = APIRouter(prefix="/history", tags=["Search History"])
 
 
 class SearchHistoryAddRequest(BaseModel):
-    search_id: str = str(uuid.uuid4())
+    # search_id: str = str(uuid.uuid4())
     search_type: str
     search_term: str
     search_results: conlist(item_type=Dict, min_items=1)
@@ -142,14 +142,13 @@ async def conv_list_to_str(values: list, data: list):
 async def get_all_search_history(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
     try:
-        query = "SELECT * FROM search_history WHERE user_id = :user_id ORDER BY id DESC"
+        query = "SELECT * FROM search_history WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
                 rows := await database.fetch_all(
                     query=query, values={"user_id": str(user.id)}
                 )
         ):
-
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
@@ -169,14 +168,16 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                 if search_term:
                     obj["search_term"] = ", ".join(search_term_ls)
             except Exception as err:
-                logger.critical("JException "+ str(err))
+                logger.critical("JException " + str(err))
                 obj["search_term"] = ""
 
-            query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
+            query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
 
             if not (
                     profile := await database.fetch_all(
-                        query=query_profile_count, values={"user_id": str(user.id), "search_id": search_id}
+                        query=query_profile_count,
+                        values={"user_id": str(user.id), "search_id": search_id, "user_id_email": str(user.id),
+                                "search_id_email": search_id}
                     )
             ):
                 logger.debug("rows>>>>", profile)
@@ -185,23 +186,10 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                     status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
                 )
 
-            query_email_count = "SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
-
-            if not (
-                    email := await database.fetch_all(
-                        query=query_email_count, values={"user_id": str(user.id), "search_id": search_id}
-                    )
-            ):
-                logger.debug("rows1>>>>", email, "rows>>>>>", profile)
-                logger.warning("Invalid Query Results")
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-                )
-            processed_rows_email = [item for x in email for item in x]
             processed_rows_profile = [item for x in profile for item in x]
-            obj['email_count'] = processed_rows_email[0]
+            obj['email_count'] = processed_rows_profile[1]
             obj['profile_count'] = processed_rows_profile[0]
-            logger.debug(f"{processed_rows_email[0]=}>>>{processed_rows_profile[0]=}")
+            logger.debug(f"{processed_rows_profile=}")
 
         return [SearchHistoryShortResponse(**x) for x in rows if x]
 
@@ -223,8 +211,9 @@ async def add_search_history(
     logger.debug(f"{request=}, {user=}")
 
     try:
+        search_id = str(uuid.uuid4())
         query = search_history.insert().values(
-            id=request.search_id,
+            id=search_id,
             user_id=str(user.id),
             search_type=request.search_type,
             search_term=request.search_term,
@@ -238,7 +227,7 @@ async def add_search_history(
 
         logger.debug(f"{row_id=}")
 
-        return SearchHistoryAddResponse(search_id=request.search_id)
+        return SearchHistoryAddResponse(search_id=search_id)
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(

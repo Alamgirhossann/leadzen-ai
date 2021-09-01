@@ -427,7 +427,6 @@ const SearchResult = (props) => {
       search_term = props.location.state.data;
     }
     let requestForSaveSearch = {
-      search_id: uuidv4(),
       search_type: searchType,
       search_term: JSON.stringify(search_term),
       search_results: response,
