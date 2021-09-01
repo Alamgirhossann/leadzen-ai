@@ -33,7 +33,7 @@ import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
 import RealTimePage from './Components/RealTimeInfo/RealTimePage';
-import RealTimePage2 from './Components/RealTimeInfo/RealTimePage2';
+import RealTimeListView from './Components/RealTimeInfo/RealTimeListView';
 const App = () => {
   return (
     <Router>
@@ -133,7 +133,7 @@ const App = () => {
             <RealTimePage />
         </Route>
         <Route path='/realTimeListView'>
-            <RealTimePage2 />
+            <RealTimeListView />
         </Route>
       </Switch>
     </Router>
