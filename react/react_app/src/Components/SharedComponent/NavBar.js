@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from "react";
 import {NavLink} from 'react-router-dom';
-import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import Cookies from "js-cookie";
 
 const NavBar = (props) => {
   const [user, setUser] = useState(props.user);
+
+  function handleSetLinkedInCookie() {
+    const cookie = prompt("Please paste your LinkedIn cookie here");
+    if (!cookie) {
+      alert("Invalid Cookie");
+    }
+    Cookies.set("user_linkedin_cookie", cookie);
+  }
+
   const handleLogout = (event) => {
     console.log("document.cookie()...handle", document.cookie)
     Cookies.remove('user_token', {path: ''})
     Cookies.remove('user_email', {path: ''})
     console.log("document.cookie()...", document.cookie)
   }
+
   return (
     <div style={{ paddingRight: "0px" }}>
       <nav
@@ -143,6 +152,15 @@ const NavBar = (props) => {
                   <li>
                     <a className="dropdown-item disabled" href="/history">
                       Export History
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-item"
+                      href="#"
+                      onClick={handleSetLinkedInCookie}
+                    >
+                      Set LinkedIn Cookie
                     </a>
                   </li>
                   <li>

@@ -1,42 +1,41 @@
-import React, {useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import Header from "../SharedComponent/Header";
 import axios from "axios";
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 const Profile = () => {
-const acess_token=Cookies.get("user_token");
-const [user,setUser]=useState()
+  const acess_token = Cookies.get("user_token");
+  const [user, setUser] = useState();
   useEffect(async () => {
-  try {
-    const userStatusResponse = await axios.get(apiServer + "/users/me", {
-      headers: {
-        Authorization: `Bearer ${acess_token}`,
-      },
-    });
-    const userStatus = await userStatusResponse;
-    if(userStatus.status  == 200)
-    {
-      console.log("kishan",userStatus)
-      setUser({
-    "name": userStatus.data.username,
-    "email":userStatus.data.email,
-    "subscription": {
-      "product": "Free Analystt",
-      "price": "100 INR",
-      "period": "Yearly",
-      "status": "Active",
-      "last_renewal": "01/02/2020",
-      "expiry_date": "02/08/2021",
-      "profile_credits": 500,
-      "mail_credits": 1000
+    try {
+      const userStatusResponse = await axios.get(apiServer + "/users/me", {
+        headers: {
+          Authorization: `Bearer ${acess_token}`,
+        },
+      });
+      const userStatus = await userStatusResponse;
+      if (userStatus.status == 200) {
+        console.log("kishan", userStatus);
+        setUser({
+          name: userStatus.data.username,
+          email: userStatus.data.email,
+          subscription: {
+            product: "Free Analystt",
+            price: "100 INR",
+            period: "Yearly",
+            status: "Active",
+            last_renewal: "01/02/2020",
+            expiry_date: "02/08/2021",
+            profile_credits: 500,
+            mail_credits: 1000,
+          },
+        });
       }
-      })
+    } catch (err) {
+      console.error("Error: ", err);
     }
-  } catch (err) {
-    console.error("Error: ", err);
-  }
-},[]);
+  }, []);
 
   return (
     <div>
