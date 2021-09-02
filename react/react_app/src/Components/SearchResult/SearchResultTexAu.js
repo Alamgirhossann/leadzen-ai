@@ -10,7 +10,8 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-
+import Lottie from 'react-lottie';
+import Loader from "../../Loader";
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
@@ -153,13 +154,13 @@ const SearchResult = (props) => {
             },
           }
         );
-
-        let json_res = await response.json();
+        setInterval(async ()=>{
+          let json_res = await response.json();
         setSearchId(json_res.search_id);
         console.log("Data>>>>>>>>>>>loading..", json_res, loading);
         setLoading(false);
-
         setMyLeads(json_res.search_results);
+     },60000);
       } catch (err) {
         console.error("Error: ", err);
       }
@@ -724,7 +725,7 @@ const SearchResult = (props) => {
                 </div>
               </div>
 
-              <div className="user-widget-box  my-3">
+              <div className="user-widget-box  my-3" >
                 {loading === false ? (
                   <div className="search-container mb-2">
                     {myLeads && myLeads.length === 0 ? (
@@ -853,8 +854,9 @@ const SearchResult = (props) => {
                   </div>
                 ) : (
                   <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
+                    <div role="status" style={{height:"400px"}}>
+                         <Lottie options={Loader}
+              />
                     </div>
                   </div>
                 )}
