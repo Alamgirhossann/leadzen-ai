@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
-from pydantic import BaseModel, conlist
+from pydantic import BaseModel
 
 from app.database import database, search_saved_list
 from app.users import fastapi_users
@@ -14,8 +14,7 @@ router = APIRouter(prefix="/save_list", tags=["Search SaveList"])
 
 
 class SaveListRequest(BaseModel):
-    save_list_id: str = str(uuid.uuid4())
-    save_list_results: conlist(item_type=Dict, min_items=1)
+    save_list_results: Dict
 
 
 class SaveListResponse(BaseModel):
@@ -35,10 +34,10 @@ async def add_search_save_list(
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
-
+    id = str(uuid.uuid4())
     try:
         query = search_saved_list.insert().values(
-            id=request.save_list_id,
+            id=id,
             user_id=str(user.id),
             save_list_results=str(json.dumps(request.save_list_results)),
             created_on=datetime.utcnow(),
@@ -50,7 +49,7 @@ async def add_search_save_list(
 
         logger.debug(f"{row_id=}")
 
-        return SaveListResponse(save_list_id=request.save_list_id)
+        return SaveListResponse(save_list_id=id)
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(

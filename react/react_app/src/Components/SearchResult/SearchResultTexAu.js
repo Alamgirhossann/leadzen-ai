@@ -8,6 +8,7 @@ import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+// import handleSaveList from "./handleSaveList";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 
@@ -35,6 +36,8 @@ const SearchResult = (props) => {
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
+  const [selectedSaveList, setSelectedSaveList] = useState([]);
+
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
@@ -382,7 +385,7 @@ const SearchResult = (props) => {
 
   const clickSelect = (e) => {
     e.preventDefault();
-    if (!selected) setSelected(true);
+    // if (!selected) setSelected(true);
   };
   const user = {
     name: "John Smith",
@@ -539,6 +542,28 @@ const SearchResult = (props) => {
     }
   };
 
+  const handleSaveList = async (data) => {
+    console.log("e.target", data);
+    console.log("JSON.stringify({ save_list_results: data })",JSON.stringify({ save_list_results: data }))
+    try {
+      const response = await fetch(apiServer + "/save_list/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify({ save_list_results: data }),
+      });
+
+      const result = response.json();
+
+      console.log("response from handleSaveList>>>", result);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
+
   const handleLeadSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
     setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
@@ -659,7 +684,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn/>
+              <SpecificSearchBtn />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
@@ -747,13 +772,13 @@ const SearchResult = (props) => {
                             />
                             <div className="search-author text-danger ">
                               <img
-                                  style={{borderRadius:"50%"}}
-                                  src={
-                                    data.profilePicture
-                                        ? data.profilePicture
-                                        : "assets/images/author-image.png"
-                                  }
-                                  alt=""
+                                style={{ borderRadius: "50%" }}
+                                src={
+                                  data.profilePicture
+                                    ? data.profilePicture
+                                    : "assets/images/author-image.png"
+                                }
+                                alt=""
                               />
                             </div>
                             <div className="search-user ps-3">
@@ -765,8 +790,15 @@ const SearchResult = (props) => {
                                 {data.length === 0 ? null : data.location}
                               </small>
                             </div>
-                            <div className='linkedin-icon d-flex justify-content-end'>
-                              <span><a href="#"><img src="assets/images/linkedin1.png" alt="" /></a></span>
+                            <div className="linkedin-icon d-flex justify-content-end">
+                              <span>
+                                <a href="#">
+                                  <img
+                                    src="assets/images/linkedin1.png"
+                                    alt=""
+                                  />
+                                </a>
+                              </span>
                             </div>
                             <div className="search-email text-center">
                               <small
@@ -796,9 +828,9 @@ const SearchResult = (props) => {
                             </div>
                             <p className="search-view-btn ">
                               <a
-                                  className="btn button"
-                                  data-toggle="collapse"
-                                  href={
+                                className="btn button"
+                                data-toggle="collapse"
+                                href={
                                   "#collapseExample_" + `${currentPage}${index}`
                                 }
                                 data-target={
@@ -813,18 +845,27 @@ const SearchResult = (props) => {
                               </a>
                             </p>
 
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
+                            {/*<a href="#" onClick={handleSaveList}>*/}
+                            {/*  <p className="search-close-btn">*/}
+                            {/*    saveList*/}
+                            {/*    /!*<img*!/*/}
+                            {/*    /!*  src={*!/*/}
+                            {/*    /!*    selected*!/*/}
+                            {/*    /!*      ? "assets/images/Frame 543.png"*!/*/}
+                            {/*    /!*      : "assets/images/Group 1863.png"*!/*/}
+                            {/*    /!*  }*!/*/}
+                            {/*    /!*  alt=""*!/*/}
+                            {/*/>*/}
+                            {/*  </p>*/}
+                            {/*</a>*/}
+                            <p>
+                              <button
+                                type="button"
+                                onClick={() => handleSaveList(data)}
+                              >
+                                button
+                              </button>
+                            </p>
                           </div>
                           <div
                             style={{
