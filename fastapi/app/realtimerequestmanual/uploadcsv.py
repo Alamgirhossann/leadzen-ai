@@ -13,10 +13,7 @@ from fastapi import (
 
 from app.realtimerequestmanual.common import RealTimeUploadResponse
 from app.config import (
-    API_CONFIG_ALLOWED_CONTENT_TYPES,
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
-    API_CONFIG_BULK_MAX_ROWS_IN_CSV,
-    API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
 )
 
 
