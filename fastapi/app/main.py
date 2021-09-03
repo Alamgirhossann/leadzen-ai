@@ -9,6 +9,7 @@ from loguru import logger
 from starlette import status
 
 from app.bulk.router import router as bulk_router
+from app.realtimerequestmanual.uploadcsv import router as realtime_router
 from app.config import (
     API_CONFIG_LINKEDIN_CSV_FILE,
     API_CONFIG_JWT_SECRET,
@@ -64,6 +65,7 @@ app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=bulk_router, prefix="/api")
+app.include_router(router=realtime_router, prefix="/api")
 app.include_router(router=history_router, prefix="/api")
 app.include_router(router=credits_router, prefix="/api")
 app.include_router(router=truemail_router, prefix="/api")
