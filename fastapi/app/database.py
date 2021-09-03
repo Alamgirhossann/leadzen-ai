@@ -1,6 +1,3 @@
-import datetime
-import uuid
-
 import databases
 import sqlalchemy
 
@@ -8,7 +5,6 @@ from app.config import API_CONFIG_DATABASE_URL
 
 metadata = sqlalchemy.MetaData()
 database = databases.Database(API_CONFIG_DATABASE_URL)
-
 
 profile_credit_history = sqlalchemy.Table(
     "profile_credit_history",
@@ -40,6 +36,15 @@ search_history = sqlalchemy.Table(
     sqlalchemy.Column("search_type", sqlalchemy.String),
     sqlalchemy.Column("search_term", sqlalchemy.String),
     sqlalchemy.Column("search_results", sqlalchemy.String),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+)
+
+search_saved_list = sqlalchemy.Table(
+    "search_saved_list",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("save_list_results", sqlalchemy.String),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 

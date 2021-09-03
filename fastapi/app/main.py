@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
 from loguru import logger
 from starlette import status
 
@@ -13,12 +16,13 @@ from app.config import (
     API_CONFIG_LINKEDIN_CSV_FILE,
     API_CONFIG_JWT_SECRET,
 )
+from app.credits import router as credits_router
 from app.customize_filter import router as filter_router
 from app.database import database
 from app.email import router as email_router
-from app.pipl.router import router as pipl_router
 from app.history import router as history_router
-from app.credits import router as credits_router
+from app.pipl.router import router as pipl_router
+from app.save_list import router as save_list_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau.router import router as texau_router
 from app.users import fastapi_users
@@ -29,14 +33,8 @@ from app.users import (
     after_verification_request,
 )
 from app.utils.proxy_curl import router as proxycurl_router
-
 from app.utils.snov import router as snov_router
 from app.utils.truemail import router as truemail_router
-
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.inmemory import InMemoryBackend
-from fastapi_cache.decorator import cache
-
 
 current_active_user = fastapi_users.current_user(active=True)
 
@@ -50,7 +48,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.mount("/api/bulk", StaticFiles(directory="bulk"), name="bulk")
 
@@ -69,6 +66,7 @@ app.include_router(router=credits_router, prefix="/api")
 app.include_router(router=truemail_router, prefix="/api")
 app.include_router(router=snov_router, prefix="/api")
 app.include_router(router=proxycurl_router, prefix="/api")
+app.include_router(router=save_list_router, prefix="/api")
 # app.include_router(
 #     router=search_operations,
 #     prefix="/api",
