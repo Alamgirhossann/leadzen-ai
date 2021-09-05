@@ -154,7 +154,7 @@ const SearchResult = (props) => {
             },
           }
         );
-        setInterval(async ()=>{
+        setTimeout(async ()=>{
           let json_res = await response.json();
         setSearchId(json_res.search_id);
         console.log("Data>>>>>>>>>>>loading..", json_res, loading);
