@@ -48,7 +48,7 @@ const FirstTimeUser = () => {
           Accept: "application/json",
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
-        body: JSON.stringify({ onboarded: false }),
+        body: JSON.stringify({ onboarded: true }),
       });
 
       async function handleSuccess(fetchResponse) {
@@ -65,7 +65,7 @@ const FirstTimeUser = () => {
           return handleError(fetchResponse);
       }
     } catch (err) {
-      console.error(err);
+     handleError(err);
     }
   };
 

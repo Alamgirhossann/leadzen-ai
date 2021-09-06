@@ -45,7 +45,7 @@ const LogIn = (props) => {
   const email = url.searchParams.get("email");
 
   const [userLogin, setUserLogin] = useState({
-    email: "",
+    email: email || "",
     password: "",
     error: "",
   });
@@ -116,7 +116,6 @@ const LogIn = (props) => {
 
   function handleError(status) {
     console.error(`Got HTTP Error ${status}`);
-    alert("Error Searching For Leads");
   }
 
   function handleUnAuthorized(response = null) {
@@ -143,35 +142,51 @@ const LogIn = (props) => {
       async function handleSuccess(fetchResponse) {
         let json_res = await fetchResponse.data;
         console.log("json_res", json_res);
-        const userStatusResponse = await axios.get(apiServer + "/users/me", {
-          headers: {
-            Authorization: `Bearer ${json_res.access_token}`,
-          },
-        });
+        try {
+          const userStatusResponse = await axios.get(apiServer + "/users/me", {
+            headers: {
+              Authorization: `Bearer ${json_res.access_token}`,
+            },
+          });
+          async function handleUserSuccess() {
+            const userStatus = await userStatusResponse;
+            console.log("userStatus>>>>>>>>", userStatus);
 
-        const userStatus = await userStatusResponse;
-        console.log("userStatus>>>>>>>>", userStatus);
+            setResponse({ ...response, ok: true });
 
-        setResponse({ ...response, ok: true });
-
-        if (userStatus.data.is_verified === false) {
-          console.log("in if");
-          setUserVerifiedStatus(false);
-        } else {
-          Cookies.set("user_email", userLogin.email, { expires: 0.08 });
-          Cookies.set("user_id", userStatus.data.id);
-          Cookies.set("user_token", json_res.access_token, { expires: 0.08 });
-          console.log("userVerifiedStatus.....");
-          if (userStatus.data.onboarded === true) {
-            console.log("in user render");
-            history.push({
-              pathname: "/firstTimeUser",
-            });
-          } else {
-            history.push({
-              pathname: "/repeatedUser",
-            });
+            if (userStatus.data.is_verified === false) {
+              console.log("in if");
+              setUserVerifiedStatus(false);
+            } else {
+              Cookies.set("user_email", userLogin.email, { expires: 0.08 });
+              Cookies.set("user_id", userStatus.data.id);
+              Cookies.set("user_token", json_res.access_token, {
+                expires: 0.08,
+              });
+              console.log("userVerifiedStatus.....");
+              if (userStatus.data.onboarded === false) {
+                console.log("in user render");
+                history.push({
+                  pathname: "/firstTimeUser",
+                });
+              } else {
+                history.push({
+                  pathname: "/repeatedUser",
+                });
+              }
+            }
           }
+
+          switch (userStatusResponse.status) {
+            case 200:
+              return await handleUserSuccess(userStatusResponse);
+            case 401:
+              return handleUnAuthorized(userStatusResponse);
+            default:
+              return handleError(userStatusResponse);
+          }
+        } catch (err) {
+          handleError(err);
         }
       }
 
@@ -184,7 +199,7 @@ const LogIn = (props) => {
           return handleError(fetchResponse);
       }
     } catch (err) {
-      console.error(err);
+      handleError(err);
       setResponse({ ...response, message: "user not found" });
     }
   };

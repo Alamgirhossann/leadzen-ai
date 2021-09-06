@@ -112,12 +112,12 @@ const SignUp = () => {
 
   function handleError(status) {
     console.error(`Got HTTP Error ${status}`);
+    alert("Please try after some time")
   }
 
   async function handleUserExists(fetchResponse) {
     const data = await fetchResponse.json();
     if (data.detail === "REGISTER_USER_ALREADY_EXISTS") {
-      // alert(data.detail);
       setResponse({ ...response, message: "User or Email already exists" });
     }
   }
@@ -157,8 +157,8 @@ const SignUp = () => {
           return handleError(fetchResponse);
       }
     } catch (err) {
-      console.error("Error: ", err);
-      alert("some thing goes wrong");
+      handleError(err);
+
     }
   };
 
@@ -216,7 +216,6 @@ const SignUp = () => {
               <div className="signup-wrapper py-3 px-md-6">
                 <div className="row align-items-center">
                   <Robot />
-                  {/*{response.ok ? <Redirect to="/login" /> : null}*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center pt-1">

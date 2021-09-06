@@ -19,22 +19,22 @@ from app.email import UserEmailVerificationEmailRequest
 
 class User(models.BaseUser):
     username: str
-    onboarded: bool = True
+    onboarded: bool = False
 
 
 class UserCreate(models.BaseUserCreate):
     username: str
-    onboarded: bool = True
+    onboarded: bool = False
 
 
 class UserUpdate(User, models.BaseUserUpdate):
     username: Optional[str]
-    onboarded: bool = True
+    onboarded: bool = False
 
 
 class UserDB(User, models.BaseUserDB):
     username: str
-    onboarded: bool = True
+    onboarded: bool = False
 
 
 Base: DeclarativeMeta = declarative_base()
