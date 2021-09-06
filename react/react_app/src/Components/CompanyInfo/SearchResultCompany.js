@@ -84,7 +84,7 @@ const SearchResultCompany = (props) => {
       };
       const endpoint = "/texau/linkedin/matching_profiles_for_company_url";
       const inputData = requestForTexAu;
-      // inputData.cookie = tempCookie;
+      inputData.cookie = tempCookie;
       await sendForExecution(endpoint, inputData);
     }
     if (props.location.pathname.includes("/result_by_history_type3")) {
