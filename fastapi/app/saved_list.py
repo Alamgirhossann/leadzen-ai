@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel
 
-from app.database import database, search_saved_list
+from app.database import database, search_saved
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/save_list", tags=["Search SaveList"])
@@ -36,10 +36,10 @@ async def add_search_save_list(
     logger.debug(f"{request=}, {user=}")
     id = str(uuid.uuid4())
     try:
-        query = search_saved_list.insert().values(
+        query = search_saved.insert().values(
             id=id,
             user_id=str(user.id),
-            save_list_results=str(json.dumps(request.save_list_results)),
+            save_list_results=json.dumps(request.save_list_results),
             created_on=datetime.utcnow(),
         )
 
@@ -65,7 +65,7 @@ async def delete_save_list_by_id(
     logger.debug(f"{save_list_id=}, {user=}")
     try:
         query = (
-            f"DELETE FROM search_saved_list WHERE id = :save_list_id AND user_id = :user_id"
+            f"DELETE FROM search_saved WHERE id = :save_list_id AND user_id = :user_id"
         )
         if not (
                 row := await database.execute(
@@ -95,7 +95,7 @@ async def delete_save_list_by_id(
 async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
     try:
-        query = "SELECT * FROM search_saved_list WHERE user_id = :user_id ORDER BY id DESC"
+        query = "SELECT * FROM search_saved WHERE user_id = :user_id ORDER BY id DESC"
 
         if not (
                 rows := await database.fetch_all(
@@ -109,12 +109,12 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
             )
 
         logger.debug(f"{rows=}")
-
         processed_rows = [dict(x) for x in rows]
-        print("processed_rows", processed_rows)
+
+        for x in processed_rows:
+            x["save_list_results"] = json.loads(x['save_list_results'])
 
         return processed_rows
-
     except HTTPException as e:
         raise e
     except Exception as e:

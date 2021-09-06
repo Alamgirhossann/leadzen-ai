@@ -2,20 +2,41 @@ import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import Header from "../SharedComponent/Header";
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SavedList = () => {
   const [serachText, setSearchText] = useState({ text: null });
+  useEffect(() => {
+    fetchData();
+  }, []);
   const fetchData = async () => {
     // TODO:Create api calls to get user profile data from the backend
+    try {
+      const response = await fetch(apiServer + "/save_list/all", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+      });
+      const result = await response.json();
+      console.log("result in save List", result[1]);
+    } catch (e) {
+      console.error(e);
+    }
   };
+
   const handleSearch = (e) => {
     setSearchText({ ...serachText, text: e.target.value });
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(serachText);
   };
   // TODO: Get user info from backend
+
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",

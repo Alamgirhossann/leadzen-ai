@@ -11,6 +11,7 @@ import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 // import handleSaveList from "./handleSaveList";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
+import SavedList from "./SavedList";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -542,28 +543,6 @@ const SearchResult = (props) => {
     }
   };
 
-  const handleSaveList = async (data) => {
-    console.log("e.target", data);
-    console.log("JSON.stringify({ save_list_results: data })",JSON.stringify({ save_list_results: data }))
-    try {
-      const response = await fetch(apiServer + "/save_list/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${Cookies.get("user_token")}`,
-        },
-        body: JSON.stringify({ save_list_results: data }),
-      });
-
-      const result = response.json();
-
-      console.log("response from handleSaveList>>>", result);
-    } catch (e) {
-      console.error("Exception>>", e);
-    }
-  };
-
   const handleLeadSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
     setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
@@ -859,12 +838,7 @@ const SearchResult = (props) => {
                             {/*  </p>*/}
                             {/*</a>*/}
                             <p>
-                              <button
-                                type="button"
-                                onClick={() => handleSaveList(data)}
-                              >
-                                button
-                              </button>
+                              <SavedList data={data} />
                             </p>
                           </div>
                           <div

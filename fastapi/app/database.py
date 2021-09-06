@@ -39,8 +39,8 @@ search_history = sqlalchemy.Table(
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
-search_saved_list = sqlalchemy.Table(
-    "search_saved_list",
+search_saved = sqlalchemy.Table(
+    "search_saved",
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
     sqlalchemy.Column("user_id", sqlalchemy.String),
