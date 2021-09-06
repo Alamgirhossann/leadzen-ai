@@ -109,6 +109,19 @@ const SignUp = () => {
       </div>
     );
   };
+
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  async function handleUserExists(fetchResponse) {
+    const data = await fetchResponse.json();
+    if (data.detail === "REGISTER_USER_ALREADY_EXISTS") {
+      // alert(data.detail);
+      setResponse({ ...response, message: "User or Email already exists" });
+    }
+  }
+
   const fetchData = async () => {
     console.info(userRegistration);
 
@@ -122,19 +135,26 @@ const SignUp = () => {
         body: JSON.stringify(userRegistration),
       });
 
-      const data = await fetchResponse.json();
-      console.log("Data>>>>>>>>>>>", data);
+      async function handleSuccess(fetchResponse) {
+        const data = await fetchResponse.json();
+        console.log("Data>>>>>>>>>>>", data);
 
-      if (data.detail === "REGISTER_USER_ALREADY_EXISTS") {
-        // alert(data.detail);
-        setResponse({ ...response, message: "User or Email already exists" });
+        if ("id" in data) {
+          setResponse({ ...response, ok: true });
+          history.push({
+            state: { userRegistrationEmail: userRegistration.email },
+            pathname: "/login",
+          });
+        }
       }
-      if ("id" in data) {
-        setResponse({ ...response, ok: true });
-        history.push({
-          state: { userRegistrationEmail: userRegistration.email },
-          pathname: "/login",
-        });
+
+      switch (fetchResponse.status) {
+        case 201:
+          return await handleSuccess(fetchResponse);
+        case 400:
+          return handleUserExists(fetchResponse);
+        default:
+          return handleError(fetchResponse);
       }
     } catch (err) {
       console.error("Error: ", err);

@@ -28,6 +28,15 @@ const FirstTimeUser = () => {
     },
   };
 
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    alert("Please Logout and LogIn Again");
+  }
+
   const UpdateUser = async () => {
     try {
       console.log("in update user");
@@ -39,10 +48,22 @@ const FirstTimeUser = () => {
           Accept: "application/json",
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
-        body: JSON.stringify({ first_time: false }),
+        body: JSON.stringify({ onboarded: false }),
       });
-      let json_res = await fetchResponse.data;
-      console.log("json_res for update user", json_res);
+
+      async function handleSuccess(fetchResponse) {
+        let json_res = await fetchResponse.data;
+        console.log("json_res for update user", json_res);
+      }
+
+      switch (fetchResponse.status) {
+        case 200:
+          return await handleSuccess(fetchResponse);
+        case 401:
+          return handleUnAuthorized(fetchResponse);
+        default:
+          return handleError(fetchResponse);
+      }
     } catch (err) {
       console.error(err);
     }

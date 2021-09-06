@@ -18,23 +18,23 @@ from app.email import UserEmailVerificationEmailRequest
 
 
 class User(models.BaseUser):
-    username: Optional[str] = None
-    first_time: Optional[bool] = True
+    username: str
+    onboarded: bool = True
 
 
 class UserCreate(models.BaseUserCreate):
-    username: Optional[str] = None
-    first_time: Optional[bool] = True
+    username: str
+    onboarded: bool = True
 
 
 class UserUpdate(User, models.BaseUserUpdate):
-    username: Optional[str] = None
-    first_time: Optional[bool] = True
+    username: Optional[str]
+    onboarded: bool = True
 
 
 class UserDB(User, models.BaseUserDB):
-    username: Optional[str] = None
-    first_time: Optional[bool] = True
+    username: str
+    onboarded: bool = True
 
 
 Base: DeclarativeMeta = declarative_base()
@@ -42,7 +42,7 @@ Base: DeclarativeMeta = declarative_base()
 
 class UserTable(Base, SQLAlchemyBaseUserTable):
     username = Column(String(length=320), nullable=True)
-    first_time = Column(Boolean, default=True)
+    onboarded = Column(Boolean, default=True)
 
 
 Base.metadata.create_all(engine)

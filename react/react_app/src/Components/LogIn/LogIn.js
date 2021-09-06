@@ -39,13 +39,13 @@ const LogIn = (props) => {
       mail_credits: "",
     },
   };
-  var url_string = window.location.href;
-  var url = new URL(url_string);
-  var emailVerified = url.searchParams.get("emailVerified");
-  var email = url.searchParams.get("email");
+  const urlString = window.location.href;
+  const url = new URL(urlString);
+  const emailVerified = url.searchParams.get("emailVerified");
+  const email = url.searchParams.get("email");
 
   const [userLogin, setUserLogin] = useState({
-    email: "",
+    email: email || "",
     password: "",
     error: "",
   });
@@ -162,7 +162,7 @@ const LogIn = (props) => {
           Cookies.set("user_id", userStatus.data.id);
           Cookies.set("user_token", json_res.access_token, { expires: 0.08 });
           console.log("userVerifiedStatus.....");
-          if (userStatus.data.first_time === true) {
+          if (userStatus.data.onboarded === true) {
             console.log("in user render");
             history.push({
               pathname: "/firstTimeUser",
