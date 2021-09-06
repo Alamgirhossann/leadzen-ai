@@ -747,13 +747,13 @@ const SearchResult = (props) => {
                             />
                             <div className="search-author text-danger ">
                               <img
-                                  style={{borderRadius:"50%"}}
-                                  src={
-                                    data.profilePicture
-                                        ? data.profilePicture
-                                        : "assets/images/author-image.png"
-                                  }
-                                  alt=""
+                                style={{ borderRadius: "50%" }}
+                                src={
+                                  data.profilePicture
+                                    ? data.profilePicture
+                                    : "assets/images/author-image.png"
+                                }
+                                alt=""
                               />
                             </div>
                             <div className="search-user ps-3">
@@ -765,8 +765,15 @@ const SearchResult = (props) => {
                                 {data.length === 0 ? null : data.location}
                               </small>
                             </div>
-                            <div className='linkedin-icon d-flex justify-content-end'>
-                              <span><a href="#"><img src="assets/images/linkedin1.png" alt="" /></a></span>
+                            <div className="linkedin-icon d-flex justify-content-end">
+                              <span>
+                                <a href="#">
+                                  <img
+                                    src="assets/images/linkedin1.png"
+                                    alt=""
+                                  />
+                                </a>
+                              </span>
                             </div>
                             <div className="search-email text-center">
                               <small
@@ -796,9 +803,9 @@ const SearchResult = (props) => {
                             </div>
                             <p className="search-view-btn ">
                               <a
-                                  className="btn button"
-                                  data-toggle="collapse"
-                                  href={
+                                className="btn button"
+                                data-toggle="collapse"
+                                href={
                                   "#collapseExample_" + `${currentPage}${index}`
                                 }
                                 data-target={

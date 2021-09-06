@@ -72,7 +72,7 @@ async def handle_find_matching_linkedin_profiles(
 
         logger.debug(f"{execution_id=}")
 
-        # return TexAuExecutionResponse(execution_id="execution_id")
+        return TexAuExecutionResponse(execution_id=execution_id)
     except HTTPException as e:
         logger.critical(str(e))
         raise e
