@@ -141,7 +141,7 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                     query=query, values={"user_id": str(user.id)}
                 )
         ):
-            print("ows>>>>", rows)
+            print("rows>>>>", rows)
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"

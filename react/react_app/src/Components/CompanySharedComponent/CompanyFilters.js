@@ -7,16 +7,14 @@ const CompanyFilters = (props) => {
   const history = useHistory();
   const [isHide, setIsHide] = useState(true);
   const [customSearch, setCustomSearch] = useState({
-    company_name: null,
+    name: null,
     location: null,
     industry: null,
-    employee_count: null,
-    price_base: null,
-    interest_based: null,
+    employeeCount: null,
   });
 
   const handleName = (e) => {
-    setCustomSearch({ ...customSearch, company_name: e.target.value });
+    setCustomSearch({ ...customSearch, name: e.target.value });
   };
   const handleLocation = (e) => {
     setCustomSearch({ ...customSearch, location: e.target.value });
@@ -25,13 +23,7 @@ const CompanyFilters = (props) => {
     setCustomSearch({ ...customSearch, industry: e.target.value });
   };
   const handleEmployeeCount = (e) => {
-    setCustomSearch({ ...customSearch, employee_count: e.target.value });
-  };
-  const handlePriceBased = (e) => {
-    setCustomSearch({ ...customSearch, price_base: e.target.value });
-  };
-  const handleInterestBased = (e) => {
-    setCustomSearch({ ...customSearch, interest_based: e.target.value });
+    setCustomSearch({ ...customSearch, employeeCount: e.target.value });
   };
 
   const handleCustomSubmit = (e) => {
@@ -46,8 +38,8 @@ const CompanyFilters = (props) => {
   const handleCloseCompany = (type) => {
     console.log("In HandleCloseCompany......", type);
 
-    if (type === "company_name") {
-      setCustomSearch({ ...customSearch, company_name: "" });
+    if (type === "name") {
+      setCustomSearch({ ...customSearch, name: "" });
     }
     if (type === "location") {
       setCustomSearch({ ...customSearch, location: "" });
@@ -56,14 +48,8 @@ const CompanyFilters = (props) => {
       setCustomSearch({ ...customSearch, industry: "" });
     }
 
-    if (type === "employee_count") {
-      setCustomSearch({ ...customSearch, employee_count: "" });
-    }
-    if (type === "price_base") {
-      setCustomSearch({ ...customSearch, price_base: "" });
-    }
-    if (type === "interest_based") {
-      setCustomSearch({ ...customSearch, interest_based: "" });
+    if (type === "employeeCount") {
+      setCustomSearch({ ...customSearch, employeeCount: "" });
     }
   };
 
@@ -86,7 +72,7 @@ const CompanyFilters = (props) => {
       <div className="sidebar-accordion accordion" id="accordionExample">
         <div className="accordion-item">
           <div>
-            {isHide && customSearch.company_name ? (
+            {isHide && customSearch.name ? (
               <p
                 className="text-left top-search"
                 style={{ width: "fit-content" }}
@@ -96,12 +82,12 @@ const CompanyFilters = (props) => {
                   src="assets/images/Group 2346.png"
                   alt=""
                 />
-                {customSearch.company_name}
+                {customSearch.name}
                 <img
                   className="ps-4"
                   src="assets/images/cross-icon.png"
                   alt=""
-                  onClick={() => handleCloseCompany("company_name")}
+                  onClick={() => handleCloseCompany("name")}
                 />
               </p>
             ) : null}
@@ -144,7 +130,7 @@ const CompanyFilters = (props) => {
               </p>
             ) : null}
 
-            {isHide && customSearch.employee_count ? (
+            {isHide && customSearch.employeeCount ? (
               <p
                 className="text-left top-search"
                 style={{ width: "fit-content" }}
@@ -154,53 +140,16 @@ const CompanyFilters = (props) => {
                   src="assets/images/users.png"
                   alt=""
                 />
-                {customSearch.employee_count}
+                {customSearch.employeeCount}
                 <img
                   className="ps-4"
                   src="assets/images/cross-icon.png"
                   alt=""
-                  onClick={() => handleCloseCompany("employee_count")}
+                  onClick={() => handleCloseCompany("employeeCount")}
                 />
               </p>
             ) : null}
-            {isHide && customSearch.price_base ? (
-              <p
-                className="text-left top-search"
-                style={{ width: "fit-content" }}
-              >
-                <img
-                  style={{ width: "8px", marginRight: "5px" }}
-                  src="assets/images/Group 2314.png"
-                  alt=""
-                />
-                {customSearch.price_base}
-                <img
-                  className="ps-4"
-                  src="assets/images/cross-icon.png"
-                  alt=""
-                  onClick={() => handleCloseCompany("price_base")}
-                />
-              </p>
-            ) : null}
-            {isHide && customSearch.interest_based ? (
-              <p
-                className="text-left top-search"
-                style={{ width: "fit-content" }}
-              >
-                <img
-                  style={{ width: "8px", marginRight: "5px" }}
-                  src="assets/images/Group 2315.png"
-                  alt=""
-                />
-                {customSearch.interest_based}
-                <img
-                  className="ps-4"
-                  src="assets/images/cross-icon.png"
-                  alt=""
-                  onClick={() => handleCloseCompany("interest_based")}
-                />
-              </p>
-            ) : null}
+
             <div className="d-flex justify-content-between">
               <a onClick={() => handleHide()}>
                 <img
@@ -236,7 +185,7 @@ const CompanyFilters = (props) => {
               <input
                 className="customize-search"
                 onChange={handleName}
-                value={customSearch.company_name}
+                value={customSearch.name}
                 type="text"
                 placeholder="Search Location"
               />
@@ -323,60 +272,6 @@ const CompanyFilters = (props) => {
                 onChange={handleEmployeeCount}
                 type="text"
                 placeholder="Search Job title"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#five"
-            >
-              <img src="assets/images/Group 2314.png" alt="title" /> Price Based
-            </button>
-          </h2>
-          <div
-            id="five"
-            className="accordion-collapse collapse"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <input
-                className="customize-search"
-                onChange={handlePriceBased}
-                type="text"
-                placeholder="Search Education"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#six"
-            >
-              <img src="assets/images/Group 2315.png" alt="title" />
-              Interest Based
-            </button>
-          </h2>
-
-          <div
-            id="six"
-            className="accordion-collapse collapse"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <input
-                className="customize-search"
-                onChange={handleInterestBased}
-                type="text"
-                placeholder="Search Company Name"
               />
             </div>
           </div>

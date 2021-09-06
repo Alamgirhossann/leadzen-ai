@@ -9,17 +9,30 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
 import BulkSearch from "../CompanySharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+import Cookies from "js-cookie";
+import { v4 as uuidv4 } from "uuid";
+import SpecificUser from "../DetailedInfo/SpecificUser";
+import Pagination from "../SharedComponent/Pagination";
 
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
+    name: null,
     location: null,
     industry: null,
-    job_title: null,
-    education: null,
-    company_name: null,
-    keywords: null,
-    csv_file: null,
+    employeeCount: null,
   });
+  const [loading, setLoading] = useState(true);
+  const tempCookie = Cookies.get("user_linkedin_cookie");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLeads, setCurrentLeads] = useState([]);
+  const [myLeads, setMyLeads] = useState([]);
+  let today = new Date();
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+
+  let dd = String(today.getDate()).padStart(2, "0");
+  let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  let yyyy = today.getFullYear();
+  const [searchId, setSearchId] = useState();
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -34,30 +47,246 @@ const SearchResultCompany = (props) => {
       mail_credits: 1000,
     },
   };
+  today = dd + "/" + mm + "/" + yyyy;
+  const paginate = (pageNumber) => {
+    setCurrentLeads([]);
+    setCurrentPage(pageNumber);
+    setCurrentLeads(
+      myLeads && Array.isArray(myLeads)
+        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+        : 0
+    );
+  };
 
+  useEffect(() => {
+    paginate(1);
+  }, [myLeads]);
   useEffect(async () => {
+    let requestForTexAu = {};
     if (props.location.state.customSearch) {
       setCustomSearch(props.location.state.customSearch);
       console.log(
         "from advance.customSearch filters .....",
         props.location.state.customSearch
       );
+      setLoading(true);
+      requestForTexAu = {
+        name: props.location.state.customSearch.name
+          ? props.location.state.customSearch.name
+          : "",
+
+        industry: props.location.state.customSearch.industry
+          ? [props.location.state.customSearch.industry]
+          : [],
+        location: props.location.state.customSearch.location
+          ? [props.location.state.customSearch.location]
+          : [],
+        employeeCount: props.location.state.customSearch.employeeCount
+          ? [props.location.state.customSearch.employeeCount]
+          : [],
+      };
+      const endpoint = "/texau/linkedin/matching_profiles_for_company_url";
+      const inputData = requestForTexAu;
+      // inputData.cookie = tempCookie;
+      await sendForExecution(endpoint, inputData);
     }
   }, []);
+
+  const sendForExecution = async (endpoint, inputData) => {
+    function handleError(status) {
+      setLoading(false);
+      setMyLeads([]);
+      console.error(`Got HTTP Error ${status}`);
+      // alert("Error Searching For Leads");
+    }
+
+    console.log(`endpoint: ${endpoint}, inputData: ${inputData}`);
+    console.log(inputData);
+
+    try {
+      const response = await fetch(apiServer + endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(inputData),
+      });
+
+      function handleUnAuthorized(response = null) {
+        console.log("User is UnAuthorized");
+        alert("Please Logout and LogIn Again");
+        setLoading(false);
+        setMyLeads([]);
+      }
+
+      async function handleSuccess(response) {
+        let json = await response.json();
+        if (!json || !json.execution_id) {
+          handleError(response);
+        }
+
+        console.log(`Got Response ${json}`);
+        checkExecutionStatus(json.execution_id);
+      }
+
+      switch (response.status) {
+        case 200:
+          return await handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        default:
+          return handleError(response);
+      }
+    } catch (err) {
+      console.error(`Exception Getting Data from ${endpoint}`);
+      console.error(err);
+      handleError(500);
+    }
+  };
+
+  const checkExecutionStatus = (executionId = null) => {
+    if (!executionId) {
+      console.log("executionId is Null");
+      return;
+    }
+
+    let timeoutId;
+
+    const intervalId = setInterval(async () => {
+      console.log("In interval.....");
+      try {
+        const response = await fetch(
+          apiServer + `/texau/result/${executionId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+          }
+        );
+
+        function handleError() {
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+
+          setLoading(false);
+          setMyLeads("");
+        }
+
+        async function handleSuccess(response) {
+          const json = await response.json();
+          if (!json || !json.data) {
+            console.warn(`Invalid Data`);
+            return handleError();
+          }
+
+          console.log(json);
+
+          setLoading(false);
+          if (timeoutId) clearTimeout(timeoutId);
+          clearInterval(intervalId);
+
+          setMyLeads(json.data);
+          await saveSearchedRecord(json.data, "texAuCompany");
+        }
+
+        function handleUnAuthorized(response = null) {
+          console.log("User is UnAuthorized");
+          handleError();
+          alert("Please Logout and LogIn Again");
+        }
+
+        function handleCookieError() {
+          // got cookie error - no need to check again, results will not change
+          console.log("Response cookie error", response.statusText);
+          handleError();
+        }
+
+        function handleNotFound() {
+          console.log("Not Found Yet, Waiting...");
+        }
+
+        switch (response.status) {
+          case 200:
+            return handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 403:
+            return handleCookieError();
+          case 404:
+            return handleNotFound();
+          default:
+            return handleError();
+        }
+      } catch (e) {
+        console.error("Exception>>", e);
+      }
+    }, 5 * 1000);
+
+    timeoutId = setTimeout(function () {
+      console.error("record not found within 5 Min");
+      clearInterval(intervalId);
+      // TODO: show appropriate ui actions like stop spinners and show error message etc
+    }, 5 * 60 * 1000);
+  };
+
+  const saveSearchedRecord = async (response, searchType) => {
+    // console.log("In saveSearchedRecord...searchTerm", searchTerm);
+    let search_term = "";
+
+    if (props.location.pathname.includes("/searchResultCompany")) {
+      let values = Object.values(props.location.state.customSearch);
+
+      search_term = values.filter(Boolean).toString();
+
+      console.log("Values Only.....>>>>", search_term);
+    }
+    let requestForSaveSearch = {
+      search_id: uuidv4(),
+      search_type: searchType,
+      search_term: JSON.stringify(search_term),
+      search_results: response,
+    };
+    console.log("In saveSearchedRecord...", requestForSaveSearch);
+    try {
+      const response = await fetch(apiServer + "/history/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify(requestForSaveSearch),
+      });
+
+      const result = response.json();
+      result.then((value) => {
+        console.log("value >>>>> ", value);
+        if (value) setSearchId(value.search_id);
+      });
+      console.log("response from saveResult>>>", result, result.search_id);
+    } catch (e) {
+      console.error("Exception>>", e);
+    }
+  };
 
   return (
     <div>
       <div>
         <Header user={user} />
-        <div class="modal" id="UpgradeModal">
+        <div className="modal" id="UpgradeModal">
           <button
             type="button"
-            class="btn-close"
+            className="btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
           />
-          <div class="modal-dialog">
-            <div class="modal-content">
+          <div className="modal-dialog">
+            <div className="modal-content">
               <div className="d-flex">
                 <div className="pe-4">
                   <img
@@ -74,7 +303,7 @@ const SearchResultCompany = (props) => {
                   </p>
                   <button
                     style={{ background: "#FB3E3E" }}
-                    class="btn text-white"
+                    className="btn text-white"
                   >
                     {" "}
                     Upgrade Now
@@ -143,32 +372,8 @@ const SearchResultCompany = (props) => {
               <div className="col-md-8 col-lg-9">
                 <div className="user-search-wrapper">
                   <div className="detailed-search">
-                    <div className="search-promote-content">
-                      <form className="form-inline d-flex my-2 my-lg-0">
-                        <input
-                          className="form-control mr-sm-2"
-                          type="search"
-                          placeholder="Search"
-                          aria-label="Search"
-                        />
-                        <button
-                          className="btn text-white d-flex ms-3"
-                          style={{
-                            background: "#FB3E3E",
-                            position: "absolute",
-                            left: "325px",
-                          }}
-                          type="submit"
-                        >
-                          <span className="pe-1">
-                            <FontAwesomeIcon icon={faSearch} />
-                          </span>
-                          Search
-                        </button>
-                      </form>
-                    </div>
                     <div>
-                      <small>Last Updated: 21/05/2021</small>
+                      <small>Last Updated: {today}</small>
                     </div>
                   </div>
                 </div>
@@ -178,16 +383,19 @@ const SearchResultCompany = (props) => {
                       <input
                         className="ms-3 me-3"
                         type="checkbox"
-                        id="checkbox"
+                        id="selectAll"
+                        name="selectAll"
+                        // onChange={handleLeadSelectAll}
+                        // checked={isCheckAll}
                       />
                       <small className="">
-                        <b>6</b> of
-                        <b>250</b> Searched profiles
+                        <b>{currentLeads.length}</b> of{" "}
+                        <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
                       </small>
                     </div>
                     <div className="d-flex">
                       <small className="unlock-btn">
-                        Unlock Profile
+                        Unlock Profile{" "}
                         <img
                           className="ps-3"
                           src="assets/images/Group 1617.png"
@@ -195,506 +403,261 @@ const SearchResultCompany = (props) => {
                         />
                       </small>
                       <small className="unlock-btn">
-                        Unlock Mails
+                        Unlock Mails{" "}
                         <img
                           className="ps-3"
                           src="assets/images/Group 1617.png"
                           alt=""
                         />
                       </small>
-                      <small className="export-btn">
-                        Export
+                      <button
+                        // onClick={handleLeadSelectionExportExcel}
+                        className="export-btn"
+                        // disabled={selectedLeads.length === 0 ? true : false}
+                      >
+                        Export{" "}
                         <img
                           className="ps-3"
                           src="assets/images/export.png"
                           alt=""
                         />
-                      </small>
+                      </button>
                     </div>
                   </div>
                 </div>
 
                 <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
+                  {loading === false ? (
+                    <div className="search-container mb-2">
+                      {myLeads && myLeads.length === 0 ? (
+                        <div>
+                          <h5>Records not found</h5>
+                        </div>
+                      ) : currentLeads ? (
+                        currentLeads.map((data, index) => (
+                          <div>
+                            <div className="user-container py-2">
+                              <input
+                                className="box ms-3 me-3"
+                                type="checkbox"
+                                id="checkbox"
+                              />
+                              <div className="search-author text-danger d-flex align-items-center">
                                 <img
-                                  src="assets/images/accord-map-pin.png"
+                                  style={{ borderRadius: "50%" }}
+                                  src={
+                                    data.logoUrl
+                                      ? data.logoUrl
+                                      : "assets/images/Group 2367.png"
+                                  }
                                   alt=""
                                 />
-                                Alpharetta, Georgia
-                              </small>
+                              </div>
+                              <div className="search-user">
+                                <div className="row">
+                                  <div className="col d-flex align-items-center">
+                                    <div>
+                                      <p className="d-block">{data.name} </p>
+                                      <small className="d-block">
+                                        {/*<img*/}
+                                        {/*  src="assets/images/accord-map-pin.png"*/}
+                                        {/*  alt=""*/}
+                                        {/*/>*/}
+                                        {/*Alpharetta, Georgia*/}
+                                      </small>
+                                    </div>
+                                  </div>
+                                  <div className="col d-flex align-items-center">
+                                    <small>{data.description}</small>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="search-view-btn d-flex align-items-center">
+                                <a className="button">View Employee</a>
+                              </div>
+                              <div className="search-close-btn d-flex align-items-center">
+                                <a href="#">
+                                  <img
+                                    src={"assets/images/Group 1863.png"}
+                                    alt=""
+                                  />
+                                </a>
+                              </div>
+                            </div>
+                            <div
+                              style={{
+                                background: "white",
+                                borderRadius: "20px",
+                                padding: "20px",
+                              }}
+                            >
+                              <div
+                                className="panel-collapse collapse in"
+                                id={
+                                  "collapseExample_" + `${currentPage}${index}`
+                                }
+                              >
+                                {/*{specificUserDetails?.map((spec) => (*/}
+                                {/*  <span>*/}
+                                {/*    {spec.index === `${currentPage}${index}` ? (*/}
+                                {/*      <span>*/}
+                                {/*        <SpecificUser details={spec.details} />*/}
+                                {/*      </span>*/}
+                                {/*    ) : null}*/}
+                                {/*  </span>*/}
+                                {/*))}{" "}*/}
+                              </div>
                             </div>
                           </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
+                        ))
+                      ) : (
+                        <h5>Record not found</h5>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="d-flex justify-content-center">
+                      <div className="spinner-border" role="status">
+                        <span className="sr-only">Loading...</span>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="user-widget-box  my-3">
-                  <div className="search-container mb-2">
-                    <div className="user-container py-2">
-                      <input
-                        className="box ms-3 me-3"
-                        type="checkbox"
-                        id="checkbox"
-                      />
-                      <div className="search-author text-danger d-flex align-items-center">
-                        <img
-                          className=""
-                          src="assets/images/Group 2367.png"
-                          alt=""
-                        />
-                      </div>
-                      <div className="search-user">
-                        <div className="row">
-                          <div className="col d-flex align-items-center">
-                            <div>
-                              <p className="d-block">Hexagon AB </p>
-                              <small className="d-block">
-                                <img
-                                  src="assets/images/accord-map-pin.png"
-                                  alt=""
-                                />
-                                Alpharetta, Georgia
-                              </small>
-                            </div>
-                          </div>
-                          <div className="col d-flex align-items-center">
-                            <small>
-                              Hexagon AB is a publicly listed global <br />{" "}
-                              information technology company
-                            </small>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="search-email text-center">
-                        <div className="">
-                          <small className="d-block text-danger">300</small>
-                          <small className="d-block">Employee</small>
-                        </div>
-                      </div>
-
-                      <div className="search-view-btn d-flex align-items-center">
-                        <a href="/detailedInfo" className="button">
-                          View Employee
-                        </a>
-                      </div>
-                      <div className="search-close-btn d-flex align-items-center">
-                        <a href="#">
-                          <img src={"assets/images/Group 1863.png"} alt="" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="d-flex justify-content-center">
-                  <div className="number-align"> 1 </div>
-                  <div className="ps-3 d-flex align-items-center"> 2 </div>
-                  <div className="ps-3 d-flex align-items-center"> 3 </div>
-                  <div className="ps-3 d-flex align-items-center"> 4 </div>
-                  <div className="ps-3 d-flex align-items-center"> 5 </div>
-                  <div className="ps-3 d-flex align-items-center"> 6 </div>
-                  <div
-                    className="ps-3 d-flex align-items-center"
-                    data-bs-toggle="modal"
-                    data-bs-target="#UpgradeModal"
-                  >
-                    {" "}
-                    Next{" "}
-                  </div>
+                  <Pagination
+                    postsPerPage={10}
+                    totalPosts={myLeads ? myLeads.length : 1}
+                    paginate={paginate}
+                  />
                 </div>
-                <AskJarvis />
+                {/*<div className="user-widget-box text-center p-4 my-3">*/}
+                {/*  <div className="user-promote-logo">*/}
+                {/*    <img src="assets/images/user-company-brand.png" alt="title" />*/}
+                {/*  </div>*/}
+                {/*  <div className="user-promote-slider">*/}
+                {/*    <div className="item">*/}
+                {/*      <div className="user-promote-item">*/}
+                {/*        <p className="">*/}
+                {/*          Want to extract contacts of group members in a LinkedIn*/}
+                {/*          group?*/}
+                {/*        </p>*/}
+                {/*        <div*/}
+                {/*          className="px-3 pb-4"*/}
+                {/*          style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            bottom: "5px",*/}
+                {/*            content: "",*/}
+                {/*          }}*/}
+                {/*        >*/}
+                {/*          <a href="/searchResult" className="small m-0">*/}
+                {/*            Try This*/}
+                {/*          </a>*/}
+                {/*        </div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*    <div className="item">*/}
+                {/*      <div className="user-promote-item">*/}
+                {/*        <p className="">*/}
+                {/*          Need a list of companies in semi-conductor space with*/}
+                {/*          1000+ employees in US?*/}
+                {/*        </p>*/}
+                {/*        <div*/}
+                {/*          className="px-3 pb-4"*/}
+                {/*          style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            bottom: "5px",*/}
+                {/*            content: "",*/}
+                {/*          }}*/}
+                {/*        >*/}
+                {/*          <a href="/searchResult" className="small m-0">*/}
+                {/*            Try This*/}
+                {/*          </a>*/}
+                {/*        </div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*    <div className="item">*/}
+                {/*      <div className="user-promote-item">*/}
+                {/*        <p className="">*/}
+                {/*          Need a detailed list of all the people working for*/}
+                {/*          Flipkart?*/}
+                {/*        </p>*/}
+                {/*        <div*/}
+                {/*          className="px-3 pb-4"*/}
+                {/*          style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            bottom: "5px",*/}
+                {/*            content: "",*/}
+                {/*          }}*/}
+                {/*        >*/}
+                {/*          <a href="/searchResult" className="small m-0">*/}
+                {/*            Try This*/}
+                {/*          </a>*/}
+                {/*        </div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*    <div className="item">*/}
+                {/*      <div className="user-promote-item">*/}
+                {/*        <p className="">*/}
+                {/*          Want to extract contacts of group members in a LinkedIn*/}
+                {/*          group?*/}
+                {/*        </p>*/}
+                {/*        <div*/}
+                {/*          className="px-3 pb-4"*/}
+                {/*          style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            bottom: "5px",*/}
+                {/*            content: "",*/}
+                {/*          }}*/}
+                {/*        >*/}
+                {/*          <a href="/searchResult" className="small m-0">*/}
+                {/*            Try This*/}
+                {/*          </a>*/}
+                {/*        </div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*    <div className="item">*/}
+                {/*      <div className="user-promote-item">*/}
+                {/*        <p className="">*/}
+                {/*          Need a detailed list of all the people working for*/}
+                {/*          Flipkart?*/}
+                {/*        </p>*/}
+
+                {/*        <div*/}
+                {/*          className="px-3 pb-4"*/}
+                {/*          style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            bottom: "5px",*/}
+                {/*            content: "",*/}
+                {/*          }}*/}
+                {/*        >*/}
+                {/*          <a href="/searchResult" className="small m-0">*/}
+                {/*            Try This*/}
+                {/*          </a>*/}
+                {/*        </div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*    <div className="item">*/}
+                {/*      <div className="user-promote-item">*/}
+                {/*        <p className="">*/}
+                {/*          Want to extract contacts of group members in a LinkedIn*/}
+                {/*          group?*/}
+                {/*        </p>*/}
+                {/*        <div*/}
+                {/*          className="px-3 pb-4"*/}
+                {/*          style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            bottom: "5px",*/}
+                {/*            content: "",*/}
+                {/*          }}*/}
+                {/*        >*/}
+                {/*          <a href="/searchResult" className="small m-0">*/}
+                {/*            Try This*/}
+                {/*          </a>*/}
+                {/*        </div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
               </div>
             </div>
           </div>
