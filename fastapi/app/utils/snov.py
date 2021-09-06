@@ -57,7 +57,7 @@ async def get_emails_from_url(request: SnovIoRequest):
             y = data["data"]["emails"]
             email = y[0]["email"]
             valid = y[0]["status"]
-            if valid == "valid":
+            if valid == "valid" or valid=="unknown":
                 return email
             else:
                 raise HTTPException(

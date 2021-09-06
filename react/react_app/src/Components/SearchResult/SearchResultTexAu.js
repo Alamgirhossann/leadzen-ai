@@ -32,6 +32,7 @@ const SearchResult = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
+  const [wait, setWait] = useState(null);
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -321,6 +322,7 @@ const SearchResult = (props) => {
   const [selected, setSelected] = useState(false);
 
   const handleUnlockEmail = async (e, index, data) => {
+    setWait(`${currentPage}${index}`)
     e.preventDefault();
     console.log("in handle unlock>>>>", data);
     // try {
@@ -357,14 +359,54 @@ const SearchResult = (props) => {
       } catch (e) {
         console.error("Exception>>", e);
       }
-
-      setUnlockEmailDetails((prev) => [
+      let urls="";
+    for(let i=0;i<data.url.length;i++){
+      if(data.url[i]=='?')
+      {
+        break;
+      }
+      else
+      {
+        urls=urls+data.url[i]
+      }
+    }
+    let url=[urls]
+      let requestforemail={
+              url: url
+      }
+    try{
+         const response_email = await fetch(apiServer + "/snov/emails_for_url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(requestforemail),
+        });
+        const result_email = await response_email.json();
+        if(result_email.detail){
+          setUnlockEmailDetails((prev) => [
         ...prev,
         {
           index: `${currentPage}${index}`,
-          details: { email: `email_${currentPage}${index}@test.com` },
+          details: { email: `Not Found` },
         },
       ]);
+        }
+        else{
+          setUnlockEmailDetails((prev) => [
+        ...prev,
+        {
+          index: `${currentPage}${index}`,
+          details: { email: result_email },
+        },
+      ]);
+        }
+      }catch(e){
+        console.log(e)
+      }
+    setWait(null)
     } else {
       unlockEmailDetails?.map((spec) => {
         console.log(
@@ -782,7 +824,7 @@ const SearchResult = (props) => {
                                   </span>
                                 ))}
                               </small>
-
+                              {wait ===`${currentPage}${index}`?<p>please wait...</p>:
                               <a
                                 href="#"
                                 onClick={(e) =>
@@ -792,7 +834,7 @@ const SearchResult = (props) => {
                                 <small className="d-block text-danger">
                                   Unlock
                                 </small>
-                              </a>
+                              </a>}
                             </div>
                             <p className="search-view-btn ">
                               <a
