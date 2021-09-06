@@ -45,7 +45,7 @@ const LogIn = (props) => {
   const email = url.searchParams.get("email");
 
   const [userLogin, setUserLogin] = useState({
-    email: email || "",
+    email: "",
     password: "",
     error: "",
   });
