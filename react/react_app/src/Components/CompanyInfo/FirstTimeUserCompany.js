@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
 import "./Style/style.css";
-import AskJarvis from "../CompanySharedComponent/AskJarvis";
-import Header from "../CompanySharedComponent/Header";
-import SidebarExtractContact from "../CompanySharedComponent/SidebarExtractContact";
+import AskJarvis from "../SharedComponent/AskJarvis";
+import Header from "../SharedComponent/Header";
+import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import UserSearch from "../CompanySharedComponent/UserSearch";
-import ExtractContacts from "../CompanySharedComponent/ExtractContacts";
+import ExtractContacts from "../SharedComponent/ExtractContacts";
 import { Link } from "react-router-dom";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
-import BulkSearch from "../CompanySharedComponent/BulkSearch";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
 const FirstTimeUserCompany = (props) => {
   const user = {

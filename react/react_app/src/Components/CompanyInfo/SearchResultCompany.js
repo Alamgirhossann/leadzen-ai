@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./Style/style.css";
-import Header from "../CompanySharedComponent/Header";
-import SidebarExtractContact from "../CompanySharedComponent/SidebarExtractContact";
-import AskJarvis from "../CompanySharedComponent/AskJarvis";
+import Header from "../SharedComponent/Header";
+import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
+
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
-import BulkSearch from "../CompanySharedComponent/BulkSearch";
+import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-import SpecificUser from "../DetailedInfo/SpecificUser";
 import Pagination from "../SharedComponent/Pagination";
 
 const SearchResultCompany = (props) => {

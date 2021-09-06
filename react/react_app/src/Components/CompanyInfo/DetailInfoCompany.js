@@ -1,13 +1,13 @@
 import React from "react";
 import "./Style/style.css";
-import AskJarvis from "../CompanySharedComponent/AskJarvis";
-import Header from "../CompanySharedComponent/Header";
-import SidebarExtractContact from "../CompanySharedComponent/SidebarExtractContact";
-import CustomizeButton from "../CompanySharedComponent/CustomizeButton";
+import AskJarvis from "../SharedComponent/AskJarvis";
+import Header from "../SharedComponent/Header";
+import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
+import CustomizeButton from "../SharedComponent/CustomizeButton";
 import { Link } from "react-router-dom";
 import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
 import SpecificCompany from "./SpecificCompany";
-import BulkSearch from "../CompanySharedComponent/BulkSearch";
+import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const DetailInfoCompany = () => {

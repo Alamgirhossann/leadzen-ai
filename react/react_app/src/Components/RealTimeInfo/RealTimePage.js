@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 // import "./Style/style.css";
-import Header from "../CompanySharedComponent/Header";
+import Header from "../SharedComponent/Header";
 
 const RealTimePage = () => {
   useEffect(() => {
