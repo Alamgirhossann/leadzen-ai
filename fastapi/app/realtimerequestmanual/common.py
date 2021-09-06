@@ -72,8 +72,8 @@ def generate_email_message_for_file(user, filename: str) -> Tuple[str, str]:
         operation = "Your Excel Export of contacts is ready."
         subject = "Excel Export Results Ready"
     else:
-        operation = f"Your request for {user['requests']} are ready."
-        subject = f"your request for {user['requests']} is Ready"
+        operation = f"Your request for {user['requirement']} are ready."
+        subject = f"your request for {user['requirement']} is Ready"
     check = ""
     for i in range(len(filename)):
         if i != 0 or i != 1:
@@ -124,7 +124,7 @@ async def send_success_email(user, filename: str):
 async def send_failure_email(user, filename: str):
     message = (
         f"Dear {user['username']}, \n"
-        f"Your request for {user['requests']} has failed. \n "
+        f"Your request for {user['requirement']} has failed. \n "
         f"--- \n"
         f"Thanks \n"
         f"LeadZen Team "
@@ -135,7 +135,7 @@ async def send_failure_email(user, filename: str):
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
                 json=UserEmailSendRequest(
-                    email=user['email'], message=message, subject=f"Request for {user['requests']} Failed"
+                    email=user['email'], message=message, subject=f"Request for {user['requirement']} Failed"
                 ).dict(),
             )
 
