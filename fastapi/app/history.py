@@ -7,7 +7,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel, conlist
 
-from app.config import API_CONFIG_USER_HISTORY_PAGE_SIZE
 from app.database import search_history, database
 from app.users import fastapi_users
 
@@ -139,6 +138,7 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                 query=query, values={"user_id": str(user.id)}
             )
         ):
+            print("rows>>>>", rows)
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"

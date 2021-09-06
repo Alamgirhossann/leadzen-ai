@@ -32,6 +32,11 @@ import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
+import FirstTimeUserCompany from "./Components/CompanyInfo/FirstTimeUserCompany";
+import SearchResultCompany from "./Components/CompanyInfo/SearchResultCompany";
+import DetailInfoCompany from "./Components/CompanyInfo/DetailInfoCompany";
+import RealTimePage from "./Components/RealTimeInfo/RealTimePage";
+import RealTimePage2 from "./Components/RealTimeInfo/RealTimePage2";
 
 const App = () => {
   return (
@@ -73,9 +78,7 @@ const App = () => {
         <Route path="/signUpError">
           <SignUpError />
         </Route>
-        <Route path="/firstTimeUser">
-          <FirstTimeUser />
-        </Route>
+        <Route path="/firstTimeUser" component={FirstTimeUser} />
         <Route path="/history">
           <History />
         </Route>
@@ -92,15 +95,24 @@ const App = () => {
         <Route path="/result_by_name" component={SearchResultTexAu} />
         <Route path="/search_by_history_type2" component={SearchResult} />
         <Route path="/result_by_history_type1" component={SearchResultTexAu} />
+        <Route
+          path="/result_by_history_type3"
+          component={SearchResultCompany}
+        />
         <Route path="/social_url_search" component={SearchResultTexAu} />
         <Route path="/advanceSearch" component={SearchResultTexAu} />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />
         <Route path="/excelDownload" component={ExcelDownload} />
+        <Route
+          path="/company_first_time_user"
+          component={FirstTimeUserCompany}
+        />
 
         <Route path="/loginEmailError">
           <LoginEmailError />
         </Route>
+
         <Route path="/passwordInstruction">
           <PasswordInstruction />
         </Route>
@@ -127,6 +139,20 @@ const App = () => {
         </Route>
         <Route path="/dashboardTwo">
           <DashboardTwo />
+        </Route>
+        <Route path="/firstTimeUserCompany">
+          <FirstTimeUserCompany />
+        </Route>
+        <Route path="/searchResultCompany" component={SearchResultCompany} />
+
+        <Route path="/detailInfoCompany">
+          <DetailInfoCompany />
+        </Route>
+        <Route path="/realTimePage">
+          <RealTimePage />
+        </Route>
+        <Route path="/realTimeListView">
+          <RealTimePage2 />
         </Route>
       </Switch>
     </Router>

@@ -77,6 +77,12 @@ const SharedHistory = () => {
         state: { details: data },
       });
     }
+    if (data.search_type === "texAuCompany") {
+      history.push({
+        pathname: "/result_by_history_type3",
+        state: { details: data },
+      });
+    }
     if (data.search_type === "PIPL") {
       history.push({
         pathname: "/search_by_history_type2",

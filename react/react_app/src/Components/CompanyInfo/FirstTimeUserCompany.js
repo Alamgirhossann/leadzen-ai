@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
+import "./Style/style.css";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
-import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
-import UserSearch from "../SharedComponent/UserSearch";
+import UserSearch from "../CompanySharedComponent/UserSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
-import BulkSearch from "../SharedComponent/BulkSearch";
+import { Link } from "react-router-dom";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
-import Cookies from "js-cookie";
+import BulkSearch from "../SharedComponent/BulkSearch";
 
-const FirstTimeUser = () => {
+const FirstTimeUserCompany = (props) => {
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -25,26 +25,26 @@ const FirstTimeUser = () => {
       mail_credits: 1000,
     },
   };
-
+  const [customSearch, setCustomSearch] = useState({
+    location: null,
+    industry: null,
+    job_title: null,
+    education: null,
+    company_name: null,
+    keywords: null,
+    csv_file: null,
+  });
+  const [toggleVal, setToggleVal] = useState();
+  const handleCSVFile = (e) => {
+    setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
+  };
   useEffect(async () => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    Cookies.set("first_time_user", false);
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-
-    //  TODO: store a cookie that the user has been to this page. Say first_time_user=false
-  }, []);
-
-  function handleCSVFile() {}
-
+    console.log("props>>> firsttimeuser", props);
+    // setToggleVal()
+  });
   return (
     <div>
       <Header user={user} />
-
       <div className="modal" id="bulkmodal">
         <button
           type="button"
@@ -53,14 +53,14 @@ const FirstTimeUser = () => {
           aria-label="Close"
         />
         <div className="modal-dialog">
-          <div className="modal-message">
+          <div classNameName="modal-message">
             <p>
-              <i className="text-danger">Format to follow:</i> Ensure that the
-              first column has the unique values you’re searching for. Download
-              the sample below for better understanding.{" "}
+              <i classNameName="text-danger">Format to follow:</i> Ensure that
+              the first column has the unique values you’re searching for.
+              Download the sample below for better understanding.{" "}
             </p>
             <Link>
-              <i className="text-danger text-decoration-underline">
+              <i classNameName="text-danger text-decoration-underline">
                 Click here to download csv format
               </i>
             </Link>
@@ -89,11 +89,11 @@ const FirstTimeUser = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-                 <SpecificSearchBtn details={true} />
-                <div className="sidebar-search-for sidebar-widget pt-4 my-3">
-                    <h6 className="text-danger mb-3">Customize your search</h6>
-                    <Filters/>
-                </div>
+              <SpecificSearchBtn details={false} />
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+                <h6 className="text-danger mb-3">Customize your search</h6>
+                <CompanyFilters />
+              </div>
               <BulkSearch />
               <SidebarExtractContact />
             </div>
@@ -111,4 +111,4 @@ const FirstTimeUser = () => {
   );
 };
 
-export default FirstTimeUser;
+export default FirstTimeUserCompany;
