@@ -46,34 +46,30 @@ async def upload_csv_file(
         user['requirement'] = requirement
 
         if file.filename.endswith(".csv"):
-            outgoing_filename = (
-                f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="File need to be in excel format",
             )
         else:
             outgoing_filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
 
-        with tempfile.TemporaryFile() as temp_file:
-            lines = file.file.readlines()
-            temp_file.writelines(lines)
-            temp_file.seek(0)
-
-            if outgoing_filename.endswith("csv"):
-                df = pd.read_csv(temp_file)
-                df.to_csv(outgoing_filename, index=False)
-            else:
-                df=pd.read_excel(temp_file)
+            with tempfile.TemporaryFile() as temp_file:
+                lines = file.file.readlines()
+                temp_file.writelines(lines)
+                temp_file.seek(0)
+                df = pd.read_excel(temp_file)
                 df.to_excel(outgoing_filename, index=False)
-        incoming_filename = file.filename
-        await wait_and_check_for_filename(
-            request=RealTimeRequest(
-                incoming_filename=incoming_filename,
-                outgoing_filename=outgoing_filename,
-                user=user,
+            incoming_filename = file.filename
+            await wait_and_check_for_filename(
+                request=RealTimeRequest(
+                    incoming_filename=incoming_filename,
+                    outgoing_filename=outgoing_filename,
+                    user=user,
+                )
             )
-        )
-        return RealTimeUploadResponse(
-            input_filename=file.filename, output_filename=outgoing_filename
-        )
+            return RealTimeUploadResponse(
+                input_filename=file.filename, output_filename=outgoing_filename
+            )
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="You need to be authorized super user",

@@ -28,12 +28,7 @@ async def wait_and_check_for_filename(
     while timeout_counter > 0:
         if os.path.exists(request.outgoing_filename):
             logger.success(f"found {request.outgoing_filename=}")
-
-            if request.outgoing_filename.endswith(".xlsx"):
-                df = pd.read_excel(request.outgoing_filename)
-            else:
-                df = pd.read_csv(request.outgoing_filename)
-
+            df = pd.read_excel(request.outgoing_filename)
             logger.debug(df.head())
 
             await update_history(user_id="---", data=[])
