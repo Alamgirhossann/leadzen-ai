@@ -17,9 +17,11 @@ from app.elasticsearch.database import delete_index as database_delete_index
 from app.elasticsearch.database import query as database_query
 from app.elasticsearch.database import get as database_get
 from app.elasticsearch.database import search as database_search
+from app.elasticsearch.database import add_json 
 from app.elasticsearch.requests import (
     ElasticsearchAddRequest,
     ElasticsearchQueryRequest,
+    ElasticsearchAddjsonRequest
 )
 from app.requests import (
     ContactAddRequest,
@@ -34,6 +36,7 @@ from app.utils import (
     spread_comma_seperated_texts,
     check_for_mandatory_columns,
 )
+import json
 
 router = APIRouter()
 
@@ -251,3 +254,35 @@ async def search_contact_by_text(
     logger.debug(results)
 
     return ContactSearchResponse(results=results)
+
+@router.post("/upload/json", response_model=bool)
+async def load_json(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    username: str = Depends(get_current_username),
+):
+    assert username
+    contents = json.load(file.file)
+    logger.debug(contents)
+    logger.debug(type(contents))
+    '''for i in contents:
+        logger.debug(i)
+        data = json.load(i)
+    logger.debug(data)'''
+    #add_json(contents)
+    background_tasks.add_task(
+                add_json,
+                request=ElasticsearchAddjsonRequest(
+                    index_name=f"analystt.{file.filename}",
+                    records=contents,
+                ),
+            )
+
+            # this sleep is needed to prevent yet more 429 errors
+    background_tasks.add_task(
+        asyncio.sleep,
+        delay=30 * 1,
+    )
+    return True
+
+    
