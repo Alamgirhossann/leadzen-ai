@@ -9,6 +9,8 @@ import ExtractContacts from "../SharedComponent/ExtractContacts";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
+import axios from "axios";
+const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const FirstTimeUser = () => {
   const user = {
@@ -26,17 +28,56 @@ const FirstTimeUser = () => {
     },
   };
 
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    alert("Please Logout and LogIn Again");
+  }
+
+  const UpdateUser = async () => {
+    try {
+      console.log("in update user");
+
+      const fetchResponse = await fetch(apiServer + "/users/me", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify({ onboarded: true }),
+      });
+
+      async function handleSuccess(fetchResponse) {
+        let json_res = await fetchResponse.data;
+        console.log("json_res for update user", json_res);
+      }
+
+      switch (fetchResponse.status) {
+        case 200:
+          return await handleSuccess(fetchResponse);
+        case 401:
+          return handleUnAuthorized(fetchResponse);
+        default:
+          return handleError(fetchResponse);
+      }
+    } catch (err) {
+     handleError(err);
+    }
+  };
+
   useEffect(async () => {
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
     script.async = true;
-    Cookies.set("first_time_user", false);
+    UpdateUser();
     document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
     };
-
-    //  TODO: store a cookie that the user has been to this page. Say first_time_user=false
   }, []);
 
   function handleCSVFile() {}
@@ -94,6 +135,11 @@ const FirstTimeUser = () => {
                     <h6 className="text-danger mb-3">Customize your search</h6>
                     <Filters/>
                 </div>
+              {/* <SpecificSearchBtn/> */}
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+                <h6 className="text-danger mb-3">Customize your search</h6>
+                <Filters />
+              </div>
               <BulkSearch />
               <SidebarExtractContact />
             </div>

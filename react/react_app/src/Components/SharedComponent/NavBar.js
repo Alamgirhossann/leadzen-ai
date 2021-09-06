@@ -21,18 +21,18 @@ const NavBar = (props) => {
   }
 
   return (
-    <div style={{ paddingRight: "0px" }}>
-      <nav
-        className="header-navbar navbar navbar-expand-xl bg-light"
-        style={{ paddingRight: "0px" }}
-      >
-        <div className="container-fluid">
-          <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
-            <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="/repeatedUser">
-                <img src="assets/images/menu-home.png" alt="home here" />
-                <span className="text-danger">Home</span>
-              </a>
+      <div style={{paddingRight: "0px"}}>
+        <nav
+            className="header-navbar navbar navbar-expand-xl bg-light"
+            style={{paddingRight: "0px"}}
+        >
+          <div className="container-fluid">
+            <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
+              <li className="nav-item me-md-4 me-3">
+                <a className="nav-icon-menu nav-link" href="/">
+                    <img src="assets/images/menu-home.png" alt="home here"/>
+                    <span className="text-danger">Home</span>
+                </a>
             </li>
 
             <li className="nav-item me-md-4 me-3">

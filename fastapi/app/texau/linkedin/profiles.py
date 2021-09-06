@@ -38,7 +38,7 @@ class TexAuFindCompanyProfileRequest(BaseModel):
 
 
 async def handle_find_matching_linkedin_profiles(
-    request: TexAuFindProfileRequest,
+        request: TexAuFindProfileRequest,
 ) -> Optional[TexAuExecutionResponse]:
     try:
         if not (query_url := linkedin_query_url_builder(request.dict())):
@@ -50,19 +50,19 @@ async def handle_find_matching_linkedin_profiles(
         logger.debug(query_url)
 
         if not (
-            execution_id := await send_spice_request(
-                data={
-                    "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
-                    "spiceId": API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
-                    "inputs": {
-                        "search": query_url,
-                        "numberOfPage": "10",
-                        "li_at": request.cookie,
-                        "proxy": TEXAU_PROXY,
-                    },
-                    "executionName": str(uuid.uuid4()),
-                }
-            )
+                execution_id := await send_spice_request(
+                    data={
+                        "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID,
+                        "spiceId": API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID,
+                        "inputs": {
+                            "search": query_url,
+                            "numberOfPage": "10",
+                            "li_at": request.cookie,
+                            "proxy": TEXAU_PROXY,
+                        },
+                        "executionName": str(uuid.uuid4()),
+                    }
+                )
         ):
             logger.warning("Invalid Task Id")
             raise HTTPException(
@@ -85,7 +85,7 @@ async def handle_find_matching_linkedin_profiles(
 
 
 async def handle_find_matching_linkedin_profiles_company(
-    request: TexAuFindCompanyProfileRequest,
+        request: TexAuFindCompanyProfileRequest,
 ) -> Optional[TexAuExecutionResponse]:
     try:
         if not (query_url := query_url_builder_company(request.dict())):
@@ -94,22 +94,22 @@ async def handle_find_matching_linkedin_profiles_company(
                 detail=str("TexAu: Could not make Linkedin Query based on input"),
             )
 
-        logger.debug("Company  Query URL>>>>>"+str(query_url))
+        logger.debug("Company  Query URL>>>>>" + str(query_url))
 
         if not (
-            execution_id := await send_spice_request(
-                data={
-                    "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_COMPANY_FUNC_ID,
-                    "spiceId": API_CONFIG_TEXAU_LINKEDIN_SEARCH_SPICE_ID_COMPANY,
-                    "inputs": {
-                        "search": query_url,
-                        "numberOfPage": "10",
-                        "li_at": request.cookie,
-                        "proxy": TEXAU_PROXY,
-                    },
-                    "executionName": str(uuid.uuid4()),
-                }
-            )
+                execution_id := await send_spice_request(
+                    data={
+                        "funcName": API_CONFIG_TEXAU_LINKEDIN_SEARCH_COMPANY_FUNC_ID,
+                        "spiceId": API_CONFIG_TEXAU_LINKEDIN_SEARCH_SPICE_ID_COMPANY,
+                        "inputs": {
+                            "search": query_url,
+                            "numberOfPage": "10",
+                            "li_at": request.cookie,
+                            "proxy": TEXAU_PROXY,
+                        },
+                        "executionName": str(uuid.uuid4()),
+                    }
+                )
         ):
             logger.warning("Invalid Task Id")
             raise HTTPException(

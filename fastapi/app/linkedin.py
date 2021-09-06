@@ -177,7 +177,7 @@ def query_url_builder_company(search_field_dict):
         #         link += '&' + f'keywords={kw}'
 
         encoded_link = urllib.parse.quote(link, safe="/:?=&")
-        print("Encodec Company URL",encoded_link)
+        print("Encodec Company URL", encoded_link)
         return encoded_link
     except Exception as e:
         logger.critical(str(e))

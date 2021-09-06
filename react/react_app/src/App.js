@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Home from "./Components/Home/Home";
 import LogIn from "./Components/LogIn/LogIn";
@@ -37,14 +38,12 @@ import SearchResultCompany from "./Components/CompanyInfo/SearchResultCompany";
 import DetailInfoCompany from "./Components/CompanyInfo/DetailInfoCompany";
 import RealTimePage from "./Components/RealTimeInfo/RealTimePage";
 import RealTimePage2 from "./Components/RealTimeInfo/RealTimePage2";
+import PrivateRoute from "./Components/SharedComponent/PrivateRoute";
 
 const App = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
-          <LogIn />
-        </Route>
         <Route path="/resetPassword">
           <ResetPassword />
         </Route>
@@ -53,9 +52,6 @@ const App = () => {
         </Route>
         <Route path="/howToUse">
           <HowToUse />
-        </Route>
-        <Route path="/profile">
-          <Profile />
         </Route>
         <Route path="/savedList">
           <SavedList />
@@ -69,28 +65,39 @@ const App = () => {
         <Route path="/loginError">
           <LoginError />
         </Route>
-        <Route path="/login">
-          <LogIn />
-        </Route>
         <Route path="/signUp">
           <SignUp />
         </Route>
         <Route path="/signUpError">
           <SignUpError />
         </Route>
-        <Route path="/firstTimeUser" component={FirstTimeUser} />
-        <Route path="/history">
-          <History />
-        </Route>
-        <Route path="/repeatedUser">
-          <RepeatedUser />
-        </Route>
+
         <Route path="/detailedInfo">
           <DetailedInfo />
         </Route>
         <Route path="/signUpEmailError">
           <SignUpEmailError />
         </Route>
+        <PrivateRoute path="/searchResult" component={SearchResult} exact />
+        <PrivateRoute path="/profile" component={Profile} exact />
+        <PrivateRoute path="/history" component={History} exact />
+        <PrivateRoute
+          path="/result_by_name"
+          component={SearchResultTexAu}
+          exact
+        />
+        <PrivateRoute
+          path="/advanceSearch"
+          component={SearchResultTexAu}
+          exact
+        />
+        <PrivateRoute path="/verification" component={Verification} exact />
+        <PrivateRoute path="/repeatedUser" component={RepeatedUser} exact />
+        <PrivateRoute path="/firstTimeUser" component={FirstTimeUser} exact />
+        <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
+        <PrivateRoute path="/excelDownload" component={ExcelDownload} />
+        <Route path="/login" component={LogIn} />
+        <Route path="/" component={LogIn} />
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/result_by_name" component={SearchResultTexAu} />
         <Route path="/search_by_history_type2" component={SearchResult} />

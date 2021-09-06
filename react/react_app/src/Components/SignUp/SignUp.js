@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import "./Style/style.css";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import validator from "validator";
 import CookieConsent from "react-cookie-consent";
 import Header from "../SharedComponent/Header";
+import { useHistory } from "react-router-dom";
 
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SignUp = () => {
+  const history = useHistory();
   const user = {
     name: "",
     email: "",
@@ -47,24 +49,40 @@ const SignUp = () => {
   };
 
   const Robot = () => {
-    if (response.message === "REGISTER_USER_ALREADY_EXISTS") {
+    if (response.message) {
       return (
         <div className="col-md-6 order-md-12">
           <div className="sign-up-page-robot">
-            <p className="fw-bold">
-              <img
-                style={{ width: "20px" }}
-                src="assets/images/Group 2221.png"
-                alt=""
-              />
-              Hey {userRegistration.email}, <br />
-              looks like you’ve been taking the ‘lead’ already. The username
-              already exists. Try{" "}
-              <Link to="/login" className="text-danger">
-                logging in
-              </Link>{" "}
-              in instead
-            </p>
+            {response.message === "User or Email already exists" ? (
+              <p className="fw-bold">
+                <img
+                  style={{ width: "20px" }}
+                  src="assets/images/Group 2221.png"
+                  alt=""
+                />
+                Hey {userRegistration.email}, <br />
+                looks like you’ve been taking the ‘lead’ already. <br />
+                {response.message}
+                <br />
+                Try{" "}
+                <Link to="/login" className="text-danger">
+                  logging in
+                </Link>{" "}
+                in instead
+              </p>
+            ) : (
+              <p className="fw-bold">
+                <img
+                  style={{ width: "20px" }}
+                  src="assets/images/Group 2221.png"
+                  alt=""
+                />
+                Hey {userRegistration.email}, <br />
+                {response.message}
+                <br />
+                Try Again{" "}
+              </p>
+            )}
           </div>
         </div>
       );
@@ -90,6 +108,58 @@ const SignUp = () => {
         </div>
       </div>
     );
+  };
+
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+    alert("Please try after some time")
+  }
+
+  async function handleUserExists(fetchResponse) {
+    const data = await fetchResponse.json();
+    if (data.detail === "REGISTER_USER_ALREADY_EXISTS") {
+      setResponse({ ...response, message: "User or Email already exists" });
+    }
+  }
+
+  const fetchData = async () => {
+    console.info(userRegistration);
+
+    try {
+      const fetchResponse = await fetch(apiServer + "/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(userRegistration),
+      });
+
+      async function handleSuccess(fetchResponse) {
+        const data = await fetchResponse.json();
+        console.log("Data>>>>>>>>>>>", data);
+
+        if ("id" in data) {
+          setResponse({ ...response, ok: true });
+          history.push({
+            state: { userRegistrationEmail: userRegistration.email },
+            pathname: "/login",
+          });
+        }
+      }
+
+      switch (fetchResponse.status) {
+        case 201:
+          return await handleSuccess(fetchResponse);
+        case 400:
+          return handleUserExists(fetchResponse);
+        default:
+          return handleError(fetchResponse);
+      }
+    } catch (err) {
+      handleError(err);
+
+    }
   };
 
   const handleSubmit = (e) => {
@@ -128,61 +198,17 @@ const SignUp = () => {
       setValid(false);
     }
     setUserRegistration({ ...userRegistration, error: error });
-    if (error) alert(error + "Invalid");
 
-    const fetchData = async () => {
-      console.info(userRegistration);
-
-      try {
-        const fetchResponse = await fetch(apiServer + "/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(userRegistration),
-        });
-
-        const data = await fetchResponse.json();
-        console.log("Data>>>>>>>>>>>", data);
-
-        if (data.detail === "REGISTER_USER_ALREADY_EXISTS") {
-          alert(data.detail);
-        } else {
-          setResponse({ ...response, ok: true });
-        }
-
-        if (response.ok === true) {
-          Cookies.set("user_email", data.email);
-          Cookies.set("first_time_user", true);
-        }
-      } catch (err) {
-        console.error("Error: ", err);
-      }
-    };
-
-    fetchData();
+    if (error) {
+      setResponse({ ...response, message: error + "Invalid" });
+    } else {
+      fetchData();
+    }
   };
   return (
     <div className="container-body">
       <Header user={user} />
-      {response.ok === true ? (
-        <div
-          className="alert alert-warning alert-dismissible fade show"
-          role="alert"
-        >
-          <strong>{userRegistration.email}</strong> please check your email for
-          verification.
-          <button
-            type="button"
-            className="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      ) : null}
+
       <div className="main-content-area overflow-hidden">
         <div className="main-wrapper">
           <div className="container-fluid">
@@ -190,7 +216,6 @@ const SignUp = () => {
               <div className="signup-wrapper py-3 px-md-6">
                 <div className="row align-items-center">
                   <Robot />
-                  {response.ok ? <Redirect to="/login" /> : null}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center pt-1">

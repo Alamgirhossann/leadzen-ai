@@ -49,7 +49,7 @@ class SearchHistoryFullResponse(BaseModel):
 
 @router.get("/id/{search_id}", response_model=SearchHistoryFullResponse)
 async def get_search_history_by_id(
-    search_id: str, user=Depends(fastapi_users.get_current_active_user)
+        search_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{search_id=}, {user=}")
     try:
@@ -58,9 +58,9 @@ async def get_search_history_by_id(
         )
 
         if not (
-            row := await database.fetch_one(
-                query=query, values={"search_id": search_id, "user_id": str(user.id)}
-            )
+                row := await database.fetch_one(
+                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -134,9 +134,9 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
         query = "SELECT * FROM search_history WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
-            rows := await database.fetch_all(
-                query=query, values={"user_id": str(user.id)}
-            )
+                rows := await database.fetch_all(
+                    query=query, values={"user_id": str(user.id)}
+                )
         ):
             print("rows>>>>", rows)
             logger.warning("Invalid Query Results")
@@ -152,15 +152,15 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
             query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
 
             if not (
-                profile := await database.fetch_all(
-                    query=query_profile_count,
-                    values={
-                        "user_id": str(user.id),
-                        "search_id": search_id,
-                        "user_id_email": str(user.id),
-                        "search_id_email": search_id,
-                    },
-                )
+                    profile := await database.fetch_all(
+                        query=query_profile_count,
+                        values={
+                            "user_id": str(user.id),
+                            "search_id": search_id,
+                            "user_id_email": str(user.id),
+                            "search_id_email": search_id,
+                        },
+                    )
             ):
                 logger.warning("Invalid Query Results")
                 raise HTTPException(
@@ -186,8 +186,8 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
 
 @router.post("/add", response_model=SearchHistoryAddResponse)
 async def add_search_history(
-    request: SearchHistoryAddRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        request: SearchHistoryAddRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
