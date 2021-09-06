@@ -68,12 +68,8 @@ class RealTimeUploadResponse(BaseModel):
 
 
 def generate_email_message_for_file(user, filename: str) -> Tuple[str, str]:
-    if filename.endswith(".xlsx"):
-        operation = "Your Excel Export of contacts is ready."
-        subject = "Excel Export Results Ready"
-    else:
-        operation = f"Your request for {user['requirement']} are ready."
-        subject = f"your request for {user['requirement']} is Ready"
+    operation = f"Your request for {user['requirement']} are ready."
+    subject = f"your request for {user['requirement']} is Ready"
     check = ""
     for i in range(len(filename)):
         if i != 0 or i != 1:

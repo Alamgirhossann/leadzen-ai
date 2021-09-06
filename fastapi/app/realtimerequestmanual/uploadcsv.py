@@ -56,10 +56,12 @@ async def upload_csv_file(
             lines = file.file.readlines()
             temp_file.writelines(lines)
             temp_file.seek(0)
-            df = pd.read_csv(temp_file)
+
             if outgoing_filename.endswith("csv"):
+                df = pd.read_csv(temp_file)
                 df.to_csv(outgoing_filename, index=False)
             else:
+                df=pd.read_excel(temp_file)
                 df.to_excel(outgoing_filename, index=False)
         incoming_filename = file.filename
         await wait_and_check_for_filename(
