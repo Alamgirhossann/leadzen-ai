@@ -6,10 +6,9 @@ import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
-import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
-import { v4 as uuidv4 } from "uuid";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -27,7 +26,7 @@ const SearchResult = (props) => {
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
   ]);
-  const [searchTerm, setSearchTerm] = useState({});
+  const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
@@ -54,9 +53,7 @@ const SearchResult = (props) => {
         : 0
     );
   };
-  useEffect(async () => {
-    console.log("in search term useeffect...", searchTerm);
-  }, [searchTerm]);
+
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
@@ -70,8 +67,8 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
-        setSearchTerm(props.location.state.requestTexAu);
-        console.log("serc", searchTerm);
+        setSearchTerm(props.location.state.requestTexAu.searchTerm);
+        console.log("serchterm...after set advance search", searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
       }
@@ -79,7 +76,7 @@ const SearchResult = (props) => {
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
-        setSearchTerm(props.location.state.customSearch);
+        console.log("serchterm...after set custom search", searchTerm);
         setCustomSearch(props.location.state.customSearch);
         console.log(
           "from advance.customSearch filters .....",
@@ -135,7 +132,7 @@ const SearchResult = (props) => {
 
       const inputData = props.location.state.data;
       const endpoint = props.location.state.endpoint;
-      setSearchTerm(props.location.state.data);
+      console.log("serchterm...after set social search", searchTerm);
       setLoading(true);
 
       await sendForExecution(endpoint, inputData);
@@ -155,8 +152,14 @@ const SearchResult = (props) => {
         );
 
         let json_res = await response.json();
-        setSearchId(json_res.search_id);
-        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+        setSearchId(json_res.id);
+        console.log(
+          "Data>>>>>>>>>>>loading..",
+          json_res,
+          loading,
+          ">>>setSearchId",
+          searchId
+        );
         setLoading(false);
 
         setMyLeads(json_res.search_results);
@@ -405,11 +408,26 @@ const SearchResult = (props) => {
 
   const saveSearchedRecord = async (response, searchType) => {
     console.log("In saveSearchedRecord...searchTerm", searchTerm);
-
+    let search_term = "";
+    if (
+      props.location.pathname.includes("/result_by_name") ||
+      props.location.pathname.includes("/advanceSearch")
+    ) {
+      if (props.location.state.requestTexAu) {
+        search_term = props.location.state.requestTexAu.searchTerm;
+      }
+      if (props.location.state.customSearch) {
+        let values = Object.values(props.location.state.customSearch);
+        search_term = values.filter(Boolean).toString();
+        console.log("Values Only.....>>>>", search_term);
+      }
+    }
+    if (props.location.pathname.includes("/social_url_search")) {
+      search_term = props.location.state.data;
+    }
     let requestForSaveSearch = {
-      search_id: uuidv4(),
       search_type: searchType,
-      search_term: JSON.stringify(searchTerm),
+      search_term: search_term,
       search_results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
@@ -470,41 +488,50 @@ const SearchResult = (props) => {
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
             let obj = json_res[i];
-            console.log("in for loop pipl>>>", obj, ">>>>", obj.phones.length);
-            for (let j = 0; j < obj.phones.length; j++) {
-              phones.push(obj.phones[j].number);
+            console.log("in for loop pipl>>>", obj, ">>>>");
+            if (obj.phones) {
+              for (let j = 0; j < obj.phones.length; j++) {
+                phones.push(obj.phones[j].number);
+              }
             }
           }
           console.log("Phones>>>>>>", phones);
-          let requestForSaveProfileCredit = {
-            search_id: searchId,
-            phone_numbers: phones,
-            search_index: `${currentPage}${index}`,
-          };
-          try {
-            const response = await fetch(
-              apiServer + "/credits/profile/bulk_add",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                  Authorization: `Bearer ${Cookies.get("user_token")}`,
-                },
-                body: JSON.stringify(requestForSaveProfileCredit),
-              }
-            );
+          if (phones.length >= 1) {
+            let requestForSaveProfileCredit = {
+              search_id: searchId,
+              phone_numbers: phones,
+              search_index: `${currentPage}${index}`,
+            };
+            try {
+              const response = await fetch(
+                apiServer + "/credits/profile/bulk_add",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                  },
+                  body: JSON.stringify(requestForSaveProfileCredit),
+                }
+              );
 
-            const result = response.json();
+              const result = response.json();
 
-            console.log("response from saveResult>>>", result);
-          } catch (e) {
-            console.error("Exception>>", e);
+              console.log("response from saveResult>>>", result);
+            } catch (e) {
+              console.error("Exception>>", e);
+            }
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              { index: `${currentPage}${index}`, details: json_res[0] },
+            ]);
+          } else {
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              { index: `${currentPage}${index}`, details: "Record Not Found" },
+            ]);
           }
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: json_res[0] },
-          ]);
         } else {
           console.log("In setSpecificUserDetails else");
           setSpecificUserDetails((prev) => [
@@ -767,7 +794,7 @@ const SearchResult = (props) => {
                             </div>
                             <div className="linkedin-icon d-flex justify-content-end">
                               <span>
-                                <a href="#">
+                                <a href={data.url} target="_blank">
                                   <img
                                     src="assets/images/linkedin1.png"
                                     alt=""
