@@ -40,10 +40,10 @@ const RealTimePage = () => {
     }
     else
     {
-        let email_from= Cookies.get("user_email")
+        let user_id= Cookies.get("user_id")
         const inputData = {
         email:"malhar@analystt.ai",
-        message:"email_from: " + email_from +'\n' + "requriement: "+ requirement,
+        message:"Requset_from_UserId: " + user_id +'\n' + "requriement: "+ requirement,
         subject:"Request From RealTime"
         };
         try{
