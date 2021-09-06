@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel, conlist
 
+from app.config import API_CONFIG_USER_HISTORY_PAGE_SIZE
 from app.database import search_history, database
 from app.users import fastapi_users
 
@@ -14,7 +15,7 @@ router = APIRouter(prefix="/history", tags=["Search History"])
 
 
 class SearchHistoryAddRequest(BaseModel):
-    search_id: str = str(uuid.uuid4())
+    # search_id: str = str(uuid.uuid4())
     search_type: str
     search_term: str
     search_results: conlist(item_type=Dict, min_items=1)
@@ -33,6 +34,8 @@ class SearchHistoryShortResponse(BaseModel):
     user_id: str
     search_type: str
     search_term: str
+    profile_count: int
+    email_count: int
     created_on: datetime
 
 
@@ -45,14 +48,9 @@ class SearchHistoryFullResponse(BaseModel):
     created_on: datetime
 
 
-class ViewedCountResponse(BaseModel):
-    profile_count: int
-    unlock_email_count: int
-
-
 @router.get("/id/{search_id}", response_model=SearchHistoryFullResponse)
 async def get_search_history_by_id(
-        search_id: str, user=Depends(fastapi_users.get_current_active_user)
+    search_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{search_id=}, {user=}")
     try:
@@ -61,9 +59,9 @@ async def get_search_history_by_id(
         )
 
         if not (
-                row := await database.fetch_one(
-                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
-                )
+            row := await database.fetch_one(
+                query=query, values={"search_id": search_id, "user_id": str(user.id)}
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -134,69 +132,47 @@ async def get_search_history_by_id(
 async def get_all_search_history(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
     try:
-        query = "SELECT * FROM search_history WHERE user_id = :user_id ORDER BY id DESC"
+        query = "SELECT * FROM search_history WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": str(user.id)}
-                )
+            rows := await database.fetch_all(
+                query=query, values={"user_id": str(user.id)}
+            )
         ):
-            print("ows>>>>", rows)
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
 
-        logger.debug(f"{rows=}")
+        rows = [dict(x) for x in rows if x]
 
-        processed_rows = [dict(x) for x in rows]
+        for row in rows:
+            search_id = row["id"]
 
-        return [SearchHistoryShortResponse(**x) for x in processed_rows if x]
+            query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
 
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        logger.critical(f"Exception Querying Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Querying Database",
-        )
-
-
-@router.get("/get_viewed_count", response_model=ViewedCountResponse)
-async def get_viewed_count(search_id: str, user=Depends(fastapi_users.get_current_active_user)):
-    logger.debug(f"{user=}")
-    try:
-        query_profile_count = "SELECT COUNT(*) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
-
-        if not (
+            if not (
                 profile := await database.fetch_all(
-                    query=query_profile_count, values={"user_id": str(user.id), "search_id": search_id}
+                    query=query_profile_count,
+                    values={
+                        "user_id": str(user.id),
+                        "search_id": search_id,
+                        "user_id_email": str(user.id),
+                        "search_id_email": search_id,
+                    },
                 )
-        ):
-            logger.debug("rows>>>>", profile)
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-
-        query_email_count = "SELECT COUNT(*) as email_count FROM email_credit_history  WHERE  user_id = :user_id AND search_id =:search_id "
-
-        if not (
-                email := await database.fetch_all(
-                    query=query_email_count, values={"user_id": str(user.id), "search_id": search_id}
+            ):
+                logger.warning("Invalid Query Results")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
                 )
-        ):
-            logger.debug("rows1>>>>", email, "rows>>>>>", profile)
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-        processed_rows_email = [item for x in email for item in x]
-        processed_rows_profile = [item for x in profile for item in x]
-        logger.debug(f"{processed_rows_email[0]=}>>>{processed_rows_profile[0]=}")
 
-        return ViewedCountResponse(profile_count=processed_rows_profile[0], unlock_email_count=processed_rows_email[0])
+            processed_rows_profile = [item for x in profile for item in x]
+            row["email_count"] = processed_rows_profile[1]
+            row["profile_count"] = processed_rows_profile[0]
+            logger.debug(f"{processed_rows_profile=}")
+
+        return [SearchHistoryShortResponse(**x) for x in rows if x]
 
     except HTTPException as e:
         raise e
@@ -210,14 +186,15 @@ async def get_viewed_count(search_id: str, user=Depends(fastapi_users.get_curren
 
 @router.post("/add", response_model=SearchHistoryAddResponse)
 async def add_search_history(
-        request: SearchHistoryAddRequest,
-        user=Depends(fastapi_users.get_current_active_user),
+    request: SearchHistoryAddRequest,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
     try:
+        search_id = str(uuid.uuid4())
         query = search_history.insert().values(
-            id=request.search_id,
+            id=search_id,
             user_id=str(user.id),
             search_type=request.search_type,
             search_term=request.search_term,
@@ -231,7 +208,7 @@ async def add_search_history(
 
         logger.debug(f"{row_id=}")
 
-        return SearchHistoryAddResponse(search_id=request.search_id)
+        return SearchHistoryAddResponse(search_id=search_id)
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(
