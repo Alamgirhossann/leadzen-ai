@@ -10,7 +10,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-import Lottie from 'react-lottie';
+import Lottie from "react-lottie";
 import Loader from "../../Loader";
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -155,12 +155,12 @@ const SearchResult = (props) => {
           }
         );
         let json_res = await response.json();
-        setTimeout( ()=>{
-        setSearchId(json_res.search_id);
-        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
-        setLoading(false);
-        setMyLeads(json_res.search_results);
-     },60000);
+        setTimeout(() => {
+          setSearchId(json_res.search_id);
+          console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+          setLoading(false);
+          setMyLeads(json_res.search_results);
+        }, 60000);
       } catch (err) {
         console.error("Error: ", err);
       }
@@ -305,7 +305,8 @@ const SearchResult = (props) => {
     timeoutId = setTimeout(function () {
       console.error("record not found within 5 Min");
       clearInterval(intervalId);
-      // TODO: show appropriate ui actions like stop spinners and show error message etc
+      setLoading(false);
+      setMyLeads("");
     }, 5 * 60 * 1000);
   };
 
@@ -725,7 +726,7 @@ const SearchResult = (props) => {
                 </div>
               </div>
 
-              <div className="user-widget-box  my-3" >
+              <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
                     {myLeads && myLeads.length === 0 ? (
@@ -854,9 +855,8 @@ const SearchResult = (props) => {
                   </div>
                 ) : (
                   <div className="d-flex justify-content-center">
-                    <div role="status" style={{height:"400px"}}>
-                         <Lottie options={Loader}
-              />
+                    <div role="status" style={{ height: "400px" }}>
+                      <Lottie options={Loader} />
                     </div>
                   </div>
                 )}
