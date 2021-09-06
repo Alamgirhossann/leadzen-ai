@@ -177,6 +177,7 @@ const SearchResult = (props) => {
     }
 
     let requestForSaveSearch = {
+      search_id: uuidv4(),
       search_type: searchType,
       search_term: search_term,
       search_results: response,
@@ -419,80 +420,80 @@ const SearchResult = (props) => {
         </div>
       </div>
 
-      <div className="main-content-area pb-6 pt-2">
-        <div className="main-wrapper container-fluid">
-          <div className="row">
-            <div className="col-md-4 col-lg-3">
-              {/* <SpecificSearchBtn/> */}
-              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
-                <h6 className="text-danger mb-3">Customize your search</h6>
-                <Filters />
-              </div>
-              <BulkSearch />
-              <SidebarExtractContact />
-            </div>
-            <div className="col-md-8 col-lg-9">
-              <div className="user-search-wrapper">
-                <div className="detailed-search">
-                  <div>
-                    <small>Last Updated: {today}</small>
-                  </div>
-                </div>
-                <div>
-                  <p className="mt-3">
-                    Extracted Results for:{" "}
-                    <span className="link-style">
-                      <img src="assets/images/Vector (2).png" alt="" />{" "}
-                      https://www.instagram.com/
-                    </span>
-                    <span className="link-style">Followers</span>{" "}
-                    <a className="text-danger" href="#">
-                      Clear All
-                    </a>
-                  </p>
-                </div>
-              </div>
-              <div className="user-widget-box  my-3">
-                <div className="d-flex align-items-center justify-content-between py-3">
-                  <div className="d-flex align-items-center ">
-                    <input
-                      className="ms-3 me-3"
-                      type="checkbox"
-                      id="checkbox"
-                    />
-                    <small className="">
-                      <b>{currentLeads.length}</b> of{" "}
-                      <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
-                    </small>
-                  </div>
-                  <div className="d-flex">
-                    <small className="unlock-btn">
-                      Unlock Profile
-                      <img
-                        className="ps-3"
-                        src="assets/images/Group 1617.png"
-                        alt=""
-                      />
-                    </small>
-                    <small className="unlock-btn">
-                      Unlock Mails
-                      <img
-                        className="ps-3"
-                        src="assets/images/Group 1617.png"
-                        alt=""
-                      />
-                    </small>
-                    <small className="export-btn">
-                      Export
-                      <img
-                        className="ps-3"
-                        src="assets/images/export.png"
-                        alt=""
-                      />
-                    </small>
-                  </div>
-                </div>
-              </div>
+        <div className="main-content-area pb-6 pt-2">
+            <div className="main-wrapper container-fluid">
+                <div className="row">
+                    <div className="col-md-4 col-lg-3">
+                        <SpecificSearchBtn/>
+                        <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+                            <h6 className="text-danger mb-3">Customize your search</h6>
+                            <Filters/>
+                        </div>
+                        <BulkSearch/>
+                        <SidebarExtractContact/>
+                    </div>
+                    <div className="col-md-8 col-lg-9">
+                        <div className="user-search-wrapper">
+                            <div className="detailed-search">
+                                <div>
+                                    <small>Last Updated: {today}</small>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="mt-3">
+                                    Extracted Results for:{" "}
+                                    <span className="link-style">
+                                            <img src="assets/images/Vector (2).png" alt=""/>{" "}
+                                        https://www.instagram.com/
+                                        </span>
+                                    <span className="link-style">Followers</span>{" "}
+                                    <a className="text-danger" href="#">
+                                        Clear All
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <div className="user-widget-box  my-3">
+                            <div className="d-flex align-items-center justify-content-between py-3">
+                                <div className="d-flex align-items-center ">
+                                    <input
+                                        className="ms-3 me-3"
+                                        type="checkbox"
+                                        id="checkbox"
+                                    />
+                                    <small className="">
+                                        <b>{currentLeads.length}</b> of{" "}
+                                        <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
+                                    </small>
+                                </div>
+                                <div className="d-flex">
+                                    <small className="unlock-btn">
+                                        Unlock Profile
+                                        <img
+                                            className="ps-3"
+                                            src="assets/images/Group 1617.png"
+                                            alt=""
+                                        />
+                                    </small>
+                                    <small className="unlock-btn">
+                                        Unlock Mails
+                                        <img
+                                            className="ps-3"
+                                            src="assets/images/Group 1617.png"
+                                            alt=""
+                                        />
+                                    </small>
+                                    <small className="export-btn">
+                                        Export
+                                        <img
+                                            className="ps-3"
+                                            src="assets/images/export.png"
+                                            alt=""
+                                        />
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
 
               <div className="user-widget-box  my-3">
                 {loading === false ? (
@@ -538,15 +539,8 @@ const SearchResult = (props) => {
                                   : data.addresses[0].display}
                               </small>
                             </div>
-                            <div className="linkedin-icon d-flex justify-content-end">
-                              <span>
-                                <a href="#">
-                                  <img
-                                    src="assets/images/linkedin1.png"
-                                    alt=""
-                                  />
-                                </a>
-                              </span>
+                            <div className='linkedin-icon d-flex justify-content-end'>
+                              <span><a href="#"><img src="assets/images/linkedin1.png" alt="" /></a></span>
                             </div>
                             <div className="search-email text-center">
                               <small
