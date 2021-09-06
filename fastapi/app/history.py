@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel, conlist
 
+from app.config import API_CONFIG_USER_HISTORY_PAGE_SIZE
 from app.database import search_history, database
 from app.users import fastapi_users
 
@@ -49,7 +50,7 @@ class SearchHistoryFullResponse(BaseModel):
 
 @router.get("/id/{search_id}", response_model=SearchHistoryFullResponse)
 async def get_search_history_by_id(
-        search_id: str, user=Depends(fastapi_users.get_current_active_user)
+    search_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{search_id=}, {user=}")
     try:
@@ -58,9 +59,9 @@ async def get_search_history_by_id(
         )
 
         if not (
-                row := await database.fetch_one(
-                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
-                )
+            row := await database.fetch_one(
+                query=query, values={"search_id": search_id, "user_id": str(user.id)}
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -126,6 +127,7 @@ async def get_search_history_by_id(
 #             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
 #         )
 
+
 @router.get("/all", response_model=List[SearchHistoryShortResponse])
 async def get_all_search_history(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
@@ -133,39 +135,41 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
         query = "SELECT * FROM search_history WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": str(user.id)}
-                )
+            rows := await database.fetch_all(
+                query=query, values={"user_id": str(user.id)}
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
-        rows = [dict(x) for x in rows]
 
-        for obj in rows:
-            if not obj:
-                continue
-            search_id = obj['id']
+        rows = [dict(x) for x in rows if x]
+
+        for row in rows:
+            search_id = row["id"]
 
             query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
 
             if not (
-                    profile := await database.fetch_all(
-                        query=query_profile_count,
-                        values={"user_id": str(user.id), "search_id": search_id, "user_id_email": str(user.id),
-                                "search_id_email": search_id}
-                    )
+                profile := await database.fetch_all(
+                    query=query_profile_count,
+                    values={
+                        "user_id": str(user.id),
+                        "search_id": search_id,
+                        "user_id_email": str(user.id),
+                        "search_id_email": search_id,
+                    },
+                )
             ):
-                logger.debug("rows>>>>", profile)
                 logger.warning("Invalid Query Results")
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
                 )
 
             processed_rows_profile = [item for x in profile for item in x]
-            obj['email_count'] = processed_rows_profile[1]
-            obj['profile_count'] = processed_rows_profile[0]
+            row["email_count"] = processed_rows_profile[1]
+            row["profile_count"] = processed_rows_profile[0]
             logger.debug(f"{processed_rows_profile=}")
 
         return [SearchHistoryShortResponse(**x) for x in rows if x]
@@ -182,8 +186,8 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
 
 @router.post("/add", response_model=SearchHistoryAddResponse)
 async def add_search_history(
-        request: SearchHistoryAddRequest,
-        user=Depends(fastapi_users.get_current_active_user),
+    request: SearchHistoryAddRequest,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
