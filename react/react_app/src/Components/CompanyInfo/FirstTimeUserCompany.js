@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import CompanyFilters from "../CompanySharedComponent/CompanyFilters";
+import "./Style/style.css";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import Header from "../SharedComponent/Header";
-import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
-import UserSearch from "../SharedComponent/UserSearch";
+import UserSearch from "../CompanySharedComponent/UserSearch";
 import ExtractContacts from "../SharedComponent/ExtractContacts";
-import BulkSearch from "../SharedComponent/BulkSearch";
+import { Link } from "react-router-dom";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
-import Cookies from "js-cookie";
-import axios from "axios";
-const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+import BulkSearch from "../SharedComponent/BulkSearch";
 
-const FirstTimeUser = () => {
+const FirstTimeUserCompany = (props) => {
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -27,65 +25,26 @@ const FirstTimeUser = () => {
       mail_credits: 1000,
     },
   };
-
-  function handleError(status) {
-    console.error(`Got HTTP Error ${status}`);
-  }
-
-  function handleUnAuthorized(response = null) {
-    console.log("User is UnAuthorized");
-    alert("Please Logout and LogIn Again");
-  }
-
-  const UpdateUser = async () => {
-    try {
-      console.log("in update user");
-
-      const fetchResponse = await fetch(apiServer + "/users/me", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${Cookies.get("user_token")}`,
-        },
-        body: JSON.stringify({ onboarded: true }),
-      });
-
-      async function handleSuccess(fetchResponse) {
-        let json_res = await fetchResponse.data;
-        console.log("json_res for update user", json_res);
-      }
-
-      switch (fetchResponse.status) {
-        case 200:
-          return await handleSuccess(fetchResponse);
-        case 401:
-          return handleUnAuthorized(fetchResponse);
-        default:
-          return handleError(fetchResponse);
-      }
-    } catch (err) {
-     handleError(err);
-    }
+  const [customSearch, setCustomSearch] = useState({
+    location: null,
+    industry: null,
+    job_title: null,
+    education: null,
+    company_name: null,
+    keywords: null,
+    csv_file: null,
+  });
+  const [toggleVal, setToggleVal] = useState();
+  const handleCSVFile = (e) => {
+    setCustomSearch({ ...customSearch, csv_file: e.target.files[0] });
   };
-
   useEffect(async () => {
-    const script = document.createElement("script");
-    script.src = "assets/js/app.js";
-    script.async = true;
-    UpdateUser();
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  function handleCSVFile() {}
-
+    console.log("props>>> firsttimeuser", props);
+    // setToggleVal()
+  });
   return (
     <div>
       <Header user={user} />
-
       <div className="modal" id="bulkmodal">
         <button
           type="button"
@@ -94,14 +53,14 @@ const FirstTimeUser = () => {
           aria-label="Close"
         />
         <div className="modal-dialog">
-          <div className="modal-message">
+          <div classNameName="modal-message">
             <p>
-              <i className="text-danger">Format to follow:</i> Ensure that the
-              first column has the unique values you’re searching for. Download
-              the sample below for better understanding.{" "}
+              <i classNameName="text-danger">Format to follow:</i> Ensure that
+              the first column has the unique values you’re searching for.
+              Download the sample below for better understanding.{" "}
             </p>
             <Link>
-              <i className="text-danger text-decoration-underline">
+              <i classNameName="text-danger text-decoration-underline">
                 Click here to download csv format
               </i>
             </Link>
@@ -130,15 +89,10 @@ const FirstTimeUser = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-                 <SpecificSearchBtn details={true} />
-                <div className="sidebar-search-for sidebar-widget pt-4 my-3">
-                    <h6 className="text-danger mb-3">Customize your search</h6>
-                    <Filters/>
-                </div>
-              {/* <SpecificSearchBtn/> */}
+              <SpecificSearchBtn details={false} />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
-                <Filters />
+                <CompanyFilters />
               </div>
               <BulkSearch />
               <SidebarExtractContact />
@@ -157,4 +111,4 @@ const FirstTimeUser = () => {
   );
 };
 
-export default FirstTimeUser;
+export default FirstTimeUserCompany;

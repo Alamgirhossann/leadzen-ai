@@ -36,6 +36,10 @@ API_CONFIG_LINKEDIN_SEARCH_BASE_URL = os.getenv(
     "API_CONFIG_LINKEDIN_SEARCH_BASE_URL",
     "https://www.linkedin.com/search/results/people/?",
 )
+API_CONFIG_LINKEDIN_COMPANY_SEARCH_BASE_URL = os.getenv(
+    "API_CONFIG_LINKEDIN_COMPANY_SEARCH_BASE_URL",
+    "https://www.linkedin.com/search/results/companies/?",
+)
 API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE = os.getenv(
     "API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE",
     "./app/industry_codes.json",
@@ -49,6 +53,11 @@ API_CONFIG_LINKEDIN_LOCATION_CODES_FILE = os.getenv(
 API_CONFIG_LINKEDIN_COMPANY_CODES_FILE = os.getenv(
     "API_CONFIG_LINKEDIN_COMPANY_CODES_FILE",
     "./app/company_codes.json",
+)
+
+API_CONFIG_LINKEDIN_COMPANY_SIZE_CODES_FILE = os.getenv(
+    "API_CONFIG_LINKEDIN_COMPANY_SIZE_CODES_FILE",
+    "./app/company_size_codes.json",
 )
 
 API_CONFIG_TEXAU_URL = os.getenv(
@@ -68,6 +77,13 @@ API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID = os.getenv(
 API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID = os.getenv(
     "API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID",
     "texau-automation-1-dev-linkedInSearchExtractor",
+)
+API_CONFIG_TEXAU_LINKEDIN_SEARCH_SPICE_ID_COMPANY = os.getenv(
+    "API_CONFIG_TEXAU_LINKEDIN_SEARCH_SPICE_ID_COMPANY", "5dfb522a0d074f7c847ece2d"
+)
+API_CONFIG_TEXAU_LINKEDIN_SEARCH_COMPANY_FUNC_ID = os.getenv(
+    "API_CONFIG_TEXAU_LINKEDIN_SEARCH_COMPANY_FUNC_ID",
+    "texau-automation-1-dev-linkedInCompanySearchExtractor",
 )
 API_CONFIG_TEXAU_PROXY_NAME = os.getenv(
     "API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pune"
