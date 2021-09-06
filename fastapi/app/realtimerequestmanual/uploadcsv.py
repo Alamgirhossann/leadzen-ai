@@ -45,12 +45,7 @@ async def upload_csv_file(
         user = response1.json()
         user['requirement'] = requirement
 
-        if file.filename.endswith(".csv"):
-            raise HTTPException(
-                status_code=status.HTTP_406_NOT_ACCEPTABLE,
-                detail="File need to be in excel format",
-            )
-        else:
+        if file.filename.endswith(".xlsx"):
             outgoing_filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
 
             with tempfile.TemporaryFile() as temp_file:
@@ -70,6 +65,13 @@ async def upload_csv_file(
             return RealTimeUploadResponse(
                 input_filename=file.filename, output_filename=outgoing_filename
             )
+
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="File need to be in excel format",
+            )
+
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="You need to be authorized super user",
