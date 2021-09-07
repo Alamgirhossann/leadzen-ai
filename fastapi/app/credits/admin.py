@@ -2,14 +2,14 @@ import sys
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 
-from app.credits.common import UserCreditRequest
+from app.credits.common import UserCreditRequest, UserCreditResponse
 from app.database import database
 from app.users import fastapi_users, users
 
 router = APIRouter(prefix="/credits_admin", tags=["Credit Admin Operations"])
 
 
-@router.put("/add_credits")
+@router.put("/add_credits", response_model=UserCreditResponse)
 async def add_all_credits_to_users(request: UserCreditRequest, user=Depends(fastapi_users.get_current_superuser)):
     logger.debug(f"{user=},>>>{request=}")
     try:
@@ -29,7 +29,7 @@ async def add_all_credits_to_users(request: UserCreditRequest, user=Depends(fast
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
 
-        return {"row updated": row}
+        return UserCreditResponse(row_updated=row)
     except HTTPException as e:
         raise e
     except Exception as e:

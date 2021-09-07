@@ -69,3 +69,5 @@ class UserCreditRequest(BaseModel):
     company_credit: Optional[int] = 5
 
 
+class UserCreditResponse(BaseModel):
+    row_updated: int
