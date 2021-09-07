@@ -33,9 +33,6 @@ async def add_all_credits_to_users(request: UserCreditRequest, user=Depends(fast
     except HTTPException as e:
         raise e
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
         logger.critical(f"Exception Querying Database: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
