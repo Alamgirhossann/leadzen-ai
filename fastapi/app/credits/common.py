@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -60,3 +60,12 @@ class EmailCreditResponse(BaseModel):
     email_address: str
     search_index: int
     created_on: datetime
+
+
+class UserCreditRequest(BaseModel):
+    email: str
+    profile_credit: Optional[int] = 5
+    email_credit: Optional[int] = 5
+    company_credit: Optional[int] = 5
+
+

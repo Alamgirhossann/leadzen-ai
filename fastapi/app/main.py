@@ -20,6 +20,7 @@ from app.email import router as email_router
 from app.pipl.router import router as pipl_router
 from app.history import router as history_router
 from app.credits.router import router as credits_router
+from app.credits.admin import router as credits_admin_router
 from app.scraper import fetch_linkedin_cookie
 from app.texau.router import router as texau_router
 from app.users import fastapi_users
@@ -65,6 +66,7 @@ app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=bulk_router, prefix="/api")
 app.include_router(router=history_router, prefix="/api")
 app.include_router(router=credits_router, prefix="/api")
+app.include_router(router=credits_admin_router, prefix="/api")
 app.include_router(router=truemail_router, prefix="/api")
 app.include_router(router=snov_router, prefix="/api")
 app.include_router(router=proxycurl_router, prefix="/api")
