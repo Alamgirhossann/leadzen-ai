@@ -18,12 +18,6 @@ class PiplDetailsFromProfileUrlRequest(BaseModel):
 class PiplDetailsFromProfileUrlResponse(BaseModel):
     filename: str
 
-class RequestForExcelData(BaseModel):
-    filename:str
-
-
-
-
 async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     profile_urls = list(set(request.profile_urls))  # remove duplicates
     profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
@@ -43,13 +37,12 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
 
     await write_to_file(responses=responses, filename=request.filename)
 
-async def excel_design(request:RequestForExcelData):
-    filename=request.filename
-    if  (filename==""):
+def add_excel_template_to_file(outgoing_filename):
+    if  (outgoing_filename==""):
         logger.error("No excel file found")
         return
     else:
-        wb = load_workbook(f'{filename}')
+        wb = load_workbook(f'{outgoing_filename}')
         if (wb==""):
             logger.error("Error in loading work book of excel file")
             return
@@ -80,4 +73,5 @@ async def excel_design(request:RequestForExcelData):
             img3 = openpyxl.drawing.image.Image(f'./app/Excel/FA_img.png')
             img3.anchor = 'A1'
             financial_advisor.add_image(img3)
-            wb.save(filename)
+            wb.save(outgoing_filename)
+            return outgoing_filename
