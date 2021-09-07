@@ -6,7 +6,7 @@ from fastapi_users import FastAPIUsers, models
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from loguru import logger
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy import Column, String, Integer, Boolean
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 from app.config import (
@@ -18,23 +18,35 @@ from app.email import UserEmailVerificationEmailRequest
 
 
 class User(models.BaseUser):
-    username: str
+    username: Optional[str] = None
     onboarded: bool = False
+    profile_credit: Optional[int] = 5
+    email_credit: Optional[int] = 5
+    company_credit: Optional[int] = 5
 
 
 class UserCreate(models.BaseUserCreate):
-    username: str
+    username: Optional[str] = None
     onboarded: bool = False
+    profile_credit: Optional[int] = 5
+    email_credit: Optional[int] = 5
+    company_credit: Optional[int] = 5
 
 
 class UserUpdate(User, models.BaseUserUpdate):
-    username: Optional[str]
+    username: Optional[str] = None
     onboarded: bool = False
+    profile_credit: Optional[int] = 5
+    email_credit: Optional[int] = 5
+    company_credit: Optional[int] = 5
 
 
 class UserDB(User, models.BaseUserDB):
-    username: str
+    username: Optional[str] = None
     onboarded: bool = False
+    profile_credit: Optional[int] = 5
+    email_credit: Optional[int] = 5
+    company_credit: Optional[int] = 5
 
 
 Base: DeclarativeMeta = declarative_base()
@@ -43,6 +55,9 @@ Base: DeclarativeMeta = declarative_base()
 class UserTable(Base, SQLAlchemyBaseUserTable):
     username = Column(String(length=320), nullable=True)
     onboarded = Column(Boolean, default=True)
+    profile_credit = Column(Integer,default=5)
+    email_credit = Column(Integer,default=5)
+    company_credit = Column(Integer,default=5)
 
 
 Base.metadata.create_all(engine)
