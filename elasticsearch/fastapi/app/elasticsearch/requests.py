@@ -20,5 +20,5 @@ class ElasticsearchAddRequest(BaseModel):
 class ElasticsearchAddjsonRequest(BaseModel):
     index_name: constr(
         to_lower=True, strip_whitespace=True, min_length=3
-    ) = "analystt.default"
+    ) = "analystt.json.default"
     records: Dict

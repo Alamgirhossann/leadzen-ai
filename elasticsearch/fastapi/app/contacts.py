@@ -273,7 +273,7 @@ async def load_json(
     background_tasks.add_task(
                 add_json,
                 request=ElasticsearchAddjsonRequest(
-                    index_name=f"analystt.{file.filename}",
+                    index_name=f"analystt.json.{file.filename}",
                     records=contents,
                 ),
             )
