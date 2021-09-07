@@ -18,6 +18,7 @@ async def add_all_credits_to_users(request: UserCreditRequest, user=Depends(fast
             profile_credit=users.c.profile_credit + request.profile_credit,
             email_credit=users.c.email_credit + request.email_credit,
             company_credit=users.c.company_credit + request.company_credit).where(users.c.email == request.email)
+        logger.debug(f"{update_query=}")
 
         if not (
                 row := await database.execute(update_query
