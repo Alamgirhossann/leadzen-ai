@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Style/style.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import Pagination from "../SharedComponent/Pagination";
 import SpecificUser from "../DetailedInfo/SpecificUser";
@@ -9,6 +11,8 @@ import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
+import Lottie from 'react-lottie';
+import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const SearchResult = (props) => {
@@ -423,7 +427,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn details={true} />
+              <SpecificSearchBtn details={true}/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
@@ -433,11 +437,40 @@ const SearchResult = (props) => {
             </div>
             <div className="col-md-8 col-lg-9">
               <div className="user-search-wrapper">
+              <div className="user-search-wrapper">
                 <div className="detailed-search">
+                  <div className="search-promote-content">
+                    <form className=" d-flex my-2 my-lg-0">
+                      <input
+                        className="form-control mr-sm-2"
+                        type="search"
+                        // onBlur={handleHeadSearch}
+                        placeholder="Search"
+                        aria-label="Search"
+                      />
+                      <button
+                        className="btn text-white w-auto d-flex ms-3"
+                        // onClick={handleHeadSearchSubmit}
+                        style={{ background: "#FB3E3E" }}
+                        type="submit"
+                      >
+                        <span className="pe-1">
+                          <FontAwesomeIcon icon={faSearch} />
+                        </span>{" "}
+                        Search
+                      </button>
+                    </form>
+                  </div>
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
                 </div>
+              </div>
+                {/* <div className="detailed-search">
+                  <div>
+                    <small>Last Updated: {today}</small>
+                  </div>
+                </div> */}
                 <div>
                   <p className="mt-3">
                     Extracted Results for:{" "}
@@ -630,8 +663,9 @@ const SearchResult = (props) => {
                   </div>
                 ) : (
                   <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
+                         <div role="status" style={{height:"400px"}}>
+                         <Lottie options={Loader}
+              />
                     </div>
                   </div>
                 )}
