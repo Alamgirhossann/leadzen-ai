@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Style/style.css";
 import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -9,7 +9,21 @@ import { useHistory } from "react-router-dom";
 
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
-const LogIn = () => {
+const LogIn = (props) => {
+  const [historyState, setHistoryState] = useState("");
+  const [userSession, setUserSession] = useState(false);
+  useEffect(() => {
+    if (props.location.state !== undefined) {
+      // console.log("history",props.location.state)
+      if (props.location.state.userRegistrationEmail) {
+        setHistoryState(props.location.state.userRegistrationEmail);
+      }
+      if (props.location.state.userSession) {
+        setUserSession(true);
+      }
+    }
+  }, []);
+
   const history = useHistory();
   const user = {
     name: "",
@@ -25,9 +39,8 @@ const LogIn = () => {
       mail_credits: "",
     },
   };
-  const url_string = window.location.href;
-  // var url_string = "localhost:12002/login?emailVerified=true&email=piyush.jaiswal@kapso.in";
-  const url = new URL(url_string);
+  const urlString = window.location.href;
+  const url = new URL(urlString);
   const emailVerified = url.searchParams.get("emailVerified");
   const email = url.searchParams.get("email");
 
@@ -55,7 +68,7 @@ const LogIn = () => {
   };
 
   const Robot = () => {
-    if (response.message === "user not found") {
+    if (response.message) {
       return (
         <div className="col-md-6 robot-container order-md-12">
           <div className="sign-up-robot text-center ps-4 pe-7 pt-2 pb-7 mb-4">
@@ -64,13 +77,22 @@ const LogIn = () => {
               src="assets/images/Group 2221.png"
               alt=""
             />
-            <p className="fw-bold">
-              Hey Buddy, time to take <br /> the ‘lead’. User not found. <br />{" "}
-              <Link to="/signUp" className="text-danger text-decoration-none">
-                Sign up
-              </Link>{" "}
-              to begin.{" "}
-            </p>
+            {!userLogin.error ? (
+              <p className="fw-bold">
+                Hey Buddy, Time to take the lead.
+                <br /> {!userLogin.error ? response.message : userLogin.error}
+                <br />{" "}
+                <Link to="/signUp" className="text-danger text-decoration-none">
+                  Sign up
+                </Link>{" "}
+                to begin.{" "}
+              </p>
+            ) : (
+              <p className="fw-bold">
+                Hey Buddy, Time to take the lead.
+                <br /> {userLogin.error} <br />{" "}
+              </p>
+            )}
           </div>
         </div>
       );
@@ -92,9 +114,97 @@ const LogIn = () => {
     );
   };
 
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    alert("Please Logout and LogIn Again");
+  }
+
+  const formData = new FormData();
+  formData.set("username", userLogin.email);
+  formData.set("password", userLogin.password);
+
+  const fetchData = async () => {
+    try {
+      const fetchResponse = await axios.post(
+        apiServer + "/auth/jwt/login",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      async function handleSuccess(fetchResponse) {
+        let json_res = await fetchResponse.data;
+        console.log("json_res", json_res);
+        try {
+          const userStatusResponse = await axios.get(apiServer + "/users/me", {
+            headers: {
+              Authorization: `Bearer ${json_res.access_token}`,
+            },
+          });
+          async function handleUserSuccess() {
+            const userStatus = await userStatusResponse;
+            console.log("userStatus>>>>>>>>", userStatus);
+
+            setResponse({ ...response, ok: true });
+
+            if (userStatus.data.is_verified === false) {
+              console.log("in if");
+              setUserVerifiedStatus(false);
+            } else {
+              Cookies.set("user_email", userLogin.email, { expires: 0.08 });
+              Cookies.set("user_id", userStatus.data.id);
+              Cookies.set("user_token", json_res.access_token, {
+                expires: 0.08,
+              });
+              console.log("userVerifiedStatus.....");
+              if (userStatus.data.onboarded === false) {
+                console.log("in user render");
+                history.push({
+                  pathname: "/firstTimeUser",
+                });
+              } else {
+                history.push({
+                  pathname: "/repeatedUser",
+                });
+              }
+            }
+          }
+
+          switch (userStatusResponse.status) {
+            case 200:
+              return await handleUserSuccess(userStatusResponse);
+            case 401:
+              return handleUnAuthorized(userStatusResponse);
+            default:
+              return handleError(userStatusResponse);
+          }
+        } catch (err) {
+          handleError(err);
+        }
+      }
+
+      switch (fetchResponse.status) {
+        case 200:
+          return await handleSuccess(fetchResponse);
+        case 401:
+          return handleUnAuthorized(fetchResponse);
+        default:
+          return handleError(fetchResponse);
+      }
+    } catch (err) {
+      handleError(err);
+      setResponse({ ...response, message: "user not found" });
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("userLogin", userLogin);
     if (!userLogin.email || !userLogin.password) {
       setUserLogin({
         ...userLogin,
@@ -108,7 +218,7 @@ const LogIn = () => {
     if (!validator.isEmail(userLogin.email)) {
       setUserLogin({ ...userLogin, error: "Invalid Email" });
       setValid(false);
-      alert("Invalid Email");
+      // alert("Invalid Email");
     }
     if (
       !validator.isStrongPassword(userLogin.password, {
@@ -122,84 +232,12 @@ const LogIn = () => {
     ) {
       setUserLogin({ ...userLogin, error: "Invalid Password" });
       setValid(false);
-      alert("Invalid Password!");
+      // alert("Invalid Password!");
     }
-    const formData = new FormData();
-    formData.set("username", userLogin.email);
-    formData.set("password", userLogin.password);
-    console.log("formData", formData);
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-    const fetchData = async () => {
-      try {
-        const fetchResponse = await axios.post(
-          apiServer + "/auth/jwt/login",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log("urlll>>>", apiServer + "/auth/jwt/login");
-        let json_res = await fetchResponse.data;
-        console.log("json_res", json_res);
 
-        const userStatusResponse = await axios.get(apiServer + "/users/me", {
-          headers: {
-            Authorization: `Bearer ${json_res.access_token}`,
-          },
-        });
-
-        const userStatus = await userStatusResponse;
-        console.log("userStatus>>>>>>>>", userStatus);
-
-        if (json_res.access_token) {
-          console.log("token created.....");
-
-          Cookies.set("user_email", userLogin.email);
-          Cookies.set("user_id", userStatus.data.id);
-          Cookies.set("user_token", json_res.access_token);
-        }
-
-        setResponse({ ...response, ok: true });
-        console.log("response", response);
-
-        if (response.ok === true) {
-          // Cookies.set("user_email", userLogin.email);
-        }
-        console.log("json_res.access_token,,,,,,", json_res.access_token);
-        console.log("usersdcbfcb.....", userStatus.data.is_verified === false);
-        if (userStatus.data.is_verified === false) {
-          console.log("in if");
-          setUserVerifiedStatus(false);
-          //  show a banner and prevent any next action
-          //  take to LoginEmailUnverifiedError
-        } else {
-          //  normal user operations
-          //  check for the first_time_user, if it is false take to repeated user
-          //  else take to the repeated user page
-          const first_time_user = Cookies.get("first_time_user");
-          console.log("first_time_user", first_time_user);
-          if (first_time_user === true) {
-            history.push({
-              pathname: "/firstTimeUser",
-            });
-          } else {
-            history.push({
-              pathname: "/repeatedUser",
-            });
-          }
-        }
-      } catch (err) {
-        console.error("Error: ", err);
-      }
-    };
     fetchData();
   };
 
-  // console.log("userStatus",userStatus)
   return (
     <div>
       <Header user={user} />
@@ -208,7 +246,40 @@ const LogIn = () => {
           className="alert alert-warning alert-dismissible fade show"
           role="alert"
         >
-          <strong>{email}</strong>, Your Email is Verified.
+          <strong>{email}</strong> You have verified successfully.
+          <button
+            type="button"
+            className="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      ) : null}
+      {historyState !== "" ? (
+        <div
+          className="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>{historyState}</strong> please check your email for
+          verification.
+          <button
+            type="button"
+            className="close"
+            data-dismiss="alert"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      ) : null}
+      {userSession ? (
+        <div
+          className="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          Your session expired. Please Login again.
           <button
             type="button"
             className="close"
@@ -226,7 +297,6 @@ const LogIn = () => {
               <div className="signup-wrapper py-4 px-md-6">
                 <div className="row align-items-center">
                   {!userVerifiedStatus ? <Redirect to="/unverified" /> : null}
-                  {/*{response.ok && !first_time_user ? <Redirect to="/repeatedUser" /> :<Redirect to="/firstTimeUser" /> }*/}
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center">
@@ -246,6 +316,7 @@ const LogIn = () => {
                             name="email"
                             placeholder="Enter your email"
                             id="email"
+                            required
                           />
                         </div>
                         <div className="mb-3 password-input">
@@ -258,6 +329,7 @@ const LogIn = () => {
                             name="password"
                             placeholder="Enter your password"
                             id="password"
+                            required
                           />
                           <Link to="" onClick={handlePassClick}>
                             <img

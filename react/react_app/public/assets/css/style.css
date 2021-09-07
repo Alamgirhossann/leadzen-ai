@@ -13552,7 +13552,7 @@ a:hover {
 }
 .sign-up-form input:invalid,
 .sign-up-form select:invalid {
-  border-color: #fb3e3e;
+  border-color: #9c9c9c;
 }
 
 .sign-up-form button {

@@ -88,7 +88,6 @@ const UserSearch = () => {
       email: emailUser,
       name: { first_name: "", last_name: "" },
       url: urlUser,
-      searchType: searchType,
       searchTerm: searchText.text,
     };
 
@@ -107,7 +106,6 @@ const UserSearch = () => {
       location: [],
       currentCompany: [],
       pastCompany: [],
-      searchType: searchType,
       searchTerm: searchText.text,
     };
     if (!isUrl && !isEmail) {

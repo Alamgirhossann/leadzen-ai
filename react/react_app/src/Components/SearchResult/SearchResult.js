@@ -11,6 +11,8 @@ import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
+import Lottie from 'react-lottie';
+import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const SearchResult = (props) => {
@@ -113,6 +115,7 @@ const SearchResult = (props) => {
 
         console.log("Data>>>>>>>>>>>loading..", json_res, loading);
         setLoading(false);
+        setSearchId(json_res.id);
 
         setMyLeads(json_res.search_results);
       } catch (err) {
@@ -172,11 +175,14 @@ const SearchResult = (props) => {
 
   const saveSearchedRecord = async (response, searchType) => {
     console.log("In saveSearchedRecord");
+    let search_term = "";
+    if (props.location.pathname.includes("/searchResult")) {
+      search_term = props.location.state.reqJsonPipl.searchTerm;
+    }
 
     let requestForSaveSearch = {
-      search_id: uuidv4(),
       search_type: searchType,
-      search_term: JSON.stringify(searchTerm),
+      search_term: search_term,
       search_results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
@@ -217,7 +223,6 @@ const SearchResult = (props) => {
     console.log("isDuplicate>>>>", isDuplicate);
     if (isDuplicate === false) {
       let requestForSaveEmailCredit = {
-        user_id: Cookies.get("user_id"),
         search_id: searchId,
         email_addresses: ["sff", "ddsg"],
         search_index: parseInt(`${currentPage}${index}`),
@@ -277,12 +282,12 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         let phones = [];
-        if (data) {
+        if (data && data.phones) {
           console.log("in data>>>>", data.phones);
-          if (data.phones) {
-            for (let j = 0; j < data.phones.length; j++) {
-              phones.push(data.phones[j].number);
-            }
+
+          for (let j = 0; j < data.phones.length; j++) {
+            phones.push(data.phones[j].number);
+
             console.log("Phones>>>>>>", phones);
             let requestForSaveProfileCredit = {
               search_id: searchId,
@@ -422,7 +427,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn />
+              <SpecificSearchBtn details={true}/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
@@ -658,8 +663,9 @@ const SearchResult = (props) => {
                   </div>
                 ) : (
                   <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
+                         <div role="status" style={{height:"400px"}}>
+                         <Lottie options={Loader}
+              />
                     </div>
                   </div>
                 )}

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi_utils.tasks import repeat_every
 from loguru import logger
 from starlette import status
 
@@ -37,7 +38,6 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.decorator import cache
 
-
 current_active_user = fastapi_users.current_user(active=True)
 
 app = FastAPI()
@@ -50,7 +50,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.mount("/api/bulk", StaticFiles(directory="bulk"), name="bulk")
 
@@ -105,17 +104,20 @@ app.include_router(
 app.include_router(router=email_router, prefix="/api")
 
 
-# @app.on_event("startup")
-# @repeat_every(seconds=60 * 60)
-# def refresh_linkedin_cookie():
-#     logger.debug("linkedin cookie...")
-#     data = fetch_linkedin_cookie()
-#     header = ["cookie"]
-#     with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
-#         writer = csv.writer(f)
-#         writer.writerow(header)
-#         writer.writerow([data])
-#     logger.debug(header)
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60)
+def job():
+    print("linkedin delete cookie...")
+    # data = fetch_linkedin_cookie()
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "r") as f:
+        data = list(csv.reader(f))
+        logger.debug("data", data)
+    # header = ['cookie']
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, 'wb') as f:
+        writer = csv.writer(f)
+        for row in data:
+            if row[2] != "0":
+                writer.writerow(row)
 
 
 @app.get("/refresh_linkedin_cookie")
