@@ -9,6 +9,8 @@ import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
+import Lottie from 'react-lottie';
+import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 
 const SearchResult = (props) => {
@@ -630,8 +632,9 @@ const SearchResult = (props) => {
                   </div>
                 ) : (
                   <div className="d-flex justify-content-center">
-                    <div className="spinner-border" role="status">
-                      <span className="sr-only">Loading...</span>
+                         <div role="status" style={{height:"400px"}}>
+                         <Lottie options={Loader}
+              />
                     </div>
                   </div>
                 )}
