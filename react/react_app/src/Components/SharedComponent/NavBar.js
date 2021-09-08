@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 
 const NavBar = (props) => {
@@ -14,11 +14,11 @@ const NavBar = (props) => {
   }
 
   const handleLogout = (event) => {
-    console.log("document.cookie()...handle", document.cookie)
-    Cookies.remove('user_token', {path: ''})
-    Cookies.remove('user_email', {path: ''})
-    console.log("document.cookie()...", document.cookie)
-  }
+    console.log("document.cookie()...handle", document.cookie);
+    Cookies.remove("user_token", { path: "" });
+    Cookies.remove("user_email", { path: "" });
+    console.log("document.cookie()...", document.cookie);
+  };
 
   return (
     <div style={{ paddingRight: "0px" }}>
@@ -36,7 +36,7 @@ const NavBar = (props) => {
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link disabled" href="/savedList">
+              <a className="nav-icon-menu nav-link" href="/savedList">
                 <img src="assets/images/menu-saved-list.png" alt="saved here" />
                 Saved lists
               </a>
@@ -146,7 +146,10 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="https://leadzen.ai/pricing/">
+                    <a
+                      className="dropdown-item"
+                      href="https://leadzen.ai/pricing/"
+                    >
                       Buy Credits
                     </a>
                   </li>
@@ -173,7 +176,7 @@ const NavBar = (props) => {
                     <div onClick={(event) => handleLogout(event)}>
                       <Link className="dropdown-item" to="/login">
                         <span className="text-muted me-3">Logout</span>{" "}
-                        <img src="assets/images/logout-icon.png" alt="image"/>
+                        <img src="assets/images/logout-icon.png" alt="image" />
                       </Link>
                     </div>
                   </li>

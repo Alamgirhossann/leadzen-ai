@@ -22,10 +22,7 @@ class SaveListResponse(BaseModel):
 
 
 class SaveListFullResponse(BaseModel):
-    # id: str
-    # user_id: str
-    save_list_results: List[Dict]
-    # created_on: datetime
+    save_list_results: List
 
 
 @router.post("/add", response_model=SaveListResponse)
@@ -95,7 +92,7 @@ async def delete_save_list_by_id(
 async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
     try:
-        query = "SELECT * FROM search_saved WHERE user_id = :user_id ORDER BY id DESC"
+        query = "SELECT * FROM search_saved WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
                 rows := await database.fetch_all(
@@ -114,6 +111,7 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
         for x in processed_rows:
             x["save_list_results"] = json.loads(x['save_list_results'])
 
+        # return SaveListFullResponse(save_list_results=processed_rows)
         return processed_rows
     except HTTPException as e:
         raise e

@@ -11,7 +11,7 @@ import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 // import handleSaveList from "./handleSaveList";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-import SavedList from "./SavedList";
+import SavedListButton from "./SavedListButton";
 
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -322,7 +322,7 @@ const SearchResult = (props) => {
   console.log("myLeads>>>>>>>>>>>", myLeads);
 
   const [show, setShow] = useState(false);
-  const [selected, setSelected] = useState(false);
+  // const [selected, setSelected] = useState(false);
 
   const handleUnlockEmail = async (e, index, data) => {
     e.preventDefault();
@@ -827,18 +827,18 @@ const SearchResult = (props) => {
                             {/*<a href="#" onClick={handleSaveList}>*/}
                             {/*  <p className="search-close-btn">*/}
                             {/*    saveList*/}
-                            {/*    /!*<img*!/*/}
-                            {/*    /!*  src={*!/*/}
-                            {/*    /!*    selected*!/*/}
-                            {/*    /!*      ? "assets/images/Frame 543.png"*!/*/}
-                            {/*    /!*      : "assets/images/Group 1863.png"*!/*/}
-                            {/*    /!*  }*!/*/}
-                            {/*    /!*  alt=""*!/*/}
+                            {/*    <img*/}
+                            {/*      src={*/}
+                            {/*        selected*/}
+                            {/*          ? "assets/images/Frame 543.png"*/}
+                            {/*          : "assets/images/Group 1863.png"*/}
+                            {/*      }*/}
+                            {/*      alt=""*/}
                             {/*/>*/}
                             {/*  </p>*/}
                             {/*</a>*/}
                             <p>
-                              <SavedList data={data} />
+                              <SavedListButton data={data} />
                             </p>
                           </div>
                           <div

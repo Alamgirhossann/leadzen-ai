@@ -1,9 +1,11 @@
 import Cookies from "js-cookie";
-import React from "react";
+import React, { useState } from "react";
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
-const SavedList = ({ data }) => {
+const SavedListButton = ({ data }) => {
+  const [selectedButton, setSelectedButton] = useState(false);
   console.log("e.target", data);
+
   function handleUnAuthorized(response = null) {
     console.log("User is UnAuthorized");
     alert("Please Logout and LogIn Again");
@@ -11,11 +13,11 @@ const SavedList = ({ data }) => {
 
   function handleError(response = null) {
     console.error(`Error, Status Code: ${response?.status}`);
-    alert("Some thing goes wrong");
+    alert("Please Try after sometime");
   }
 
   async function handleSaveList() {
-    console.log("ataa",data)
+    console.log("dataa", data);
     try {
       const response = await fetch(apiServer + "/save_list/add", {
         method: "POST",
@@ -29,6 +31,7 @@ const SavedList = ({ data }) => {
       async function handleSuccess(response) {
         const result = await response.json();
         console.log("response from handleSaveList>>>", result);
+        setSelectedButton(true);
       }
 
       switch (response.status) {
@@ -45,10 +48,20 @@ const SavedList = ({ data }) => {
   }
 
   return (
-    <button type="button" onClick={() => handleSaveList(data)}>
-      button
-    </button>
+    <>
+      {!selectedButton ? (
+        <button
+          style={{ background: "none", border: "none" }}
+          type="button"
+          onClick={() => handleSaveList(data)}
+        >
+          <img src="assets/images/Group 1863.png" alt="" />
+        </button>
+      ) : (
+        <img src="assets/images/Frame 543.png" alt="" />
+      )}
+    </>
   );
 };
 
-export default SavedList;
+export default SavedListButton;
