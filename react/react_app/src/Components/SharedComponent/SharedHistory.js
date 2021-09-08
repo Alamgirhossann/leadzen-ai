@@ -40,6 +40,7 @@ const SharedHistory = () => {
   //     profile_used: 9,
   //   },
   // ];
+
   const [myLeads, setMyLeads] = useState([]);
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   const myTags = [
@@ -73,6 +74,12 @@ const SharedHistory = () => {
     if (data.search_type === "texAu") {
       history.push({
         pathname: "/result_by_history_type1",
+        state: { details: data },
+      });
+    }
+    if (data.search_type === "texAuCompany") {
+      history.push({
+        pathname: "/result_by_history_type3",
         state: { details: data },
       });
     }
@@ -153,9 +160,11 @@ const SharedHistory = () => {
                     </p>
                     <div align="right">
                       <small className="d-block">
-                        Profile: {data.profile_used}
+                        Profile: {data.profile_count}
                       </small>
-                      <small className="d-block">Mail: {data.mail_used}</small>
+                      <small className="d-block">
+                        Mail: {data.email_count}
+                      </small>
                     </div>
                   </div>
                 </div>

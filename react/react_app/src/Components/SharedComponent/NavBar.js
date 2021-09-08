@@ -51,6 +51,13 @@ const NavBar = (props) => {
             </li>
 
             <li className="nav-item me-md-4 me-3">
+              <a className="nav-icon-menu nav-link" href="#">
+                <img src="assets/images/trending-up.png" alt="tranding here" />
+                Trending Leads
+              </a>
+            </li>
+
+            <li className="nav-item me-md-4 me-3">
               <li className="nav-item dropdown">
                 <a
                   className="credit-btn btn btn-outline-danger nav-link"

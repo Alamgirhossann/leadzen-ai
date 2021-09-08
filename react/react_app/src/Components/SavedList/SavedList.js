@@ -72,7 +72,7 @@ const SavedList = () => {
       <Header user={user} />
 
       <div className="text-center p-4 my-3">
-        <div className="user-lead-top mb-2 head-btn-style">
+        <div className="user-lead-top mb-2 head-btn-style mb-3">
           <div className="d-flex align-items-center">
             <h5 className="m-0">
             <a href="/repeatedUser" className="text-decoration-none text-dark">
@@ -102,7 +102,7 @@ const SavedList = () => {
           </form>
         </div>
         <div className="lead-accordion accordion" id="accordionExample2">
-          <div className="accordion-item">
+          <div className="accordion-item mb-3">
             <h2 className="accordion-header">
               <button
                 className="accordion-button alignment"
@@ -117,13 +117,13 @@ const SavedList = () => {
               >
                 <div className=" first-grid head-align">
                   <span className="me-3 fw-bold">My Leads</span>
-                  <button className="m-0">
+                  {/* <button className="m-0">
                     <img
                       className="m-0"
                       src="assets/images/edit (4).png"
                       alt=""
                     />
-                  </button>
+                  </button> */}
                 </div>
                 <div className="second-grid">
                   <input
@@ -207,13 +207,13 @@ const SavedList = () => {
               >
                 <div className=" first-grid head-align">
                   <span className="me-3 fw-bold">Product Designer Leads</span>
-                  <button className="m-0">
+                  {/* <button className="m-0">
                     <img
                       className="m-0"
                       src="assets/images/edit (4).png"
                       alt=""
                     />
-                  </button>
+                  </button> */}
                 </div>
                 <div className="second-grid">
                   <input

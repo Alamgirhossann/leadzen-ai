@@ -11,7 +11,8 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-
+import Lottie from "react-lottie";
+import Loader from "../../Loader";
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
@@ -28,7 +29,7 @@ const SearchResult = (props) => {
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
   ]);
-  const [searchTerm, setSearchTerm] = useState({});
+  const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
@@ -55,9 +56,7 @@ const SearchResult = (props) => {
         : 0
     );
   };
-  useEffect(async () => {
-    console.log("in search term useeffect...", searchTerm);
-  }, [searchTerm]);
+
   today = dd + "/" + mm + "/" + yyyy;
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
@@ -71,8 +70,8 @@ const SearchResult = (props) => {
           "from advance. requestTexAu name.....",
           props.location.state.requestTexAu
         );
-        setSearchTerm(props.location.state.requestTexAu);
-        console.log("serc", searchTerm);
+        setSearchTerm(props.location.state.requestTexAu.searchTerm);
+        console.log("serchterm...after set advance search", searchTerm);
         requestForTexAu = props.location.state.requestTexAu;
         setLoading(true);
       }
@@ -80,7 +79,7 @@ const SearchResult = (props) => {
       let isKeyword,
         isEducation = false;
       if (props.location.state.customSearch) {
-        setSearchTerm(props.location.state.customSearch);
+        console.log("serchterm...after set custom search", searchTerm);
         setCustomSearch(props.location.state.customSearch);
         console.log(
           "from advance.customSearch filters .....",
@@ -136,7 +135,7 @@ const SearchResult = (props) => {
 
       const inputData = props.location.state.data;
       const endpoint = props.location.state.endpoint;
-      setSearchTerm(props.location.state.data);
+      console.log("serchterm...after set social search", searchTerm);
       setLoading(true);
 
       await sendForExecution(endpoint, inputData);
@@ -154,13 +153,13 @@ const SearchResult = (props) => {
             },
           }
         );
-
         let json_res = await response.json();
-        setSearchId(json_res.search_id);
-        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
-        setLoading(false);
-
-        setMyLeads(json_res.search_results);
+        setTimeout(() => {
+          setSearchId(json_res.search_id);
+          console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+          setLoading(false);
+          setMyLeads(json_res.search_results);
+        }, 60000);
       } catch (err) {
         console.error("Error: ", err);
       }
@@ -305,7 +304,8 @@ const SearchResult = (props) => {
     timeoutId = setTimeout(function () {
       console.error("record not found within 5 Min");
       clearInterval(intervalId);
-      // TODO: show appropriate ui actions like stop spinners and show error message etc
+      setLoading(false);
+      setMyLeads("");
     }, 5 * 60 * 1000);
   };
 
@@ -406,11 +406,26 @@ const SearchResult = (props) => {
 
   const saveSearchedRecord = async (response, searchType) => {
     console.log("In saveSearchedRecord...searchTerm", searchTerm);
-
+    let search_term = "";
+    if (
+      props.location.pathname.includes("/result_by_name") ||
+      props.location.pathname.includes("/advanceSearch")
+    ) {
+      if (props.location.state.requestTexAu) {
+        search_term = props.location.state.requestTexAu.searchTerm;
+      }
+      if (props.location.state.customSearch) {
+        let values = Object.values(props.location.state.customSearch);
+        search_term = values.filter(Boolean).toString();
+        console.log("Values Only.....>>>>", search_term);
+      }
+    }
+    if (props.location.pathname.includes("/social_url_search")) {
+      search_term = props.location.state.data;
+    }
     let requestForSaveSearch = {
-      search_id: uuidv4(),
       search_type: searchType,
-      search_term: JSON.stringify(searchTerm),
+      search_term: search_term,
       search_results: response,
     };
     console.log("In saveSearchedRecord...", requestForSaveSearch);
@@ -471,41 +486,50 @@ const SearchResult = (props) => {
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
             let obj = json_res[i];
-            console.log("in for loop pipl>>>", obj, ">>>>", obj.phones.length);
-            for (let j = 0; j < obj.phones.length; j++) {
-              phones.push(obj.phones[j].number);
+            console.log("in for loop pipl>>>", obj, ">>>>");
+            if (obj.phones) {
+              for (let j = 0; j < obj.phones.length; j++) {
+                phones.push(obj.phones[j].number);
+              }
             }
           }
           console.log("Phones>>>>>>", phones);
-          let requestForSaveProfileCredit = {
-            search_id: searchId,
-            phone_numbers: phones,
-            search_index: `${currentPage}${index}`,
-          };
-          try {
-            const response = await fetch(
-              apiServer + "/credits/profile/bulk_add",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                  Authorization: `Bearer ${Cookies.get("user_token")}`,
-                },
-                body: JSON.stringify(requestForSaveProfileCredit),
-              }
-            );
+          if (phones.length >= 1) {
+            let requestForSaveProfileCredit = {
+              search_id: searchId,
+              phone_numbers: phones,
+              search_index: `${currentPage}${index}`,
+            };
+            try {
+              const response = await fetch(
+                apiServer + "/credits/profile/bulk_add",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                  },
+                  body: JSON.stringify(requestForSaveProfileCredit),
+                }
+              );
 
-            const result = response.json();
+              const result = response.json();
 
-            console.log("response from saveResult>>>", result);
-          } catch (e) {
-            console.error("Exception>>", e);
+              console.log("response from saveResult>>>", result);
+            } catch (e) {
+              console.error("Exception>>", e);
+            }
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              { index: `${currentPage}${index}`, details: json_res[0] },
+            ]);
+          } else {
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              { index: `${currentPage}${index}`, details: "Record Not Found" },
+            ]);
           }
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: json_res[0] },
-          ]);
         } else {
           console.log("In setSpecificUserDetails else");
           setSpecificUserDetails((prev) => [
@@ -660,7 +684,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn />
+              <SpecificSearchBtn details={true} />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
@@ -746,18 +770,18 @@ const SearchResult = (props) => {
                               )}
                               onChange={handleLeadSelectionChange}
                             />
-                            <p className="search-author text-danger">
+                            <div className="search-author text-danger ">
                               <img
+                                style={{ borderRadius: "50%" }}
                                 src={
                                   data.profilePicture
                                     ? data.profilePicture
                                     : "assets/images/author-image.png"
                                 }
                                 alt=""
-                                // style="border-radius: 50%;"
                               />
-                            </p>
-                            <div className="search-user">
+                            </div>
+                            <div className="search-user ps-3">
                               <p>{data.length === 0 ? null : data.name}</p>
                               <small className="d-block">
                                 Works at {data.length === 0 ? null : data.job}
@@ -765,6 +789,16 @@ const SearchResult = (props) => {
                               <small className="d-block">
                                 {data.length === 0 ? null : data.location}
                               </small>
+                            </div>
+                            <div className="linkedin-icon d-flex justify-content-end">
+                              <span>
+                                <a href={data.url} target="_blank">
+                                  <img
+                                    src="assets/images/linkedin1.png"
+                                    alt=""
+                                  />
+                                </a>
+                              </span>
                             </div>
                             <div className="search-email text-center">
                               <small
@@ -794,7 +828,7 @@ const SearchResult = (props) => {
                             </div>
                             <p className="search-view-btn ">
                               <a
-                                className="btn"
+                                className="btn button"
                                 data-toggle="collapse"
                                 href={
                                   "#collapseExample_" + `${currentPage}${index}`
@@ -854,8 +888,8 @@ const SearchResult = (props) => {
                                     </div>
                                 ) : (
                                     <div className="d-flex justify-content-center">
-                                        <div className="spinner-border" role="status">
-                                            <span className="sr-only">Loading...</span>
+                                        <div role="status" style={ height: "400px" }>
+                                            <Lottie options={Loader} >
                                         </div>
                                     </div>
                                 )}
