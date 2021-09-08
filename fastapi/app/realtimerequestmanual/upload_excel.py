@@ -16,7 +16,6 @@ from fastapi import (
 )
 from starlette import status
 from app.users import fastapi_users
-
 from app.config import (
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
     API_CONFIG_GET_USER_FROM_USER_ID_URL
@@ -62,7 +61,6 @@ async def upload_excel_file(
                         user=user,
                     )
                 )
-
                 return RealTimeUploadResponse(
                     input_filename=file.filename, output_filename=outgoing_filename
                 )
