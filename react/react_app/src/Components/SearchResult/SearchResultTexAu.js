@@ -406,7 +406,6 @@ const SearchResult = (props) => {
       }catch(e){
         console.log(e)
       }
-    setWait(null)
     } else {
       unlockEmailDetails?.map((spec) => {
         console.log(
@@ -416,6 +415,7 @@ const SearchResult = (props) => {
         );
       });
     }
+    setWait(null)
   };
 
   useEffect(() => {
