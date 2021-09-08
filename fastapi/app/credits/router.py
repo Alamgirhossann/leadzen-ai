@@ -1,15 +1,18 @@
+import sys
 import uuid
 from datetime import datetime
 from typing import List
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 
+from app.config import API_CONFIG_SELF_BASE_URL
 from app.credits.common import ProfileCreditAddRequest, ProfileCreditBulkAddRequest, ProfileCreditAddResponse, \
     ProfileCreditBulkAddResponse, ProfileCreditResponse, EmailCreditAddRequest, EmailCreditBulkAddRequest, \
-    EmailCreditAddResponse, EmailCreditBulkAddResponse, EmailCreditResponse
+    EmailCreditAddResponse, EmailCreditBulkAddResponse, EmailCreditResponse, UserCreditResponse
 from app.database import profile_credit_history, email_credit_history, database
-from app.users import fastapi_users
+from app.users import fastapi_users, users
 
 router = APIRouter(prefix="/credits", tags=["Credits"])
 
@@ -130,7 +133,7 @@ async def add_bulk_profile_credit_history(
                    "created_on": datetime.utcnow()
                    } for phone in [request.phone_numbers[i] for i in range(0, len(request.phone_numbers))]]
         profile_credit_ids = [item.get("id") for item in values]
-        logger.debug("Ids>>>>"+str(profile_credit_ids)+ str(type(profile_credit_ids)))
+        logger.debug("Ids>>>>" + str(profile_credit_ids) + str(type(profile_credit_ids)))
         query = profile_credit_history.insert().values(
             values
         )
@@ -257,6 +260,11 @@ async def add_bulk_email_credit_history(
     logger.debug(f"{request=}, {user=}")
 
     try:
+        if user.email_credit <= 0:
+            logger.warning("Insufficient credits")
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient credits"
+            )
 
         values = [{"id": str(uuid.uuid4()),
                    "user_id": str(user.id),
@@ -266,20 +274,89 @@ async def add_bulk_email_credit_history(
                    "created_on": datetime.utcnow()
                    } for emails in [request.email_addresses[i] for i in range(0, len(request.email_addresses))]]
         email_credit_ids = [item.get("id") for item in values]
-
         query = email_credit_history.insert().values(
             values
         )
-
-        row_id = await database.execute(query)
-
+        if not (
+                row_id := await database.execute(query)
+        ):
+            logger.warning("Invalid Request")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
         logger.debug(f"{row_id=}")
+
+        # async with httpx.AsyncClient(auth=Depends(fastapi_users.get_current_active_user)) as client:
+        #
+        #     response = await client.put(
+        #         f"{API_CONFIG_SELF_BASE_URL}/api/credits/deduct/EMAIL",
+        #
+        #
+        #     )
+        #     if not response:
+        #         logger.debug(f"credit deduct {response=}")
 
         return EmailCreditBulkAddResponse(email_credit_ids=email_credit_ids)
 
     except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("line->" + str(exc_tb.tb_lineno))
+        print('Exception' + str(e))
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Inserting to Database",
+        )
+
+
+@router.put("/deduct/{credit_type}", response_model=UserCreditResponse)
+async def deduct_credit(credit_type: str, user=Depends(fastapi_users.get_current_active_user),
+                        ):
+    logger.debug(f"{user=}")
+    try:
+        values = ""
+        if credit_type:
+            if credit_type == 'EMAIL':
+                if not user.email_credit >= 1:
+                    logger.warning("Insufficient credits")
+                    raise HTTPException(
+                        status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient credits"
+                    )
+                values = {"email_credit": users.c.email_credit - 1}
+            if credit_type == 'PROFILE':
+                if not user.profile_credit >= 1:
+                    logger.warning("Insufficient credits")
+                    raise HTTPException(
+                        status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient credits"
+                    )
+                values = {"profile_credit": users.c.profile_credit - 1}
+            if credit_type == 'COMPANY':
+                if not user.company_credit >= 1:
+                    logger.warning("Insufficient credits")
+                    raise HTTPException(
+                        status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient credits"
+                    )
+                values = {"company_credit": users.c.company_credit - 1}
+
+        update_query = users.update().values(values).where(users.c.id == user.id)
+        logger.debug(f"{update_query=}")
+
+        if not (
+                row := await database.execute(update_query
+                                              )
+        ):
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+        return UserCreditResponse(row_updated=row)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("line->" + str(exc_tb.tb_lineno))
+        print('Exception' + str(e))
+        logger.critical(f"Exception Querying Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
         )
