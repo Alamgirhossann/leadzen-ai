@@ -1,4 +1,5 @@
 import os
+import sentry_sdk
 
 API_CONFIG_PIPL_BASE_URL = os.getenv(
     "API_CONFIG_PIPL_BASE_URL", "https://api.pipl.com/search"
@@ -224,4 +225,18 @@ API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS = int(
 )
 API_CONFIG_MAX_RESULTS_PER_CALL = int(
     os.getenv("API_CONFIG_MAX_RESULTS_PER_CALL", "100")
+)
+
+API_CONFIG_SENTRY_DSN = os.getenv(
+    "API_CONFIG_SENTRY_DSN",
+    "https://5c82fcb5179441aaa52475dec4c2b507@o818106.ingest.sentry.io/5950717",
+)
+
+
+sentry_sdk.init(
+    API_CONFIG_SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
 )

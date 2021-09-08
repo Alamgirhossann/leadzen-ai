@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, status, BackgroundTasks, Depends
 from fastapi_cache.decorator import cache
 from loguru import logger
 from pydantic import BaseModel
+from sentry_sdk import capture_message
 
 from app.config import (
     API_CONFIG_PIPL_API_KEY,
@@ -82,6 +83,11 @@ async def people_search(
             response = await client.get(url)
 
             if not response.status_code == 200:
+                if response.status_code == 403 or response.status_code == 429:
+                    capture_message(
+                        message=f"PIPL Rate Limit Hit, {url=}, {response.status_code =}"
+                    )
+
                 logger.warning(
                     f"Invalid Status Code: {response.status_code=}, {response.text=}"
                 )
