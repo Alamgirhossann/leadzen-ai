@@ -84,6 +84,7 @@ async def people_search(
 
             if not response.status_code == 200:
                 if response.status_code == 403 or response.status_code == 429:
+                    # https://docs.pipl.com/reference/#rate-limiting-information
                     capture_message(
                         message=f"PIPL Rate Limit Hit, {url=}, {response.status_code =}"
                     )
