@@ -9,7 +9,7 @@ from loguru import logger
 from starlette import status
 
 from app.bulk.router import router as bulk_router
-from app.realtimerequestmanual.uploadcsv import router as realtime_router
+from app.realtimerequestmanual.upload_excel import router as realtime_router
 from app.config import (
     API_CONFIG_LINKEDIN_CSV_FILE,
     API_CONFIG_JWT_SECRET,
