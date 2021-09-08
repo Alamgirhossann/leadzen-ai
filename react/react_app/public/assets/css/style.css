@@ -12995,7 +12995,7 @@ a:hover {
   padding-bottom: 14px;
   margin-bottom: 10px;
   font-size: 16px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1) !important;
+  /* box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1) !important; */
 }
 .lead-accordion .accordion-item .accordion-header button img {
   height: 15px;
@@ -13552,7 +13552,7 @@ a:hover {
 }
 .sign-up-form input:invalid,
 .sign-up-form select:invalid {
-  border-color: #fb3e3e;
+  border-color: #9c9c9c;
 }
 
 .sign-up-form button {
@@ -14364,6 +14364,14 @@ a:hover {
     padding: 10px 25px !important;
   }
 }
+@media only screen and (max-width: 1124px){
+  .history-container{
+    width: 800px;
+  }
+ .container-style{
+   overflow-x: scroll;
+ }
+}
 @media only screen and (max-width: 1024px){
   .save-list-container, .history-container{
     width: 800px;
@@ -14703,7 +14711,7 @@ a:hover {
 .history-container {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-areas: "p n n n d d c c c v v b";
+  grid-template-areas: "p n n n d d c c v v v b";
   align-items: center;
 }
 .profile {
@@ -14738,7 +14746,7 @@ a:hover {
 .button {
   border: 1px solid #fb3e3e;
   color: #fb3e3e;
-  padding: 5px 15px;
+  padding: 5px 10px;
   border-radius: 5px;
 }
 .detailed-search {

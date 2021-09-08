@@ -3,6 +3,7 @@ import "./Style/style.css";
 import Header from "../SharedComponent/Header";
 import Cookies from "js-cookie"
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+const email_id= `${process.env.REACT_APP_CONFIG_EMAIL_ID}`;
 const RealTimePage = () => {
  const [requirement, setRequirement] = useState();
   useEffect(() => {
@@ -42,9 +43,9 @@ const RealTimePage = () => {
     {
         let user_id= Cookies.get("user_id")
         const inputData = {
-        email:"malhar@analystt.ai",
-        message:"Requset_from_UserId: " + user_id +'\n' + "requriement: "+ requirement,
-        subject:"Request From RealTime"
+        email:email_id,
+        message:"Requset_from_UserId: " + user_id +'\n' + "\n" + "requirement: "+ requirement,
+        subject:"Request_from_UserId"
         };
         try{
              const response = await fetch(apiServer + "/email/send", {
@@ -60,10 +61,10 @@ const RealTimePage = () => {
             {
                 var element = document.getElementById("real-time-request");
                     element.value =""
-                alert("Request is send")
+                alert("Request is Sent. You will get an email with the results in a few hours.")
             }
             else{
-                alert("Sorry request is not send try again")
+                alert("Sorry your Request was not sent. Please try again")
             }
         }
         catch(err){
@@ -74,7 +75,6 @@ const RealTimePage = () => {
 
 
   }
-console.log(requirement)
   return (
     <div>
       <Header user={user} />

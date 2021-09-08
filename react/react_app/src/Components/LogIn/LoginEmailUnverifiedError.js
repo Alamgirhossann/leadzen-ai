@@ -4,33 +4,33 @@ import { Link } from "react-router-dom";
 const LoginEmailUnverifiedError = () => {
   return (
     <div className="container-body">
-      <header class="header-area">
-        <nav class="header-navbar navbar navbar-expand-xl bg-light">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="index.html">
-              <img src="assets/images/header-brand-black.png" alt="" />
+      <header className="header-area">
+        <nav className="header-navbar navbar navbar-expand-xl bg-light">
+          <div className="container-fluid">
+            <a className="navbar-brand" href="index.html">
+              <img src="assets/images/header-brand-black.png" alt=""/>
             </a>
           </div>
         </nav>
       </header>
 
-      <div class="main-content-area overflow-hidden">
-        <div class="main-wrapper">
-          <div class="container-fluid">
-            <div class="form-container">
-              <div class="signup-wrapper py-4 px-md-6">
-                <div class="row align-items-center">
-                  <div class="col-md-6 robot-container order-md-12">
-                    <div class="sign-up-email-error">
-                      <p class="fw-bold text-center">
+      <div className="main-content-area overflow-hidden">
+        <div className="main-wrapper">
+          <div className="container-fluid">
+            <div className="form-container">
+              <div className="signup-wrapper py-4 px-md-6">
+                <div className="row align-items-center">
+                  <div className="col-md-6 robot-container order-md-12">
+                    <div className="sign-up-email-error">
+                      <p className="fw-bold text-center">
                         <img
-                          style={{ width: "20px" }}
-                          src="assets/images/Group 2221.png"
-                          alt=""
+                            style={{width: "20px"}}
+                            src="assets/images/Group 2221.png"
+                            alt=""
                         />{" "}
-                        <br />
-                        <span class="text-danger"> Sorry!</span>
-                        <br />
+                        <br/>
+                        <span className="text-danger"> Sorry!</span>
+                        <br/>
                         Please Verify your Email by clicking the link sent to
                         your Email
                       </p>

@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import ResetPassword from "./Components/ResetPassword/ResetPassword";
 import Home from "./Components/Home/Home";
 import LogIn from "./Components/LogIn/LogIn";
@@ -34,13 +35,15 @@ import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedEr
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
 import RealTimePage from './Components/RealTimeInfo/RealTimePage';
 import RealTimeListView from './Components/RealTimeInfo/RealTimeListView';
+import FirstTimeUserCompany from "./Components/CompanyInfo/FirstTimeUserCompany";
+import SearchResultCompany from "./Components/CompanyInfo/SearchResultCompany";
+import DetailInfoCompany from "./Components/CompanyInfo/DetailInfoCompany";
+import PrivateRoute from "./Components/SharedComponent/PrivateRoute";
+
 const App = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
-          <LogIn />
-        </Route>
         <Route path="/resetPassword">
           <ResetPassword />
         </Route>
@@ -49,9 +52,6 @@ const App = () => {
         </Route>
         <Route path="/howToUse">
           <HowToUse />
-        </Route>
-        <Route path="/profile">
-          <Profile />
         </Route>
         <Route path="/savedList">
           <SavedList />
@@ -65,43 +65,67 @@ const App = () => {
         <Route path="/loginError">
           <LoginError />
         </Route>
-        <Route path="/login">
-          <LogIn />
-        </Route>
         <Route path="/signUp">
           <SignUp />
         </Route>
         <Route path="/signUpError">
           <SignUpError />
         </Route>
-        <Route path="/firstTimeUser">
-          <FirstTimeUser />
-        </Route>
-        <Route path="/history">
-          <History />
-        </Route>
-        <Route path="/repeatedUser">
-          <RepeatedUser />
-        </Route>
+
         <Route path="/detailedInfo">
           <DetailedInfo />
         </Route>
         <Route path="/signUpEmailError">
           <SignUpEmailError />
         </Route>
+        <PrivateRoute path="/searchResult" component={SearchResult} exact />
+        <PrivateRoute path="/profile" component={Profile} exact />
+        <PrivateRoute path="/history" component={History} exact />
+        <PrivateRoute
+          path="/result_by_name"
+          component={SearchResultTexAu}
+          exact
+        />
+        <PrivateRoute
+          path="/advanceSearch"
+          component={SearchResultTexAu}
+          exact
+        />
+        <PrivateRoute path="/verification" component={Verification} exact />
+        <PrivateRoute path="/repeatedUser" component={RepeatedUser} exact />
+        <PrivateRoute path="/firstTimeUser" component={FirstTimeUser} exact />
+                 <Route path='/realTimePage'>
+            <RealTimePage />
+        </Route>
+        <Route path='/realTimeListView'>
+            <RealTimeListView />
+        </Route>
+        <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
+        <PrivateRoute path="/excelDownload" component={ExcelDownload} />
+        <Route path="/login" component={LogIn} />
+        <Route path="/" component={LogIn} />
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/result_by_name" component={SearchResultTexAu} />
         <Route path="/search_by_history_type2" component={SearchResult} />
         <Route path="/result_by_history_type1" component={SearchResultTexAu} />
+        <Route
+          path="/result_by_history_type3"
+          component={SearchResultCompany}
+        />
         <Route path="/social_url_search" component={SearchResultTexAu} />
         <Route path="/advanceSearch" component={SearchResultTexAu} />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />
         <Route path="/excelDownload" component={ExcelDownload} />
+        <Route
+          path="/company_first_time_user"
+          component={FirstTimeUserCompany}
+        />
 
         <Route path="/loginEmailError">
           <LoginEmailError />
         </Route>
+
         <Route path="/passwordInstruction">
           <PasswordInstruction />
         </Route>
@@ -129,11 +153,13 @@ const App = () => {
         <Route path="/dashboardTwo">
           <DashboardTwo />
         </Route>
-         <Route path='/realTimePage'>
-            <RealTimePage />
+        <Route path="/firstTimeUserCompany">
+          <FirstTimeUserCompany />
         </Route>
-        <Route path='/realTimeListView'>
-            <RealTimeListView />
+        <Route path="/searchResultCompany" component={SearchResultCompany} />
+
+        <Route path="/detailInfoCompany">
+          <DetailInfoCompany />
         </Route>
       </Switch>
     </Router>
