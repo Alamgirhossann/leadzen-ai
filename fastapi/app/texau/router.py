@@ -28,6 +28,9 @@ from app.texau.linkedin.profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest, handle_find_matching_linkedin_profiles_company, TexAuFindCompanyProfileRequest,
 )
+
+from app.texau.linkedin.company import (TexAuFindLinkedInCompanyRequest,handle_find_company_details)
+
 from app.texau.status import get_status_once
 from app.users import fastapi_users
 
