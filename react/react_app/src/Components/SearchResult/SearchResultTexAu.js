@@ -845,69 +845,69 @@ const SearchResult = (props) => {
                               </a>
                             </p>
 
-                                                        <a href="#" onClick={clickSelect}>
-                                                            <p className="search-close-btn">
-                                                                <img
-                                                                    src={
-                                                                        selected
-                                                                            ? "assets/images/Frame 543.png"
-                                                                            : "assets/images/Group 1863.png"
-                                                                    }
-                                                                    alt=""
-                                                                />
-                                                            </p>
-                                                        </a>
-                                                    </div>
-                                                    <div
-                                                        style={{
-                                                            background: "white",
-                                                            borderRadius: "20px",
-                                                            padding: "20px",
-                                                        }}
-                                                    >
-                                                        <div
-                                                            className="panel-collapse collapse in"
-                                                            id={"collapseExample_" + `${currentPage}${index}`}
-                                                        >
-                                                            {specificUserDetails?.map((spec) => (
-                                                                <span>
-                                                                    {spec.index === `${currentPage}${index}` ? (
-                                                                        <span>
-                                                                            <SpecificUser details={spec.details} />
-                                                                        </span>
-                                                                    ) : null}
-                                                                </span>
-                                                            ))}{" "}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <h5>Record not found</h5>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className="d-flex justify-content-center">
-                                        <div role="status" style={ height: "400px" }>
-                                            <Lottie options={Loader} >
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="d-flex justify-content-center">
-                                <Pagination
-                                    postsPerPage={10}
-                                    totalPosts={myLeads ? myLeads.length : 1}
-                                    paginate={paginate}
+                            <a href="#" onClick={clickSelect}>
+                              <p className="search-close-btn">
+                                <img
+                                  src={
+                                    selected
+                                      ? "assets/images/Frame 543.png"
+                                      : "assets/images/Group 1863.png"
+                                  }
+                                  alt=""
                                 />
+                              </p>
+                            </a>
+                          </div>
+                          <div
+                            style={{
+                              background: "white",
+                              borderRadius: "20px",
+                              padding: "20px",
+                            }}
+                          >
+                            <div
+                              className="panel-collapse collapse in"
+                              id={"collapseExample_" + `${currentPage}${index}`}
+                            >
+                              {specificUserDetails?.map((spec) => (
+                                <span>
+                                  {spec.index === `${currentPage}${index}` ? (
+                                    <span>
+                                      <SpecificUser details={spec.details} />
+                                    </span>
+                                  ) : null}
+                                </span>
+                              ))}{" "}
                             </div>
-                            <AskJarvis/>
+                          </div>
                         </div>
+                      ))
+                    ) : (
+                      <h5>Record not found</h5>
+                    )}
+                  </div>
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    <div role="status" style={{ height: "400px" }}>
+                      <Lottie options={Loader} />
                     </div>
-                </div>
+                  </div>
+                )}
+              </div>
+              <div className="d-flex justify-content-center">
+                <Pagination
+                  postsPerPage={10}
+                  totalPosts={myLeads ? myLeads.length : 1}
+                  paginate={paginate}
+                />
+              </div>
+              <AskJarvis />
             </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default SearchResult;

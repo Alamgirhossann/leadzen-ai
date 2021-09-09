@@ -109,36 +109,36 @@ const SharedHistory = () => {
     }
   }, []);
   return (
-        <div className="text-center p-4 my-3 container-fluid">
-          <div className="user-lead-top mb-2 head-btn-style">
-            <div className="d-flex align-items-center">
-              <h5 className="m-0">
-              <a href="/repeatedUser" className="text-decoration-none text-dark">
-                  <span className="me-1">
-                    <img src="assets/images/back-union.png" alt="title" />
-                  </span>{" "}
-                 </a>
-               History
-              </h5>
-            </div>
-            <form action="#" className="search-form-sm">
-              <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control"
-                  onBlur={handleSearch}
-                  placeholder="Search"
-                />
-                <button
-                  className="btn btn-danger"
-                  onClick={handleSubmit}
-                  type="submit"
-                >
-                  <img src="assets/images/small-search-icon.png" alt="title" />
-                </button>
-              </div>
-            </form>
+    <div className="text-center p-4 my-3 container-fluid">
+      <div className="user-lead-top mb-2 head-btn-style">
+        <div className="d-flex align-items-center">
+          <h5 className="m-0">
+            <a href="/repeatedUser" className="text-decoration-none text-dark">
+              <span className="me-1">
+                <img src="assets/images/back-union.png" alt="title" />
+              </span>{" "}
+            </a>
+            History
+          </h5>
+        </div>
+        <form action="#" className="search-form-sm">
+          <div className="input-group">
+            <input
+              type="text"
+              className="form-control"
+              onBlur={handleSearch}
+              placeholder="Search"
+            />
+            <button
+              className="btn btn-danger"
+              onClick={handleSubmit}
+              type="submit"
+            >
+              <img src="assets/images/small-search-icon.png" alt="title" />
+            </button>
           </div>
+        </form>
+      </div>
 
       <div className="accordion-body">
         {myLeads.length >= 0 ? (
