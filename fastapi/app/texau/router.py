@@ -14,6 +14,7 @@ from app.texau.linkedin.commenters import (
     handle_find_post_commenters,
     TexAuFindLinkedInPostCommentersRequest,
 )
+from app.texau.linkedin.company import (TexAuFindLinkedInCompanyRequest, handle_find_company_details)
 from app.texau.linkedin.cookie import read_linkedin_cookie
 from app.texau.linkedin.email import (
     TexAuFindEmailAndPhoneForLinkedInProfileRequest,
@@ -28,9 +29,6 @@ from app.texau.linkedin.profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest, handle_find_matching_linkedin_profiles_company, TexAuFindCompanyProfileRequest,
 )
-
-from app.texau.linkedin.company import (TexAuFindLinkedInCompanyRequest,handle_find_company_details)
-
 from app.texau.status import get_status_once
 from app.users import fastapi_users
 
@@ -155,6 +153,26 @@ async def find_linkedin_post_commenters(
         app_request.cookie = cookie
 
     return await handle_find_post_commenters(request=app_request)
+
+
+@router.post("/linkedin/find_company_details", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_company_details(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+
+    if not app_request.cookie:
+        if not (cookie := read_linkedin_cookie()):
+            logger.critical("Error Getting LinkedIn Cookie")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error Getting LinkedIn Cookie",
+            )
+        app_request.cookie = cookie
+
+    return await handle_find_company_details(request=app_request)
 
 
 @router.get("/result/{execution_id}", response_model=TexAuResult)
