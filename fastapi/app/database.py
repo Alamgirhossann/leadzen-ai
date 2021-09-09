@@ -1,5 +1,3 @@
-import datetime
-import uuid
 
 import databases
 import sqlalchemy
@@ -39,6 +37,17 @@ search_history = sqlalchemy.Table(
     sqlalchemy.Column("user_id", sqlalchemy.String),
     sqlalchemy.Column("search_type", sqlalchemy.String),
     sqlalchemy.Column("search_term", sqlalchemy.String),
+    sqlalchemy.Column("search_results", sqlalchemy.String),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+)
+
+profile_search = sqlalchemy.Table(
+    "profile_search",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("search_type", sqlalchemy.String),
+    sqlalchemy.Column("hash_key", sqlalchemy.String),
     sqlalchemy.Column("search_results", sqlalchemy.String),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )

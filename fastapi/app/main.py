@@ -19,6 +19,7 @@ from app.database import database
 from app.email import router as email_router
 from app.pipl.router import router as pipl_router
 from app.history import router as history_router
+from app.profile_search import router as profile_search_router
 from app.credits.profile import router as credits_profile_router
 from app.credits.email import router as credits_email_router
 from app.credits.admin import router as credits_admin_router
@@ -68,6 +69,7 @@ app.include_router(router=bulk_router, prefix="/api")
 app.include_router(router=history_router, prefix="/api")
 app.include_router(router=credits_profile_router, prefix="/api")
 app.include_router(router=credits_email_router, prefix="/api")
+app.include_router(router=profile_search_router, prefix="/api")
 app.include_router(router=credits_admin_router, prefix="/api")
 app.include_router(router=truemail_router, prefix="/api")
 app.include_router(router=snov_router, prefix="/api")
