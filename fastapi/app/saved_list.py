@@ -80,7 +80,7 @@ async def delete_save_list_by_id(
 
         logger.debug(f"{query=}")
 
-        return SaveListResponse(save_list_id="delete successfully")
+        return SaveListResponse(save_list_id=row.id)
     except HTTPException as e:
         raise e
     except Exception as e:
