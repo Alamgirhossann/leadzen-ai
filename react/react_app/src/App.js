@@ -94,16 +94,16 @@ const App = () => {
         <PrivateRoute path="/verification" component={Verification} exact />
         <PrivateRoute path="/repeatedUser" component={RepeatedUser} exact />
         <PrivateRoute path="/firstTimeUser" component={FirstTimeUser} exact />
-                 <Route path='/realTimePage'>
-            <RealTimePage />
+        <Route path="/realTimePage">
+          <RealTimePage />
         </Route>
-        <Route path='/realTimeListView'>
-            <RealTimeListView />
+        <Route path="/realTimeListView">
+          <RealTimeListView />
         </Route>
         <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
         <PrivateRoute path="/excelDownload" component={ExcelDownload} />
-        <Route path="/login" component={LogIn} />
-        <Route path="/" component={LogIn} />
+        <Route path="/login" component={LogIn} exact />
+        <Route path="/" component={LogIn} exact />
         <Route path="/searchResult" component={SearchResult} />
         <Route path="/result_by_name" component={SearchResultTexAu} />
         <Route path="/search_by_history_type2" component={SearchResult} />
