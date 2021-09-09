@@ -1,4 +1,4 @@
-import sys
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 
@@ -76,9 +76,7 @@ async def deduct_credit(credit_type: str, user=Depends(fastapi_users.get_current
     except HTTPException as e:
         raise e
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
+
         logger.critical(f"Exception Querying Database: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
