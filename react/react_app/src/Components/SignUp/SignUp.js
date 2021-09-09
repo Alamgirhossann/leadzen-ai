@@ -112,7 +112,7 @@ const SignUp = () => {
 
   function handleError(status) {
     console.error(`Got HTTP Error ${status}`);
-    alert("Please try after some time")
+    alert("Please try after some time");
   }
 
   async function handleUserExists(fetchResponse) {
@@ -158,7 +158,6 @@ const SignUp = () => {
       }
     } catch (err) {
       handleError(err);
-
     }
   };
 

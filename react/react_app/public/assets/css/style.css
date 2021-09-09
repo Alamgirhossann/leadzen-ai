@@ -13552,7 +13552,7 @@ a:hover {
 }
 .sign-up-form input:invalid,
 .sign-up-form select:invalid {
-  border-color: #9c9c9c;
+    border-color: #9c9c9c;
 }
 
 .sign-up-form button {
@@ -14354,31 +14354,38 @@ a:hover {
     background-color: #ffffff;
     z-index: 111;
   }
-  .header-navbar .navbar-collapse .navbar-main-menu .nav-item .nav-link {
-    padding: 12px 20px;
-  }
-  .overview-mega-menu .navbar-nav li .nav-link {
-    padding: 10px;
-  }
-  .navbar-bottom-menu li a {
-    padding: 10px 25px !important;
-  }
+
+    .header-navbar .navbar-collapse .navbar-main-menu .nav-item .nav-link {
+        padding: 12px 20px;
+    }
+
+    .overview-mega-menu .navbar-nav li .nav-link {
+        padding: 10px;
+    }
+
+    .navbar-bottom-menu li a {
+        padding: 10px 25px !important;
+    }
 }
-@media only screen and (max-width: 1124px){
-  .history-container{
-    width: 800px;
-  }
- .container-style{
-   overflow-x: scroll;
- }
+
+@media only screen and (max-width: 1124px) {
+    .history-container {
+        width: 800px;
+    }
+
+    .container-style {
+        overflow-x: scroll;
+    }
 }
-@media only screen and (max-width: 1024px){
-  .save-list-container, .history-container{
-    width: 800px;
-  }
- .container-style{
-   overflow-x: scroll;
- }
+
+@media only screen and (max-width: 1024px) {
+    .save-list-container, .history-container {
+        width: 800px;
+    }
+
+    .container-style {
+        overflow-x: scroll;
+    }
 }
 
 /* ============================================== 
@@ -14709,10 +14716,10 @@ a:hover {
   padding: 20px 10px;
 }
 .history-container {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-areas: "p n n n d d c c v v v b";
-  align-items: center;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: "p n n n d d c c v v v b";
+    align-items: center;
 }
 .profile {
   grid-area: p;
@@ -14744,10 +14751,10 @@ a:hover {
   justify-content: flex-end;
 }
 .button {
-  border: 1px solid #fb3e3e;
-  color: #fb3e3e;
-  padding: 5px 10px;
-  border-radius: 5px;
+    border: 1px solid #fb3e3e;
+    color: #fb3e3e;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 .detailed-search {
   display: grid;
