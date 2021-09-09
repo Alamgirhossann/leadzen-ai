@@ -44,6 +44,7 @@ search_saved = sqlalchemy.Table(
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
     sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("search_type", sqlalchemy.String),
     sqlalchemy.Column("save_list_results", sqlalchemy.String),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )

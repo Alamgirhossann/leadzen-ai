@@ -26,7 +26,7 @@ const SavedListButton = ({ data }) => {
           Accept: "application/json",
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
-        body: JSON.stringify({ save_list_results: data }),
+        body: JSON.stringify({ save_list_results: data, search_type: "texAu" }),
       });
       async function handleSuccess(response) {
         const result = await response.json();

@@ -15,6 +15,7 @@ router = APIRouter(prefix="/save_list", tags=["Search SaveList"])
 
 class SaveListRequest(BaseModel):
     save_list_results: Dict
+    search_type: str
 
 
 class SaveListResponse(BaseModel):
@@ -36,6 +37,7 @@ async def add_search_save_list(
         query = search_saved.insert().values(
             id=id,
             user_id=str(user.id),
+            search_type=request.search_type,
             save_list_results=json.dumps(request.save_list_results),
             created_on=datetime.utcnow(),
         )
