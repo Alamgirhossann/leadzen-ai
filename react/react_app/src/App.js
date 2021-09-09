@@ -33,12 +33,11 @@ import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
-import RealTimeListView from "./Components/RealTimeInfo/RealTimeListView";
+import RealTimePage from './Components/RealTimeInfo/RealTimePage';
+import RealTimeListView from './Components/RealTimeInfo/RealTimeListView';
 import FirstTimeUserCompany from "./Components/CompanyInfo/FirstTimeUserCompany";
 import SearchResultCompany from "./Components/CompanyInfo/SearchResultCompany";
 import DetailInfoCompany from "./Components/CompanyInfo/DetailInfoCompany";
-import RealTimePage from "./Components/RealTimeInfo/RealTimePage";
-import RealTimePage2 from "./Components/RealTimeInfo/RealTimePage2";
 import PrivateRoute from "./Components/SharedComponent/PrivateRoute";
 
 const App = () => {
@@ -95,11 +94,11 @@ const App = () => {
         <PrivateRoute path="/verification" component={Verification} exact />
         <PrivateRoute path="/repeatedUser" component={RepeatedUser} exact />
         <PrivateRoute path="/firstTimeUser" component={FirstTimeUser} exact />
-        <Route path="/realTimePage">
-          <RealTimePage />
+                 <Route path='/realTimePage'>
+            <RealTimePage />
         </Route>
-        <Route path="/realTimeListView">
-          <RealTimeListView />
+        <Route path='/realTimeListView'>
+            <RealTimeListView />
         </Route>
         <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
         <PrivateRoute path="/excelDownload" component={ExcelDownload} exact />
