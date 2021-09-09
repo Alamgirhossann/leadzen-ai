@@ -66,7 +66,6 @@ class UserCreditRequest(BaseModel):
     email: str
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
-    company_credit: Optional[int] = 5
 
 
 class UserCreditResponse(BaseModel):

@@ -455,6 +455,7 @@ const SearchResult = (props) => {
       email: "",
       name: { first_name: "", last_name: "" },
       url: data.url,
+      token: Cookies.get("user_token"),
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     try {

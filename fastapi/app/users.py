@@ -18,46 +18,42 @@ from app.email import UserEmailVerificationEmailRequest
 
 
 class User(models.BaseUser):
-    username: Optional[str] = None
+    username: str
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
-    company_credit: Optional[int] = 5
 
 
 class UserCreate(models.BaseUserCreate):
-    username: Optional[str] = None
+    username: str
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
-    company_credit: Optional[int] = 5
 
 
 class UserUpdate(User, models.BaseUserUpdate):
-    username: Optional[str] = None
+    username: str
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
-    company_credit: Optional[int] = 5
 
 
 class UserDB(User, models.BaseUserDB):
-    username: Optional[str] = None
+    username: str
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
-    company_credit: Optional[int] = 5
 
 
 Base: DeclarativeMeta = declarative_base()
 
 
 class UserTable(Base, SQLAlchemyBaseUserTable):
-    username = Column(String(length=320), nullable=True)
+    username = Column(String(length=320))
     onboarded = Column(Boolean, default=True)
-    profile_credit = Column(Integer,default=5)
-    email_credit = Column(Integer,default=5)
-    company_credit = Column(Integer,default=5)
+    profile_credit = Column(Integer, default=5)
+    email_credit = Column(Integer, default=5)
+    company_credit = Column(Integer, default=5)
 
 
 Base.metadata.create_all(engine)

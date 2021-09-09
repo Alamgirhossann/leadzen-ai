@@ -33,6 +33,7 @@ import DashboardTwo from "./Components/AdminDashboard/DashboardTwo";
 import Verification from "./Components/SignUp/Verification";
 import LoginEmailUnverifiedError from "./Components/LogIn/LoginEmailUnverifiedError";
 import ExcelDownload from "./Components/ExportExcel/ExcelDownload";
+import RealTimeListView from "./Components/RealTimeInfo/RealTimeListView";
 import FirstTimeUserCompany from "./Components/CompanyInfo/FirstTimeUserCompany";
 import SearchResultCompany from "./Components/CompanyInfo/SearchResultCompany";
 import DetailInfoCompany from "./Components/CompanyInfo/DetailInfoCompany";
@@ -94,32 +95,54 @@ const App = () => {
         <PrivateRoute path="/verification" component={Verification} exact />
         <PrivateRoute path="/repeatedUser" component={RepeatedUser} exact />
         <PrivateRoute path="/firstTimeUser" component={FirstTimeUser} exact />
+        <Route path="/realTimePage">
+          <RealTimePage />
+        </Route>
+        <Route path="/realTimeListView">
+          <RealTimeListView />
+        </Route>
         <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
-        <PrivateRoute path="/excelDownload" component={ExcelDownload} />
+        <PrivateRoute path="/excelDownload" component={ExcelDownload} exact />
         <Route path="/login" component={LogIn} />
-        <Route path="/" component={LogIn} />
-        <PrivateRoute path="/searchResult" component={SearchResult} />
-        <PrivateRoute path="/result_by_name" component={SearchResultTexAu} />
+        <Route path="/" component={LogIn} exact />
+        <PrivateRoute path="/searchResult" component={SearchResult} exact />
+        <PrivateRoute
+          path="/result_by_name"
+          component={SearchResultTexAu}
+          exact
+        />
         <PrivateRoute
           path="/search_by_history_type2"
           component={SearchResult}
+          exact
         />
         <PrivateRoute
           path="/result_by_history_type1"
           component={SearchResultTexAu}
+          exact
         />
         <PrivateRoute
           path="/result_by_history_type3"
           component={SearchResultCompany}
+          exact
         />
-        <PrivateRoute path="/social_url_search" component={SearchResultTexAu} />
-        <PrivateRoute path="/advanceSearch" component={SearchResultTexAu} />
+        <PrivateRoute
+          path="/social_url_search"
+          component={SearchResultTexAu}
+          exact
+        />
+        <PrivateRoute
+          path="/advanceSearch"
+          component={SearchResultTexAu}
+          exact
+        />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />
         <Route path="/excelDownload" component={ExcelDownload} />
         <PrivateRoute
           path="/company_first_time_user"
           component={FirstTimeUserCompany}
+          exact
         />
 
         <Route path="/loginEmailError">
@@ -153,23 +176,23 @@ const App = () => {
         <Route path="/dashboardTwo">
           <DashboardTwo />
         </Route>
-        <PrivateRoute path="/firstTimeUserCompany">
-          <FirstTimeUserCompany />
-        </PrivateRoute>
+        <PrivateRoute
+          path="/firstTimeUserCompany"
+          component={FirstTimeUserCompany}
+          exact
+        />
+
         <PrivateRoute
           path="/searchResultCompany"
           component={SearchResultCompany}
+          exact
         />
 
-        <PrivateRoute path="/detailInfoCompany">
-          <DetailInfoCompany />
-        </PrivateRoute>
-        <Route path="/realTimePage">
-          <RealTimePage />
-        </Route>
-        <Route path="/realTimeListView">
-          <RealTimePage2 />
-        </Route>
+        <PrivateRoute
+          path="/detailInfoCompany"
+          component={DetailInfoCompany}
+          exact
+        />
       </Switch>
     </Router>
   );
