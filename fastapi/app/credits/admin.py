@@ -79,5 +79,5 @@ async def deduct_credit(credit_type: str, user=Depends(fastapi_users.get_current
 
         logger.critical(f"Exception Querying Database: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error Querying Database"
         )
