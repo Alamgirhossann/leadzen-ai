@@ -23,6 +23,7 @@ class ProfileSearchAddRequest(BaseModel):
 class ProfileSearchAddResponse(BaseModel):
     id: str
 
+
 class ProfileSearchResponse(BaseModel):
     id: str
     user_id: str
@@ -32,39 +33,15 @@ class ProfileSearchResponse(BaseModel):
     created_on: datetime
 
 
-@router.get("/get/{hash_key}", response_model=ProfileSearchResponse)
+@router.get("/get/{hash_key}")
 async def get_profile_search_by_hash_key(
         hash_key: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{hash_key=}, {user=}")
-    try:
-        query = (
-            f"SELECT * FROM profile_search WHERE hash_key = :hash_key AND user_id = :user_id"
-        )
-
-        if not (
-                row := await database.fetch_one(
-                    query=query, values={"hash_key": hash_key, "user_id": str(user.id)}
-                )
-        ):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-
-        logger.debug(f"{row=}")
-
-        processed_row = dict(row)
-        processed_row["search_results"] = json.loads(processed_row["search_results"])
-
-        return ProfileSearchResponse(**processed_row)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        logger.critical(f"Exception Querying Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
-        )
+    response = await get_profile_search(hash_key, user)
+    logger.debug(f"{response=}")
+    return response
+    # return ProfileSearchResponse(**response)
 
 
 @router.get("/all")
@@ -78,7 +55,6 @@ async def get_all_profile_search(user=Depends(fastapi_users.get_current_active_u
                     query=query, values={"user_id": str(user.id)}
                 )
         ):
-
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
@@ -102,35 +78,41 @@ async def get_all_profile_search(user=Depends(fastapi_users.get_current_active_u
         )
 
 
-@router.post("/add", response_model=ProfileSearchAddResponse)
+@router.post("/add")
 async def add_profile_search(
         request: ProfileSearchAddRequest,
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
+    add_res = await add_profile(request, user)
+    return add_res
 
+
+async def add_profile(request, user):
     try:
+        logger.debug(f"{request.get('hash_key')=}, {user=}")
         query = f"SELECT * FROM profile_search WHERE hash_key = :hash_key AND user_id = :user_id"
 
         if (
                 rows := await database.fetch_all(
-                    query=query, values={"hash_key": str(request.hash_key),"user_id": str(user.id)}
+                    query=query, values={"hash_key": str(request.get('hash_key')), "user_id": str(user.id)}
                 )
         ):
             print("rows>>>>", rows)
+            # return rows
             logger.warning("Record Already Exist")
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Record Already Exist"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Record Already Exist"
             )
 
-        id = str(uuid.uuid4())
-        print("HashKey>>>",request.hash_key, type(request.hash_key))
+        profile_id = str(uuid.uuid4())
+
         query = profile_search.insert().values(
-            id=id,
+            id=profile_id,
             user_id=str(user.id),
-            search_type=request.search_type,
-            hash_key=request.hash_key,
-            search_results=str(json.dumps(request.search_results)),
+            search_type=request.get('search_type'),
+            hash_key=request.get('hash_key'),
+            search_results=str(request.get('search_results')),
             created_on=datetime.utcnow(),
         )
 
@@ -146,7 +128,7 @@ async def add_profile_search(
 
         logger.debug(f"{row_id=}")
 
-        return ProfileSearchAddResponse(id=id)
+        return {"id": profile_id}
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -158,3 +140,36 @@ async def add_profile_search(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Inserting to Database",
         )
+
+
+async def get_profile_search(hash_key, user):
+    logger.debug(f"get_profile_search >>{hash_key=}, {user=} , {user.id=}")
+    try:
+        query = (
+            f"SELECT * FROM profile_search WHERE hash_key = :hash_key AND user_id = :user_id"
+        )
+
+        if not (
+                row := await database.fetch_one(
+                    query=query, values={"hash_key": hash_key, "user_id": str(user.id)}
+                )
+        ):
+            logger.warning("Result Not Found")
+            return None
+
+        logger.debug(f"{row=}")
+
+        processed_row = dict(row)
+        logger.debug(f"{processed_row=}")
+        # processed_row["search_results"] = json.loads(processed_row["search_results"])
+        return processed_row
+        # return ProfileSearchResponse(**processed_row)
+    except HTTPException as e:
+        raise e
+
+    except Exception as e:
+        logger.critical(f"Exception Querying Database: {str(e)}")
+        # raise HTTPException(
+        #     status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
+        # )
+        return None
