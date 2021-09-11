@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic.main import BaseModel
 
-from app.database import profile_credit_history, email_credit_history, database
+from app.database import profile_credit_history, email_credit_history,email_search, database
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/credits", tags=["Credits"])
@@ -202,6 +202,16 @@ class EmailCreditResponse(BaseModel):
     search_index: int
     created_on: datetime
 
+class EmailSearchAddRequest(BaseModel):
+    user_id: str
+    query_url: str
+    email_result: str
+
+
+class EmailSearchGetRequest(BaseModel):
+    user_id:str
+    query_url: str
+
 
 @router.get(
     "/email/all",
@@ -339,3 +349,61 @@ async def add_bulk_email_credit_history(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Inserting to Database",
         )
+
+
+@router.post("/email_search/add")
+async def add_email_search(
+        request: EmailSearchAddRequest
+):
+    try:
+        email_search_id = str(uuid.uuid4())
+        query = email_search.insert().values(
+            id=email_search_id,
+            user_id=request.user_id,
+            query_url=request.query_url,
+            email_result=request.email_result,
+            created_on=datetime.utcnow(),
+        )
+
+        row_id = await database.execute(query)
+        logger.debug(f"{row_id=}")
+        return row_id
+    except Exception as e:
+        logger.critical(f"Exception Inserting to Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Inserting to Database",
+        )
+
+
+@router.post("/email_search/get")
+async def add_email_search(
+        request: EmailSearchGetRequest,
+):
+    print("kisha",request)
+    try:
+        query = f"SELECT * FROM email_search WHERE user_id = :user_id AND query_url = :query_url"
+
+        if not (
+                rows := await database.fetch_all(
+                    query=query, values={"user_id": request.user_id, "query_url": request.query_url}
+                )
+        ):
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+
+        logger.debug(f"{rows=}")
+
+        processed_rows = [dict(x) for x in rows]
+        for i in processed_rows[0]:
+            if i=='email_result':
+                return processed_rows[0][i]
+    except Exception as e:
+        logger.critical(f"Exception Querying Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
+        )
+
+
