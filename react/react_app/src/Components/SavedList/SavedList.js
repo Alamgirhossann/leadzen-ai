@@ -204,8 +204,13 @@ const SavedList = (props) => {
         <div className="user-lead-top mb-2 head-btn-style mb-3">
           <div className="d-flex align-items-center">
             <h5 className="m-0">
-              <a href="/repeatedUser">
-                <img src="assets/images/back-union.png" alt="" />
+              <a
+                href="/repeatedUser"
+                className="text-decoration-none text-dark"
+              >
+                <span className="me-1">
+                  <img src="assets/images/back-union.png" alt="title" />
+                </span>{" "}
               </a>
               Saved Leads
             </h5>

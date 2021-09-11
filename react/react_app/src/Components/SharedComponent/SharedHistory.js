@@ -113,7 +113,12 @@ const SharedHistory = () => {
       <div className="user-lead-top mb-2 head-btn-style">
         <div className="d-flex align-items-center">
           <h5 className="m-0">
-            <img src="assets/images/back-union.png" alt="" /> History
+            <a href="/repeatedUser" className="text-decoration-none text-dark">
+              <span className="me-1">
+                <img src="assets/images/back-union.png" alt="title" />
+              </span>{" "}
+            </a>
+            History
           </h5>
         </div>
         <form action="#" className="search-form-sm">

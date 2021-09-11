@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -29,24 +30,28 @@ const NavBar = (props) => {
         <div className="container-fluid">
           <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="/">
-                <img src="assets/images/menu-home.png" alt="home here" />
-                <span className="text-danger">Home</span>
-              </a>
+              <NavLink exact activeClassName=" active-class" to="/repeatedUser">
+                <img
+                  className="blue"
+                  src="assets/images/home.png"
+                  alt="home here"
+                />
+                <span className="ps-2">Home</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="/savedList">
+              <NavLink exact activeClassName=" active-class" to="/savedList">
                 <img src="assets/images/menu-saved-list.png" alt="saved here" />
-                Saved lists
-              </a>
+                <span className="ps-2">Saved lists</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="/history">
+              <NavLink exact activeClassName=" active-class" to="/history">
                 <img src="assets/images/menu-history.png" alt="history here" />
-                History
-              </a>
+                <span className="ps-2">History</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
