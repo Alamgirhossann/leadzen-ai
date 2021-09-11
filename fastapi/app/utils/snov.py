@@ -1,6 +1,6 @@
 import json
 from typing import List
-
+from app.users import fastapi_users
 import httpx
 import requests
 from fastapi import APIRouter, HTTPException,Depends
