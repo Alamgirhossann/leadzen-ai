@@ -13,6 +13,8 @@ import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
+import SavedListButton from "./SavedListButton";
+
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
@@ -37,6 +39,8 @@ const SearchResult = (props) => {
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
+  const [selectedSaveList, setSelectedSaveList] = useState([]);
+
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
@@ -319,7 +323,7 @@ const SearchResult = (props) => {
   console.log("myLeads>>>>>>>>>>>", myLeads);
 
   const [show, setShow] = useState(false);
-  const [selected, setSelected] = useState(false);
+  // const [selected, setSelected] = useState(false);
 
   const handleUnlockEmail = async (e, index, data) => {
     e.preventDefault();
@@ -383,7 +387,7 @@ const SearchResult = (props) => {
 
   const clickSelect = (e) => {
     e.preventDefault();
-    if (!selected) setSelected(true);
+    // if (!selected) setSelected(true);
   };
   const user = {
     name: "John Smith",
@@ -844,19 +848,9 @@ const SearchResult = (props) => {
                                 View Profile
                               </a>
                             </p>
-
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
+                            <p>
+                              <SavedListButton data={data} />
+                            </p>
                           </div>
                           <div
                             style={{

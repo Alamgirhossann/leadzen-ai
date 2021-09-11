@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import Header from "../SharedComponent/Header";
 import Cookies from "js-cookie";
+
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 const email_id = `${process.env.REACT_APP_CONFIG_EMAIL_ID}`;
 const RealTimePage = () => {

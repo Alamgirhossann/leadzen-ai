@@ -10,6 +10,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import axios from "axios";
+
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const FirstTimeUser = () => {
