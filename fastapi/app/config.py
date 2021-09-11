@@ -103,7 +103,7 @@ API_CONFIG_ALLOWED_CONTENT_TYPES = [
     if x
 ]
 API_CONFIG_ALLOWED_FILE_TYPE = os.getenv("API_CONFIG_ALLOWED_FILE_TYPE", ".csv")
-API_CONFIG_PORT_NUM_INTERNAL = int(os.getenv("API_CONFIG_PORT_NUM_INTERNAL", "18001"))
+API_CONFIG_PORT_NUM_INTERNAL = int(os.getenv("API_CONFIG_PORT_NUM_INTERNAL", "12005"))
 API_CONFIG_TEXAU_LINKEDIN_EMAIL_SEARCH_URL = f"http://localhost:{API_CONFIG_PORT_NUM_INTERNAL}/api/texau/find_email_and_phone_for_linkedin_profile_url"
 API_CONFIG_BULK_PIPL_EMAIL_SEARCH_URL = (
     f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/pipl/bulk/email"
@@ -144,10 +144,10 @@ API_CONFIG_REACT_SIGNUP_PAGE_URL = os.getenv(
     "API_CONFIG_REACT_SIGNUP_PAGE", "http://localhost:3000/signUp"
 )
 API_CONFIG_SELF_BASE_URL = os.getenv(
-    "API_CONFIG_SELF_BASE_URL", "http://localhost:18001"
+    "API_CONFIG_SELF_BASE_URL", "http://localhost:12005"
 )
 API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv(
-    "API_CONFIG_SELF_BASE_EXTERNAL_URL", "http://localhost:18001"
+    "API_CONFIG_SELF_BASE_EXTERNAL_URL", "http://localhost:12005"
 )
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
 API_CONFIG_DATABASE_URL = "sqlite:///./test.db"
