@@ -3,7 +3,6 @@ import { Link, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import Moment from "react-moment";
 import Header from "../SharedComponent/Header";
-import ViewProfile from "../SharedComponent/ViewProfile";
 import SpecificUser from "../DetailedInfo/SpecificUser";
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
