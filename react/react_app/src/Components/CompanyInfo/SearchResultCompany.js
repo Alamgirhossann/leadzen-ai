@@ -23,6 +23,9 @@ const SearchResultCompany = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
+  const [specificUserDetails, setSpecificUserDetails] = useState([
+    { index: null, details: null },
+  ]);
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -293,7 +296,115 @@ const SearchResultCompany = (props) => {
       console.error("Exception>>", e);
     }
   };
+  const handleProfile = async (index, data) => {
+    let reqJsonPipl = {
+      url: data.companyUrl,
+      cookie: tempCookie,
+    };
+    console.log("in Handle profile...", `${currentPage}${index}`, data);
+    console.log("reqJsonPipl", reqJsonPipl);
+    try {
+      let isDuplicate = false;
 
+      specificUserDetails.map((spec) => {
+        console.log("spec>>>", spec.index);
+        if (spec.index === `${currentPage}${index}`) {
+          isDuplicate = true;
+        }
+      });
+      console.log("isDuplicate>>>>", isDuplicate);
+      if (isDuplicate === false) {
+        console.log("In Fetch......");
+        const response = await fetch(
+          apiServer + "/texau/linkedin/find_company_details",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(reqJsonPipl),
+          }
+        );
+
+        let json_res = await response.json();
+        console.log("Data Pipl..>>>>>>>>>>>", json_res);
+        // let phones = [];
+        // if (json_res) {
+        //   for (let i = 0; i < json_res.length; i++) {
+        //     let obj = json_res[i];
+        //     console.log("in for loop pipl>>>", obj, ">>>>");
+        //     if (obj.phones) {
+        //       for (let j = 0; j < obj.phones.length; j++) {
+        //         phones.push(obj.phones[j].number);
+        //       }
+        //     }
+        //   }
+        //   console.log("Phones>>>>>>", phones);
+        //   if (phones.length >= 1) {
+        //     let requestForSaveProfileCredit = {
+        //       search_id: searchId,
+        //       phone_numbers: phones,
+        //       search_index: `${currentPage}${index}`,
+        //     };
+        //     try {
+        //       const response = await fetch(
+        //         apiServer + "/credits/profile/bulk_add",
+        //         {
+        //           method: "POST",
+        //           headers: {
+        //             "Content-Type": "application/json",
+        //             Accept: "application/json",
+        //             Authorization: `Bearer ${Cookies.get("user_token")}`,
+        //           },
+        //           body: JSON.stringify(requestForSaveProfileCredit),
+        //         }
+        //       );
+        //
+        //       const result = response.json();
+        //
+        //       console.log("response from saveResult>>>", result);
+        //     } catch (e) {
+        //       console.error("Exception>>", e);
+        //     }
+        //     setSpecificUserDetails((prev) => [
+        //       ...prev,
+        //       { index: `${currentPage}${index}`, details: json_res[0] },
+        //     ]);
+        //   } else {
+        //     setSpecificUserDetails((prev) => [
+        //       ...prev,
+        //       { index: `${currentPage}${index}`, details: "Record Not Found" },
+        //     ]);
+        //   }
+        // } else {
+        //   console.log("In setSpecificUserDetails else");
+        //   setSpecificUserDetails((prev) => [
+        //     ...prev,
+        //     { index: `${currentPage}${index}`, details: "Record Not Found" },
+        //   ]);
+        //   console.log(
+        //     "In setSpecificUserDetails else ress....",
+        //     specificUserDetails
+        //   );
+        // }
+      }
+
+      console.log("specificUser>>>>>>>", specificUserDetails);
+      specificUserDetails?.map((spec) => {
+        console.log(
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
+        );
+      });
+    } catch (err) {
+      console.error("Error: ", err);
+    }
+  };
+  console.info("currentLeads,,,,", currentLeads);
+  console.info("specificUserDetails,,,,", specificUserDetails);
   return (
     <div>
       <div>
@@ -494,7 +605,25 @@ const SearchResultCompany = (props) => {
                               </div>
 
                               <div className="search-view-btn d-flex align-items-center">
-                                <a className="button">View Employee</a>
+                                {/*<a className="button">View Employee</a>*/}
+                                <a
+                                  className="btn button"
+                                  data-toggle="collapse"
+                                  href={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  data-target={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  role="button"
+                                  aria-expanded="false"
+                                  aria-controls="collapseExample"
+                                  onClick={() => handleProfile(index, data)}
+                                >
+                                  View Details
+                                </a>
                               </div>
                               <div className="search-close-btn d-flex align-items-center">
                                 <a href="#">
