@@ -63,15 +63,14 @@ class RealTimeUploadResponse(BaseModel):
 
 
 def generate_email_message_for_file(user, filename: str) -> Tuple[str, str]:
-    operation = f"Your request for {user['requirement']} are ready."
-    subject = f"your request for {user['requirement']} is Ready"
+    subject = f"LeadZen: Your custom data request is Ready"
     check = ""
     for i in range(len(filename)):
         if i != 0 or i != 1:
             check = check + filename[i]
     message = (
         f"Dear {user['username']}, \n"
-        f"{operation} \n"
+        f"We have completed your custom data request for: {user['requirement']} \n"
         f"Please click on the link below to download the results. The download should start automatically, "
         f"however in case it doesn't kindly right click on the link and download the linked file. Get your lead "
         f"details as you open the file in Excel.\n"
