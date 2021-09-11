@@ -9,7 +9,7 @@ const Header = (props) => {
         <nav className="header-navbar navbar navbar-expand-xl bg-light">
           <div className="container-fluid" style={{ paddingRight: "0px" }}>
             <a className="navbar-brand" href="/repeatedUser">
-              <img src="assets/images/header-brand-black.png" alt="title" />
+              <img src="assets/images/logo- without BG.png" alt="title" />
             </a>
 
             {user?.name !== undefined && <NavBar user={user} />}

@@ -46,12 +46,15 @@ const Profile = () => {
           <div className="container-fluid">
             <div className="bg-light rounded-3 py-3 px-4 mb-4">
               <h3 className="m-0">
-                <a href="/repeatedUser" className="text-primary">
+                <a
+                  href="/repeatedUser"
+                  className="text-decoration-none text-dark"
+                >
                   <span className="me-1">
                     <img src="assets/images/back-union.png" alt="title" />
                   </span>{" "}
-                  Profile
                 </a>
+                Profile
               </h3>
             </div>
             <div className="bg-light rounded-3 p-4">
@@ -75,11 +78,11 @@ const Profile = () => {
                 </div>
                 <div className="col-md-6">
                   <div className="mb-1 d-block d-md-flex justify-content-end mt-3">
-                    <Link to="http://lead-gen.analystt.ai/pricing/">
+                    <a href="http://lead-gen.analystt.ai/pricing/">
                       <button type="submit" className="btn btn-renew py-1 px-3">
                         Renew Plan
                       </button>
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

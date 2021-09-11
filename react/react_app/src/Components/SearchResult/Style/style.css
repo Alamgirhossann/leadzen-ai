@@ -76,6 +76,12 @@
       width: 95px;
       padding-right: 10px;
     }
+    .search-container{
+      overflow-x: scroll;
+    }
+    .user-container{
+      width: 850px;
+    }
   }
   .top-search{
     background: #FFE3E3;

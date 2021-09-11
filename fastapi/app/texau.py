@@ -27,6 +27,7 @@ from app.config import (
 from app.config import API_CONFIG_TEXAU_URL as url
 from app.linkedin import query_url_builder as linkedin_query_url_builder
 from app.users import fastapi_users
+from app.scraper import fetch_linkedin_cookie
 
 
 class TexAuRequest(BaseModel):
@@ -52,6 +53,7 @@ router = APIRouter(prefix="/texau", tags=["TexAu Search"])
 
 
 def read_linkedin_cookie():
+    cookie = ""
     with open(f"./{API_CONFIG_LINKEDIN_CSV_FILE}", "r") as file:
         csv_reader = csv.reader(file)
         for line in csv_reader:
@@ -59,6 +61,18 @@ def read_linkedin_cookie():
                 cookie = line[0]
                 logger.debug(cookie, "cookie")
     return cookie
+
+
+def refresh_linkedin_cookie_manually():
+    logger.debug("linkedin cookie...")
+    data = fetch_linkedin_cookie()
+    header = ["cookie"]
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerow([data])
+    logger.debug(header)
+    return data
 
 
 @router.get("/check_status/{execution_id}", response_model=TexAuResponse)
@@ -210,11 +224,12 @@ async def search_using_texau(
         logger.debug(query_url)
 
         if not (cookie := read_linkedin_cookie()):
-            logger.critical("Error Getting LinkedIn Cookie")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error Getting LinkedIn Cookie",
-            )
+            if not (cookie := refresh_linkedin_cookie_manually()):
+                logger.critical("Error Getting LinkedIn Cookie")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Error Getting LinkedIn Cookie",
+                )
 
         if not (
                 execution_id := await send_spice_request(
