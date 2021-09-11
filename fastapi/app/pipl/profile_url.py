@@ -1,10 +1,12 @@
 from typing import Optional, List
 from urllib.parse import urlencode
+from fastapi import HTTPException
+from starlette import status
 
 from loguru import logger
 from pydantic import BaseModel
 
-from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY
+from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY,API_CONFIG_EXCEL_FILE_PATH
 from app.pipl.common import write_to_file, search_all
 
 import openpyxl
@@ -55,13 +57,13 @@ def add_excel_template_to_file(outgoing_filename):
                 wb.create_sheet('Index', 0)
                 index_sheet = wb.get_sheet_by_name('Index')
                 index_sheet.merge_cells('A1:W36')
-                img1 = openpyxl.drawing.image.Image(f'./app/Excel/Index.png')
+                img1 = openpyxl.drawing.image.Image(f'{API_CONFIG_EXCEL_FILE_PATH}/Index.png')
                 img1.anchor = 'A1'
                 index_sheet.add_image(img1)
                 wb.create_sheet('Disclaimer', 2)
                 dis_sheet = wb.get_sheet_by_name('Disclaimer')
                 dis_sheet.merge_cells('A1:X31')
-                img2 = openpyxl.drawing.image.Image(f'./app/Excel/Disclaimer.png')
+                img2 = openpyxl.drawing.image.Image(f'{API_CONFIG_EXCEL_FILE_PATH}/Disclaimer.png')
                 img2.anchor = 'A1'
                 dis_sheet.add_image(img2)
                 financial_advisor = wb.get_sheet_by_name('Sheet1')
@@ -75,15 +77,11 @@ def add_excel_template_to_file(outgoing_filename):
                 lastcell = last_column + str(number_of_col)
                 financial_advisor.move_range(f"A1:{lastcell}", rows=8, cols=0)
                 financial_advisor.merge_cells('A1:W8')
-                img3 = openpyxl.drawing.image.Image(f'./app/Excel/FA_img.png')
+                img3 = openpyxl.drawing.image.Image(f'{API_CONFIG_EXCEL_FILE_PATH}/FA_img.png')
                 img3.anchor = 'A1'
                 financial_advisor.add_image(img3)
                 wb.save(outgoing_filename)
                 return outgoing_filename
             except Exception as e:
                 logger.critical("Error>>>" + str(e))
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Error in add excel template to file",
-                )
 
