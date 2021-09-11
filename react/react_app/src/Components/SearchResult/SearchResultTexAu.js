@@ -384,22 +384,23 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(requestforemail),
         });
-        const result_email = await response_email.json();
-        if(result_email.detail){
-          setUnlockEmailDetails((prev) => [
+         if(response_email.status==200)
+         {
+            const result_email = await response_email.json();
+              setUnlockEmailDetails((prev) => [
         ...prev,
         {
           index: `${currentPage}${index}`,
-          details: { email: `Not Found` },
+          details: { email: result_email },
         },
       ]);
-        }
+         }
         else{
           setUnlockEmailDetails((prev) => [
         ...prev,
         {
           index: `${currentPage}${index}`,
-          details: { email: result_email },
+          details: { email: `Not Found` },
         },
       ]);
         }
