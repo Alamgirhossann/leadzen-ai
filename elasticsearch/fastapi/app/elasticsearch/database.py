@@ -183,7 +183,7 @@ async def search(index: str, query: str, limit: int):
         logger.critical("Exception Searching Elasticsearch: " + str(e))
         return None
 
-async def add_json(request: ElasticsearchAddjsonRequest) -> Optional[bool]:
+async def add_json(request: ElasticsearchAddRequest) -> Optional[bool]:
     if not es:
         logger.warning("Elasticsearch not initialized")
         return None
