@@ -1,6 +1,9 @@
 import os
 import sentry_sdk
 
+API_CONFIG_EXCEL_FILE_PATH = os.getenv(
+    "API_CONFIG_EXCEL_FILE_PATH", "./Excel"
+)
 API_CONFIG_PIPL_BASE_URL = os.getenv(
     "API_CONFIG_PIPL_BASE_URL", "https://api.pipl.com/search"
 )

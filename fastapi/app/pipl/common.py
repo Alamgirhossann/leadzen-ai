@@ -18,63 +18,63 @@ from app.config import (
 
 def filter_data(person: Dict, slug: str) -> Dict:
     result = {
-        "input": slug,
-        "names": None,
-        "emails": None,
-        "phones": None,
-        "gender": None,
-        "addresses": None,
-        "jobs": None,
-        "educations": None,
-        "relationships": None,
-        "user_ids": None,
-        "images": None,
-        "urls": None,
+        "Input": slug,
+        "Names": None,
+        "Emails": None,
+        "Phones": None,
+        "Gender": None,
+        "Addresses": None,
+        "Jobs": None,
+        "Educations": None,
+        "Relationships": None,
+        "User_ids": None,
+        "Images": None,
+        "Urls": None,
     }
 
     if "names" in person:
         names = jmespath.search("names[*].display", person)
-        result["names"] = ", ".join(names)
+        result["Names"] = ", ".join(names)
 
     if "emails" in person:
         emails = jmespath.search("emails[*].address", person)
-        result["emails"] = ", ".join(emails)
+        result["Emails"] = ", ".join(emails)
 
     if "phones" in person:
         phones = jmespath.search("phones[*].display_international", person)
-        result["phones"] = ", ".join(phones)
+        result["Phones"] = ", ".join(phones)
 
     if "gender" in person:
         gender = jmespath.search("gender", person)
-        result["gender"] = gender.get("content", "unknown")
+        result["Gender"] = gender.get("content", "unknown")
 
     if "addresses" in person:
         addresses = jmespath.search("addresses[*].display", person)
-        result["addresses"] = " | ".join(addresses)
+        result["Addresses"] = " | ".join(addresses)
 
     if "jobs" in person:
         jobs = jmespath.search("jobs[*].display", person)
-        result["jobs"] = " | ".join(jobs)
+        result["Jobs"] = " | ".join(jobs)
 
     if "educations" in person:
         educations = jmespath.search("educations[*].display", person)
-        result["educations"] = " | ".join(educations)
+        result["Educations"] = " | ".join(educations)
 
     if "relationships" in person:
         relationships = jmespath.search("relationships[*].names[*].display", person)
-        result["relationships"] = ", ".join(list(itertools.chain(*relationships)))
+        result["Relationships"] = ", ".join(list(itertools.chain(*relationships)))
 
     if "user_ids" in person:
         user_ids = jmespath.search("user_ids[*].content", person)
-        result["user_ids"] = ", ".join(user_ids)
+        result["User_ids"] = ", ".join(user_ids)
 
     if "images" in person:
         images = jmespath.search("images[*].url", person)
-        result["images"] = ", ".join(images)
+        result["Images"] = ", ".join(images)
 
     if "urls" in person:
         urls = jmespath.search("urls[*].url", person)
-        result["urls"] = ", ".join(urls)
+        result["Urls"] = ", ".join(urls)
 
     return result
 
