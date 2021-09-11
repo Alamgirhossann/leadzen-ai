@@ -1,7 +1,8 @@
 import asyncio
 import tempfile
 from typing import Dict
-
+import orjson
+import os
 import pandas as pd
 from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks, Depends
 from loguru import logger
@@ -258,31 +259,31 @@ async def search_contact_by_text(
 @router.post("/upload/json", response_model=bool)
 async def load_json(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),
     username: str = Depends(get_current_username),
 ):
     assert username
-    contents = json.load(file.file)
-    logger.debug(contents)
-    logger.debug(type(contents))
-    '''for i in contents:
-        logger.debug(i)
-        data = json.load(i)
-    logger.debug(data)'''
-    #add_json(contents)
-    background_tasks.add_task(
-                add_json,
-                request=ElasticsearchAddjsonRequest(
-                    index_name=f"analystt.json.{file.filename}",
-                    records=contents,
-                ),
-            )
+    path = "C:\\Users\\Pratik\\OneDrive\\Desktop\\New folder (2)\\"
+    file_list = os.listdir(path)
+    for file_name in file_list :
+        
+        f = open(f"{str(path)}\\{file_name}",encoding="UTF-8",buffering=20000000).read()
+        val = [orjson.loads((item)) for item in f.strip().split('\n')]
+        #val = orjson.loads(f)
 
-            # this sleep is needed to prevent yet more 429 errors
-    background_tasks.add_task(
-        asyncio.sleep,
-        delay=30 * 1,
-    )
+        background_tasks.add_task(
+                    add_json,
+                    request=ElasticsearchAddRequest(
+                        index_name=f"analystt.json.trial",
+                        records=val,
+                    ),
+                )
+
+                # this sleep is needed to prevent yet more 429 errors
+        background_tasks.add_task(
+            asyncio.sleep,
+            delay=30 * 1,
+        )
     return True
+
 
     

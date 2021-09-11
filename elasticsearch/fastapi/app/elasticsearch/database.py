@@ -190,26 +190,14 @@ async def add_json(request: ElasticsearchAddjsonRequest) -> Optional[bool]:
 
     async def row_generator(index_name: str, rows: Dict) -> Dict:
         for k in rows:
-            logger.debug(k)
-            logger.debug(type(rows[k]))
-            if type(rows[k])!=str:
-                for v in rows[k]:
-                    logger.debug(v)
                     yield {
                         "_op_type": "create",
                         "_index": index_name,
                         '_type': '_doc',
                         "_id": str(uuid.uuid4()),
-                        "_source": v
+                        "_source": k
                     }
-            else:
-                yield {
-                        "_op_type": "create",
-                        "_index": index_name,
-                        '_type': '_doc',
-                        "_id": str(uuid.uuid4()),
-                        "_source": rows[k]
-                    }
+            
 
     try:
         progress = tqdm(unit="rows", total=len(request.records))
