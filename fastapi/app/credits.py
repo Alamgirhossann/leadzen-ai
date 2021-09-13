@@ -209,8 +209,8 @@ class EmailSearchAddRequest(BaseModel):
 
 
 class EmailSearchGetRequest(BaseModel):
-    user_id:str
-    query_url: str
+    user_id : str
+    query_url : str
 
 
 @router.get(
@@ -380,7 +380,6 @@ async def add_email_search(
 async def add_email_search(
         request: EmailSearchGetRequest,
 ):
-    print("kisha",request)
     try:
         query = f"SELECT * FROM email_search WHERE user_id = :user_id AND query_url = :query_url"
 

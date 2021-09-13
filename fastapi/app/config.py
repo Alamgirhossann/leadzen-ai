@@ -209,3 +209,9 @@ API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS = int(
 API_CONFIG_MAX_RESULTS_PER_CALL = int(
     os.getenv("API_CONFIG_MAX_RESULTS_PER_CALL", "100")
 )
+API_CONFIG_DATABASE_GET_EMAIL = os.getenv(
+    "API_CONFIG_DATABASE_GET_EMAIL", "http://localhost:12005/api/credits/email_search/get"
+)
+API_CONFIG_DATABASE_ADD_EMAIL = os.getenv(
+    "API_CONFIG_DATABASE_ADD_EMAIL", "http://localhost:12005/api/credits/email_search/add"
+)
