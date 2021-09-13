@@ -71,7 +71,6 @@ const App = () => {
         <Route path="/signUpError">
           <SignUpError />
         </Route>
-
         <Route path="/detailedInfo">
           <DetailedInfo />
         </Route>
@@ -102,27 +101,20 @@ const App = () => {
         </Route>
         <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
         <PrivateRoute path="/excelDownload" component={ExcelDownload} exact />
-        <Route path="/login" component={LogIn} />
+        <Route path="/login" component={LogIn} exact />
         <Route path="/" component={LogIn} exact />
-        <PrivateRoute path="/searchResult" component={SearchResult} exact />
-        <PrivateRoute
-          path="/result_by_name"
-          component={SearchResultTexAu}
-          exact
-        />
-        <PrivateRoute
-          path="/search_by_history_type2"
-          component={SearchResult}
-          exact
-        />
-        <PrivateRoute
+        <Route path="/searchResult" component={SearchResult} />
+        <Route path="/result_by_name" component={SearchResultTexAu} exact />
+        <Route path="/search_by_history_type2" component={SearchResult} exact />
+        <Route
           path="/result_by_history_type1"
           component={SearchResultTexAu}
           exact
         />
-        <PrivateRoute
+        <Route
           path="/result_by_history_type3"
           component={SearchResultCompany}
+          exact
           exact
         />
         <PrivateRoute
@@ -143,11 +135,9 @@ const App = () => {
           component={FirstTimeUserCompany}
           exact
         />
-
         <Route path="/loginEmailError">
           <LoginEmailError />
         </Route>
-
         <Route path="/passwordInstruction">
           <PasswordInstruction />
         </Route>
