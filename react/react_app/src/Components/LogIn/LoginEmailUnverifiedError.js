@@ -8,7 +8,7 @@ const LoginEmailUnverifiedError = () => {
         <nav className="header-navbar navbar navbar-expand-xl bg-light">
           <div className="container-fluid">
             <a className="navbar-brand" href="index.html">
-              <img src="assets/images/header-brand-black.png" alt=""/>
+              <img src="assets/images/header-brand-black.png" alt="" />
             </a>
           </div>
         </nav>
@@ -24,13 +24,13 @@ const LoginEmailUnverifiedError = () => {
                     <div className="sign-up-email-error">
                       <p className="fw-bold text-center">
                         <img
-                            style={{width: "20px"}}
-                            src="assets/images/Group 2221.png"
-                            alt=""
+                          style={{ width: "20px" }}
+                          src="assets/images/Group 2221.png"
+                          alt=""
                         />{" "}
-                        <br/>
+                        <br />
                         <span className="text-danger"> Sorry!</span>
-                        <br/>
+                        <br />
                         Please Verify your Email by clicking the link sent to
                         your Email
                       </p>

@@ -35,7 +35,7 @@ const SpecificCompany = () => {
               <p>Alpharetta, Georgia</p>
             </div>
           </div>
-          <div className='px-3'>
+          <div className="px-3">
             <p className="specific-page-title">Company Type</p>
             <div>
               <p>Information technology company</p>
@@ -57,7 +57,7 @@ const SpecificCompany = () => {
               <p>4.5 Rating</p>
             </div>
           </div>
-          <div className='px-3'>
+          <div className="px-3">
             <p className="specific-page-title">Recent News</p>
             <div>
               <p>
@@ -603,12 +603,12 @@ const SpecificCompany = () => {
               </div>
               <p className="text-danger">+ 19 others</p>
               <div className="text-center">
-              <a href="#">Visit</a>
+                <a href="#">Visit</a>
               </div>
             </div>
           </div>
           <div className="col-md-3">
-          <div className="stack-card">
+            <div className="stack-card">
               <div className="under-border">
                 <p>Ads</p>
                 <p>22 Products used</p>
@@ -620,12 +620,12 @@ const SpecificCompany = () => {
               </div>
               <p className="text-danger">+ 19 others</p>
               <div className="text-center">
-              <a href="#">Visit</a>
+                <a href="#">Visit</a>
               </div>
             </div>
           </div>
           <div className="col-md-3">
-          <div className="stack-card">
+            <div className="stack-card">
               <div className="under-border">
                 <p>Ads</p>
                 <p>22 Products used</p>
@@ -637,12 +637,12 @@ const SpecificCompany = () => {
               </div>
               <p className="text-danger">+ 19 others</p>
               <div className="text-center">
-              <a href="#">Visit</a>
+                <a href="#">Visit</a>
               </div>
             </div>
           </div>
           <div className="col-md-3">
-          <div className="stack-card">
+            <div className="stack-card">
               <div className="under-border">
                 <p>Ads</p>
                 <p>22 Products used</p>
@@ -654,14 +654,14 @@ const SpecificCompany = () => {
               </div>
               <p className="text-danger">+ 19 others</p>
               <div className="text-center">
-              <a href="#">Visit</a>
+                <a href="#">Visit</a>
               </div>
             </div>
           </div>
         </div>
       </section>
       <div className="text-center">
-      <button className=" see-less-btn">See Less</button>
+        <button className=" see-less-btn">See Less</button>
       </div>
     </div>
   );

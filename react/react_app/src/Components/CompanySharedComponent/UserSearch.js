@@ -10,9 +10,11 @@ const UserSearch = () => {
   const handleHeadSearch = (e) => {
     setSearchText({ ...searchText, text: e.target.value });
   };
+
   function WordCount(str) {
     return str.split(" ").length;
   }
+
   const handleHeadSubmit = (e) => {
     e.preventDefault();
     let isUrl,
@@ -30,14 +32,22 @@ const UserSearch = () => {
       return;
     }
     console.log("In else....");
-    if (/^[a-z0-9]+([\.-]?[a-z0-9]+)*@[a-z0-9]+([\.-]?\w+)*(\.[a-z0-9]{2,3})+$/.test(searchText.text.toLowerCase())){
-      isEmail=true;
+    if (
+      /^[a-z0-9]+([\.-]?[a-z0-9]+)*@[a-z0-9]+([\.-]?\w+)*(\.[a-z0-9]{2,3})+$/.test(
+        searchText.text.toLowerCase()
+      )
+    ) {
+      isEmail = true;
     }
     // isEmail = searchText.text.includes("@");
     words = WordCount(searchText.text);
     // isMultiWords = searchText.text.includes(" ");
-    if (/^(http(s)?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,3}(\/[a-z0-9-]+)*\/?$/.test(searchText.text.toLowerCase())){
-      isUrl=true;
+    if (
+      /^(http(s)?:\/\/)?([a-z0-9-]+\.)+[a-z0-9]{2,3}(\/[a-z0-9-]+)*\/?$/.test(
+        searchText.text.toLowerCase()
+      )
+    ) {
+      isUrl = true;
     }
     // /^(http:\/\/www.|https:\/\/www.|www.){1}linkedin\.com(\/\w+(\-{0,1}\w+)+)+\/{0,1}$/.test(searchText.text)
 

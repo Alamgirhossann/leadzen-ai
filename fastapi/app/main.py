@@ -6,19 +6,25 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_utils.tasks import repeat_every
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
 from loguru import logger
 from starlette import status
 
 from app.bulk.router import router as bulk_router
+from app.realtimerequestmanual.upload_excel import router as realtime_router
 from app.config import (
     API_CONFIG_LINKEDIN_CSV_FILE,
     API_CONFIG_JWT_SECRET,
 )
+# from app.credits import router as credits_router
 from app.customize_filter import router as filter_router
 from app.database import database
 from app.email import router as email_router
-from app.pipl.router import router as pipl_router
 from app.history import router as history_router
+from app.pipl.router import router as pipl_router
+from app.saved_list import router as save_list_router
 from app.profile_search import router as profile_search_router
 from app.credits.profile import router as credits_profile_router
 from app.credits.email import router as credits_email_router
@@ -33,9 +39,9 @@ from app.users import (
     after_verification_request,
 )
 from app.utils.proxy_curl import router as proxycurl_router
-
 from app.utils.snov import router as snov_router
 from app.utils.truemail import router as truemail_router
+
 
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
@@ -66,6 +72,7 @@ app.include_router(router=pipl_router, prefix="/api")
 app.include_router(router=filter_router, prefix="/api")
 app.include_router(router=texau_router, prefix="/api")
 app.include_router(router=bulk_router, prefix="/api")
+app.include_router(router=realtime_router, prefix="/api")
 app.include_router(router=history_router, prefix="/api")
 app.include_router(router=credits_profile_router, prefix="/api")
 app.include_router(router=credits_email_router, prefix="/api")
@@ -74,6 +81,7 @@ app.include_router(router=credits_admin_router, prefix="/api")
 app.include_router(router=truemail_router, prefix="/api")
 app.include_router(router=snov_router, prefix="/api")
 app.include_router(router=proxycurl_router, prefix="/api")
+app.include_router(router=save_list_router, prefix="/api")
 # app.include_router(
 #     router=search_operations,
 #     prefix="/api",

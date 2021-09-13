@@ -6,12 +6,14 @@ import Header from "../SharedComponent/Header";
 import Filters from "../SharedComponent/Filters";
 import SidebarExtractContact from "../SharedComponent/SidebarExtractContact";
 import SpecificUser from "../DetailedInfo/SpecificUser";
-import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import BulkSearch from "../SharedComponent/BulkSearch";
+import AskJarvis from "../SharedComponent/AskJarvis";
+import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
+import SavedListButton from "./SavedListButton";
 
 export async function digestMessage(message) {
   console.log("Message....", message);
@@ -23,6 +25,7 @@ export async function digestMessage(message) {
     .join(""); // convert bytes to hex string
   return hashHex;
 }
+
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
@@ -47,6 +50,8 @@ const SearchResult = (props) => {
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
+  const [selectedSaveList, setSelectedSaveList] = useState([]);
+
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
@@ -329,7 +334,7 @@ const SearchResult = (props) => {
   console.log("myLeads>>>>>>>>>>>", myLeads);
 
   const [show, setShow] = useState(false);
-  const [selected, setSelected] = useState(false);
+  // const [selected, setSelected] = useState(false);
 
   const handleUnlockEmail = async (e, index, data) => {
     e.preventDefault();
@@ -393,7 +398,7 @@ const SearchResult = (props) => {
 
   const clickSelect = (e) => {
     e.preventDefault();
-    if (!selected) setSelected(true);
+    // if (!selected) setSelected(true);
   };
   const user = {
     name: "John Smith",
@@ -547,15 +552,16 @@ const SearchResult = (props) => {
               ...prev,
               { index: `${currentPage}${index}`, details: json_res[0] },
             ]);
-          } else {
-            setSpecificUserDetails((prev) => [
-              ...prev,
-              {
-                index: `${currentPage}${index}`,
-                details: "Record Not Found",
-              },
-            ]);
           }
+          // else {
+          //   setSpecificUserDetails((prev) => [
+          //     ...prev,
+          //     {
+          //       index: `${currentPage}${index}`,
+          //       details: "Record Not Found",
+          //     },
+          //   ]);
+          // }
         } else {
           console.log("In setSpecificUserDetails else");
           setSpecificUserDetails((prev) => [
@@ -870,19 +876,9 @@ const SearchResult = (props) => {
                                 View Profile
                               </a>
                             </p>
-
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
+                            <p>
+                              <SavedListButton data={data} />
+                            </p>
                           </div>
                           <div
                             style={{
@@ -927,134 +923,7 @@ const SearchResult = (props) => {
                   paginate={paginate}
                 />
               </div>
-              {/*<div className="user-widget-box text-center p-4 my-3">*/}
-              {/*  <div className="user-promote-logo">*/}
-              {/*    <img src="assets/images/user-company-brand.png" alt="title" />*/}
-              {/*  </div>*/}
-              {/*  <div className="user-promote-slider">*/}
-              {/*    <div className="item">*/}
-              {/*      <div className="user-promote-item">*/}
-              {/*        <p className="">*/}
-              {/*          Want to extract contacts of group members in a LinkedIn*/}
-              {/*          group?*/}
-              {/*        </p>*/}
-              {/*        <div*/}
-              {/*          className="px-3 pb-4"*/}
-              {/*          style={{*/}
-              {/*            position: "absolute",*/}
-              {/*            bottom: "5px",*/}
-              {/*            content: "",*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <a href="/searchResult" className="small m-0">*/}
-              {/*            Try This*/}
-              {/*          </a>*/}
-              {/*        </div>*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*    <div className="item">*/}
-              {/*      <div className="user-promote-item">*/}
-              {/*        <p className="">*/}
-              {/*          Need a list of companies in semi-conductor space with*/}
-              {/*          1000+ employees in US?*/}
-              {/*        </p>*/}
-              {/*        <div*/}
-              {/*          className="px-3 pb-4"*/}
-              {/*          style={{*/}
-              {/*            position: "absolute",*/}
-              {/*            bottom: "5px",*/}
-              {/*            content: "",*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <a href="/searchResult" className="small m-0">*/}
-              {/*            Try This*/}
-              {/*          </a>*/}
-              {/*        </div>*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*    <div className="item">*/}
-              {/*      <div className="user-promote-item">*/}
-              {/*        <p className="">*/}
-              {/*          Need a detailed list of all the people working for*/}
-              {/*          Flipkart?*/}
-              {/*        </p>*/}
-              {/*        <div*/}
-              {/*          className="px-3 pb-4"*/}
-              {/*          style={{*/}
-              {/*            position: "absolute",*/}
-              {/*            bottom: "5px",*/}
-              {/*            content: "",*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <a href="/searchResult" className="small m-0">*/}
-              {/*            Try This*/}
-              {/*          </a>*/}
-              {/*        </div>*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*    <div className="item">*/}
-              {/*      <div className="user-promote-item">*/}
-              {/*        <p className="">*/}
-              {/*          Want to extract contacts of group members in a LinkedIn*/}
-              {/*          group?*/}
-              {/*        </p>*/}
-              {/*        <div*/}
-              {/*          className="px-3 pb-4"*/}
-              {/*          style={{*/}
-              {/*            position: "absolute",*/}
-              {/*            bottom: "5px",*/}
-              {/*            content: "",*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <a href="/searchResult" className="small m-0">*/}
-              {/*            Try This*/}
-              {/*          </a>*/}
-              {/*        </div>*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*    <div className="item">*/}
-              {/*      <div className="user-promote-item">*/}
-              {/*        <p className="">*/}
-              {/*          Need a detailed list of all the people working for*/}
-              {/*          Flipkart?*/}
-              {/*        </p>*/}
-
-              {/*        <div*/}
-              {/*          className="px-3 pb-4"*/}
-              {/*          style={{*/}
-              {/*            position: "absolute",*/}
-              {/*            bottom: "5px",*/}
-              {/*            content: "",*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <a href="/searchResult" className="small m-0">*/}
-              {/*            Try This*/}
-              {/*          </a>*/}
-              {/*        </div>*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*    <div className="item">*/}
-              {/*      <div className="user-promote-item">*/}
-              {/*        <p className="">*/}
-              {/*          Want to extract contacts of group members in a LinkedIn*/}
-              {/*          group?*/}
-              {/*        </p>*/}
-              {/*        <div*/}
-              {/*          className="px-3 pb-4"*/}
-              {/*          style={{*/}
-              {/*            position: "absolute",*/}
-              {/*            bottom: "5px",*/}
-              {/*            content: "",*/}
-              {/*          }}*/}
-              {/*        >*/}
-              {/*          <a href="/searchResult" className="small m-0">*/}
-              {/*            Try This*/}
-              {/*          </a>*/}
-              {/*        </div>*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*  </div>*/}
-              {/*</div>*/}
+              <AskJarvis />
             </div>
           </div>
         </div>

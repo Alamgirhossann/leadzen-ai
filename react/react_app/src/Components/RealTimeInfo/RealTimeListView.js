@@ -91,7 +91,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
@@ -134,7 +135,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
@@ -177,7 +179,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
@@ -220,7 +223,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
@@ -263,7 +267,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
@@ -306,7 +311,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
@@ -349,7 +355,8 @@ const RealTimeListView = () => {
                       fontSize: "16px",
                       background: "#CCE1FF",
                       padding: "0px 20px",
-                      borderRadius: "5px",}}
+                      borderRadius: "5px",
+                    }}
                   >
                     <span>200 Leads</span>
                   </div>
