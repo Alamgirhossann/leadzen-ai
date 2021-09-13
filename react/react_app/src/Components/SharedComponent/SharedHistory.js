@@ -40,6 +40,7 @@ const SharedHistory = () => {
   //     profile_used: 9,
   //   },
   // ];
+
   const [myLeads, setMyLeads] = useState([]);
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   const myTags = [
@@ -76,6 +77,12 @@ const SharedHistory = () => {
         state: { details: data },
       });
     }
+    if (data.search_type === "texAuCompany") {
+      history.push({
+        pathname: "/result_by_history_type3",
+        state: { details: data },
+      });
+    }
     if (data.search_type === "PIPL") {
       history.push({
         pathname: "/search_by_history_type2",
@@ -106,7 +113,12 @@ const SharedHistory = () => {
       <div className="user-lead-top mb-2 head-btn-style">
         <div className="d-flex align-items-center">
           <h5 className="m-0">
-            <img src="assets/images/back-union.png" alt="" /> History
+            <a href="/repeatedUser" className="text-decoration-none text-dark">
+              <span className="me-1">
+                <img src="assets/images/back-union.png" alt="title" />
+              </span>{" "}
+            </a>
+            History
           </h5>
         </div>
         <form action="#" className="search-form-sm">
@@ -148,9 +160,11 @@ const SharedHistory = () => {
                     </p>
                     <div align="right">
                       <small className="d-block">
-                        Profile: {data.profile_used}
+                        Profile: {data.profile_count}
                       </small>
-                      <small className="d-block">Mail: {data.mail_used}</small>
+                      <small className="d-block">
+                        Mail: {data.email_count}
+                      </small>
                     </div>
                   </div>
                 </div>

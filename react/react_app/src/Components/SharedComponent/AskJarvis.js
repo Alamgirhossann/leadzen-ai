@@ -23,7 +23,7 @@ const AskJarvis = () => {
             </p>
             <div
               classNameName="px-3 pb-4"
-              style={{ position: "absolute", bottom: "5px", content: "" }}
+              style={{ position: "absolute", bottom: "15px", content: "" }}
             >
               <a href="/searchResult" className="small m-0">
                 Try This
@@ -39,7 +39,7 @@ const AskJarvis = () => {
             </p>
             <div
               classNameName="px-3 pb-4"
-              style={{ position: "absolute", bottom: "5px", content: "" }}
+              style={{ position: "absolute", bottom: "15px", content: "" }}
             >
               <a href="/searchResult" className="small m-0">
                 Try This
@@ -54,7 +54,22 @@ const AskJarvis = () => {
             </p>
             <div
               classNameName="px-3 pb-4"
-              style={{ position: "absolute", bottom: "5px", content: "" }}
+              style={{ position: "absolute", bottom: "15px", content: "" }}
+            >
+              <a href="/searchResult" className="small m-0">
+                Try This
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="item">
+          <div className="user-promote-item">
+            <p className="">
+              Need a detailed list of all the people working for Flipkart?
+            </p>
+            <div
+              classNameName="px-3 pb-4"
+              style={{ position: "absolute", bottom: "15px", content: "" }}
             >
               <a href="/searchResult" className="small m-0">
                 Try This
@@ -69,7 +84,7 @@ const AskJarvis = () => {
             </p>
             <div
               classNameName="px-3 pb-4"
-              style={{ position: "absolute", bottom: "5px", content: "" }}
+              style={{ position: "absolute", bottom: "15px", content: "" }}
             >
               <a href="/searchResult" className="small m-0">
                 Try This
@@ -82,25 +97,9 @@ const AskJarvis = () => {
             <p className="">
               Need a detailed list of all the people working for Flipkart?
             </p>
-
             <div
-              className="px-3 pb-4"
-              style={{ position: "absolute", bottom: "5px", content: "" }}
-            >
-              <a href="/searchResult" className="small m-0">
-                Try This
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="item">
-          <div className="user-promote-item">
-            <p className="">
-              Want to extract contacts of group members in a LinkedIn group?
-            </p>
-            <div
-              className="px-3 pb-4"
-              style={{ position: "absolute", bottom: "5px", content: "" }}
+              classNameName="px-3 pb-4"
+              style={{ position: "absolute", bottom: "15px", content: "" }}
             >
               <a href="/searchResult" className="small m-0">
                 Try This
