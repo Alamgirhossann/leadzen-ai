@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional
+from typing import Optional, List
 from urllib.parse import urlencode
 
 import httpx
@@ -43,6 +43,8 @@ class PiplRequest(BaseModel):
     name: Optional[PiplName] = None
     url: Optional[str] = None
     hash_key: Optional[str] = None
+    type: Optional[str] = None
+    result: Optional[List[dict]] = None
 
 
 @router.post("/search")
@@ -82,6 +84,7 @@ async def people_search(
             response = await get_profile_search(app_request.hash_key, user)
             logger.debug(f"is_credit_applied>>>{response=}, {user=}")
             if response:
+
                 return response.get('search_results')
             else:
                 logger.debug(f"Profile not found")
@@ -93,14 +96,21 @@ async def people_search(
                     raise HTTPException(
                         status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
                     )
-                pipl_res = await send_pipl_request(params)
+                search_type = ''
+                if app_request.type == 'PIPL_REC':
+                    search_type = "PIPL"
+                    pipl_res = app_request.result
+                    logger.debug(f" $$$$$$$$$$$$$$$$$$$$$$$$$in pipl res >>>>{pipl_res=}")
+                else:
+                    search_type = "texAu"
+                    pipl_res = await send_pipl_request(params)
                 # logger.debug(f"{pipl_res=}")
                 if pipl_res:
                     logger.debug(f" in pipl res >>>>{user_response=}")
                     credit_res = await deduct_credit("PROFILE", user_response)
                     logger.debug(f"{credit_res=}")
                     request = {
-                        "search_type": "texAu",
+                        "search_type": search_type,
                         "hash_key": app_request.hash_key,
                         "search_results": [
                             pipl_res
@@ -111,6 +121,13 @@ async def people_search(
                     # logger.debug(f"{add_profile_res=}")
 
                 return pipl_res
+        else:
+            logger.debug(f"Credit Not applied")
+            pipl_res = await send_pipl_request(params)
+            return pipl_res
+    except HTTPException as e:
+        logger.warning(f"HTTPException re-raised")
+        raise e
     except Exception as e:
         logger.critical(f"Exception in PIPL search: {str(e)}")
         return None

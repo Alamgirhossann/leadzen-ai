@@ -11,9 +11,10 @@ import Filters from "../SharedComponent/Filters";
 import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-import Lottie from 'react-lottie';
+import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+import { digestMessage } from "./SearchResultTexAu";
 
 const SearchResult = (props) => {
   useEffect(() => {
@@ -284,11 +285,40 @@ const SearchResult = (props) => {
         let phones = [];
         if (data && data.phones) {
           console.log("in data>>>>", data.phones);
+          let hash_key = await digestMessage(data);
+          console.log("hash_key>>>>>>>>>>", hash_key);
+          let reqJsonPipl = {
+            hash_key: hash_key,
+            type: "PIPL_REC",
+            result: [data],
+          };
+          const response = await fetch(apiServer + "/pipl/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(reqJsonPipl),
+          });
 
-          for (let j = 0; j < data.phones.length; j++) {
-            phones.push(data.phones[j].number);
-
+          if (response.status === 402) {
+            alert(
+              "You have insufficient profile credit. Buy Credits to get details."
+            );
+          }
+          if (response.status === 500) {
+            console.log("Not able to get Details");
+          }
+          let json_res = null;
+          if (response.status === 200) {
+            json_res = await response.json();
+            console.log("PIPL response>>>>", response);
+            for (let j = 0; j < data.phones.length; j++) {
+              phones.push(data.phones[j].number);
+            }
             console.log("Phones>>>>>>", phones);
+
             let requestForSaveProfileCredit = {
               search_id: searchId,
               phone_numbers: phones,
@@ -315,6 +345,7 @@ const SearchResult = (props) => {
               console.error("Exception>>", e);
             }
           }
+
           setSpecificUserDetails((prev) => [
             ...prev,
             { index: `${currentPage}${index}`, details: data },
@@ -427,7 +458,7 @@ const SearchResult = (props) => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn details={true}/>
+              <SpecificSearchBtn details={true} />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
@@ -437,35 +468,35 @@ const SearchResult = (props) => {
             </div>
             <div className="col-md-8 col-lg-9">
               <div className="user-search-wrapper">
-              <div className="user-search-wrapper">
-                <div className="detailed-search">
-                  <div className="search-promote-content">
-                    <form className=" d-flex my-2 my-lg-0">
-                      <input
-                        className="form-control mr-sm-2"
-                        type="search"
-                        // onBlur={handleHeadSearch}
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                      <button
-                        className="btn text-white w-auto d-flex ms-3"
-                        // onClick={handleHeadSearchSubmit}
-                        style={{ background: "#FB3E3E" }}
-                        type="submit"
-                      >
-                        <span className="pe-1">
-                          <FontAwesomeIcon icon={faSearch} />
-                        </span>{" "}
-                        Search
-                      </button>
-                    </form>
-                  </div>
-                  <div>
-                    <small>Last Updated: {today}</small>
+                <div className="user-search-wrapper">
+                  <div className="detailed-search">
+                    <div className="search-promote-content">
+                      <form className=" d-flex my-2 my-lg-0">
+                        <input
+                          className="form-control mr-sm-2"
+                          type="search"
+                          // onBlur={handleHeadSearch}
+                          placeholder="Search"
+                          aria-label="Search"
+                        />
+                        <button
+                          className="btn text-white w-auto d-flex ms-3"
+                          // onClick={handleHeadSearchSubmit}
+                          style={{ background: "#FB3E3E" }}
+                          type="submit"
+                        >
+                          <span className="pe-1">
+                            <FontAwesomeIcon icon={faSearch} />
+                          </span>{" "}
+                          Search
+                        </button>
+                      </form>
+                    </div>
+                    <div>
+                      <small>Last Updated: {today}</small>
+                    </div>
                   </div>
                 </div>
-              </div>
                 {/* <div className="detailed-search">
                   <div>
                     <small>Last Updated: {today}</small>
@@ -663,9 +694,8 @@ const SearchResult = (props) => {
                   </div>
                 ) : (
                   <div className="d-flex justify-content-center">
-                         <div role="status" style={{height:"400px"}}>
-                         <Lottie options={Loader}
-              />
+                    <div role="status" style={{ height: "400px" }}>
+                      <Lottie options={Loader} />
                     </div>
                   </div>
                 )}

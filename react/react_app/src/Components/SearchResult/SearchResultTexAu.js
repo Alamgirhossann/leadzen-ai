@@ -12,6 +12,16 @@ import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
+
+export async function digestMessage(message) {
+  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join(""); // convert bytes to hex string
+  return hashHex;
+}
 const SearchResult = (props) => {
   const [customSearch, setCustomSearch] = useState({
     location: null,
@@ -451,11 +461,13 @@ const SearchResult = (props) => {
   };
 
   const handleProfile = async (index, data) => {
+    let hash_key = await digestMessage(data.url);
+    console.log("hash_key>>>>>>>>>>", hash_key);
     let reqJsonPipl = {
       email: "",
       name: { first_name: "", last_name: "" },
       url: data.url,
-      token: Cookies.get("user_token"),
+      hash_key: hash_key,
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     try {
@@ -480,8 +492,18 @@ const SearchResult = (props) => {
           body: JSON.stringify(reqJsonPipl),
         });
 
-        let json_res = await response.json();
-        console.log("Data Pipl..>>>>>>>>>>>", json_res);
+        if (response.status === 402) {
+          alert(
+            "You have insufficient profile credit. Buy Credits to get details."
+          );
+        }
+        if (response.status === 500) {
+          console.log("Not able to get Details");
+        }
+        let json_res = null;
+        if (response.status === 200) {
+          json_res = await response.json();
+        }
         let phones = [];
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
@@ -527,7 +549,10 @@ const SearchResult = (props) => {
           } else {
             setSpecificUserDetails((prev) => [
               ...prev,
-              { index: `${currentPage}${index}`, details: "Record Not Found" },
+              {
+                index: `${currentPage}${index}`,
+                details: "Record Not Found",
+              },
             ]);
           }
         } else {
