@@ -287,6 +287,7 @@ const SavedList = (props) => {
                   userInfo.map((data) => (
                     <div className="container-style mb-2">
                       <div key={data.id} className="save-list-container">
+                        {data.save_list_results.category==="People" ? <React.Fragment>
                         <p className="save-profile text-danger">
                           <img
                             src={
@@ -342,6 +343,62 @@ const SavedList = (props) => {
                             <img src="assets/images/close-user.png" alt="" />
                           </p>
                         </a>
+                        </React.Fragment>: <React.Fragment>
+                        <p className="save-profile text-danger">
+                          <img
+                            src={
+                              data.save_list_results.logoUrl ||
+                              "assets/images/author-image.png"
+                            }
+                            alt=""
+                          />
+                        </p>
+                        <p className="save-name">
+                          {data.save_list_results.name}
+                        </p>
+                        <div className="save-speaker">
+                          <div>
+                            <small className="d-block">
+                              {data.save_list_results.description}
+                            </small>
+                            {/*<small className="d-block">*/}
+                            {/*  Works at {data.comp}*/}
+                            {/*</small>*/}
+                          </div>
+                        </div>
+                        <div className="save-date">
+                          <div>
+                            <small className="d-block">Search Date</small>
+                            <small className="d-block">
+                              <Moment format="DD/MM/YYYY">
+                                {data.save_list_results.timestamp}
+                              </Moment>
+                            </small>
+                          </div>
+                        </div>
+
+                        <p className="save-view-btn">
+                          <a
+                            className="btn button"
+                            data-toggle="collapse"
+                            href={"#collapseExample_" + `${data.id}`}
+                            data-target={"#collapseExample_" + `${data.id}`}
+                            role="button"
+                            aria-expanded="false"
+                            aria-controls="collapseExample"
+                          >
+                            View Details
+                          </a>
+                        </p>
+                        <a
+                          href="savedList"
+                          onClick={(e) => handleDelete(data.id)}
+                        >
+                          <p className="save-close-btn">
+                            <img src="assets/images/close-user.png" alt="" />
+                          </p>
+                        </a>
+                        </React.Fragment>}
                       </div>
                       <div
                         style={{
