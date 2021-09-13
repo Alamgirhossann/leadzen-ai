@@ -285,7 +285,7 @@ const SearchResult = (props) => {
         let phones = [];
         if (data && data.phones) {
           console.log("in data>>>>", data.phones);
-          let hash_key = await digestMessage(data);
+          let hash_key = await digestMessage(JSON.stringify(data));
           console.log("hash_key>>>>>>>>>>", hash_key);
           let reqJsonPipl = {
             hash_key: hash_key,
@@ -306,6 +306,7 @@ const SearchResult = (props) => {
             alert(
               "You have insufficient profile credit. Buy Credits to get details."
             );
+            return;
           }
           if (response.status === 500) {
             console.log("Not able to get Details");
@@ -344,23 +345,21 @@ const SearchResult = (props) => {
             } catch (e) {
               console.error("Exception>>", e);
             }
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              { index: `${currentPage}${index}`, details: data },
+            ]);
           }
-
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: data },
-          ]);
-        } else {
-          console.log("In setSpecificUserDetails else");
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: "Record Not Found" },
-          ]);
-          console.log(
-            "In setSpecificUserDetails else ress....",
-            specificUserDetails
-          );
         }
+        console.log("In setSpecificUserDetails else");
+        setSpecificUserDetails((prev) => [
+          ...prev,
+          { index: `${currentPage}${index}`, details: "Record Not Found" },
+        ]);
+        console.log(
+          "In setSpecificUserDetails else ress....",
+          specificUserDetails
+        );
       }
 
       console.log("specificUser>>>>>>>", specificUserDetails);
@@ -682,8 +681,17 @@ const SearchResult = (props) => {
                               id={"collapseExample_" + `${currentPage}${index}`}
                             >
                               {/* <div className="card card-body"> */}
-                              <SpecificUser details={data} />
+                              {/*<SpecificUser details={data} />*/}
                               {/* </div> */}
+                              {specificUserDetails?.map((spec) => (
+                                <span>
+                                  {spec.index === `${currentPage}${index}` ? (
+                                    <span>
+                                      <SpecificUser details={spec.details} />
+                                    </span>
+                                  ) : null}
+                                </span>
+                              ))}{" "}
                             </div>
                           </div>
                         </div>

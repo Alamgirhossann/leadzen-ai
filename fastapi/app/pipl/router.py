@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, status, BackgroundTasks, Depends
 from fastapi_cache.decorator import cache
 from loguru import logger
 from pydantic import BaseModel
+from sentry_sdk import capture_message
 
 from app.config import (
     API_CONFIG_PIPL_API_KEY,

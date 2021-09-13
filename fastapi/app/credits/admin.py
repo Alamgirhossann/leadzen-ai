@@ -69,7 +69,7 @@ async def deduct_credit(credit_type, user):
                     )
                 values = {"profile_credit": user.profile_credit - 1 }
         logger.debug(f"{values=}")
-        update_query = users.update().values(values).where(user.id == user.id)
+        update_query = users.update().values(values).where(users.c.id == user.id)
         logger.debug(f"{update_query=}")
 
         if not (
