@@ -176,6 +176,11 @@ const App = () => {
           component={SearchResultCompany}
           exact
         />
+        <PrivateRoute
+          path="/company_result_by_name"
+          component={SearchResultCompany}
+          exact
+        />
 
         <PrivateRoute
           path="/detailInfoCompany"
