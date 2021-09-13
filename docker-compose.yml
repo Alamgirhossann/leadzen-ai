@@ -1,34 +1,48 @@
-version: '3.3'
+version: "3.3"
 
 services:
-    selenium:
-        image: "selenium/standalone-chrome:latest"
-        container_name: "selenium"
-        ports:
-            - "4444:4444"
-        volumes:
-            - /dev/shm:/dev/shm
+  selenium:
+    image: "selenium/standalone-chrome:latest"
+    container_name: "selenium"
+    ports:
+      - "4444:4444"
+    volumes:
+      - /dev/shm:/dev/shm
 
-    person_fastapi:
-        image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
-        container_name: "person_fastapi"
-        ports:
-            - "8000:5000"
-        environment:
-            - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
-            - API_CONFIG_PORT_NUM_INTERNAL=5000
-            - API_CONFIG_SELF_BASE_URL=http://localhost:5000
-            - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://person-dev.analystt.ai
-            - API_CONFIG_REACT_LOGIN_PAGE=http://person-dev.analystt.ai/login
-            - API_CONFIG_REACT_SIGNUP_PAGE=http://person-dev.analystt.ai/signUp
-        depends_on: 
-            - selenium
-            
-    person_react:
-        image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
-        container_name: "person_react"      
-        ports: 
-            - 80:80
-        depends_on:
-            - person_fastapi
-            
+  person_fastapi:
+    image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
+    container_name: "person_fastapi"
+    ports:
+      - "8000:5000"
+    environment:
+      - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
+      - API_CONFIG_PORT_NUM_INTERNAL=5000
+      - API_CONFIG_SELF_BASE_URL=http://localhost:5000
+      - API_CONFIG_SELF_BASE_EXTERNAL_URL=https://leadzen-dev.analystt.ai
+      - API_CONFIG_REACT_LOGIN_PAGE=https://leadzen-dev.analystt.ai/login
+      - API_CONFIG_REACT_SIGNUP_PAGE=https://leadzen-dev.analystt.ai/signUp
+    depends_on:
+      - selenium
+
+  person_react:
+    image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
+    container_name: "person_react"
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - person_fastapi
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  certbot:
+    image: certbot/certbot
+    container_name: "letsencrypt_certbot"
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
