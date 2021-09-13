@@ -71,7 +71,6 @@ const App = () => {
         <Route path="/signUpError">
           <SignUpError />
         </Route>
-
         <Route path="/detailedInfo">
           <DetailedInfo />
         </Route>
@@ -101,31 +100,35 @@ const App = () => {
           <RealTimeListView />
         </Route>
         <Route path="/unverified" component={LoginEmailUnverifiedError} exact />
-        <PrivateRoute path="/excelDownload" component={ExcelDownload} />
-        <Route path="/login" component={LogIn} />
-        <Route path="/" component={LogIn} />
+        <PrivateRoute path="/excelDownload" component={ExcelDownload} exact />
+        <Route path="/login" component={LogIn} exact />
+        <Route path="/" component={LogIn} exact />
         <Route path="/searchResult" component={SearchResult} />
-        <Route path="/result_by_name" component={SearchResultTexAu} />
-        <Route path="/search_by_history_type2" component={SearchResult} />
-        <Route path="/result_by_history_type1" component={SearchResultTexAu} />
+        <Route path="/result_by_name" component={SearchResultTexAu} exact />
+        <Route path="/search_by_history_type2" component={SearchResult} exact />
+        <Route
+          path="/result_by_history_type1"
+          component={SearchResultTexAu}
+          exact
+        />
         <Route
           path="/result_by_history_type3"
           component={SearchResultCompany}
+          exact
         />
-        <Route path="/social_url_search" component={SearchResultTexAu} />
-        <Route path="/advanceSearch" component={SearchResultTexAu} />
+        <Route path="/social_url_search" component={SearchResultTexAu} exact />
+        <Route path="/advanceSearch" component={SearchResultTexAu} exact />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />
         <Route path="/excelDownload" component={ExcelDownload} />
         <Route
           path="/company_first_time_user"
           component={FirstTimeUserCompany}
+          exact
         />
-
         <Route path="/loginEmailError">
           <LoginEmailError />
         </Route>
-
         <Route path="/passwordInstruction">
           <PasswordInstruction />
         </Route>
@@ -153,14 +156,18 @@ const App = () => {
         <Route path="/dashboardTwo">
           <DashboardTwo />
         </Route>
-        <Route path="/firstTimeUserCompany">
-          <FirstTimeUserCompany />
-        </Route>
-        <Route path="/searchResultCompany" component={SearchResultCompany} />
-
-        <Route path="/detailInfoCompany">
-          <DetailInfoCompany />
-        </Route>
+        <Route
+          path="/firstTimeUserCompany"
+          component={FirstTimeUserCompany}
+          exact
+        />
+        /
+        <Route
+          path="/searchResultCompany"
+          component={SearchResultCompany}
+          exact
+        />
+        <Route path="/detailInfoCompany" component={DetailInfoCompany} exact />
       </Switch>
     </Router>
   );
