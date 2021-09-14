@@ -45,7 +45,7 @@ echo  "--- Done Committing and Tagging ---"
 echo "--------------------------"
 echo "*** Building $DOCKER_IMAGE_NAME Docker Image and tagging as $CONTAINER_REGISTRY_IMAGE"
 echo "--------------------------"
-docker build -t "$DOCKER_IMAGE_NAME":latest "$ROOT_DIRECTORY"
+sudo docker build -t "$DOCKER_IMAGE_NAME":latest "$ROOT_DIRECTORY"
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Build Error"
@@ -55,7 +55,7 @@ else
 fi
 
 
-docker tag "$DOCKER_IMAGE_NAME":latest "$CONTAINER_REGISTRY_IMAGE":latest
+sudo docker tag "$DOCKER_IMAGE_NAME":latest "$CONTAINER_REGISTRY_IMAGE":latest
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Tag Error"
@@ -68,14 +68,14 @@ fi
 echo "------------------------"
 echo "*** Pushing $DOCKER_IMAGE_NAME Image to Container Registry: $CONTAINER_REGISTRY"
 echo "------------------------"
-aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin "$CONTAINER_REGISTRY"
+aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin "$CONTAINER_REGISTRY"
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Registry Login Error"
     exit 1
 fi
 
-docker push "$CONTAINER_REGISTRY_IMAGE":latest
+sudo docker push "$CONTAINER_REGISTRY_IMAGE":latest
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Registry Push Error"
@@ -141,7 +141,7 @@ echo  "--- Done Committing and Tagging ---"
 echo "--------------------------"
 echo "*** Building $DOCKER_IMAGE_NAME Docker Image and tagging as $CONTAINER_REGISTRY_IMAGE"
 echo "--------------------------"
-docker build -t "$DOCKER_IMAGE_NAME":latest "$ROOT_DIRECTORY"
+sudo docker build -t "$DOCKER_IMAGE_NAME":latest "$ROOT_DIRECTORY"
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Build Error"
@@ -150,7 +150,7 @@ else
     echo "--- Done Building ---"
 fi
 
-docker tag "$DOCKER_IMAGE_NAME":latest "$CONTAINER_REGISTRY_IMAGE":latest
+sudo docker tag "$DOCKER_IMAGE_NAME":latest "$CONTAINER_REGISTRY_IMAGE":latest
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Tag Error"
@@ -163,14 +163,14 @@ fi
 echo "------------------------"
 echo "*** Pushing $DOCKER_IMAGE_NAME Image to Container Registry: $CONTAINER_REGISTRY"
 echo "------------------------"
-aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin "$CONTAINER_REGISTRY"
+aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin "$CONTAINER_REGISTRY"
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Registry Login Error"
     exit 1
 fi
 
-docker push "$CONTAINER_REGISTRY_IMAGE":latest
+sudo docker push "$CONTAINER_REGISTRY_IMAGE":latest
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker Registry Push Error"
