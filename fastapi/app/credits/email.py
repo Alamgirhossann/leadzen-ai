@@ -1,216 +1,18 @@
+import sys
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import Depends, HTTPException, APIRouter
 from loguru import logger
-from pydantic.main import BaseModel
+from starlette import status
 
-from app.database import profile_credit_history, email_credit_history,email_search, database
+from app.credits.common import EmailCreditResponse, EmailCreditAddResponse, EmailCreditAddRequest, \
+    EmailCreditBulkAddResponse, EmailCreditBulkAddRequest,EmailSearchGetRequest ,EmailSearchAddRequest
+from app.database import database, email_credit_history,email_search
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/credits", tags=["Credits"])
-
-
-class ProfileCreditAddRequest(BaseModel):
-    search_id: str
-    phone_number: str
-    search_index: int
-
-
-class ProfileCreditBulkAddRequest(BaseModel):
-    search_id: str
-    phone_numbers: List[str]
-    search_index: int
-
-
-class ProfileCreditAddResponse(BaseModel):
-    profile_credit_id: str
-
-
-class ProfileCreditBulkAddResponse(BaseModel):
-    profile_credit_ids: List[str]
-
-
-class ProfileCreditResponse(BaseModel):
-    id: str
-    user_id: str
-    search_id: str
-    phone_number: str
-    search_index: int
-    created_on: datetime
-
-
-@router.get("/profile/all", response_model=List[ProfileCreditResponse])
-async def get_all_profile_credit(user=Depends(fastapi_users.get_current_active_user)):
-    logger.debug(f"{user=}")
-    try:
-        query = "SELECT * FROM profile_credit_history WHERE user_id = :user_id ORDER BY id DESC"
-
-        if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": str(user.id)}
-                )
-        ):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-
-        logger.debug(f"{rows=}")
-
-        processed_rows = [dict(x) for x in rows]
-
-        return [ProfileCreditResponse(**x) for x in processed_rows if x]
-
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        logger.critical(f"Exception Querying Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Querying Database",
-        )
-
-
-@router.get(
-    "/profile/search_id/{search_id}",
-    response_model=List[ProfileCreditResponse],
-)
-async def get_all_profile_credits_for_search_id(
-        search_id: str, user=Depends(fastapi_users.get_current_active_user)
-):
-    logger.debug(f"{search_id=}, {user=}")
-    try:
-        query = f"SELECT * FROM profile_credit_history WHERE search_id = :search_id AND user_id = :user_id"
-
-        if not (
-                rows := await database.fetch_all(
-                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
-                )
-        ):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
-
-        logger.debug(f"{rows=}")
-
-        processed_rows = [dict(x) for x in rows]
-
-        return [ProfileCreditResponse(**x) for x in processed_rows]
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        logger.critical(f"Exception Querying Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
-        )
-
-
-@router.post("/profile/add", response_model=ProfileCreditAddResponse)
-async def add_profile_credit_history(
-        request: ProfileCreditAddRequest,
-        user=Depends(fastapi_users.get_current_active_user),
-):
-    logger.debug(f"{request=}, {user=}")
-
-    try:
-        profile_credit_id = str(uuid.uuid4())
-
-        query = profile_credit_history.insert().values(
-            id=profile_credit_id,
-            user_id=str(user.id),
-            search_id=request.search_id,
-            phone_number=request.phone_number,
-            search_index=request.search_index,
-            created_on=datetime.utcnow(),
-        )
-
-        row_id = await database.execute(query)
-
-        logger.debug(f"{row_id=}")
-
-        return ProfileCreditAddResponse(profile_credit_id=profile_credit_id)
-
-    except Exception as e:
-        logger.critical(f"Exception Inserting to Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Inserting to Database",
-        )
-
-
-@router.post("/profile/bulk_add", response_model=ProfileCreditBulkAddResponse)
-async def add_bulk_profile_credit_history(
-        request: ProfileCreditBulkAddRequest,
-        user=Depends(fastapi_users.get_current_active_user),
-):
-    logger.debug(f"{request=}, {user=}")
-
-    try:
-        values = [{"id": str(uuid.uuid4()),
-                   "user_id": str(user.id),
-                   "search_id": request.search_id,
-                   "phone_number": phone,
-                   "search_index": request.search_index,
-                   "created_on": datetime.utcnow()
-                   } for phone in [request.phone_numbers[i] for i in range(0, len(request.phone_numbers))]]
-        profile_credit_ids = [item.get("id") for item in values]
-        logger.debug("Ids>>>>"+str(profile_credit_ids)+ str(type(profile_credit_ids)))
-        query = profile_credit_history.insert().values(
-            values
-        )
-
-        row_id = await database.execute(query)
-        logger.debug(f"{row_id=}")
-        return ProfileCreditBulkAddResponse(profile_credit_ids=profile_credit_ids)
-
-    except Exception as e:
-        logger.critical(f"Exception Inserting to Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Inserting to Database",
-        )
-
-
-class EmailCreditAddRequest(BaseModel):
-    search_id: str
-    email_address: str
-    search_index: int
-
-
-class EmailCreditBulkAddRequest(BaseModel):
-    search_id: str
-    email_addresses: List[str]
-    search_index: int
-
-
-class EmailCreditAddResponse(BaseModel):
-    email_credit_id: str
-
-
-class EmailCreditBulkAddResponse(BaseModel):
-    email_credit_ids: List[str]
-
-
-class EmailCreditResponse(BaseModel):
-    id: str
-    user_id: str
-    search_id: str
-    email_address: str
-    search_index: int
-    created_on: datetime
-
-class EmailSearchAddRequest(BaseModel):
-    user_id: str
-    query_url: str
-    email_result: str
-
-
-class EmailSearchGetRequest(BaseModel):
-    user_id : str
-    query_url : str
 
 
 @router.get(
@@ -332,18 +134,33 @@ async def add_bulk_email_credit_history(
                    "created_on": datetime.utcnow()
                    } for emails in [request.email_addresses[i] for i in range(0, len(request.email_addresses))]]
         email_credit_ids = [item.get("id") for item in values]
-
         query = email_credit_history.insert().values(
             values
         )
-
-        row_id = await database.execute(query)
-
+        if not (
+                row_id := await database.execute(query)
+        ):
+            logger.warning("Invalid Request")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+            )
         logger.debug(f"{row_id=}")
+
+        # async with httpx.AsyncClient() as client:
+        #
+        #     response = await client.put(
+        #         f"{API_CONFIG_SELF_BASE_URL}/api/credits/deduct/EMAIL",
+        #
+        #     )
+        #     if not response:
+        #         logger.debug(f"credit deduct {response=}")
 
         return EmailCreditBulkAddResponse(email_credit_ids=email_credit_ids)
 
     except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("line->" + str(exc_tb.tb_lineno))
+        print('Exception' + str(e))
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -364,7 +181,6 @@ async def add_email_search(
             email_result=request.email_result,
             created_on=datetime.utcnow(),
         )
-
         row_id = await database.execute(query)
         logger.debug(f"{row_id=}")
         return row_id
@@ -382,7 +198,6 @@ async def add_email_search(
 ):
     try:
         query = f"SELECT * FROM email_search WHERE user_id = :user_id AND query_url = :query_url"
-
         if not (
                 rows := await database.fetch_all(
                     query=query, values={"user_id": request.user_id, "query_url": request.query_url}
@@ -392,9 +207,7 @@ async def add_email_search(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
-
         logger.debug(f"{rows=}")
-
         processed_rows = [dict(x) for x in rows]
         for i in processed_rows[0]:
             if i=='email_result':
@@ -404,5 +217,3 @@ async def add_email_search(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
         )
-
-

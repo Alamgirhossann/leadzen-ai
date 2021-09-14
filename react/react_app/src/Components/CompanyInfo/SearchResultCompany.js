@@ -87,6 +87,20 @@ const SearchResultCompany = (props) => {
       inputData.cookie = tempCookie;
       await sendForExecution(endpoint, inputData);
     }
+    if (props.location.pathname.includes("/company_result_by_name")) {
+      console.log("......from name .....", props.location.state.requestTexAu);
+      setLoading(true);
+      requestForTexAu = {
+        name: props.location.state.requestTexAu.name,
+        industry: [],
+        location: [],
+        employeeCount: [],
+      };
+      const endpoint = "/texau/linkedin/matching_profiles_for_company_url";
+      const inputData = requestForTexAu;
+      inputData.cookie = tempCookie;
+      await sendForExecution(endpoint, inputData);
+    }
     if (props.location.pathname.includes("/result_by_history_type3")) {
       try {
         const response = await fetch(
