@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import Cookies from "js-cookie";
 
-const BulkSearch = () => {
+const BulkSearch = (data) => {
   const [uploadedCSV, setUploadedCSV] = useState("");
   const [sampleChecked, setSampleChecked] = useState(false);
 
@@ -104,7 +104,7 @@ const BulkSearch = () => {
         href="assets/sample.csv"
         onClick={(e) => setSampleChecked(true)}
       >
-        Click here to download csv format
+        {data.data ? "" : "Click here to download csv format"}
       </a>
 
       <input
@@ -122,7 +122,7 @@ const BulkSearch = () => {
         <button
           className="browse-btn"
           onClick={handleCsvUpload}
-          // disabled={sampleChecked ? "" : "disabled"}
+          disabled={data.data}
         >
           Browse
         </button>
@@ -134,6 +134,7 @@ const BulkSearch = () => {
         className="btn text-white"
         type="submit"
         onClick={async (e) => uploadCsv()}
+        disabled={data.data}
       >
         <span className="pe-1">
           <FontAwesomeIcon icon={faSearch} />

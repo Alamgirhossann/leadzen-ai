@@ -46,7 +46,7 @@ const UserGuide = () => {
           className="btn-close"
           data-bs-dismiss="modal"
           aria-label="Close"
-        ></button>
+        />
         <div className="modal-dialog">
           <div className="modal-message">
             <p>
@@ -84,7 +84,7 @@ const UserGuide = () => {
         <div className="main-wrapper container-fluid">
           <div className="row">
             <div className="col-md-4 col-lg-3">
-              <SpecificSearchBtn />
+              <SpecificSearchBtn details={true} />
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />

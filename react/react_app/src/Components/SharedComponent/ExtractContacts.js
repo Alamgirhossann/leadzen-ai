@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import extractDomain from "extract-domain";
 import Cookies from "js-cookie";
 
-const ExtractContacts = () => {
+const ExtractContacts = (data) => {
   const [socialMediaData, setSocialMediaData] = useState({
     url: null,
     type: "Likers",
@@ -126,6 +126,7 @@ const ExtractContacts = () => {
             className="form-control"
             onBlur={handleUrlChange}
             placeholder="Paste Social Media URL"
+            disabled={data.data}
           />
           {/*<button*/}
           {/*  className="btn btn-danger"*/}
@@ -172,6 +173,7 @@ const ExtractContacts = () => {
             value="Likers"
             checked={socialMediaData.type.includes("Likers")}
             onChange={handleTypeChange}
+            disabled={data.data}
           />
           <label className="form-check-label" for="inlineRadio3">
             Likers
@@ -186,6 +188,7 @@ const ExtractContacts = () => {
             value="Commenters"
             checked={socialMediaData.type.includes("Commenters")}
             onChange={handleTypeChange}
+            disabled={data.data}
           />
           <label className="form-check-label" for="inlineRadio4">
             Commenters
@@ -220,6 +223,7 @@ const ExtractContacts = () => {
         className="btn text-white"
         type="submit"
         onClick={handleSubmit}
+        disabled={data.data}
       >
         <span className="pe-1">
           <FontAwesomeIcon icon={faSearch} />
@@ -227,7 +231,7 @@ const ExtractContacts = () => {
         Search
       </button>
       <p className="m-0 mt-2">
-        <a href="#" className="text-danger">
+        <a href={data.data ? "" : "/userGuide"} className="learn-link">
           Learn More{" "}
         </a>
       </p>
