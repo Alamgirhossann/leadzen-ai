@@ -49,6 +49,17 @@ search_saved = sqlalchemy.Table(
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
+profile_search = sqlalchemy.Table(
+    "profile_search",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("search_type", sqlalchemy.String),
+    sqlalchemy.Column("hash_key", sqlalchemy.String),
+    sqlalchemy.Column("search_results", sqlalchemy.String),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+)
+
 engine = sqlalchemy.create_engine(
     API_CONFIG_DATABASE_URL, connect_args={"check_same_thread": False}
 )

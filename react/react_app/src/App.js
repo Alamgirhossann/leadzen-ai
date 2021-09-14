@@ -115,13 +115,22 @@ const App = () => {
           path="/result_by_history_type3"
           component={SearchResultCompany}
           exact
+          exact
         />
-        <Route path="/social_url_search" component={SearchResultTexAu} exact />
-        <Route path="/advanceSearch" component={SearchResultTexAu} exact />
+        <PrivateRoute
+          path="/social_url_search"
+          component={SearchResultTexAu}
+          exact
+        />
+        <PrivateRoute
+          path="/advanceSearch"
+          component={SearchResultTexAu}
+          exact
+        />
         <Route path="/verification" component={Verification} />
         <Route path="/unverified" component={LoginEmailUnverifiedError} />
         <Route path="/excelDownload" component={ExcelDownload} />
-        <Route
+        <PrivateRoute
           path="/company_first_time_user"
           component={FirstTimeUserCompany}
           exact
@@ -156,18 +165,28 @@ const App = () => {
         <Route path="/dashboardTwo">
           <DashboardTwo />
         </Route>
-        <Route
+        <PrivateRoute
           path="/firstTimeUserCompany"
           component={FirstTimeUserCompany}
           exact
         />
-        /
-        <Route
+
+        <PrivateRoute
           path="/searchResultCompany"
           component={SearchResultCompany}
           exact
         />
-        <Route path="/detailInfoCompany" component={DetailInfoCompany} exact />
+        <PrivateRoute
+          path="/company_result_by_name"
+          component={SearchResultCompany}
+          exact
+        />
+
+        <PrivateRoute
+          path="/detailInfoCompany"
+          component={DetailInfoCompany}
+          exact
+        />
       </Switch>
     </Router>
   );

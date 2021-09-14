@@ -20,7 +20,7 @@ const SpecificSearchBtn = (details) => {
       setToggleCheck(true);
       console.log("true....People");
       history.push({
-        pathname: "/firstTimeUser",
+        pathname: "/repeatedUser",
         state: JSON.stringify({ status: true }),
       });
     } else {
