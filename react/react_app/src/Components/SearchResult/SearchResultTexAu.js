@@ -375,23 +375,20 @@ const SearchResult = (props) => {
       } catch (e) {
         console.error("Exception>>", e);
       }
-      let urls="";
-    for(let i=0;i<data.url.length;i++){
-      if(data.url[i]=='?')
-      {
-        break;
+      let urls = "";
+      for (let i = 0; i < data.url.length; i++) {
+        if (data.url[i] == '?') {
+          break;
+        } else {
+          urls = urls + data.url[i]
+        }
       }
-      else
-      {
-        urls=urls+data.url[i]
+      let url = [urls]
+      let requestforemail = {
+        url: url
       }
-    }
-    let url=[urls]
-      let requestforemail={
-              url: url
-      }
-    try{
-         const response_email = await fetch(apiServer + "/snov/emails_for_url", {
+      try {
+        const responseEmail = await fetch(apiServer + "/snov/emails_for_url", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -400,39 +397,41 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(requestforemail),
         });
-         if(response_email.status==402)
-         {
-           alert("Insufficient Email Credit")
-         }
-         else if(response_email.status==200)
-         {
-            const result_email = await response_email.json();
-              setUnlockEmailDetails((prev) => [
-        ...prev,
-        {
-          index: `${currentPage}${index}`,
-          details: { email: result_email },
-        },
-      ]);
-         }
-        else{
-          setUnlockEmailDetails((prev) => [
-        ...prev,
-        {
-          index: `${currentPage}${index}`,
-          details: { email: `Not Found` },
-        },
-      ]);
+        if (responseEmail.status === 402) {
+          alert("You have insufficient profile credit. Buy Credits to get details.")
         }
-      }catch(e){
-        console.log(e)
+        if (responseEmail.status === 200) {
+          const result_email = await responseEmail.json();
+          setUnlockEmailDetails((prev) => [
+            ...prev,
+            {
+              index: `${currentPage}${index}`,
+              details: {email: result_email},
+            },
+          ]);
+        }
+        if(responseEmail.status == 404){
+          setUnlockEmailDetails((prev) => [
+            ...prev,
+            {
+              index: `${currentPage}${index}`,
+              details: {email: `Not Found`},
+            },
+          ]);
+        }
+        if (responseEmail.status == 500)
+        {
+          alert("Error getting data from server.Please try again.")
+        }
+      } catch (err) {
+        console.error("Error: ", err);
       }
     } else {
       unlockEmailDetails?.map((spec) => {
         console.log(
-          "Check details>>>>",
-          spec.index,
-          spec.details === "Record Not Found"
+            "Check details>>>>",
+            spec.index,
+            spec.details === "Record Not Found"
         );
       });
     }

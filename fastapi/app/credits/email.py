@@ -7,9 +7,16 @@ from fastapi import Depends, HTTPException, APIRouter
 from loguru import logger
 from starlette import status
 
-from app.credits.common import EmailCreditResponse, EmailCreditAddResponse, EmailCreditAddRequest, \
-    EmailCreditBulkAddResponse, EmailCreditBulkAddRequest,EmailSearchGetRequest ,EmailSearchAddRequest
-from app.database import database, email_credit_history,email_search
+from app.credits.common import (
+    EmailCreditResponse,
+    EmailCreditAddResponse,
+    EmailCreditAddRequest,
+    EmailCreditBulkAddResponse,
+    EmailCreditBulkAddRequest,
+    EmailSearchGetRequest,
+    EmailSearchAddRequest,
+)
+from app.database import database, email_credit_history, email_search
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/credits", tags=["Credits"])
@@ -25,9 +32,9 @@ async def get_all_email_credits(user=Depends(fastapi_users.get_current_active_us
         query = "SELECT * FROM email_credit_history WHERE user_id = :user_id ORDER BY id DESC"
 
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": str(user.id)}
-                )
+            rows := await database.fetch_all(
+                query=query, values={"user_id": str(user.id)}
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -55,16 +62,16 @@ async def get_all_email_credits(user=Depends(fastapi_users.get_current_active_us
     response_model=List[EmailCreditResponse],
 )
 async def get_email_credits_used_in_search_id(
-        search_id: str, user=Depends(fastapi_users.get_current_active_user)
+    search_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{search_id=}, {user=}")
     try:
         query = f"SELECT * FROM email_credit_history WHERE search_id = :search_id AND user_id = :user_id"
 
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
-                )
+            rows := await database.fetch_all(
+                query=query, values={"search_id": search_id, "user_id": str(user.id)}
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -87,8 +94,8 @@ async def get_email_credits_used_in_search_id(
 
 @router.post("/email/add", response_model=EmailCreditAddResponse)
 async def add_email_credit_history(
-        request: EmailCreditAddRequest,
-        user=Depends(fastapi_users.get_current_active_user),
+    request: EmailCreditAddRequest,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
@@ -119,27 +126,30 @@ async def add_email_credit_history(
 
 @router.post("/email/bulk_add", response_model=EmailCreditBulkAddResponse)
 async def add_bulk_email_credit_history(
-        request: EmailCreditBulkAddRequest,
-        user=Depends(fastapi_users.get_current_active_user),
+    request: EmailCreditBulkAddRequest,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
     try:
 
-        values = [{"id": str(uuid.uuid4()),
-                   "user_id": str(user.id),
-                   "search_id": request.search_id,
-                   "email_address": emails,
-                   "search_index": request.search_index,
-                   "created_on": datetime.utcnow()
-                   } for emails in [request.email_addresses[i] for i in range(0, len(request.email_addresses))]]
+        values = [
+            {
+                "id": str(uuid.uuid4()),
+                "user_id": str(user.id),
+                "search_id": request.search_id,
+                "email_address": emails,
+                "search_index": request.search_index,
+                "created_on": datetime.utcnow(),
+            }
+            for emails in [
+                request.email_addresses[i]
+                for i in range(0, len(request.email_addresses))
+            ]
+        ]
         email_credit_ids = [item.get("id") for item in values]
-        query = email_credit_history.insert().values(
-            values
-        )
-        if not (
-                row_id := await database.execute(query)
-        ):
+        query = email_credit_history.insert().values(values)
+        if not (row_id := await database.execute(query)):
             logger.warning("Invalid Request")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
@@ -160,7 +170,7 @@ async def add_bulk_email_credit_history(
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
+        print("Exception" + str(e))
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -169,9 +179,7 @@ async def add_bulk_email_credit_history(
 
 
 @router.post("/email_search/add")
-async def add_email_search(
-        request: EmailSearchAddRequest
-):
+async def add_email_search(request: EmailSearchAddRequest):
     try:
         email_search_id = str(uuid.uuid4())
         query = email_search.insert().values(
@@ -193,15 +201,16 @@ async def add_email_search(
 
 
 @router.post("/email_search/get")
-async def add_email_search(
-        request: EmailSearchGetRequest,
+async def get_email_search(
+    request: EmailSearchGetRequest,
 ):
     try:
         query = f"SELECT * FROM email_search WHERE user_id = :user_id AND query_url = :query_url"
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": request.user_id, "query_url": request.query_url}
-                )
+            rows := await database.fetch_all(
+                query=query,
+                values={"user_id": request.user_id, "query_url": request.query_url},
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -210,7 +219,7 @@ async def add_email_search(
         logger.debug(f"{rows=}")
         processed_rows = [dict(x) for x in rows]
         for i in processed_rows[0]:
-            if i=='email_result':
+            if i == "email_result":
                 return processed_rows[0][i]
     except Exception as e:
         logger.critical(f"Exception Querying Database: {str(e)}")
