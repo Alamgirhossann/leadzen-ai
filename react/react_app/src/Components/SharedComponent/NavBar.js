@@ -55,10 +55,10 @@ const NavBar = (props) => {
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="#">
+              <NavLink exact activeClassName=" active-class" to="/realTimePage">
                 <img src="assets/images/trending-up.png" alt="tranding here" />
-                Trending Leads
-              </a>
+                <span className="ps-2">Trending Leads</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">

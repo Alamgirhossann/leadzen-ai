@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
+import { digestMessage } from "./SearchResultTexAu";
 
 const SearchResult = (props) => {
   useEffect(() => {
@@ -284,11 +285,41 @@ const SearchResult = (props) => {
         let phones = [];
         if (data && data.phones) {
           console.log("in data>>>>", data.phones);
+          let hash_key = await digestMessage(JSON.stringify(data));
+          console.log("hash_key>>>>>>>>>>", hash_key);
+          let reqJsonPipl = {
+            hash_key: hash_key,
+            type: "PIPL_REC",
+            result: [data],
+          };
+          const response = await fetch(apiServer + "/pipl/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(reqJsonPipl),
+          });
 
-          for (let j = 0; j < data.phones.length; j++) {
-            phones.push(data.phones[j].number);
-
+          if (response.status === 402) {
+            alert(
+              "You have insufficient profile credit. Buy Credits to get details."
+            );
+            return;
+          }
+          if (response.status === 500) {
+            console.log("Not able to get Details");
+          }
+          let json_res = null;
+          if (response.status === 200) {
+            json_res = await response.json();
+            console.log("PIPL response>>>>", response);
+            for (let j = 0; j < data.phones.length; j++) {
+              phones.push(data.phones[j].number);
+            }
             console.log("Phones>>>>>>", phones);
+
             let requestForSaveProfileCredit = {
               search_id: searchId,
               phone_numbers: phones,
@@ -314,22 +345,21 @@ const SearchResult = (props) => {
             } catch (e) {
               console.error("Exception>>", e);
             }
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              { index: `${currentPage}${index}`, details: data },
+            ]);
           }
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: data },
-          ]);
-        } else {
-          console.log("In setSpecificUserDetails else");
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: "Record Not Found" },
-          ]);
-          console.log(
-            "In setSpecificUserDetails else ress....",
-            specificUserDetails
-          );
         }
+        console.log("In setSpecificUserDetails else");
+        setSpecificUserDetails((prev) => [
+          ...prev,
+          { index: `${currentPage}${index}`, details: "Record Not Found" },
+        ]);
+        console.log(
+          "In setSpecificUserDetails else ress....",
+          specificUserDetails
+        );
       }
 
       console.log("specificUser>>>>>>>", specificUserDetails);
@@ -651,8 +681,17 @@ const SearchResult = (props) => {
                               id={"collapseExample_" + `${currentPage}${index}`}
                             >
                               {/* <div className="card card-body"> */}
-                              <SpecificUser details={data} />
+                              {/*<SpecificUser details={data} />*/}
                               {/* </div> */}
+                              {specificUserDetails?.map((spec) => (
+                                <span>
+                                  {spec.index === `${currentPage}${index}` ? (
+                                    <span>
+                                      <SpecificUser details={spec.details} />
+                                    </span>
+                                  ) : null}
+                                </span>
+                              ))}{" "}
                             </div>
                           </div>
                         </div>

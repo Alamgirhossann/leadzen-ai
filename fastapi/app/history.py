@@ -14,7 +14,6 @@ router = APIRouter(prefix="/history", tags=["Search History"])
 
 
 class SearchHistoryAddRequest(BaseModel):
-    # search_id: str = str(uuid.uuid4())
     search_type: str
     search_term: str
     search_results: conlist(item_type=Dict, min_items=1)

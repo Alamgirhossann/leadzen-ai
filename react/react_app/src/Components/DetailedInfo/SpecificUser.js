@@ -11,7 +11,8 @@ const SpecificUser = (props) => {
       {" "}
       {props.details === "Record Not Found" ||
       props.details === "Item not found" ||
-      !props.details ? (
+      !props.details ||
+      !props.details.phones ? (
         <div>
           {" "}
           <section className="item-section" style={{ textAlign: "center" }}>
