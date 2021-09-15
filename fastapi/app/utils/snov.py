@@ -1,6 +1,7 @@
 import json
-from typing import List
-
+import sys
+from typing import List, Optional
+from fastapi_cache.decorator import cache
 import httpx
 import requests
 from fastapi import APIRouter, HTTPException
@@ -14,7 +15,7 @@ from app.config import (
     API_CONFIG_SNOV_CLIENT_SECRET,
     API_CONFIG_SNOV_ADD_URL_SEARCH,
     API_CONFIG_SNOV_GET_EMAIL,
-    API_CONFIG_SNOV_OAUTH_ACESS_TOKEN,
+    API_CONFIG_SNOV_OAUTH_ACESS_TOKEN, API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
 )
 
 router = APIRouter(prefix="/snov", tags=["Snov"])
@@ -22,6 +23,12 @@ router = APIRouter(prefix="/snov", tags=["Snov"])
 
 class SnovIoRequest(BaseModel):
     url: List[HttpUrl] = []
+
+
+class TexAuFindLinkedInCompanyRequest(BaseModel):
+    url: Optional[str] = None
+    name: Optional[str] = None
+    cookie: Optional[str] = None
 
 
 def get_access_token():
@@ -69,6 +76,34 @@ async def get_emails_from_url(request: SnovIoRequest):
             detail=str("Snov: Data not found"),
         )
     except Exception as e:
+        logger.critical(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Getting data from snov",
+        )
+
+
+@router.post("/emails_for_company")
+async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
+    try:
+        token = get_access_token()
+        print("token", token)
+        # print("request.url", request.url)
+
+        params = {
+            "access_token": token,
+            "domain": request.url,
+            "type": "personal",
+            "limit": 100,
+            "lastId": 0
+        }
+        async with httpx.AsyncClient() as client:
+            res = await client.get("https://api.snov.io/v2/domain-emails-with-info", params=params)
+        print(res)
+        return json.loads(res.text)
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno)
         logger.critical(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

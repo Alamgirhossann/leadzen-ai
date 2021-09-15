@@ -10,6 +10,7 @@ import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Pagination from "../SharedComponent/Pagination";
+import SpecificCompany from "./SpecificCompany";
 
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -19,13 +20,17 @@ const SearchResultCompany = (props) => {
     employeeCount: null,
   });
   const [loading, setLoading] = useState(true);
+  const [handleLoading, setHandleLoading] = useState(false);
   const tempCookie = Cookies.get("user_linkedin_cookie");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
+  const [companyDetails, setCompanyDetails] = useState("");
+  const [companyInfo, setCompanyInfo] = useState("");
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
+  const [temp, setTemp] = useState(false);
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -151,7 +156,7 @@ const SearchResultCompany = (props) => {
         }
 
         console.log(`Got Response ${json}`);
-        checkExecutionStatus(json.execution_id);
+        checkExecutionStatus(json.execution_id, "");
       }
 
       switch (response.status) {
@@ -169,7 +174,8 @@ const SearchResultCompany = (props) => {
     }
   };
 
-  const checkExecutionStatus = (executionId = null) => {
+  const checkExecutionStatus = (executionId, handleFrom) => {
+    // const [executionId,handleFrom] = args
     if (!executionId) {
       console.log("executionId is Null");
       return;
@@ -213,8 +219,13 @@ const SearchResultCompany = (props) => {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
-          setMyLeads(json.data);
-          await saveSearchedRecord(json.data, "texAuCompany");
+          if (handleFrom === "handleProfile") {
+            setCompanyDetails(json.data);
+            setHandleLoading(false);
+          } else {
+            setMyLeads(json.data);
+            await saveSearchedRecord(json.data, "texAuCompany");
+          }
         }
 
         function handleUnAuthorized(response = null) {
@@ -296,13 +307,15 @@ const SearchResultCompany = (props) => {
       console.error("Exception>>", e);
     }
   };
+
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
-      url: data.companyUrl,
-      cookie: tempCookie,
+      name: data.name,
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     console.log("reqJsonPipl", reqJsonPipl);
+    setHandleLoading(true);
+    setTemp(true);
     try {
       let isDuplicate = false;
 
@@ -316,7 +329,7 @@ const SearchResultCompany = (props) => {
       if (isDuplicate === false) {
         console.log("In Fetch......");
         const response = await fetch(
-          apiServer + "/texau/linkedin/find_company_details",
+          apiServer + "/texau/linkedin/find_company_domain",
           {
             method: "POST",
             headers: {
@@ -327,84 +340,61 @@ const SearchResultCompany = (props) => {
             body: JSON.stringify(reqJsonPipl),
           }
         );
-
         let json_res = await response.json();
         console.log("Data Pipl..>>>>>>>>>>>", json_res);
-        // let phones = [];
-        // if (json_res) {
-        //   for (let i = 0; i < json_res.length; i++) {
-        //     let obj = json_res[i];
-        //     console.log("in for loop pipl>>>", obj, ">>>>");
-        //     if (obj.phones) {
-        //       for (let j = 0; j < obj.phones.length; j++) {
-        //         phones.push(obj.phones[j].number);
-        //       }
-        //     }
-        //   }
-        //   console.log("Phones>>>>>>", phones);
-        //   if (phones.length >= 1) {
-        //     let requestForSaveProfileCredit = {
-        //       search_id: searchId,
-        //       phone_numbers: phones,
-        //       search_index: `${currentPage}${index}`,
-        //     };
-        //     try {
-        //       const response = await fetch(
-        //         apiServer + "/credits/profile/bulk_add",
-        //         {
-        //           method: "POST",
-        //           headers: {
-        //             "Content-Type": "application/json",
-        //             Accept: "application/json",
-        //             Authorization: `Bearer ${Cookies.get("user_token")}`,
-        //           },
-        //           body: JSON.stringify(requestForSaveProfileCredit),
-        //         }
-        //       );
-        //
-        //       const result = response.json();
-        //
-        //       console.log("response from saveResult>>>", result);
-        //     } catch (e) {
-        //       console.error("Exception>>", e);
-        //     }
-        //     setSpecificUserDetails((prev) => [
-        //       ...prev,
-        //       { index: `${currentPage}${index}`, details: json_res[0] },
-        //     ]);
-        //   } else {
-        //     setSpecificUserDetails((prev) => [
-        //       ...prev,
-        //       { index: `${currentPage}${index}`, details: "Record Not Found" },
-        //     ]);
-        //   }
-        // } else {
-        //   console.log("In setSpecificUserDetails else");
-        //   setSpecificUserDetails((prev) => [
-        //     ...prev,
-        //     { index: `${currentPage}${index}`, details: "Record Not Found" },
-        //   ]);
-        //   console.log(
-        //     "In setSpecificUserDetails else ress....",
-        //     specificUserDetails
-        //   );
-        // }
+        checkExecutionStatus(json_res.execution_id, "handleProfile");
+        setSpecificUserDetails((prev) => [
+          ...prev,
+          { index: `${currentPage}${index}`, details: json_res },
+        ]);
       }
-
-      console.log("specificUser>>>>>>>", specificUserDetails);
-      specificUserDetails?.map((spec) => {
-        console.log(
-          "Check details>>>>",
-          spec.index,
-          spec.details === "Record Not Found"
-        );
-      });
     } catch (err) {
       console.error("Error: ", err);
+      setSpecificUserDetails((prev) => [
+        ...prev,
+        { index: `${currentPage}${index}`, details: "Record Not Found" },
+      ]);
     }
+
+    console.log("dataa", data);
   };
-  console.info("currentLeads,,,,", currentLeads);
-  console.info("specificUserDetails,,,,", specificUserDetails);
+
+  async function callApi(reqJsonPipl) {
+    try {
+      setHandleLoading(true);
+      const response = await fetch(
+        apiServer + `/texau/linkedin/get_all_company_data`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify({ url: reqJsonPipl }),
+        }
+      );
+      const companyResponse = await response.json();
+      console.log("next call", companyResponse);
+      setCompanyInfo(companyResponse);
+      setHandleLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    if (companyDetails.length > 0) {
+      console.log(
+        "companyDetails in handle profile",
+        companyDetails[0].website
+      );
+      callApi(companyDetails[0].website);
+    }
+  }, [companyDetails]);
+
+  console.log("companyInfo", companyInfo);
+
   return (
     <div>
       <div>
@@ -647,6 +637,53 @@ const SearchResultCompany = (props) => {
                                   "collapseExample_" + `${currentPage}${index}`
                                 }
                               >
+                                {specificUserDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}` ? (
+                                      <span>
+                                        {!handleLoading ? (
+                                          temp ? (
+                                            <SpecificCompany
+                                              data={companyInfo}
+                                            />
+                                          ) : (
+                                            <h5>Record not found</h5>
+                                          )
+                                        ) : (
+                                          <div className="d-flex justify-content-center">
+                                            <div
+                                              className="spinner-border"
+                                              role="status"
+                                            >
+                                              <span className="sr-only">
+                                                Loading...
+                                              </span>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                ))}
+                                {/*{!handleLoading ? (*/}
+                                {/*  temp ? (*/}
+                                {/*    <SpecificCompany details={companyDetails} />*/}
+                                {/*  ) : (*/}
+                                {/*    <h5>Record not found</h5>*/}
+                                {/*  )*/}
+                                {/*) : (*/}
+                                {/*  <div className="d-flex justify-content-center">*/}
+                                {/*    <div*/}
+                                {/*      className="spinner-border"*/}
+                                {/*      role="status"*/}
+                                {/*    >*/}
+                                {/*      <span className="sr-only">*/}
+                                {/*        Loading...*/}
+                                {/*      </span>*/}
+                                {/*    </div>*/}
+                                {/*  </div>*/}
+                                {/*)}*/}
+
                                 {/*{specificUserDetails?.map((spec) => (*/}
                                 {/*  <span>*/}
                                 {/*    {spec.index === `${currentPage}${index}` ? (*/}
