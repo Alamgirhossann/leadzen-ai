@@ -10,6 +10,7 @@ import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Pagination from "../SharedComponent/Pagination";
+import SavedListButton from "../SearchResult/SavedListButton";
 
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -508,15 +509,19 @@ const SearchResultCompany = (props) => {
                               </div>
 
                               <div className="search-view-btn d-flex align-items-center">
-                                <a className="button">View Employee</a>
+                                <a className="button">View Details</a>
                               </div>
+
                               <div className="search-close-btn d-flex align-items-center">
-                                <a href="#">
-                                  <img
-                                    src={"assets/images/Group 1863.png"}
-                                    alt=""
-                                  />
-                                </a>
+                                {/*<a href="#">*/}
+                                {/*  <img*/}
+                                {/*    src={"assets/images/Group 1863.png"}*/}
+                                {/*    alt=""*/}
+                                {/*  />*/}
+                                {/*</a>*/}
+                                  <p>
+                              <SavedListButton data={data} />
+                              </p>
                               </div>
                             </div>
                             <div
