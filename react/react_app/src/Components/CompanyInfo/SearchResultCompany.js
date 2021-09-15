@@ -401,8 +401,8 @@ const SearchResultCompany = (props) => {
                   {/*</div>*/}
                   <CompanyFilters customSearch={customSearch} />
                 </div>
-                <BulkSearch />
-                <SidebarExtractContact />
+                <BulkSearch data={true} />
+                <SidebarExtractContact data={true} />
               </div>
               <div className="col-md-8 col-lg-9">
                 <div className="user-search-wrapper">

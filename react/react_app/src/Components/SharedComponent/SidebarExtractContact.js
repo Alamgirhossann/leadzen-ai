@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import extractDomain from "extract-domain";
 import Cookies from "js-cookie";
 
-const SidebarExtractContact = () => {
+const SidebarExtractContact = (data) => {
   const [socialMediaData, setSocialMediaData] = useState({
     url: null,
     type: "Likers",
@@ -13,7 +13,7 @@ const SidebarExtractContact = () => {
   const history = useHistory();
   const allowedDomains = ["linkedin.com"];
   const tempCookie = Cookies.get("user_linkedin_cookie");
-
+  console.log("data>>>>", data, data.data);
   const handleTypeChange = (e) => {
     setSocialMediaData({ ...socialMediaData, type: e.target.value });
   };
@@ -126,6 +126,7 @@ const SidebarExtractContact = () => {
               className="form-control"
               onBlur={handleUrlChange}
               placeholder="Paste Social Media URL"
+              disabled={data.data}
             />
           </div>
           <div className="dropdown mb-3">
@@ -136,6 +137,7 @@ const SidebarExtractContact = () => {
               aria-haspopup="true"
               aria-expanded="false"
               placeholder="Search Type"
+              disabled={data.data}
             />
 
             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -211,6 +213,7 @@ const SidebarExtractContact = () => {
             onClick={handleSubmit}
             className="btn text-white"
             type="submit"
+            disabled={data.data}
           >
             <span className="pe-1">
               <FontAwesomeIcon icon={faSearch} />
@@ -219,7 +222,7 @@ const SidebarExtractContact = () => {
           </button>
 
           <p className="m-0">
-            <a href="/userGuide" className="learn-link">
+            <a href={data.data ? "" : "/userGuide"} className="learn-link">
               Learn More
             </a>
           </p>

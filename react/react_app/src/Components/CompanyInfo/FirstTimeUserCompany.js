@@ -94,15 +94,15 @@ const FirstTimeUserCompany = (props) => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <CompanyFilters />
               </div>
-              <BulkSearch />
-              <SidebarExtractContact />
+              <BulkSearch data={true} />
+              <SidebarExtractContact data={true} />
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
               <div>
                 <AskJarvis />
               </div>
-              <ExtractContacts />
+              <ExtractContacts data={true} />
             </div>
           </div>
         </div>
