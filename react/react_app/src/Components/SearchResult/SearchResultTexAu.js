@@ -790,7 +790,7 @@ const SearchResult = (props) => {
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
-                        <div>
+                          data.name!="LinkedIn Member"? <div>
                           <div className="user-container py-2" key={index}>
                             <input
                               className="box ms-3 me-3"
@@ -902,7 +902,7 @@ const SearchResult = (props) => {
                               ))}{" "}
                             </div>
                           </div>
-                        </div>
+                        </div>: console.log("not valid name")
                       ))
                     ) : (
                       <h5>Record not found</h5>
