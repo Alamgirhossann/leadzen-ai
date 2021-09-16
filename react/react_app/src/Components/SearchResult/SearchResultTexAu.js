@@ -397,7 +397,7 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(requestforemail),
         });
-        if(responseEmail.status == 401){
+        if(responseEmail.status ===401){
           alert("Please Logout and Login again.")
         }
         if (responseEmail.status === 402) {
@@ -413,7 +413,7 @@ const SearchResult = (props) => {
             },
           ]);
         }
-        if(responseEmail.status == 404){
+        if(responseEmail.status === 404){
           setUnlockEmailDetails((prev) => [
             ...prev,
             {
