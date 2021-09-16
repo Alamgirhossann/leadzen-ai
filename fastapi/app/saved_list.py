@@ -14,7 +14,7 @@ router = APIRouter(prefix="/save_list", tags=["Search SaveList"])
 
 
 class SaveListRequest(BaseModel):
-    save_list_name:str
+    save_list_name: str
     save_list_results: Dict
     search_type: str
 
@@ -29,8 +29,8 @@ class SaveListFullResponse(BaseModel):
 
 @router.post("/add", response_model=SaveListResponse)
 async def add_search_save_list(
-        request: SaveListRequest,
-        user=Depends(fastapi_users.get_current_active_user),
+    request: SaveListRequest,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
     id = str(uuid.uuid4())
@@ -61,7 +61,7 @@ async def add_search_save_list(
 
 @router.delete("/id/{save_list_id}", response_model=SaveListResponse)
 async def delete_save_list_by_id(
-        save_list_id: str, user=Depends(fastapi_users.get_current_active_user)
+    save_list_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{save_list_id=}, {user=}")
     try:
@@ -69,9 +69,10 @@ async def delete_save_list_by_id(
             f"DELETE FROM search_saved WHERE id = :save_list_id AND user_id = :user_id"
         )
         if not (
-                row := await database.execute(
-                    query=query, values={"save_list_id": save_list_id, "user_id": str(user.id)}
-                )
+            row := await database.execute(
+                query=query,
+                values={"save_list_id": save_list_id, "user_id": str(user.id)},
+            )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -99,9 +100,9 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
         query = "SELECT * FROM search_saved WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": str(user.id)}
-                )
+            rows := await database.fetch_all(
+                query=query, values={"user_id": str(user.id)}
+            )
         ):
             print("rows>>>>", rows)
             logger.warning("Invalid Query Results")
@@ -112,7 +113,7 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
         logger.debug(f"{rows=}")
         processed_rows = [dict(x) for x in rows]
         for x in processed_rows:
-            x["save_list_results"] = json.loads(x['save_list_results'])
+            x["save_list_results"] = json.loads(x["save_list_results"])
         # return SaveListFullResponse(save_list_results=processed_rows)
         return processed_rows
     except HTTPException as e:
@@ -132,24 +133,24 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
         query = "SELECT save_list_name FROM search_saved WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
-                rows := await database.fetch_all(
-                    query=query, values={"user_id": str(user.id)}
-                )
+            rows := await database.fetch_all(
+                query=query, values={"user_id": str(user.id)}
+            )
         ):
             print("rows>>>>", rows)
             logger.warning("Invalid Query Results")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
-        save_list_names=[]
+        save_list_names = []
         for i in rows:
-            check=True
+            check = True
             for j in save_list_names:
-                if i[0]==j['save_list_name']:
-                    check=False
-                    break;
+                if i[0] == j["save_list_name"]:
+                    check = False
+                    break
             if check:
-                save_list_names.append({'save_list_name': i[0]})
+                save_list_names.append({"save_list_name": i[0]})
 
         return save_list_names
 
