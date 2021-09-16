@@ -1,4 +1,3 @@
-import asyncio
 import uuid
 from http.client import HTTPException
 
@@ -34,8 +33,8 @@ from app.texau.linkedin.profiles import (
     TexAuFindProfileRequest, handle_find_matching_linkedin_profiles_company, TexAuFindCompanyProfileRequest,
 )
 from app.texau.status import get_status_once, get_status_waiting
-from app.utils.snov import get_emails_from_domain
 from app.users import fastapi_users
+from app.utils.snov import get_emails_from_domain
 
 router = APIRouter(prefix="/texau", tags=["TexAu"])
 
@@ -207,16 +206,6 @@ async def find_company_screenshot(
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.info(f"{app_request=}, {user=}")
-
-    # if not app_request.cookie:
-    #     if not (cookie := read_linkedin_cookie()):
-    #         logger.critical("Error Getting LinkedIn Cookie")
-    #         raise HTTPException(
-    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #             detail="Error Getting LinkedIn Cookie",
-    #         )
-    #     app_request.cookie = cookie
-
     return await handle_find_company_screenshot(request=app_request)
 
 
@@ -227,16 +216,6 @@ async def find_company_domain(
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.info(f"{app_request=}, {user=}")
-
-    # if not app_request.cookie:
-    #     if not (cookie := read_linkedin_cookie()):
-    #         logger.critical("Error Getting LinkedIn Cookie")
-    #         raise HTTPException(
-    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #             detail="Error Getting LinkedIn Cookie",
-    #         )
-    #     app_request.cookie = cookie
-
     return await handle_find_company_domain(request=app_request)
 
 
@@ -247,16 +226,6 @@ async def find_company_tech_stack(
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.info(f"{app_request=}, {user=}")
-
-    # if not app_request.cookie:
-    #     if not (cookie := read_linkedin_cookie()):
-    #         logger.critical("Error Getting LinkedIn Cookie")
-    #         raise HTTPException(
-    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #             detail="Error Getting LinkedIn Cookie",
-    #         )
-    #     app_request.cookie = cookie
-
     return await handle_find_company_tech_stack(request=app_request)
 
 

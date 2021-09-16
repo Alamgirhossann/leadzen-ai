@@ -286,7 +286,7 @@ const SpecificUser = (props) => {
             <img src="assets/images/Group 1908.png" alt="" />
             <p>{props.details.rating} Rating</p>
           </div>
-          )
+
         </div>
       )}
     </div>

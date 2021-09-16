@@ -1,7 +1,7 @@
 import json
 import sys
 from typing import List, Optional
-from fastapi_cache.decorator import cache
+
 import httpx
 import requests
 from fastapi import APIRouter, HTTPException
@@ -15,8 +15,7 @@ from app.config import (
     API_CONFIG_SNOV_CLIENT_SECRET,
     API_CONFIG_SNOV_ADD_URL_SEARCH,
     API_CONFIG_SNOV_GET_EMAIL,
-    API_CONFIG_SNOV_OAUTH_ACESS_TOKEN, API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
-)
+    API_CONFIG_SNOV_OAUTH_ACESS_TOKEN, )
 
 router = APIRouter(prefix="/snov", tags=["Snov"])
 
@@ -87,19 +86,16 @@ async def get_emails_from_url(request: SnovIoRequest):
 async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
     try:
         token = get_access_token()
-        print("token", token)
-        # print("request.url", request.url)
-
         params = {
             "access_token": token,
             "domain": request.url,
             "type": "personal",
-            "limit": 100,
-            "lastId": 0
+            "limit": 10,
+            "lastId": 0,
+            "positions[]": ["Founder", "Director", "Chief", "President", "COO", "CEO"]
         }
         async with httpx.AsyncClient() as client:
             res = await client.get("https://api.snov.io/v2/domain-emails-with-info", params=params)
-        print(res)
         return json.loads(res.text)
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()

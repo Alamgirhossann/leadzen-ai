@@ -8,7 +8,13 @@ from starlette import status
 
 from app.config import (
     API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DETAILS_FUNC_ID,
-    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DETAILS_SPICE_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DETAILS_SPICE_ID, API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMPLOYEES_FUNC_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMPLOYEES_SPICE_ID, API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMAILS_FUNC_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMAILS_SPICE_ID, API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_FUNC_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_SPICE_ID, API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SCREENSHOT_FUNC_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SCREENSHOT_SPICE_ID, API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_STACK_FUNC_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_STACK_SPICE_ID, API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SOCIAL_MEDIA_FUNC_ID,
+    API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SOCIAL_MEDIA_SPICE_ID,
 )
 from app.texau.common import TexAuExecutionResponse, TEXAU_PROXY
 from app.texau.spice import send_spice_request
@@ -64,8 +70,8 @@ async def handle_find_company_employees_details(
     try:
         execution_id = await send_spice_request(
             data={
-                "funcName": "texau-automation-1-dev-linkedinCompaniesEmployees",
-                "spiceId": "5d403c1ddf129e430077c362",
+                "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMPLOYEES_FUNC_ID,
+                "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMPLOYEES_SPICE_ID,
                 "inputs": {
                     "company": request.url,
                     "li_at": request.cookie,
@@ -103,8 +109,8 @@ async def handle_find_email_and_phones_from_website(
     try:
         execution_id = await send_spice_request(
             data={
-                "funcName": "texau-automation-2-dev-extractEmail",
-                "spiceId": "5d5b9d2658ad5ac0f87fd3b7",
+                "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMAILS_FUNC_ID,
+                "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_EMAILS_SPICE_ID,
                 "inputs": {
                     "li_at": request.cookie,
                     "urls": request.url,
@@ -141,8 +147,8 @@ async def handle_find_company_domain(
     try:
         execution_id = await send_spice_request(
             data={
-                "funcName": "texau-automation-new-scripts-dev-nameToDomain",
-                "spiceId": "5de7bde6d9b7c045379ea2ba",
+                "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_FUNC_ID,
+                "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_SPICE_ID,
                 "inputs": {
                     "name": request.name,
                     "proxy": TEXAU_PROXY,
@@ -178,8 +184,8 @@ async def handle_find_company_screenshot(
     try:
         execution_id = await send_spice_request(
             data={
-                "funcName": "texau-automation-2-dev-takeScreenshot",
-                "spiceId": "5d5be27b58ad5ac0f882b55d",
+                "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SCREENSHOT_FUNC_ID,
+                "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SCREENSHOT_SPICE_ID,
                 "inputs": {
                     "siteUrl": request.url,
                     "onlyWindow": True,
@@ -216,8 +222,8 @@ async def handle_find_company_tech_stack(
     try:
         execution_id = await send_spice_request(
             data={
-                "funcName": "texau-automation-2-dev-wappalyzer",
-                "spiceId": "5d403c1ddf129e430077c38b",
+                "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_STACK_FUNC_ID,
+                "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_STACK_SPICE_ID,
                 "inputs": {
                     "url": request.url,
                     "proxy": TEXAU_PROXY,
@@ -253,8 +259,8 @@ async def handle_find_company_social_media(
     try:
         execution_id = await send_spice_request(
             data={
-                "funcName": "texau-automation-2-dev-socialMediaLinks",
-                "spiceId": "5d5b9ba058ad5ac0f87fc2cf",
+                "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SOCIAL_MEDIA_FUNC_ID,
+                "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SOCIAL_MEDIA_SPICE_ID,
                 "inputs": {
                     "urls": request.url,
                     "proxy": TEXAU_PROXY,
