@@ -397,16 +397,19 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(requestforemail),
         });
+        if(responseEmail.status == 401){
+          alert("Please Logout and Login again.")
+        }
         if (responseEmail.status === 402) {
           alert("You have insufficient profile credit. Buy Credits to get details.")
         }
         if (responseEmail.status === 200) {
-          const result_email = await responseEmail.json();
+          const resultEmail = await responseEmail.json();
           setUnlockEmailDetails((prev) => [
             ...prev,
             {
               index: `${currentPage}${index}`,
-              details: {email: result_email},
+              details: {email: resultEmail},
             },
           ]);
         }

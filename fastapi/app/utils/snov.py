@@ -10,6 +10,7 @@ from starlette import status
 from app.credits.common import EmailSearchGetRequest, EmailSearchAddRequest
 from app.credits.email import add_email_search, get_email_search
 from app.credits.admin import deduct_credit
+from starlette.responses import JSONResponse
 from app.users import get_user
 from app.config import (
     API_CONFIG_SNOV_GRANT_TYPE,
@@ -43,17 +44,43 @@ def get_access_token():
         "client_id": API_CONFIG_SNOV_CLIENT_ID,
         "client_secret": API_CONFIG_SNOV_CLIENT_SECRET,
     }
-    res = requests.post(API_CONFIG_SNOV_OAUTH_ACESS_TOKEN, data=params)
-    res_text = res.text.encode("ascii", "ignore")
-    return json.loads(res_text)["access_token"]
+    try:
+        res = requests.post(API_CONFIG_SNOV_OAUTH_ACESS_TOKEN, data=params)
+        if res.status_code == 200:
+            res_text = res.text.encode("ascii", "ignore")
+            return json.loads(res_text)["access_token"]
+        else:
+            return JSONResponse(
+                status_code=res.status_code,
+                content={"message": "Error Getting Token for snov"},
+            )
+    except Exception as e:
+        logger.critical(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Getting Token For snov",
+        )
 
 
 def add_url_for_search(url):
     print("url2", url)
     token = get_access_token()
     params = {"access_token": token, "url": url}
-    res = requests.post(API_CONFIG_SNOV_ADD_URL_SEARCH, data=params)
-    return json.loads(res.text)
+    try:
+        res = requests.post(API_CONFIG_SNOV_ADD_URL_SEARCH, data=params)
+        if res.status_code == 200:
+            return json.loads(res.text)
+        else:
+            return JSONResponse(
+                status_code=res.status_code,
+                content={"message": "Error Adding url for search"},
+            )
+    except Exception as e:
+        logger.critical(e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Adding url for search",
+        )
 
 
 @router.post("/emails_for_url")
@@ -84,32 +111,35 @@ async def get_emails_from_url(
                 params = {"access_token": token, "url": url}
                 async with httpx.AsyncClient() as client:
                     res = await client.post(API_CONFIG_SNOV_GET_EMAIL, data=params)
-                    print("kishan",res.json())
-                data = json.loads(res.text)
-                if data["success"]:
-                    email_data = data["data"]["emails"]
-                    email = email_data[0]["email"]
-                    valid = email_data[0]["status"]
-                    if valid == "valid" or valid == "unknown":
-                        background_tasks.add_task(
-                            add_email_into_database, str(user.id), url, email
+                    if res.status_code == 200:
+                        data = json.loads(res.text)
+                        if data["success"]:
+                            email_data = data["data"]["emails"]
+                            email = email_data[0]["email"]
+                            valid = email_data[0]["status"]
+                            if valid == "valid" or valid == "unknown":
+                                background_tasks.add_task(
+                                    add_email_into_database, str(user.id), url, email
+                                )
+                                background_tasks.add_task(deduct_credit, "EMAIL", user)
+                                return email
+                        return JSONResponse(
+                            status_code=404,
+                            content={"message": "Snov: Data not found"},
                         )
-                        background_tasks.add_task(deduct_credit, "EMAIL", user)
-                        return email
-                status_codes = status.HTTP_404_NOT_FOUND
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=str("Snov: Data not found"),
-                )
+                    else:
+                        return JSONResponse(
+                            status_code=res.status_code,
+                            content={"message": "Error Getting Data From snov"},
+                        )
             else:
-                status_codes = status.HTTP_402_PAYMENT_REQUIRED
-                raise HTTPException(
-                    status_code=status.HTTP_402_PAYMENT_REQUIRED,
-                    detail=str("Insufficient Credits"),
+                return JSONResponse(
+                    status_code=402,
+                    content={"message": "Insufficient Credits"},
                 )
     except Exception as e:
         logger.critical(str(e))
         raise HTTPException(
-            status_code=status_codes,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Getting data from snov",
         )
