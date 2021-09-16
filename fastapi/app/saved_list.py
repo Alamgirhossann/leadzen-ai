@@ -3,11 +3,11 @@ import uuid
 from datetime import datetime
 from typing import List, Dict
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from loguru import logger
 from pydantic import BaseModel
 
-from app.database import database, search_saved
+from app.database import database, search_saved, search_saved_name
 from app.users import fastapi_users
 
 router = APIRouter(prefix="/save_list", tags=["Search SaveList"])
@@ -27,9 +27,14 @@ class SaveListFullResponse(BaseModel):
     save_list_results: List
 
 
+class SaveListRequestName(BaseModel):
+    save_list_name: str
+
+
 @router.post("/add", response_model=SaveListResponse)
 async def add_search_save_list(
     request: SaveListRequest,
+    background_tasks: BackgroundTasks,
     user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
@@ -47,9 +52,16 @@ async def add_search_save_list(
         logger.debug(f"{query=}")
 
         row_id = await database.execute(query)
-
+        values = {"created_on": datetime.utcnow()}
+        update_query = (
+            search_saved_name.update()
+            .values(values)
+            .where(search_saved_name.c.save_list_name == request.save_list_name)
+        )
+        if not (row := await database.execute(update_query)):
+            logger.debug(f"updated....{row=}")
+            logger.warning("Invalid Query Results")
         logger.debug(f"{row_id=}")
-
         return SaveListResponse(save_list_id=id)
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
@@ -126,11 +138,41 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
         )
 
 
-@router.get("/all_names")
-async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user)):
+@router.post("/add_name", response_model=SaveListResponse)
+async def add_search_save_list_name(
+    request: SaveListRequestName,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.debug(f"{request=}, {user=}")
+    id = str(uuid.uuid4())
+    try:
+        query = search_saved_name.insert().values(
+            id=id,
+            user_id=str(user.id),
+            save_list_name=request.save_list_name,
+            created_on=datetime.utcnow(),
+        )
+
+        logger.debug(f"{query=}")
+
+        row_id = await database.execute(query)
+
+        logger.debug(f"{row_id=}")
+
+        return SaveListResponse(save_list_id=id)
+    except Exception as e:
+        logger.critical(f"Exception Inserting to Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Inserting to Database",
+        )
+
+
+@router.get("/all_name")
+async def get_all_save_list_name(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
     try:
-        query = "SELECT save_list_name FROM search_saved WHERE user_id = :user_id ORDER BY created_on DESC"
+        query = "SELECT save_list_name FROM search_saved_name WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
             rows := await database.fetch_all(
@@ -142,18 +184,10 @@ async def get_all_save_list(user=Depends(fastapi_users.get_current_active_user))
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
             )
-        save_list_names = []
-        for i in rows:
-            check = True
-            for j in save_list_names:
-                if i[0] == j["save_list_name"]:
-                    check = False
-                    break
-            if check:
-                save_list_names.append({"save_list_name": i[0]})
 
-        return save_list_names
-
+        logger.debug(f"{rows=}")
+        processed_rows = [dict(x) for x in rows]
+        return processed_rows
     except HTTPException as e:
         raise e
     except Exception as e:

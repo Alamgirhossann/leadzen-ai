@@ -50,6 +50,16 @@ search_saved = sqlalchemy.Table(
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
+search_saved_name = sqlalchemy.Table(
+    "search_saved_name",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("save_list_name", sqlalchemy.String, unique=True),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+)
+
+
 profile_search = sqlalchemy.Table(
     "profile_search",
     metadata,
