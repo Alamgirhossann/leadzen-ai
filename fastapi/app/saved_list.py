@@ -141,7 +141,9 @@ async def get_saved_list_by_id(
         logger.debug(f"{row=}")
 
         processed_row = dict(row)
-        processed_row["list_content"] = json.loads(processed_row["list_content"])
+
+        if processed_row["list_content"]:
+            processed_row["list_content"] = json.loads(processed_row["list_content"])
 
         return processed_row
     except HTTPException as e:
