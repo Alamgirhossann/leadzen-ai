@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from typing import List, Dict, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel
 
