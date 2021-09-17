@@ -56,7 +56,7 @@ async def add_search_save_list(
         update_query = (
             search_saved_name.update()
             .values(values)
-            .where(search_saved_name.c.save_list_name == request.save_list_name)
+            .where(search_saved_name.c.save_list_name == request.save_list_name and search_saved_name.c.user_id == request.user_id)
         )
         if not (row := await database.execute(update_query)):
             logger.debug(f"updated....{row=}")
