@@ -31,7 +31,7 @@ const SearchResultCompany = (props) => {
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
-  const [temp, setTemp] = useState(false);
+  const [secondLoader, setSecondLoader] = useState(false);
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -352,7 +352,7 @@ const SearchResultCompany = (props) => {
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     console.log("reqJsonPipl", reqJsonPipl);
     setHandleLoading(true);
-    setTemp(true);
+    setSecondLoader(true);
     try {
       let isDuplicate = false;
 
@@ -708,7 +708,7 @@ const SearchResultCompany = (props) => {
                                     {spec.index === `${currentPage}${index}` ? (
                                       <span>
                                         {!handleLoading ? (
-                                          temp ? (
+                                          secondLoader ? (
                                             <SpecificCompany
                                               data={companyInfo}
                                             />

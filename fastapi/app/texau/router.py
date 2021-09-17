@@ -261,6 +261,13 @@ async def get_all_company_data(
     )
     print(jack)
     return jack"""
+    # all_groups = asyncio.gather(screenshot, email_and_phone, company_stack, social_media, snov)
+    # results = loop.run_until_complete(all_groups)
+    #
+    # loop.close()
+    #
+    # print(results)
+    # return results
     ls = dict()
     count = 0
     for x in lst:

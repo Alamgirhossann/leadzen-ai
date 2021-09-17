@@ -96,7 +96,23 @@ async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
         }
         async with httpx.AsyncClient() as client:
             res = await client.get("https://api.snov.io/v2/domain-emails-with-info", params=params)
-        return json.loads(res.text)
+
+            if res.status_code == 200:
+                return json.loads(res.text)
+
+            elif res.status_code == 400:
+                print("in 400")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str("Snov: Bad request"),
+                )
+
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=str("Snov: Data not found"),
+                )
+
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         print(exc_type, exc_tb.tb_lineno)
