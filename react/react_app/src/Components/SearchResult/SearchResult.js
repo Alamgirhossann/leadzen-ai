@@ -373,6 +373,7 @@ const SearchResult = (props) => {
     } catch (err) {
       console.error("Error: ", err);
     }
+    // window.location.reload(false);
   };
 
   return (

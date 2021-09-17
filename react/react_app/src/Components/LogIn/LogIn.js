@@ -241,7 +241,7 @@ const LogIn = (props) => {
 
   return (
     <div>
-      <Header user={user} />
+      {/*<Header user={user} />*/}
       {emailVerified ? (
         <div
           className="alert alert-warning alert-dismissible fade show"
