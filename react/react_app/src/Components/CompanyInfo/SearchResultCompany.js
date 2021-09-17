@@ -453,7 +453,7 @@ const SearchResultCompany = (props) => {
   }
 
   useEffect(() => {
-    if (companyDetails.length > 0) {
+    if (companyDetails != null && companyDetails.length > 0) {
       console.log(
         "companyDetails in handle profile",
         companyDetails[0].website

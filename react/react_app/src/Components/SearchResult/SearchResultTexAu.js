@@ -938,6 +938,6 @@ const SearchResult = (props) => {
       </div>
     </div>
   );
-};;
+};
 
 export default SearchResult;
