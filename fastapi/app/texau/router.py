@@ -1,3 +1,5 @@
+import asyncio
+import itertools
 import uuid
 from http.client import HTTPException
 
@@ -32,7 +34,7 @@ from app.texau.linkedin.profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest, handle_find_matching_linkedin_profiles_company, TexAuFindCompanyProfileRequest,
 )
-from app.texau.status import get_status_once, get_status_waiting
+from app.texau.status import get_status_once
 from app.users import fastapi_users
 from app.utils.snov import get_emails_from_domain
 
@@ -246,36 +248,55 @@ async def get_all_company_data(
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.info(f"{app_request=}, {user=}")
-
-    screenshot = await handle_find_company_screenshot(request=app_request)
-    email_and_phone = await handle_find_email_and_phones_from_website(request=app_request)
-    company_stack = await handle_find_company_tech_stack(request=app_request)
-    social_media = await handle_find_company_social_media(request=app_request)
-    snov = await get_emails_from_domain(request=app_request)
-    lst = [screenshot, email_and_phone, company_stack, social_media]
-    """jack = await asyncio.gather(
+    coroutines = [
         handle_find_company_screenshot(request=app_request),
         handle_find_email_and_phones_from_website(request=app_request),
         handle_find_company_tech_stack(request=app_request),
-        handle_find_company_social_media(request=app_request)
-    )
-    print(jack)
-    return jack"""
-    # all_groups = asyncio.gather(screenshot, email_and_phone, company_stack, social_media, snov)
-    # results = loop.run_until_complete(all_groups)
-    #
-    # loop.close()
-    #
-    # print(results)
-    # return results
-    ls = dict()
-    count = 0
-    for x in lst:
-        data = await get_status_waiting(x.execution_id)
-        ls[count] = data
-        count += 1
-    ls[4] = snov
-    return ls
+        handle_find_company_social_media(request=app_request),
+        get_emails_from_domain(request=app_request),
+
+    ]
+    results = await asyncio.gather(*coroutines)
+    results = [
+        x for x in results if x
+    ]  # remove the None's else chain/flatten operation will fail
+    print("results", results)
+    if not any(results):
+        logger.warning("No Results Found")
+        return None
+
+    return list(itertools.chain(*results))
+
+    # screenshot = await handle_find_company_screenshot(request=app_request)
+    # email_and_phone = await handle_find_email_and_phones_from_website(request=app_request)
+    # company_stack = await handle_find_company_tech_stack(request=app_request)
+    # social_media = await handle_find_company_social_media(request=app_request)
+    # snov = await get_emails_from_domain(request=app_request)
+    # lst = [screenshot, email_and_phone, company_stack, social_media]
+    # """jack = await asyncio.gather(
+    #     handle_find_company_screenshot(request=app_request),
+    #     handle_find_email_and_phones_from_website(request=app_request),
+    #     handle_find_company_tech_stack(request=app_request),
+    #     handle_find_company_social_media(request=app_request)
+    # )
+    # print(jack)
+    # return jack"""
+    # # all_groups = asyncio.gather(screenshot, email_and_phone, company_stack, social_media, snov)
+    # # all_groups = asyncio.gather(*lst)
+    # # results = loop.run_until_complete(all_groups)
+    # #
+    # # loop.close()
+    # #
+    # # print(results)
+    # # return results
+    # ls = dict()
+    # count = 0
+    # for x in lst:
+    #     data = await get_status_waiting(x.execution_id)
+    #     ls[count] = data
+    #     count += 1
+    # ls[4] = snov
+    # return ls
 
 
 @router.get("/result/{execution_id}", response_model=TexAuResult)
