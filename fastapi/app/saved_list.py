@@ -31,10 +31,19 @@ class SaveListRequestName(BaseModel):
     save_list_name: str
 
 
+class SaveListRequestUpdateName(BaseModel):
+    prev_save_list_name: str
+    new_save_list_name: str
+
+
+class SaveListRequestNameUpdateDescription(BaseModel):
+    save_list_name: str
+    save_list_name_description: str
+
+
 @router.post("/add", response_model=SaveListResponse)
 async def add_search_save_list(
     request: SaveListRequest,
-    background_tasks: BackgroundTasks,
     user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
@@ -56,7 +65,10 @@ async def add_search_save_list(
         update_query = (
             search_saved_name.update()
             .values(values)
-            .where(search_saved_name.c.save_list_name == request.save_list_name and search_saved_name.c.user_id == request.user_id)
+            .where(
+                search_saved_name.c.save_list_name == request.save_list_name
+                and search_saved_name.c.user_id == request.user_id
+            )
         )
         if not (row := await database.execute(update_query)):
             logger.debug(f"updated....{row=}")
@@ -172,7 +184,7 @@ async def add_search_save_list_name(
 async def get_all_save_list_name(user=Depends(fastapi_users.get_current_active_user)):
     logger.debug(f"{user=}")
     try:
-        query = "SELECT save_list_name FROM search_saved_name WHERE user_id = :user_id ORDER BY created_on DESC"
+        query = "SELECT * FROM search_saved_name WHERE user_id = :user_id ORDER BY created_on DESC"
 
         if not (
             rows := await database.fetch_all(
@@ -195,4 +207,121 @@ async def get_all_save_list_name(user=Depends(fastapi_users.get_current_active_u
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Querying Database",
+        )
+
+
+@router.post("/update_name", response_model=SaveListResponse)
+async def update_search_save_list_name(
+    request: SaveListRequestUpdateName,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.debug(f"{request=}, {user=}")
+    id = str(uuid.uuid4())
+    try:
+        values = {"save_list_name": request.new_save_list_name}
+        update_query_name = (
+            search_saved_name.update()
+            .values(values)
+            .where(
+                search_saved_name.c.save_list_name == request.prev_save_list_name
+                and search_saved_name.c.user_id == request.user_id
+            )
+        )
+        if not (row := await database.execute(update_query_name)):
+            logger.debug(f"updated....{row=}")
+            logger.warning("Invalid Query Results")
+        try:
+            update_query_search_saved = (
+                search_saved.update()
+                .values(values)
+                .where(
+                    search_saved.c.save_list_name == request.prev_save_list_name
+                    and search_saved.c.user_id == request.user_id
+                )
+            )
+            if not (row := await database.execute(update_query_search_saved)):
+                logger.debug(f"updated....{row=}")
+                logger.warning("Invalid Query Results For Updating Name Inside Data")
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
+            )
+        return SaveListResponse(save_list_id=id)
+    except Exception as e:
+        logger.critical(f"Exception Inserting to Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Updating Name to Database",
+        )
+
+
+@router.delete("/by_name/{name}", response_model=SaveListResponse)
+async def delete_save_list_by_name(
+    save_list_name: str, user=Depends(fastapi_users.get_current_active_user)
+):
+    try:
+        query_name = f"DELETE FROM search_saved_name WHERE save_list_name = :save_list_name AND user_id = :user_id"
+        if not (
+            row := await database.execute(
+                query=query_name,
+                values={"save_list_name": save_list_name, "user_id": str(user.id)},
+            )
+        ):
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+        try:
+            query_data = f"DELETE FROM search_saved WHERE save_list_name = :save_list_name AND user_id = :user_id"
+            if not (
+                row := await database.execute(
+                    query=query_data,
+                    values={"save_list_name": save_list_name, "user_id": str(user.id)},
+                )
+            ):
+                logger.warning("Invalid Query Results for Search saved Delete Data")
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Invalid Query Result ",
+                )
+        except Exception as e:
+            logger.critical(f"Exception Querying Database: {str(e)}")
+        logger.debug(f"{row=}")
+        return SaveListResponse(save_list_id=row)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.critical(f"Exception Querying Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
+        )
+
+
+@router.post("/update_description", response_model=SaveListResponse)
+async def update_search_save_list_name_description(
+    request: SaveListRequestNameUpdateDescription,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.debug(f"{request=}, {user=}")
+    id = str(uuid.uuid4())
+    try:
+        values = {"description": request.save_list_name_description}
+        update_query_name = (
+            search_saved_name.update()
+            .values(values)
+            .where(
+                search_saved_name.c.save_list_name == request.save_list_name
+                and search_saved_name.c.user_id == request.user_id
+            )
+        )
+        if not (row := await database.execute(update_query_name)):
+            logger.debug(f"updated....{row=}")
+            logger.warning("Invalid Query Results")
+
+        return SaveListResponse(save_list_id=id)
+    except Exception as e:
+        logger.critical(f"Exception Updating to Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Updating Name to Database",
         )
