@@ -10,19 +10,19 @@ from pydantic import BaseModel
 from app.database import database, saved_list
 from app.users import fastapi_users
 
-router = APIRouter(prefix="/save_list", tags=["Saved Lists"])
+router = APIRouter(prefix="/saved_list", tags=["Saved Lists"])
 
 
 class SavedListAddRequest(BaseModel):
-    name: str
-    description: Optional[str] = None
+    list_name: str
+    list_description: Optional[str] = None
     content: Dict
     search_type: str
 
 
 class SavedListUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    description: Optional[str] = None
+    list_name: Optional[str] = None
+    list_description: Optional[str] = None
     content: Optional[Dict] = None
     search_type: Optional[str] = None
 
@@ -36,19 +36,10 @@ class SavedListAddNameRequest(BaseModel):
     list_description: Optional[str] = None
 
 
-class SavedListPartial(BaseModel):
+class SavedListName(BaseModel):
     id: str
     list_name: str
     list_description: Optional[str] = None
-
-
-class SavedListNames(BaseModel):
-    items: List[SavedListPartial]
-
-
-class SaveListRequestUpdate(BaseModel):
-    id: str
-    content: SavedListAddRequest
 
 
 @router.post("/add", response_model=SavedListResponse)
@@ -63,11 +54,11 @@ async def add_to_saved_list(
     try:
         query = saved_list.insert().values(
             id=saved_list_id,
-            list_name=request.name,
+            list_name=request.list_name,
             user_id=str(user.id),
             search_type=request.search_type,
             list_content=json.dumps(request.content),
-            list_description=request.description or "",
+            list_description=request.list_description or "",
             created_on=datetime.utcnow(),
         )
 
@@ -97,6 +88,9 @@ async def delete_saved_list_by_id(
         query = (
             f"DELETE FROM saved_list WHERE id = :saved_list_id AND user_id = :user_id"
         )
+
+        logger.debug(f"{query=}")
+
         if not (
             row := await database.execute(
                 query=query,
@@ -110,9 +104,7 @@ async def delete_saved_list_by_id(
 
         logger.debug(f"{row=}")
 
-        logger.debug(f"{query=}")
-
-        return SavedListResponse(id=row.id)
+        return SavedListResponse(id=saved_list_id)
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -182,9 +174,16 @@ async def get_all_saved_lists(user=Depends(fastapi_users.get_current_active_user
             )
 
         logger.debug(f"{rows=}")
+
         processed_rows = [dict(x) for x in rows]
-        for x in processed_rows:
-            x["list_content"] = json.loads(x["list_content"])
+        processed_rows = [
+            x | {"list_content": json.loads(x["list_content"])}
+            for x in processed_rows
+            if x["list_content"]
+        ]
+
+        logger.debug(f"{processed_rows=}")
+
         return processed_rows
     except HTTPException as e:
         raise e
@@ -230,7 +229,7 @@ async def add_saved_list_name(
         )
 
 
-@router.get("/all/names", response_model=SavedListNames)
+@router.get("/all/names", response_model=List[SavedListName])
 async def get_all_saved_list_names(
     user=Depends(fastapi_users.get_current_active_user),
 ):
@@ -258,7 +257,7 @@ async def get_all_saved_list_names(
 
         logger.debug(processed_rows)
 
-        return SavedListNames(items=[SavedListPartial(**x) for x in processed_rows])
+        return [SavedListName(**x) for x in processed_rows]
     except HTTPException as e:
         raise e
     except Exception as e:
@@ -280,11 +279,11 @@ async def update_search_save_list(
     try:
         values = {}
 
-        if request.name:
-            values["list_name"] = request.name
+        if request.list_name:
+            values["list_name"] = request.list_name
 
-        if request.description:
-            values["list_description"] = request.description
+        if request.list_description:
+            values["list_description"] = request.list_description
 
         if request.content:
             values["list_content"] = json.dumps(request.content)
