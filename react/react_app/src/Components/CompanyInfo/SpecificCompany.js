@@ -393,6 +393,25 @@ const SpecificCompany = ({ data }) => {
     };
   }, []);
 
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  function handleNotFound() {
+    console.log("Not Found Yet, Waiting...");
+  }
+
+  function handleCookieError(response) {
+    console.log("Response cookie error", response.statusText);
+    handleError();
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    handleError();
+    alert("Please Logout and LogIn Again");
+  }
+
   const handleProfile = async (index, data) => {
     // setOpenProfile(true);
     setCurrentPage(`${currentPage}${index}`);
@@ -424,66 +443,84 @@ const SpecificCompany = ({ data }) => {
           body: JSON.stringify(reqJsonPipl),
         });
 
-        let json_res = await response.json();
-        console.log("Data Pipl..>>>>>>>>>>>", json_res);
-        let phones = [];
-        if (json_res) {
-          for (let i = 0; i < json_res.length; i++) {
-            let obj = json_res[i];
-            console.log("in for loop pipl>>>", obj, ">>>>");
-            if (obj.phones) {
-              for (let j = 0; j < obj.phones.length; j++) {
-                phones.push(obj.phones[j].number);
+        async function handleSuccess(response) {
+          let json_res = await response.json();
+          console.log("Data Pipl..>>>>>>>>>>>", json_res);
+          let phones = [];
+          if (json_res) {
+            for (let i = 0; i < json_res.length; i++) {
+              let obj = json_res[i];
+              console.log("in for loop pipl>>>", obj, ">>>>");
+              if (obj.phones) {
+                for (let j = 0; j < obj.phones.length; j++) {
+                  phones.push(obj.phones[j].number);
+                }
               }
             }
-          }
-          console.log("Phones>>>>>>", phones);
-          if (phones.length >= 1) {
-            let requestForSaveProfileCredit = {
-              search_id: uuidv4(),
-              phone_numbers: phones,
-              search_index: `${currentPage}${index}`,
-            };
-            try {
-              const response = await fetch(
-                apiServer + "/credits/profile/bulk_add",
+            console.log("Phones>>>>>>", phones);
+            if (phones.length >= 1) {
+              let requestForSaveProfileCredit = {
+                search_id: uuidv4(),
+                phone_numbers: phones,
+                search_index: `${currentPage}${index}`,
+              };
+              try {
+                const response = await fetch(
+                  apiServer + "/credits/profile/bulk_add",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
+                      Authorization: `Bearer ${Cookies.get("user_token")}`,
+                    },
+                    body: JSON.stringify(requestForSaveProfileCredit),
+                  }
+                );
+
+                const result = response.json();
+
+                console.log("response from saveResult>>>", result);
+              } catch (e) {
+                console.error("Exception>>", e);
+              }
+              setSpecificUserDetails((prev) => [
+                ...prev,
+                { index: `${currentPage}${index}`, details: json_res[0] },
+              ]);
+            } else {
+              setSpecificUserDetails((prev) => [
+                ...prev,
                 {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    Authorization: `Bearer ${Cookies.get("user_token")}`,
-                  },
-                  body: JSON.stringify(requestForSaveProfileCredit),
-                }
-              );
-
-              const result = response.json();
-
-              console.log("response from saveResult>>>", result);
-            } catch (e) {
-              console.error("Exception>>", e);
+                  index: `${currentPage}${index}`,
+                  details: "Record Not Found",
+                },
+              ]);
             }
-            setSpecificUserDetails((prev) => [
-              ...prev,
-              { index: `${currentPage}${index}`, details: json_res[0] },
-            ]);
           } else {
+            console.log("In setSpecificUserDetails else");
             setSpecificUserDetails((prev) => [
               ...prev,
               { index: `${currentPage}${index}`, details: "Record Not Found" },
             ]);
+            console.log(
+              "In setSpecificUserDetails else ress....",
+              specificUserDetails
+            );
           }
-        } else {
-          console.log("In setSpecificUserDetails else");
-          setSpecificUserDetails((prev) => [
-            ...prev,
-            { index: `${currentPage}${index}`, details: "Record Not Found" },
-          ]);
-          console.log(
-            "In setSpecificUserDetails else ress....",
-            specificUserDetails
-          );
+        }
+
+        switch (response.status) {
+          case 200:
+            return handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 403:
+            return handleCookieError();
+          case 404:
+            return handleNotFound();
+          default:
+            return handleError();
         }
       }
 

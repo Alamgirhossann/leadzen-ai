@@ -308,6 +308,28 @@ const SearchResultCompany = (props) => {
     }
   };
 
+  function handleError(status) {
+    setLoading(false);
+    setMyLeads([]);
+    console.error(`Got HTTP Error ${status}`);
+    // alert("Error Searching For Leads");
+  }
+
+  function handleNotFound() {
+    console.log("Not Found Yet, Waiting...");
+  }
+
+  function handleCookieError(response) {
+    console.log("Response cookie error", response.statusText);
+    handleError();
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    handleError();
+    alert("Please Logout and LogIn Again");
+  }
+
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
       name: data.name,
@@ -340,13 +362,29 @@ const SearchResultCompany = (props) => {
             body: JSON.stringify(reqJsonPipl),
           }
         );
-        let json_res = await response.json();
-        console.log("Data Pipl..>>>>>>>>>>>", json_res);
-        checkExecutionStatus(json_res.execution_id, "handleProfile");
-        setSpecificUserDetails((prev) => [
-          ...prev,
-          { index: `${currentPage}${index}`, details: json_res },
-        ]);
+
+        async function handleSuccess(response) {
+          let json_res = await response.json();
+          console.log("Data Pipl..>>>>>>>>>>>", json_res);
+          checkExecutionStatus(json_res.execution_id, "handleProfile");
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: json_res },
+          ]);
+        }
+
+        switch (response.status) {
+          case 200:
+            return handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 403:
+            return handleCookieError();
+          case 404:
+            return handleNotFound();
+          default:
+            return handleError();
+        }
       }
     } catch (err) {
       console.error("Error: ", err);
@@ -374,10 +412,26 @@ const SearchResultCompany = (props) => {
           body: JSON.stringify({ url: reqJsonPipl }),
         }
       );
-      const companyResponse = await response.json();
-      console.log("next call", companyResponse);
-      setCompanyInfo(companyResponse);
-      setHandleLoading(false);
+
+      async function handleSuccess(response) {
+        const companyResponse = await response.json();
+        console.log("next call", companyResponse);
+        setCompanyInfo(companyResponse);
+        setHandleLoading(false);
+      }
+
+      switch (response.status) {
+        case 200:
+          return handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        case 403:
+          return handleCookieError();
+        case 404:
+          return handleNotFound();
+        default:
+          return handleError();
+      }
     } catch (e) {
       console.error(e);
     }
@@ -579,13 +633,7 @@ const SearchResultCompany = (props) => {
                                   <div className="col d-flex align-items-center">
                                     <div>
                                       <p className="d-block">{data.name} </p>
-                                      <small className="d-block">
-                                        {/*<img*/}
-                                        {/*  src="assets/images/accord-map-pin.png"*/}
-                                        {/*  alt=""*/}
-                                        {/*/>*/}
-                                        {/*Alpharetta, Georgia*/}
-                                      </small>
+                                      <small className="d-block"></small>
                                     </div>
                                   </div>
                                   <div className="col d-flex align-items-center">
@@ -595,7 +643,6 @@ const SearchResultCompany = (props) => {
                               </div>
 
                               <div className="search-view-btn d-flex align-items-center">
-                                {/*<a className="button">View Employee</a>*/}
                                 <a
                                   className="btn button"
                                   data-toggle="collapse"
@@ -665,34 +712,6 @@ const SearchResultCompany = (props) => {
                                     ) : null}
                                   </span>
                                 ))}
-                                {/*{!handleLoading ? (*/}
-                                {/*  temp ? (*/}
-                                {/*    <SpecificCompany details={companyDetails} />*/}
-                                {/*  ) : (*/}
-                                {/*    <h5>Record not found</h5>*/}
-                                {/*  )*/}
-                                {/*) : (*/}
-                                {/*  <div className="d-flex justify-content-center">*/}
-                                {/*    <div*/}
-                                {/*      className="spinner-border"*/}
-                                {/*      role="status"*/}
-                                {/*    >*/}
-                                {/*      <span className="sr-only">*/}
-                                {/*        Loading...*/}
-                                {/*      </span>*/}
-                                {/*    </div>*/}
-                                {/*  </div>*/}
-                                {/*)}*/}
-
-                                {/*{specificUserDetails?.map((spec) => (*/}
-                                {/*  <span>*/}
-                                {/*    {spec.index === `${currentPage}${index}` ? (*/}
-                                {/*      <span>*/}
-                                {/*        <SpecificUser details={spec.details} />*/}
-                                {/*      </span>*/}
-                                {/*    ) : null}*/}
-                                {/*  </span>*/}
-                                {/*))}{" "}*/}
                               </div>
                             </div>
                           </div>
@@ -716,134 +735,6 @@ const SearchResultCompany = (props) => {
                     paginate={paginate}
                   />
                 </div>
-                {/*<div className="user-widget-box text-center p-4 my-3">*/}
-                {/*  <div className="user-promote-logo">*/}
-                {/*    <img src="assets/images/user-company-brand.png" alt="title" />*/}
-                {/*  </div>*/}
-                {/*  <div className="user-promote-slider">*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Want to extract contacts of group members in a LinkedIn*/}
-                {/*          group?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Need a list of companies in semi-conductor space with*/}
-                {/*          1000+ employees in US?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Need a detailed list of all the people working for*/}
-                {/*          Flipkart?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Want to extract contacts of group members in a LinkedIn*/}
-                {/*          group?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Need a detailed list of all the people working for*/}
-                {/*          Flipkart?*/}
-                {/*        </p>*/}
-
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Want to extract contacts of group members in a LinkedIn*/}
-                {/*          group?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*  </div>*/}
-                {/*</div>*/}
               </div>
             </div>
           </div>
