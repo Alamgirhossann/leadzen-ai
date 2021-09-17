@@ -179,9 +179,13 @@ async def get_all_saved_lists(user=Depends(fastapi_users.get_current_active_user
 
         processed_rows = [dict(x) for x in rows]
         processed_rows = [
-            x | {"list_content": json.loads(x["list_content"])}
+            x
+            | {
+                "list_content": json.loads(x["list_content"])
+                if x["list_content"]
+                else None
+            }
             for x in processed_rows
-            if x["list_content"]
         ]
 
         logger.debug(f"{processed_rows=}")
