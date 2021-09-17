@@ -44,19 +44,10 @@ search_saved = sqlalchemy.Table(
     metadata,
     sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
     sqlalchemy.Column("user_id", sqlalchemy.String),
-    sqlalchemy.Column("save_list_name", sqlalchemy.String),
+    sqlalchemy.Column("list_name", sqlalchemy.String),
+    sqlalchemy.Column("list_description", sqlalchemy.String),
     sqlalchemy.Column("search_type", sqlalchemy.String),
     sqlalchemy.Column("save_list_results", sqlalchemy.String),
-    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
-)
-
-search_saved_name = sqlalchemy.Table(
-    "search_saved_name",
-    metadata,
-    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
-    sqlalchemy.Column("user_id", sqlalchemy.String),
-    sqlalchemy.Column("save_list_name", sqlalchemy.String, unique=True),
-    sqlalchemy.Column("description", sqlalchemy.String),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
