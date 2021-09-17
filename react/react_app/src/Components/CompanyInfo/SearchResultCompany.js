@@ -10,6 +10,7 @@ import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Pagination from "../SharedComponent/Pagination";
+import SavedListButton from "../SearchResult/SavedListButton";
 import SpecificCompany from "./SpecificCompany";
 
 const SearchResultCompany = (props) => {
@@ -89,6 +90,20 @@ const SearchResultCompany = (props) => {
         employeeCount: props.location.state.customSearch.employeeCount
           ? [props.location.state.customSearch.employeeCount]
           : [],
+      };
+      const endpoint = "/texau/linkedin/matching_profiles_for_company_url";
+      const inputData = requestForTexAu;
+      inputData.cookie = tempCookie;
+      await sendForExecution(endpoint, inputData);
+    }
+    if (props.location.pathname.includes("/company_result_by_name")) {
+      console.log("......from name .....", props.location.state.requestTexAu);
+      setLoading(true);
+      requestForTexAu = {
+        name: props.location.state.requestTexAu.name,
+        industry: [],
+        location: [],
+        employeeCount: [],
       };
       const endpoint = "/texau/linkedin/matching_profiles_for_company_url";
       const inputData = requestForTexAu;
@@ -541,8 +556,8 @@ const SearchResultCompany = (props) => {
                   {/*</div>*/}
                   <CompanyFilters customSearch={customSearch} />
                 </div>
-                <BulkSearch />
-                <SidebarExtractContact />
+                <BulkSearch data={true} />
+                <SidebarExtractContact data={true} />
               </div>
               <div className="col-md-8 col-lg-9">
                 <div className="user-search-wrapper">
@@ -662,13 +677,17 @@ const SearchResultCompany = (props) => {
                                   View Details
                                 </a>
                               </div>
+
                               <div className="search-close-btn d-flex align-items-center">
-                                <a href="#">
-                                  <img
-                                    src={"assets/images/Group 1863.png"}
-                                    alt=""
-                                  />
-                                </a>
+                                {/*<a href="#">*/}
+                                {/*  <img*/}
+                                {/*    src={"assets/images/Group 1863.png"}*/}
+                                {/*    alt=""*/}
+                                {/*  />*/}
+                                {/*</a>*/}
+                                <p>
+                                  <SavedListButton data={data} />
+                                </p>
                               </div>
                             </div>
                             <div

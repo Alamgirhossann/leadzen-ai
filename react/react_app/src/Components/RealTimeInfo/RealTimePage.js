@@ -1,11 +1,12 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Style/style.css";
 import Header from "../SharedComponent/Header";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
+
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-const email_id= `${process.env.REACT_APP_CONFIG_EMAIL_ID}`;
+const email_id = `${process.env.REACT_APP_CONFIG_EMAIL_ID}`;
 const RealTimePage = () => {
- const [requirement, setRequirement] = useState();
+  const [requirement, setRequirement] = useState();
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "assets/js/app.js";
@@ -30,51 +31,50 @@ const RealTimePage = () => {
     },
   };
 
-   const handleUrlChange = (e) => {
-    setRequirement(e.target.value)
+  const handleUrlChange = (e) => {
+    setRequirement(e.target.value);
   };
 
-  const handleSubmit=async()=>{
-    if(!requirement)
-    {
-        alert("Please tell us your requirement")
-    }
-    else
-    {
-        let user_id= Cookies.get("user_id")
-        const inputData = {
-        email:email_id,
-        message:"Requset_from_UserId: " + user_id +'\n' + "\n" + "requirement: "+ requirement,
-        subject:"Request_from_UserId"
-        };
-        try{
-             const response = await fetch(apiServer + "/email/send", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                Authorization: `Bearer ${Cookies.get("user_token")}`,
-              },
-              body: JSON.stringify(inputData),
-            });
-            if(response.ok)
-            {
-                var element = document.getElementById("real-time-request");
-                    element.value =""
-                alert("Request is Sent. You will get an email with the results in a few hours.")
-            }
-            else{
-                alert("Sorry your Request was not sent. Please try again")
-            }
+  const handleSubmit = async () => {
+    if (!requirement) {
+      alert("Please tell us your requirement");
+    } else {
+      let user_id = Cookies.get("user_id");
+      const inputData = {
+        email: email_id,
+        message:
+          "Requset_from_UserId: " +
+          user_id +
+          "\n" +
+          "\n" +
+          "requirement: " +
+          requirement,
+        subject: "Request_from_UserId",
+      };
+      try {
+        const response = await fetch(apiServer + "/email/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(inputData),
+        });
+        if (response.ok) {
+          var element = document.getElementById("real-time-request");
+          element.value = "";
+          alert(
+            "Request is Sent. You will get an email with the results in a few hours."
+          );
+        } else {
+          alert("Sorry your Request was not sent. Please try again");
         }
-        catch(err){
-            console.log("error",err)
-        }
+      } catch (err) {
+        console.log("error", err);
+      }
     }
-
-
-
-  }
+  };
   return (
     <div>
       <Header user={user} />
@@ -313,13 +313,12 @@ const RealTimePage = () => {
                   <img src="assets/images/g10.png" alt="" />
                   <div className="text-center d-flex justify-content-center">
                     <p>
-                          <input
-                                id="real-time-request"
-                                className="form-control"
-                              onBlur={handleUrlChange}
-                                placeholder="  Tell us your requirement"
-                              />
-
+                      <input
+                        id="real-time-request"
+                        className="form-control"
+                        onBlur={handleUrlChange}
+                        placeholder="  Tell us your requirement"
+                      />
                     </p>
                   </div>
                 </div>

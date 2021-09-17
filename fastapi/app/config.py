@@ -2,6 +2,9 @@ import os
 
 import sentry_sdk
 
+API_CONFIG_EXCEL_FILE_PATH = os.getenv(
+    "API_CONFIG_EXCEL_FILE_PATH", "./Excel"
+)
 API_CONFIG_PIPL_BASE_URL = os.getenv(
     "API_CONFIG_PIPL_BASE_URL", "https://api.pipl.com/search"
 )
@@ -290,6 +293,8 @@ API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS = int(
 API_CONFIG_MAX_RESULTS_PER_CALL = int(
     os.getenv("API_CONFIG_MAX_RESULTS_PER_CALL", "100")
 )
+API_CONFIG_GET_USER_FROM_USER_ID_URL = os.getenv("API_CONFIG_GET_USER_FROM_USER_ID_URL", "http://localhost:12005/api/users/")
+
 
 API_CONFIG_SENTRY_DSN = os.getenv(
     "API_CONFIG_SENTRY_DSN",

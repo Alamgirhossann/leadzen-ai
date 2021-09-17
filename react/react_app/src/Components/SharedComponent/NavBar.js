@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 
 const NavBar = (props) => {
@@ -14,46 +15,50 @@ const NavBar = (props) => {
   }
 
   const handleLogout = (event) => {
-    console.log("document.cookie()...handle", document.cookie)
-    Cookies.remove('user_token', {path: ''})
-    Cookies.remove('user_email', {path: ''})
-    console.log("document.cookie()...", document.cookie)
-  }
+    console.log("document.cookie()...handle", document.cookie);
+    Cookies.remove("user_token", { path: "" });
+    Cookies.remove("user_email", { path: "" });
+    console.log("document.cookie()...", document.cookie);
+  };
 
   return (
-      <div style={{paddingRight: "0px"}}>
-        <nav
-            className="header-navbar navbar navbar-expand-xl bg-light"
-            style={{paddingRight: "0px"}}
-        >
-          <div className="container-fluid">
-            <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
-              <li className="nav-item me-md-4 me-3">
-                <a className="nav-icon-menu nav-link" href="/">
-                    <img src="assets/images/menu-home.png" alt="home here"/>
-                    <span className="text-danger">Home</span>
-                </a>
+    <div style={{ paddingRight: "0px" }}>
+      <nav
+        className="header-navbar navbar navbar-expand-xl bg-light"
+        style={{ paddingRight: "0px" }}
+      >
+        <div className="container-fluid">
+          <ul className="navbar-nav-profile navbar-nav align-items-center ms-auto">
+            <li className="nav-item me-md-4 me-3">
+              <NavLink exact activeClassName=" active-class" to="/repeatedUser">
+                <img
+                  className="blue"
+                  src="assets/images/home.png"
+                  alt="home here"
+                />
+                <span className="ps-2">Home</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link disabled" href="/savedList">
+              <NavLink exact activeClassName=" active-class" to="/savedList">
                 <img src="assets/images/menu-saved-list.png" alt="saved here" />
-                Saved lists
-              </a>
+                <span className="ps-2">Saved lists</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="/history">
+              <NavLink exact activeClassName=" active-class" to="/history">
                 <img src="assets/images/menu-history.png" alt="history here" />
-                History
-              </a>
+                <span className="ps-2">History</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
-              <a className="nav-icon-menu nav-link" href="#">
+              <NavLink exact activeClassName=" active-class" to="/realTimePage">
                 <img src="assets/images/trending-up.png" alt="tranding here" />
-                Trending Leads
-              </a>
+                <span className="ps-2">Trending Leads</span>
+              </NavLink>
             </li>
 
             <li className="nav-item me-md-4 me-3">
@@ -146,7 +151,10 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="https://leadzen.ai/pricing/">
+                    <a
+                      className="dropdown-item"
+                      href="https://leadzen.ai/pricing/"
+                    >
                       Buy Credits
                     </a>
                   </li>
@@ -173,7 +181,7 @@ const NavBar = (props) => {
                     <div onClick={(event) => handleLogout(event)}>
                       <Link className="dropdown-item" to="/login">
                         <span className="text-muted me-3">Logout</span>{" "}
-                        <img src="assets/images/logout-icon.png" alt="image"/>
+                        <img src="assets/images/logout-icon.png" alt="image" />
                       </Link>
                     </div>
                   </li>

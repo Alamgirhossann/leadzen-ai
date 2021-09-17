@@ -148,6 +148,7 @@ const LogIn = (props) => {
               Authorization: `Bearer ${json_res.access_token}`,
             },
           });
+
           async function handleUserSuccess() {
             const userStatus = await userStatusResponse;
             console.log("userStatus>>>>>>>>", userStatus);

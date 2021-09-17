@@ -12934,15 +12934,15 @@ a:hover {
 }
 
 .user-promote-item {
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  padding: 20px;
-  align-items: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
-  height: 180px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 15px;
+    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    height: 180px;
 }
 .user-promote-item img {
   height: 40px;
@@ -13552,7 +13552,7 @@ a:hover {
 }
 .sign-up-form input:invalid,
 .sign-up-form select:invalid {
-  border-color: #9c9c9c;
+    border-color: #9c9c9c;
 }
 
 .sign-up-form button {
@@ -14346,49 +14346,57 @@ a:hover {
   Media Query : 1200px
 ============================================== */
 @media only screen and (max-width: 1200px) {
-  .header-navbar .navbar-collapse {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 100%;
-    background-color: #ffffff;
-    z-index: 111;
-  }
-  .header-navbar .navbar-collapse .navbar-main-menu .nav-item .nav-link {
-    padding: 12px 20px;
-  }
-  .overview-mega-menu .navbar-nav li .nav-link {
-    padding: 10px;
-  }
-  .navbar-bottom-menu li a {
-    padding: 10px 25px !important;
-  }
+    .header-navbar .navbar-collapse {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 100%;
+        background-color: #ffffff;
+        z-index: 111;
+    }
+
+    .header-navbar .navbar-collapse .navbar-main-menu .nav-item .nav-link {
+        padding: 12px 20px;
+    }
+
+    .overview-mega-menu .navbar-nav li .nav-link {
+        padding: 10px;
+    }
+
+    .navbar-bottom-menu li a {
+        padding: 10px 25px !important;
+    }
 }
-@media only screen and (max-width: 1124px){
-  .history-container{
-    width: 800px;
-  }
- .container-style{
-   overflow-x: scroll;
- }
+
+@media only screen and (max-width: 1124px) {
+    .history-container {
+        width: 800px;
+    }
+
+    .container-style {
+        overflow-x: scroll;
+    }
 }
-@media only screen and (max-width: 1024px){
-  .save-list-container, .history-container{
-    width: 800px;
-  }
- .container-style{
-   overflow-x: scroll;
- }
+
+@media only screen and (max-width: 1024px) {
+    .save-list-container, .history-container {
+        width: 800px;
+    }
+
+    .container-style {
+        overflow-x: scroll;
+    }
 }
 
 /* ============================================== 
   Media Query : 991px
 ============================================== */
 @media only screen and (max-width: 991px) {
-  .header-navbar .navbar-collapse .navbar-main-menu .nav-item .nav-link {
-    padding: 3px 20px;
-  }
-  .header-navbar .navbar-search-form {
+    .header-navbar .navbar-collapse .navbar-main-menu .nav-item .nav-link {
+        padding: 3px 20px;
+    }
+
+    .header-navbar .navbar-search-form {
     width: 100%;
   }
   .header-navbar .navbar-nav-profile .nav-icon-menu img {
@@ -14709,10 +14717,10 @@ a:hover {
   padding: 20px 10px;
 }
 .history-container {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-areas: "p n n n d d c c v v v b";
-  align-items: center;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas: "p n n n d d c c v v v b";
+    align-items: center;
 }
 .profile {
   grid-area: p;
@@ -14744,10 +14752,10 @@ a:hover {
   justify-content: flex-end;
 }
 .button {
-  border: 1px solid #fb3e3e;
-  color: #fb3e3e;
-  padding: 5px 10px;
-  border-radius: 5px;
+    border: 1px solid #fb3e3e;
+    color: #fb3e3e;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 .detailed-search {
   display: grid;
@@ -14847,14 +14855,31 @@ datalist {
 datalist option {
   font-size: 0.8em;
   padding: 0.3em 1em;
-  border-radius: 10px;
-  cursor: pointer;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 /* option active styles */
 datalist option:hover, datalist option:focus {
-  color: #fff;
-  background-color: #036;
-  outline: 0 none;
+    color: #fff;
+    background-color: #036;
+    outline: 0 none;
 }
+
+a.active-class {
+    color: #FB3E3E;
+    /* border-bottom: 2px solid #FB3E3E ; */
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #FB3E3E;
+    text-decoration: none;
+}
+
+
 

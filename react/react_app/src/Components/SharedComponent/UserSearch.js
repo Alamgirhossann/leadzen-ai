@@ -144,7 +144,7 @@ const UserSearch = () => {
                     required
                   />
                   <div className="placeholder">
-                    Eg: I want to <span>email IDs</span> of people following{" "}
+                    Eg: I want <span>email IDs</span> of people following{" "}
                     <span>Flipkart Facebook Page</span>
                   </div>
                 </div>

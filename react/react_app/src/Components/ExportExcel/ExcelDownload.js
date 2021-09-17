@@ -1,13 +1,20 @@
-import React from 'react'
+import React from "react";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 
 const ExcelDownload = () => {
-
-  const apiData = [{"Name":"Piyush Jaiswal","FirstName":"Piyush","LastName":"Jaiswal","Job":"Developer"}]
-  console.log("apidata",apiData)
-  const fileName = "report"
-  const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+  const apiData = [
+    {
+      Name: "Piyush Jaiswal",
+      FirstName: "Piyush",
+      LastName: "Jaiswal",
+      Job: "Developer",
+    },
+  ];
+  console.log("apidata", apiData);
+  const fileName = "report";
+  const fileType =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
 
   const exportToCSV = (apiData, fileName) => {
@@ -23,4 +30,4 @@ const ExcelDownload = () => {
   );
 };
 
-export default ExcelDownload
+export default ExcelDownload;
