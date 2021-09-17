@@ -33,7 +33,7 @@ class SaveListRequestName(BaseModel):
 
 class SaveListRequestUpdate(BaseModel):
     prev_list_name: str
-    new_list_name: Optional[str]
+    new_list_name: str
     list_description: Optional[str]
 
 
