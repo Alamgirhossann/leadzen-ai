@@ -7,9 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SpecificCompany = ({ data }) => {
-  // const [openProfile, setOpenProfile] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [searchId, setSearchId] = useState();
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
@@ -22,7 +20,6 @@ const SpecificCompany = ({ data }) => {
     }
   }
 
-  // const slicedArray = data["4"].emails.slice(0, 10);
   console.log("slicedArray", slicedArray);
   useEffect(() => {
     const script = document.createElement("script");

@@ -34,7 +34,7 @@ from app.texau.linkedin.profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest, handle_find_matching_linkedin_profiles_company, TexAuFindCompanyProfileRequest,
 )
-from app.texau.status import get_status_once
+from app.texau.status import get_status_once, get_status_waiting
 from app.users import fastapi_users
 from app.utils.snov import get_emails_from_domain
 
@@ -253,7 +253,7 @@ async def get_all_company_data(
         handle_find_email_and_phones_from_website(request=app_request),
         handle_find_company_tech_stack(request=app_request),
         handle_find_company_social_media(request=app_request),
-        get_emails_from_domain(request=app_request),
+        # get_emails_from_domain(request=app_request),
 
     ]
     results = await asyncio.gather(*coroutines)
@@ -264,39 +264,19 @@ async def get_all_company_data(
     if not any(results):
         logger.warning("No Results Found")
         return None
-
-    return list(itertools.chain(*results))
-
-    # screenshot = await handle_find_company_screenshot(request=app_request)
-    # email_and_phone = await handle_find_email_and_phones_from_website(request=app_request)
-    # company_stack = await handle_find_company_tech_stack(request=app_request)
-    # social_media = await handle_find_company_social_media(request=app_request)
-    # snov = await get_emails_from_domain(request=app_request)
-    # lst = [screenshot, email_and_phone, company_stack, social_media]
-    # """jack = await asyncio.gather(
-    #     handle_find_company_screenshot(request=app_request),
-    #     handle_find_email_and_phones_from_website(request=app_request),
-    #     handle_find_company_tech_stack(request=app_request),
-    #     handle_find_company_social_media(request=app_request)
-    # )
-    # print(jack)
-    # return jack"""
-    # # all_groups = asyncio.gather(screenshot, email_and_phone, company_stack, social_media, snov)
-    # # all_groups = asyncio.gather(*lst)
-    # # results = loop.run_until_complete(all_groups)
-    # #
-    # # loop.close()
-    # #
-    # # print(results)
-    # # return results
-    # ls = dict()
-    # count = 0
-    # for x in lst:
-    #     data = await get_status_waiting(x.execution_id)
-    #     ls[count] = data
-    #     count += 1
-    # ls[4] = snov
-    # return ls
+    lst = list(itertools.chain(*results))
+    lst = list(itertools.chain.from_iterable(lst))
+    list_of_id = lst[1::2]
+    second_coroutine = [
+        get_status_waiting(list_of_id[0]),
+        get_status_waiting(list_of_id[1]),
+        get_status_waiting(list_of_id[2]),
+        get_status_waiting(list_of_id[3]),
+        get_emails_from_domain(request=app_request)
+    ]
+    final_results = await asyncio.gather(*second_coroutine)
+    print("final_results", final_results)
+    return final_results
 
 
 @router.get("/result/{execution_id}", response_model=TexAuResult)
@@ -306,10 +286,3 @@ async def get_execution_results(
     logger.info(f"{execution_id=}, {user=}")
 
     return await get_status_once(execution_id=execution_id)  # if not app_request.cookie:
-    #     if not (cookie := read_linkedin_cookie()):
-    #         logger.critical("Error Getting LinkedIn Cookie")
-    #         raise HTTPException(
-    #             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #             detail="Error Getting LinkedIn Cookie",
-    #         )
-    #     app_request.cookie = cookie
