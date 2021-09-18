@@ -40,8 +40,6 @@ services:
     container_name: "person_fastapi"
     ports:
       - "8000:5000"
-    volumes:
-      - ./data/fastapi/test.db:/home/appuser/test.db
     environment:
       - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
       - API_CONFIG_PORT_NUM_INTERNAL=5000
