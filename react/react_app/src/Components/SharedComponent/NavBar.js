@@ -9,6 +9,10 @@ const NavBar = (props) => {
   // const [userRes, setUserRes] = useState();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   useEffect(async () => {
+    await getUser();
+  }, []);
+
+  const getUser = async (e = null) => {
     try {
       console.log("In credit check>>>>>>>>");
       const user_res = await fetch(apiServer + "/users/me", {
@@ -26,7 +30,10 @@ const NavBar = (props) => {
       // handleError(err);
       // setResponse({ ...response, message: "user not found" });
     }
-  }, []);
+  };
+  if (props.newEvent) {
+    props.newEvent.on("updateCredit", getUser);
+  }
   useEffect(() => {
     console.log("User useEffect>>>", user);
   }, [user]);

@@ -12,7 +12,9 @@ const Header = (props) => {
               <img src="assets/images/logo- without BG.png" alt="title" />
             </a>
 
-            {user?.name !== undefined && <NavBar user={user} />}
+            {user?.name !== undefined && (
+              <NavBar user={user} newEvent={props.newEvent} />
+            )}
           </div>
         </nav>
       </header>
