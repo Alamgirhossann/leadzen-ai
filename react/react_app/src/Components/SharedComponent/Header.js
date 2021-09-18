@@ -3,6 +3,7 @@ import NavBar from "./NavBar";
 
 const Header = (props) => {
   const user = props?.user;
+  console.log("user>>", user);
   return (
     <div>
       <header className="header-area">
@@ -12,9 +13,9 @@ const Header = (props) => {
               <img src="assets/images/logo- without BG.png" alt="title" />
             </a>
 
-            {user?.name !== undefined && (
+            {user?.name ? (
               <NavBar user={user} newEvent={props.newEvent} />
-            )}
+            ) : null}
           </div>
         </nav>
       </header>
