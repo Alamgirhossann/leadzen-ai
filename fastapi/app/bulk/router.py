@@ -1,6 +1,6 @@
 import tempfile
 import uuid
-from typing import List
+from typing import List, Optional, Dict
 
 import pandas as pd
 from fastapi import (
@@ -136,6 +136,7 @@ async def send_status_stream(filename: str, request: Request):
 
 class BulkExportToExcelRequest(BaseModel):
     profile_urls: List[str]
+    hash_key_list: Optional[List[Dict]]
 
 
 @router.post("/export/excel", response_model=BulkUploadResponse)
@@ -146,14 +147,17 @@ async def export_excel_file(
     user=Depends(fastapi_users.get_current_active_user),
 ):
     outgoing_filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
-
+    # profile_urls=[key for key in app_request.profile_urls.keys()]
+    print("App request>>>>",app_request)
+    print("hash_key_list App request>>>>", app_request.hash_key_list)
     background_tasks.add_task(
         handle_bulk_profile_urls,
         request=BulkProfileUrlRequest(
             urls=app_request.profile_urls,
+            hash_key_list=app_request.hash_key_list,
             outgoing_filename=outgoing_filename,
             user=user,
-        ),
+        )
     )
 
     return BulkUploadResponse(input_filename="-", output_filename=outgoing_filename)

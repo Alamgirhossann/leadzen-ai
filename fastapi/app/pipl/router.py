@@ -85,7 +85,7 @@ async def people_search(
             response = await get_profile_search(app_request.hash_key, user)
             logger.debug(f"is_credit_applied>>>{response=}, {user=}")
             if response:
-
+                print("response.get('search_results')>>>>>",response.get('search_results'))
                 return response.get('search_results')
             else:
                 logger.debug(f"Profile not found")

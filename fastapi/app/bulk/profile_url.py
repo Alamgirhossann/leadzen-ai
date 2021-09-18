@@ -1,5 +1,5 @@
-from typing import List
-
+from typing import List, Optional, Dict
+from app.users import User
 import pandas as pd
 from app.bulk.common import BulkRequest, wait_and_check_for_filename
 from app.pipl.profile_url import (
@@ -10,12 +10,15 @@ from app.pipl.profile_url import (
 from loguru import logger
 class BulkProfileUrlRequest(BulkRequest):
     urls: List[str]
+    hash_key_list: Optional[List[Dict]] = None
+    user: User
 
 
-async def handle_bulk_profile_urls(request: BulkProfileUrlRequest):
+async def handle_bulk_profile_urls(request: BulkProfileUrlRequest, ):
+    print("in handle_bulk_profile_urls request>>",request)
     await execute_profile_task(
         request=PiplDetailsFromProfileUrlRequest(
-            profile_urls=request.urls, filename=request.outgoing_filename
+            profile_urls=request.urls, hash_key_list=request.hash_key_list, filename=request.outgoing_filename, user=request.user
         )
     )
     outgoing_filename = request.outgoing_filename
