@@ -2,10 +2,12 @@ import requests
 import os
 import gzip
 import time
+import logging
 
-url = "http://127.0.0.1:8000/contacts/upload/json"
+url = "http://65.1.86.28/contacts/upload/json"
 
 delay = 0
+logger=logging.getLogger()
 s = requests.session()
 file_path = input("Enter File Path: ")
 file_list = os.listdir(f"{file_path}")
@@ -30,11 +32,12 @@ try:
         'Content-Type': 'multipart/form-data'
         }
 
-        #response = requests.request("POST", url, headers=headers, data=payload, files=(files))
         response = s.post(url,files=files)
 
         print(response.text)
         time.sleep(delay)
+        logger.success(f"Succesfully Added File:{file_name}")
 except Exception as e:
     print(f"Exception:" + str(e))
+    logger.critical(f"Failed Adding File:{file_name}")
     

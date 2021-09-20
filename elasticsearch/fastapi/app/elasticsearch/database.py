@@ -219,7 +219,9 @@ async def add_json(request: ElasticsearchAddRequest) -> Optional[bool]:
             successes += ok
 
         logger.success(f"Database Add Completed In Index: {request.index_name}, {successes=}, {len(request.records)}")
+        logger.success(f"Succesfully Added File: {request.index_name}")
         return True
     except Exception as e:
         logger.critical(f"Exception Adding to Elasticsearch Index {request.index_name}: " + str(e))
+        logger.critical(f"Failed Adding File: {request.index_name}")
         return None

@@ -267,9 +267,9 @@ async def load_json(
 ):
 
     lines = file.file.readlines()
-    #val = [orjson.loads((item)) for item in file.strip().split('\n')]
-    val = [orjson.loads((item)) for item in lines]
-    #val = orjson.loads(f)
+    
+    json_record = [orjson.loads((item)) for item in lines]
+    
     logger.debug("Operation success")
     file_name = str(file.filename)
     file_name = file_name.replace(" ","")
@@ -277,7 +277,7 @@ async def load_json(
                 add_json,
                 request=ElasticsearchAddRequest(
                     index_name=f"analystt.json.{file_name}",
-                    records=val,
+                    records=json_record,
                 ),
             )
 
