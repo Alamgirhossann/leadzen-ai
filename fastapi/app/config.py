@@ -115,7 +115,7 @@ API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_FUNC_ID = os.getenv(
 API_CONFIG_ALLOWED_CONTENT_TYPES = [
     x.strip()
     for x in os.getenv(
-        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel"
+        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ).split(",")
     if x
 ]

@@ -30,7 +30,8 @@ const BulkSearch = (data) => {
       formData.append("file", file);
 
       function handleError(response = null) {
-        console.error(`Error Uploading File: status: ${response?.status}`);
+        console.log("response", response);
+        // console.error(`Error Uploading File: status: ${response?.status}`);
         alert("Error Uploading File, Please Try Again Later");
       }
 
@@ -45,14 +46,19 @@ const BulkSearch = (data) => {
 
         async function handleSuccess(response) {
           const json = await response.json();
-          if (!json) {
-            return handleError();
+          console.log("json", json);
+          if (json.detail) {
+            alert(json.detail);
+          } else {
+            alert(
+              "Search results are sent to your email as a CSV file. Please check your spam filter if our email has" +
+                " not arrived in a reasonable time. Cheers!"
+            );
           }
-          console.log(json);
-          alert(
-            "Search results are sent to your email as a CSV file. Please check your spam filter if our email has" +
-              " not arrived in a reasonable time. Cheers!"
-          );
+          // if (!json) {
+          //   return handleError();
+          // }
+          // console.log(json);
         }
 
         function handleUnAuthorized(response = null) {}
@@ -113,7 +119,7 @@ const BulkSearch = (data) => {
       <input
         id="csv-input"
         type="file"
-        accept=".csv"
+        accept=".csv,.xlsx"
         defaultValue={uploadedCSV}
         onChange={async (e) => setUploadedCSV(e.target.files[0])}
         style={{ display: "none" }}
