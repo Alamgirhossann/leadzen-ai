@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SavedListButton from "./SavedListButton";
+import axios from "axios";
 
 export async function digestMessage(message) {
   console.log("Message....", message);
@@ -73,6 +74,35 @@ const SearchResult = (props) => {
   };
 
   today = dd + "/" + mm + "/" + yyyy;
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    handleError();
+    alert("Please Logout and LogIn Again");
+  }
+
+  function handleCookieError(response) {
+    // got cookie error - no need to check again, results will not change
+    console.log("Response cookie error", response.statusText);
+    handleError();
+  }
+
+  function handleNotFound() {
+    console.log("Not Found Yet, Waiting...");
+  }
+
+  function handleError(status) {
+    setLoading(false);
+    setMyLeads([]);
+    console.error(`Got HTTP Error ${status}`);
+    alert("Error Searching For Leads");
+  }
+
+  function handleInsufficientBalance(response) {
+    console.error("Insufficient credits...", response);
+    alert("Insufficient Credits");
+  }
+
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
     if (
@@ -187,13 +217,6 @@ const SearchResult = (props) => {
   }, [props.location.state.customSearch]);
 
   const sendForExecution = async (endpoint, inputData) => {
-    function handleError(status) {
-      setLoading(false);
-      setMyLeads([]);
-      console.error(`Got HTTP Error ${status}`);
-      alert("Error Searching For Leads");
-    }
-
     console.log(`endpoint: ${endpoint}, inputData: ${inputData}`);
     console.log(inputData);
 
@@ -288,29 +311,13 @@ const SearchResult = (props) => {
           await saveSearchedRecord(json.data, "texAu");
         }
 
-        function handleUnAuthorized(response = null) {
-          console.log("User is UnAuthorized");
-          handleError();
-          alert("Please Logout and LogIn Again");
-        }
-
-        function handleCookieError() {
-          // got cookie error - no need to check again, results will not change
-          console.log("Response cookie error", response.statusText);
-          handleError();
-        }
-
-        function handleNotFound() {
-          console.log("Not Found Yet, Waiting...");
-        }
-
         switch (response.status) {
           case 200:
             return handleSuccess(response);
           case 401:
             return handleUnAuthorized(response);
           case 403:
-            return handleCookieError();
+            return handleCookieError(response);
           case 404:
             return handleNotFound();
           default:
@@ -684,6 +691,8 @@ const SearchResult = (props) => {
             return await handleSuccess(response);
           case 401:
             return handleUnAuthorized(response);
+          case 402:
+            return handleInsufficientBalance(response);
           default:
             return handleError(response);
         }

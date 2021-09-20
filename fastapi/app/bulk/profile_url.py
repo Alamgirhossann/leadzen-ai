@@ -18,10 +18,11 @@ async def handle_bulk_profile_urls(request: BulkProfileUrlRequest, ):
     print("in handle_bulk_profile_urls request>>",request)
     await execute_profile_task(
         request=PiplDetailsFromProfileUrlRequest(
-            profile_urls=request.urls, hash_key_list=request.hash_key_list, filename=request.outgoing_filename, user=request.user
+            profile_urls=request.urls,  filename=request.outgoing_filename, hash_key_list=request.hash_key_list, user=request.user
         )
     )
     outgoing_filename = request.outgoing_filename
+    logger.debug(f"{request.incoming_filename=}")
     if outgoing_filename:
         add_excel_template_to_file(outgoing_filename)
     else:

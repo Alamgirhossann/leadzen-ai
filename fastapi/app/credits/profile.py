@@ -121,6 +121,20 @@ async def add_bulk_profile_credit_history(
     logger.debug(f"{request=}, {user=}")
 
     try:
+        # query = (
+        #     f"SELECT * FROM profile_credit_history WHERE user_id = :user_id"
+        # )
+        # logger.debug(f"{query=}")
+        #
+        # if (
+        #         row := await database.fetch_all(
+        #             query=query, values={"user_id": str(user.id)}
+        #         )
+        # ):
+        #
+        #     logger.warning(f"Record already present {row=}")
+        #
+        #     return None
         values = [{"id": str(uuid.uuid4()),
                    "user_id": str(user.id),
                    "search_id": request.search_id,

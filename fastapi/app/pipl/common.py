@@ -10,9 +10,11 @@ import jmespath
 import pandas as pd
 from aiolimiter import AsyncLimiter
 from fastapi import HTTPException, BackgroundTasks
+from fastapi.encoders import jsonable_encoder
 from loguru import logger
 from sentry_sdk import capture_message
 from starlette import status
+from fastapi.responses import JSONResponse
 
 from app.config import (
     API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT,
@@ -90,7 +92,7 @@ def filter_data(person: Dict, slug: str) -> Dict:
 async def write_to_file(responses: List[Dict], filename: str):
     try:
         logger.debug(f"writing {len(responses)=} responses")
-
+        # logger.debug(f"{responses=}")
         df = pd.DataFrame([x for x in responses if x])
         logger.debug(df.head())
 
@@ -108,12 +110,13 @@ async def write_to_file(responses: List[Dict], filename: str):
 
 async def search_one(
         url: str, client: httpx.AsyncClient, slug: str, limiter: AsyncLimiter, hash_key_list: List[Dict], user
-, background_tasks=BackgroundTasks) -> Optional[List[Dict]]:
+        , background_tasks=BackgroundTasks) -> Optional[List[Dict]]:
     try:
         logger.debug("110 url>>>>>" + str(url))
         hash_key = None
         user_response = None
         pipl_response = None
+        is_record_present = False
         async with limiter:
             if hash_key_list:
                 print("116 In request>>>", hash_key_list)
@@ -125,23 +128,26 @@ async def search_one(
                     pairs = item.items()
 
                     for key, value in pairs:
-                        print("125 if key == url>>",key, url, key == url)
-                        parsed = urlparse(url)
-                        print("Query>>>>>>>>",parsed.query)
-                        urlSplit=parsed.query.split('&')[0]
-                        splittedUrl = urlSplit.split("=")[1]
-                        print("splittedUrl>>>",splittedUrl)
-                        print("131 if key == splittedUrl>>", key, url, key == splittedUrl)
 
-                        print("decoded url>>>", urllib.parse.unquote(splittedUrl))
+                        parsed = urlparse(url)
+
+                        urlSplit = parsed.query.split('&')[0]
+                        splittedUrl = urlSplit.split("=")[1]
+
+                        logger.debug(f"{key=}>>{urllib.parse.unquote(splittedUrl)=}>> {key == urllib.parse.unquote(splittedUrl)=}")
                         if key == urllib.parse.unquote(splittedUrl):
-                            print("128 In If url==key")
+
                             hash_key = value
                             response = await get_profile_search(hash_key, user)
-                            logger.debug(f"is_credit_applied>>>{response=}, {user=}")
+                            logger.debug(f"is_credit_applied>>> {user=}")
                             if response:
-                                logger.debug(f"profile found >>>{response=}")
-                                return response.get('search_results')
+                                logger.debug(f"profile found >>>{response=}>>>>")
+                                # json_compatible_item_data = jsonable_encoder(response.get('search_results'))
+                                # pipl_response = JSONResponse(content=json_compatible_item_data)
+                                pipl_response = await client.get(url)
+                                is_record_present = True
+                                logger.debug(f"profile found >>>{type(pipl_response)=}>>>>")
+                                # return pipl_response
                             else:
                                 logger.debug(f"Profile not found")
                                 user_response = await get_user(user)
@@ -152,9 +158,14 @@ async def search_one(
                                     raise HTTPException(
                                         status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
                                     )
+
                                 pipl_response = await client.get(url)
+                                logger.debug(f"{type(pipl_response)=}>>>>")
+
+            logger.debug(f"**pipl_response>>>{pipl_response=}>>>")
 
             if not pipl_response.status_code == 200:
+                logger.debug(f"not pipl_response.status_code == 200")
                 if pipl_response.status_code == 403 or pipl_response.status_code == 429:
                     # https://docs.pipl.com/reference/#rate-limiting-information
                     capture_message(
@@ -169,25 +180,25 @@ async def search_one(
             if not (data := pipl_response.json()):
                 logger.warning(f"Empty Response")
                 return None
-
+            logger.debug(f"data 200>>>{data=}")
             logger.debug(data.keys())
 
             if data["@persons_count"] == 1 and data.get("person"):
 
                 result = filter_data(person=data.get("person"), slug=slug)
-                if result:
+                logger.debug(f"{is_record_present=}")
+                if result and not is_record_present:
                     credit_res = await deduct_credit("PROFILE", user_response)
                     logger.debug(f"{credit_res=}")
                     request_add_profile = {
                         "search_type": "texAu",
                         "hash_key": hash_key,
-                        "search_results":
-                            [[data.get("person")]]
+                        "search_results": [data.get("person")]
 
                     }
-                    add_profile_res = await add_profile(request_add_profile,user_response)
-                    print('add_profile_res>>>>',add_profile_res)
-                    # background_tasks.add_task(add_profile, request=request_add_profile, user=user)
+                    add_profile_res = await add_profile(request_add_profile, user_response)
+                    print('add_profile_res>>>>', add_profile_res)
+
                 return [result]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
                 return [
@@ -241,4 +252,7 @@ async def search_all(urls: List[str], slugs: List[str], hash_key_list: List[Dict
             return list(itertools.chain(*results))
     except Exception as e:
         logger.critical(f"Exception Searching PIPL: {str(e)}")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("line->" + str(exc_tb.tb_lineno))
+        print('Exception' + str(e))
         return None
