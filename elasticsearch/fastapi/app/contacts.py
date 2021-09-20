@@ -1,10 +1,14 @@
+#from _typeshed import OpenTextModeReading
 import asyncio
 import tempfile
 from typing import Dict
 import orjson
 import os
+import requests
+import http3
+from requests.structures import CaseInsensitiveDict
 import pandas as pd
-from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks, Depends,Request
 from loguru import logger
 from starlette import status
 
@@ -259,31 +263,28 @@ async def search_contact_by_text(
 @router.post("/upload/json", response_model=bool)
 async def load_json(
     background_tasks: BackgroundTasks,
-    username: str = Depends(get_current_username),
+    file: UploadFile = File(...),
 ):
-    assert username
-    path = "C:\\Users\\Pratik\\OneDrive\\Desktop\\New folder (2)\\"
-    file_list = os.listdir(path)
-    for file_name in file_list :
-        
-        f = open(f"{str(path)}\\{file_name}",encoding="UTF-8",buffering=20000000).read()
-        val = [orjson.loads((item)) for item in f.strip().split('\n')]
-        #val = orjson.loads(f)
 
-        background_tasks.add_task(
-                    add_json,
-                    request=ElasticsearchAddRequest(
-                        index_name=f"analystt.json.trial",
-                        records=val,
-                    ),
-                )
+    lines = file.file.readlines()
+    #val = [orjson.loads((item)) for item in file.strip().split('\n')]
+    val = [orjson.loads((item)) for item in lines]
+    #val = orjson.loads(f)
+    logger.debug("Operation success")
+    file_name = str(file.filename)
+    file_name = file_name.replace(" ","")
+    background_tasks.add_task(
+                add_json,
+                request=ElasticsearchAddRequest(
+                    index_name=f"analystt.json.{file_name}",
+                    records=val,
+                ),
+            )
 
-                # this sleep is needed to prevent yet more 429 errors
-        background_tasks.add_task(
-            asyncio.sleep,
-            delay=30 * 1,
-        )
+            # this sleep is needed to prevent yet more 429 errors
+    background_tasks.add_task(
+        asyncio.sleep,
+        delay=30 * 1,
+    )
     return True
 
-
-    

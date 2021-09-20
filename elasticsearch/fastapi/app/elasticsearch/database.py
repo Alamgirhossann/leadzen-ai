@@ -218,8 +218,8 @@ async def add_json(request: ElasticsearchAddRequest) -> Optional[bool]:
             progress.update(1)
             successes += ok
 
-        logger.success(f"Database Add Completed, {successes=}, {len(request.records)}")
+        logger.success(f"Database Add Completed In Index: {request.index_name}, {successes=}, {len(request.records)}")
         return True
     except Exception as e:
-        logger.critical("Exception Adding to Elasticsearch: " + str(e))
+        logger.critical(f"Exception Adding to Elasticsearch Index {request.index_name}: " + str(e))
         return None
