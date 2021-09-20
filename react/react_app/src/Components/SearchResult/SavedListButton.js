@@ -19,14 +19,14 @@ const SavedListButton = ({ data }) => {
   async function handleSaveList() {
     console.log("dataa", data);
     try {
-      const response = await fetch(apiServer + "/save_list/add", {
+      const response = await fetch(apiServer + "/saved_list/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
-        body: JSON.stringify({ save_list_results: data, search_type: "texAu" }),
+        body: JSON.stringify({list_name:"ksihan",list_description:"dkaf", content: data, search_type: "texAu" }),
       });
       async function handleSuccess(response) {
         const result = await response.json();

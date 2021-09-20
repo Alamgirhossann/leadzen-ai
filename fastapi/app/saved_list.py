@@ -178,15 +178,22 @@ async def get_all_saved_lists(user=Depends(fastapi_users.get_current_active_user
         logger.debug(f"{rows=}")
 
         processed_rows = [dict(x) for x in rows]
-        processed_rows = [
-            x
-            | {
-                "list_content": json.loads(x["list_content"])
-                if x["list_content"]
-                else None
-            }
-            for x in processed_rows
-        ]
+
+        for x in processed_rows:
+            list = []
+            data = ""
+            stack = []
+            for i in x["list_content"]:
+                data = data + i
+                if i == "{":
+                    stack.append("{")
+                if i == "}":
+                    stack.pop()
+                if len(stack) == 0 and data:
+                    y = json.loads(data)
+                    list.append(y)
+                    data = ""
+            x["list_content"] = list
 
         logger.debug(f"{processed_rows=}")
 
@@ -215,6 +222,7 @@ async def add_saved_list_name(
             id=saved_list_id,
             list_name=request.list_name,
             list_description=request.list_description or "",
+            list_content="",
             user_id=str(user.id),
             created_on=datetime.utcnow(),
         )
@@ -292,7 +300,9 @@ async def update_search_save_list(
             values["list_description"] = request.list_description
 
         if request.content:
-            values["list_content"] = json.dumps(request.content)
+            values["list_content"] = saved_list.c.list_content + json.dumps(
+                request.content
+            )
 
         if request.search_type:
             values["search_type"] = request.search_type
