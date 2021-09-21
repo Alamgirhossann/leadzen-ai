@@ -98,7 +98,7 @@ async def add_profile_credit_history(
 
 async def insert_one_profile(search_id, phone_number, search_index, user):
     try:
-        if not search_id and phone_number and search_index:
+        if not search_id and not phone_number and not search_index:
             logger.warning(f"Details Not Found")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
