@@ -1,5 +1,9 @@
 import os
+import sentry_sdk
 
+API_CONFIG_EXCEL_FILE_PATH = os.getenv(
+    "API_CONFIG_EXCEL_FILE_PATH", "./Excel"
+)
 API_CONFIG_PIPL_BASE_URL = os.getenv(
     "API_CONFIG_PIPL_BASE_URL", "https://api.pipl.com/search"
 )
@@ -36,6 +40,10 @@ API_CONFIG_LINKEDIN_SEARCH_BASE_URL = os.getenv(
     "API_CONFIG_LINKEDIN_SEARCH_BASE_URL",
     "https://www.linkedin.com/search/results/people/?",
 )
+API_CONFIG_LINKEDIN_COMPANY_SEARCH_BASE_URL = os.getenv(
+    "API_CONFIG_LINKEDIN_COMPANY_SEARCH_BASE_URL",
+    "https://www.linkedin.com/search/results/companies/?",
+)
 API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE = os.getenv(
     "API_CONFIG_LINKEDIN_INDUSTRY_CODES_FILE",
     "./app/industry_codes.json",
@@ -49,6 +57,11 @@ API_CONFIG_LINKEDIN_LOCATION_CODES_FILE = os.getenv(
 API_CONFIG_LINKEDIN_COMPANY_CODES_FILE = os.getenv(
     "API_CONFIG_LINKEDIN_COMPANY_CODES_FILE",
     "./app/company_codes.json",
+)
+
+API_CONFIG_LINKEDIN_COMPANY_SIZE_CODES_FILE = os.getenv(
+    "API_CONFIG_LINKEDIN_COMPANY_SIZE_CODES_FILE",
+    "./app/company_size_codes.json",
 )
 
 API_CONFIG_TEXAU_URL = os.getenv(
@@ -68,6 +81,13 @@ API_CONFIG_TEXAU_LINKEDIN_SEARCH_RECIPE_ID = os.getenv(
 API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID = os.getenv(
     "API_CONFIG_TEXAU_LINKEDIN_SEARCH_FUNC_ID",
     "texau-automation-1-dev-linkedInSearchExtractor",
+)
+API_CONFIG_TEXAU_LINKEDIN_SEARCH_SPICE_ID_COMPANY = os.getenv(
+    "API_CONFIG_TEXAU_LINKEDIN_SEARCH_SPICE_ID_COMPANY", "5dfb522a0d074f7c847ece2d"
+)
+API_CONFIG_TEXAU_LINKEDIN_SEARCH_COMPANY_FUNC_ID = os.getenv(
+    "API_CONFIG_TEXAU_LINKEDIN_SEARCH_COMPANY_FUNC_ID",
+    "texau-automation-1-dev-linkedInCompanySearchExtractor",
 )
 API_CONFIG_TEXAU_PROXY_NAME = os.getenv(
     "API_CONFIG_TEXAU_PROXY", "BestProxyAndVPN-Pune"
@@ -208,4 +228,20 @@ API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS = int(
 )
 API_CONFIG_MAX_RESULTS_PER_CALL = int(
     os.getenv("API_CONFIG_MAX_RESULTS_PER_CALL", "100")
+)
+API_CONFIG_GET_USER_FROM_USER_ID_URL = os.getenv("API_CONFIG_GET_USER_FROM_USER_ID_URL", "http://localhost:12005/api/users/")
+
+
+API_CONFIG_SENTRY_DSN = os.getenv(
+    "API_CONFIG_SENTRY_DSN",
+    "https://5c82fcb5179441aaa52475dec4c2b507@o818106.ingest.sentry.io/5950717",
+)
+
+
+sentry_sdk.init(
+    API_CONFIG_SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
 )

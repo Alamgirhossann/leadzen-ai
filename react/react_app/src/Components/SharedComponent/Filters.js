@@ -71,19 +71,19 @@ const Filters = (props) => {
     }
   };
 
-  useEffect(()=>{
-    if (props.customSearch){
-      setCustomSearch(props.customSearch)
+  useEffect(() => {
+    if (props.customSearch) {
+      setCustomSearch(props.customSearch);
     }
-  }, [props])
+  }, [props]);
 
   const handleHide = () => {
-   setIsHide(!isHide)
-  }
+    setIsHide(!isHide);
+  };
 
   const handleClearAll = () => {
-   setCustomSearch({ location:""});
-  }
+    setCustomSearch({ location: "" });
+  };
 
   return (
     <div>
@@ -206,16 +206,17 @@ const Filters = (props) => {
                 </p>
               ) : null}
               <div className="d-flex justify-content-between">
-                <a onClick={()=> handleHide()}>
+                <a onClick={() => handleHide()}>
                   <img
                     style={{ width: "10px", marginRight: "5px" }}
                     src="assets/images/combined-eye.png"
                     alt=""
                   />
-                  {isHide? <h7> Hide</h7>:<h7> Show </h7>}
-
+                  {isHide ? <h7> Hide</h7> : <h7> Show </h7>}
                 </a>
-                <a className="text-danger" onClick={()=>handleClearAll()}>Clear All</a>
+                <a className="text-danger" onClick={() => handleClearAll()}>
+                  Clear All
+                </a>
               </div>
             </div>
             <h2 className="accordion-header">

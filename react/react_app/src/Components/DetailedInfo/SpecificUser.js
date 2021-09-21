@@ -9,7 +9,10 @@ const SpecificUser = (props) => {
   return (
     <div>
       {" "}
-      {props.details === "Record Not Found" || props.details === "Item not found" || !props.details ? (
+      {props.details === "Record Not Found" ||
+      props.details === "Item not found" ||
+      !props.details ||
+      !props.details.phones ? (
         <div>
           {" "}
           <section className="item-section" style={{ textAlign: "center" }}>
@@ -21,7 +24,9 @@ const SpecificUser = (props) => {
           <section className="item-section">
             <div className="phone-child-div">
               <div className="">
-                {props.details.phones ? <h6>Associated Phone Numbers</h6> : null}
+                {props.details.phones ? (
+                  <h6>Associated Phone Numbers</h6>
+                ) : null}
                 {props.details.phones
                   ? props.details.phones.map((number) => (
                       <div className="ms-2 d-flex align-items-center mb-3">
@@ -39,7 +44,11 @@ const SpecificUser = (props) => {
                               alert("Phone Number Copied!");
                             }}
                           >
-                            <img style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
+                            <img
+                              style={{ height: "10px" }}
+                              src="assets/images/Union.png"
+                              alt=""
+                            />
                           </a>
                         </div>
                       </div>
@@ -47,40 +56,60 @@ const SpecificUser = (props) => {
                   : null}
               </div>
               <div>
-                {props.details.emails !== undefined && props.details.emails.length !== 0 ? (
+                {props.details.emails !== undefined &&
+                props.details.emails.length !== 0 ? (
                   <h6>Associated Email Addresses</h6>
                 ) : null}
                 {props.details.emails
                   ? props.details.emails.map((email) => (
-                      <div className="ms-2 d-flex align-items-center mb-3" align="left">
+                      <div
+                        className="ms-2 d-flex align-items-center mb-3"
+                        align="left"
+                      >
                         <div className="d-flex align-items-center">
                           <small className="ms-2">{email.address}</small>
-                          <img className="ms-2" style={{ height: "10px" }} src="assets/images/Union.png" alt="" />
+                          <img
+                            className="ms-2"
+                            style={{ height: "10px" }}
+                            src="assets/images/Union.png"
+                            alt=""
+                          />
                         </div>
                         <div className="d-flex align-items-center">
-                          <img className="ms-2" src="assets/images/Vector.png" alt="" />
+                          <img
+                            className="ms-2"
+                            src="assets/images/Vector.png"
+                            alt=""
+                          />
                         </div>
                       </div>
                     ))
                   : null}
 
-                {props.details.usernames !== undefined && props.details.usernames.length !== 0 ? (
+                {props.details.usernames !== undefined &&
+                props.details.usernames.length !== 0 ? (
                   <h6>Associated Usernames</h6>
                 ) : null}
                 {props.details.usernames
                   ? props.details.usernames.map((data) => (
-                      <div className="ms-2 d-flex align-items-center mb-3" align="left">
+                      <div
+                        className="ms-2 d-flex align-items-center mb-3"
+                        align="left"
+                      >
                         <div className="d-flex align-items-center">
                           <small className="ms-2">{data.content}</small>
                           <small className="me-2 ms-2">
-                            {data.valid_since ? <span>Since {data.valid_since}</span> : null}
+                            {data.valid_since ? (
+                              <span>Since {data.valid_since}</span>
+                            ) : null}
                           </small>
                         </div>
                       </div>
                     ))
                   : null}
 
-                {props.details.urls !== undefined && props.details.urls.length !== 0 ? (
+                {props.details.urls !== undefined &&
+                props.details.urls.length !== 0 ? (
                   <h6>Probable URLs Associated</h6>
                 ) : null}
                 {props.details.urls
@@ -89,7 +118,12 @@ const SpecificUser = (props) => {
                         <div className="d-flex align-items-center">
                           <small className="ms-2">{url.url}</small>
                           <a href={url.url} target="_blank">
-                            <img className="ms-2" style={{ height: "10px" }} src="assets/images/Union (1).png" alt="" />
+                            <img
+                              className="ms-2"
+                              style={{ height: "10px" }}
+                              src="assets/images/Union (1).png"
+                              alt=""
+                            />
                           </a>
                         </div>
                       </div>
@@ -99,13 +133,20 @@ const SpecificUser = (props) => {
               <div>
                 {props.details.gender ? <h6>Gender</h6> : null}
                 <div className="ms-2 d-flex align-items-center mb-3">
-                  <small>{props.details.gender ? props.details.gender.content : null}</small>
+                  <small>
+                    {props.details.gender ? props.details.gender.content : null}
+                  </small>
                 </div>
                 {props.details.dob ? <h6>Age</h6> : null}
                 <div className="ms-2 d-flex align-items-center mb-3">
-                  <small>{props.details.dob ? <span>props.details.dob._display Years</span> : null}</small>
+                  <small>
+                    {props.details.dob ? (
+                      <span>props.details.dob._display Years</span>
+                    ) : null}
+                  </small>
                 </div>
-                {props.details.languages !== undefined && props.details.languages.length !== 0 ? (
+                {props.details.languages !== undefined &&
+                props.details.languages.length !== 0 ? (
                   <h6>Languages Known</h6>
                 ) : null}
                 {props.details.languages
@@ -159,7 +200,11 @@ const SpecificUser = (props) => {
                           />
                         </div>
                         <div className="">
-                          <img style={{ height: "32px", width: "32px" }} src="assets/images/social-mideum.png" alt="" />
+                          <img
+                            style={{ height: "32px", width: "32px" }}
+                            src="assets/images/social-mideum.png"
+                            alt=""
+                          />
                         </div>
                       </div>
                     </div>
@@ -181,7 +226,9 @@ const SpecificUser = (props) => {
                     <div className="table-alignment container-fluid">
                       <td>{comp.organization}</td>
                       <td>{comp._display}</td>
-                      <td>Since {comp.date_range ? comp.date_range.start : null}</td>
+                      <td>
+                        Since {comp.date_range ? comp.date_range.start : null}
+                      </td>
                       <td>
                         <div className="d-flex justify-content-between">
                           {/*<p>{comp.url}</p>*/}
@@ -271,7 +318,11 @@ const SpecificUser = (props) => {
                         // }}
                         >
                           <a href={profile.url}>
-                            <img className="" src="assets/images/user-athor-pic.png" alt="" />
+                            <img
+                              className=""
+                              src="assets/images/user-athor-pic.png"
+                              alt=""
+                            />
                           </a>
                         </div>
                         <p className="d-block mt-3">{profile.name}</p>
@@ -286,7 +337,6 @@ const SpecificUser = (props) => {
             <img src="assets/images/Group 1908.png" alt="" />
             <p>{props.details.rating} Rating</p>
           </div>
-          )
         </div>
       )}
     </div>

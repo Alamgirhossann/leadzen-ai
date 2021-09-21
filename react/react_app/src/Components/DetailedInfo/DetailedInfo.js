@@ -359,6 +359,7 @@ const DetailedInfo = () => {
                   background: "white",
                   borderRadius: "20px",
                   padding: "20px",
+                  marginTop: "20px",
                 }}
               >
                 <SpecificUser details={details} />

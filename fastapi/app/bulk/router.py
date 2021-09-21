@@ -81,6 +81,7 @@ async def upload_csv_file(
 
         if "emails" in df.columns:
             logger.warning("Performing Email Searches")
+            #TODO: check Credit if not sufficient send mail and exit else continue with scrapping
             outgoing_filename = (
                 f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             )
@@ -103,7 +104,7 @@ async def upload_csv_file(
             outgoing_filename = (
                 f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             )
-
+            # TODO: check Credit if not sufficient send mail and exit else continue with scrapping
             background_tasks.add_task(
                 handle_bulk_profile_urls,
                 request=BulkProfileUrlRequest(
