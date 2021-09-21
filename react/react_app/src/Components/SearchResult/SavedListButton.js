@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import React, { useState } from "react";
+
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SavedListButton = ({ data }) => {
@@ -28,6 +29,7 @@ const SavedListButton = ({ data }) => {
         },
         body: JSON.stringify({ save_list_results: data, search_type: "texAu" }),
       });
+
       async function handleSuccess(response) {
         const result = await response.json();
         console.log("response from handleSaveList>>>", result);
