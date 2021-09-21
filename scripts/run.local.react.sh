@@ -1,11 +1,16 @@
 # !/bin/bash
 echo "-----------------------------"
 echo "Building Docker Images"
+
 cd fastapi
 sudo ./scripts/build.docker.sh
 
 cd ../react
 sudo ./scripts/build.docker.sh
+
+cd ../api
+sudo ./scripts/build.docker.sh
+
 echo "-----------------------------"
 
 cd ..
