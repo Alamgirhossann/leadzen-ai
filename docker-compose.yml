@@ -35,13 +35,19 @@ services:
     volumes:
       - /dev/shm:/dev/shm
 
+  redis:
+    image: "redis:alpine"
+    container_name: "redis"
+    ports:
+      - "6379:6379"
+
   person_fastapi:
     image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
     container_name: "person_fastapi"
     ports:
       - "8000:5000"
     volumes:
-      - ./data/fastapi/test.db:/home/appuser/test.db
+      - ./shared:/home/appuser/shared
     environment:
       - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
       - API_CONFIG_PORT_NUM_INTERNAL=5000
@@ -52,11 +58,31 @@ services:
     depends_on:
       - selenium
 
+  person_fastapi_external:
+    image: "${CONTAINER_REGISTRY}/analystt/person_fastapi_external:latest"
+    container_name: "person_fastapi_external"
+    ports:
+      - "8001:5000"
+    volumes:
+      - ./shared:/home/appuser/shared
+    environment:
+      - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
+      - API_CONFIG_REDIS_URL=redis://redis
+    depends_on:
+      - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=5000"
+      - "traefik.http.routers.api.rule=Host(`leadzen-api.analystt.ai`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
+
   person_react:
     image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
     container_name: "person_react"
     ports:
-      - 8001:80
+      - "8002:80"
     depends_on:
       - person_fastapi
     labels:

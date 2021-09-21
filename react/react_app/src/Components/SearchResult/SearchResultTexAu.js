@@ -789,121 +789,129 @@ const SearchResult = (props) => {
                         <h5>Records not found</h5>
                       </div>
                     ) : currentLeads ? (
-                      currentLeads.map((data, index) => (
-                          data.name!="LinkedIn Member"? <div>
-                          <div className="user-container py-2" key={index}>
-                            <input
-                              className="box ms-3 me-3"
-                              id={data.url || data.profileLink}
-                              type="checkbox"
-                              name={data.name}
-                              checked={selectedLeads.includes(
-                                data.url || data.profileLink
-                              )}
-                              onChange={handleLeadSelectionChange}
-                            />
-                            <div className="search-author text-danger ">
-                              <img
-                                style={{ borderRadius: "50%" }}
-                                src={
-                                  data.profilePicture
-                                    ? data.profilePicture
-                                    : "assets/images/author-image.png"
-                                }
-                                alt=""
+                      currentLeads.map((data, index) =>
+                        data.name != "LinkedIn Member" ? (
+                          <div>
+                            <div className="user-container py-2" key={index}>
+                              <input
+                                className="box ms-3 me-3"
+                                id={data.url || data.profileLink}
+                                type="checkbox"
+                                name={data.name}
+                                checked={selectedLeads.includes(
+                                  data.url || data.profileLink
+                                )}
+                                onChange={handleLeadSelectionChange}
                               />
-                            </div>
-                            <div className="search-user ps-3">
-                              <p>{data.length === 0 ? null : data.name}</p>
-                              <small className="d-block">
-                                Works at {data.length === 0 ? null : data.job}
-                              </small>
-                              <small className="d-block">
-                                {data.length === 0 ? null : data.location}
-                              </small>
-                            </div>
-                            <div className="linkedin-icon d-flex justify-content-end">
-                              <span>
-                                <a href={data.url} target="_blank">
-                                  <img
-                                    src="assets/images/linkedin1.png"
-                                    alt=""
-                                  />
-                                </a>
-                              </span>
-                            </div>
-                            <div className="search-email text-center">
-                              <small
-                              // className={
-                              //   show[index] ? "d-block" : "d-block blur"
-                              // }
-                              >
-                                {unlockEmailDetails?.map((spec) => (
-                                  <span>
-                                    {spec.index === `${currentPage}${index}`
-                                      ? spec.details.email
-                                      : null}
-                                  </span>
-                                ))}
-                              </small>
-
-                              <a
-                                href="#"
-                                onClick={(e) =>
-                                  handleUnlockEmail(e, index, data)
-                                }
-                              >
-                                <small className="d-block text-danger">
-                                  Unlock
+                              <div className="search-author text-danger ">
+                                <img
+                                  style={{ borderRadius: "50%" }}
+                                  src={
+                                    data.profilePicture
+                                      ? data.profilePicture
+                                      : "assets/images/author-image.png"
+                                  }
+                                  alt=""
+                                />
+                              </div>
+                              <div className="search-user ps-3">
+                                <p>{data.length === 0 ? null : data.name}</p>
+                                <small className="d-block">
+                                  Works at {data.length === 0 ? null : data.job}
                                 </small>
-                              </a>
-                            </div>
-                            <p className="search-view-btn ">
-                              <a
-                                className="btn button"
-                                data-toggle="collapse"
-                                href={
-                                  "#collapseExample_" + `${currentPage}${index}`
-                                }
-                                data-target={
-                                  "#collapseExample_" + `${currentPage}${index}`
-                                }
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                                onClick={() => handleProfile(index, data)}
-                              >
-                                View Profile
-                              </a>
-                            </p>
-                            <p>
-                              <SavedListButton data={data} />
-                            </p>
-                          </div>
-                          <div
-                            style={{
-                              background: "white",
-                              borderRadius: "20px",
-                              padding: "20px",
-                            }}
-                          >
-                            <div
-                              className="panel-collapse collapse in"
-                              id={"collapseExample_" + `${currentPage}${index}`}
-                            >
-                              {specificUserDetails?.map((spec) => (
+                                <small className="d-block">
+                                  {data.length === 0 ? null : data.location}
+                                </small>
+                              </div>
+                              <div className="linkedin-icon d-flex justify-content-end">
                                 <span>
-                                  {spec.index === `${currentPage}${index}` ? (
-                                    <span>
-                                      <SpecificUser details={spec.details} />
-                                    </span>
-                                  ) : null}
+                                  <a href={data.url} target="_blank">
+                                    <img
+                                      src="assets/images/linkedin1.png"
+                                      alt=""
+                                    />
+                                  </a>
                                 </span>
-                              ))}{" "}
+                              </div>
+                              <div className="search-email text-center">
+                                <small
+                                // className={
+                                //   show[index] ? "d-block" : "d-block blur"
+                                // }
+                                >
+                                  {unlockEmailDetails?.map((spec) => (
+                                    <span>
+                                      {spec.index === `${currentPage}${index}`
+                                        ? spec.details.email
+                                        : null}
+                                    </span>
+                                  ))}
+                                </small>
+
+                                <a
+                                  href="#"
+                                  onClick={(e) =>
+                                    handleUnlockEmail(e, index, data)
+                                  }
+                                >
+                                  <small className="d-block text-danger">
+                                    Unlock
+                                  </small>
+                                </a>
+                              </div>
+                              <p className="search-view-btn ">
+                                <a
+                                  className="btn button"
+                                  data-toggle="collapse"
+                                  href={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  data-target={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  role="button"
+                                  aria-expanded="false"
+                                  aria-controls="collapseExample"
+                                  onClick={() => handleProfile(index, data)}
+                                >
+                                  View Profile
+                                </a>
+                              </p>
+                              <p>
+                                <SavedListButton data={data} />
+                              </p>
+                            </div>
+                            <div
+                              style={{
+                                background: "white",
+                                borderRadius: "20px",
+                                padding: "20px",
+                              }}
+                            >
+                              <div
+                                className="panel-collapse collapse in"
+                                id={
+                                  "collapseExample_" + `${currentPage}${index}`
+                                }
+                              >
+                                {specificUserDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}` ? (
+                                      <span>
+                                        <SpecificUser details={spec.details} />
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                ))}{" "}
+                              </div>
                             </div>
                           </div>
-                        </div>: console.log("not valid name")
-                      ))
+                        ) : (
+                          console.log("not valid name")
+                        )
+                      )
                     ) : (
                       <h5>Record not found</h5>
                     )}

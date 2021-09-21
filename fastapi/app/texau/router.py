@@ -1,3 +1,5 @@
+import asyncio
+import itertools
 import uuid
 from http.client import HTTPException
 
@@ -14,6 +16,10 @@ from app.texau.linkedin.commenters import (
     handle_find_post_commenters,
     TexAuFindLinkedInPostCommentersRequest,
 )
+from app.texau.linkedin.company import (TexAuFindLinkedInCompanyRequest, handle_find_company_details,
+                                        handle_find_company_employees_details, handle_find_company_screenshot,
+                                        handle_find_company_domain, handle_find_company_tech_stack,
+                                        handle_find_email_and_phones_from_website, handle_find_company_social_media)
 from app.texau.linkedin.cookie import read_linkedin_cookie
 from app.texau.linkedin.email import (
     TexAuFindEmailAndPhoneForLinkedInProfileRequest,
@@ -28,8 +34,9 @@ from app.texau.linkedin.profiles import (
     handle_find_matching_linkedin_profiles,
     TexAuFindProfileRequest, handle_find_matching_linkedin_profiles_company, TexAuFindCompanyProfileRequest,
 )
-from app.texau.status import get_status_once
+from app.texau.status import get_status_once, get_status_waiting
 from app.users import fastapi_users
+from app.utils.snov import get_emails_from_domain
 
 router = APIRouter(prefix="/texau", tags=["TexAu"])
 
@@ -154,10 +161,128 @@ async def find_linkedin_post_commenters(
     return await handle_find_post_commenters(request=app_request)
 
 
+@router.post("/linkedin/find_company_details", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_company_details(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+
+    if not app_request.cookie:
+        if not (cookie := read_linkedin_cookie()):
+            logger.critical("Error Getting LinkedIn Cookie")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error Getting LinkedIn Cookie",
+            )
+        app_request.cookie = cookie
+
+    return await handle_find_company_details(request=app_request)
+
+
+@router.post("/linkedin/find_company_employees_details", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_company_employees_details(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+
+    if not app_request.cookie:
+        if not (cookie := read_linkedin_cookie()):
+            logger.critical("Error Getting LinkedIn Cookie")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error Getting LinkedIn Cookie",
+            )
+        app_request.cookie = cookie
+
+    return await handle_find_company_employees_details(request=app_request)
+
+
+@router.post("/linkedin/find_company_screenshot", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_company_screenshot(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+    return await handle_find_company_screenshot(request=app_request)
+
+
+@router.post("/linkedin/find_company_domain", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_company_domain(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+    return await handle_find_company_domain(request=app_request)
+
+
+@router.post("/linkedin/find_company_tech_stack", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_company_tech_stack(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+    return await handle_find_company_tech_stack(request=app_request)
+
+
+@router.post("/linkedin/find_email_and_phones_from_website", response_model=TexAuExecutionResponse)
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def find_email_and_phones_from_website(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+    return await handle_find_email_and_phones_from_website(request=app_request)
+
+
+@router.post("/linkedin/get_all_company_data")
+@cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS * 10)
+async def get_all_company_data(
+        app_request: TexAuFindLinkedInCompanyRequest,
+        user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.info(f"{app_request=}, {user=}")
+    coroutines = [
+        handle_find_company_screenshot(request=app_request),
+        handle_find_email_and_phones_from_website(request=app_request),
+        handle_find_company_tech_stack(request=app_request),
+        handle_find_company_social_media(request=app_request),
+        # get_emails_from_domain(request=app_request),
+
+    ]
+    results = await asyncio.gather(*coroutines)
+    results = [
+        x for x in results if x
+    ]  # remove the None's else chain/flatten operation will fail
+    print("results", results)
+    if not any(results):
+        logger.warning("No Results Found")
+        return None
+    lst = list(itertools.chain(*results))
+    lst = list(itertools.chain.from_iterable(lst))
+    list_of_id = lst[1::2]
+    second_coroutine = [
+        get_status_waiting(list_of_id[0]),
+        get_status_waiting(list_of_id[1]),
+        get_status_waiting(list_of_id[2]),
+        get_status_waiting(list_of_id[3]),
+        get_emails_from_domain(request=app_request)
+    ]
+    final_results = await asyncio.gather(*second_coroutine)
+    print("final_results", final_results)
+    return final_results
+
+
 @router.get("/result/{execution_id}", response_model=TexAuResult)
 async def get_execution_results(
         execution_id, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.info(f"{execution_id=}, {user=}")
 
-    return await get_status_once(execution_id=execution_id)
+    return await get_status_once(execution_id=execution_id)  # if not app_request.cookie:

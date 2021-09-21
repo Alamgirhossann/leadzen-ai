@@ -4,14 +4,13 @@ import httpx
 import pytest
 
 from app.history import SearchHistoryAddRequest
-from app.main import app
-from test.common import TEST_CONFIG_HEADERS
+from test.common import TEST_CONFIG_HEADERS, app
 
 search_id = str(uuid.uuid4())  # "d6e8d807-a4a2-4b17-9f9e-88dda4b75fd3"
 
 
 @pytest.mark.asyncio
-async def test_search_history_add():
+async def test_search_history_add(app):
     async with httpx.AsyncClient(app=app, base_url="http://test") as client:
         response = await client.post(
             "/api/history/add",
@@ -34,7 +33,7 @@ async def test_search_history_add():
 
 
 @pytest.mark.asyncio
-async def test_search_history_get_all():
+async def test_search_history_get_all(app):
     async with httpx.AsyncClient(app=app, base_url="http://test") as client:
         response = await client.get(
             "/api/history/all",
@@ -51,7 +50,7 @@ async def test_search_history_get_all():
 
 
 @pytest.mark.asyncio
-async def test_search_get_by_id():
+async def test_search_get_by_id(app):
     async with httpx.AsyncClient(app=app, base_url="http://test") as client:
         response = await client.get(
             f"/api/history/id/{search_id}",

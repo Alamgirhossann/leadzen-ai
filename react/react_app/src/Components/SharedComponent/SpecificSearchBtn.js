@@ -15,7 +15,7 @@ const SpecificSearchBtn = (details) => {
   }, []);
 
   const handleChange = async (e, event) => {
-    console.log("e.target>>>", e.target);
+    // console.log("e.target>>>", e.target);
     if (event === true) {
       setToggleCheck(true);
       console.log("true....People");
