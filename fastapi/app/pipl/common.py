@@ -142,12 +142,10 @@ async def search_one(
                             logger.debug(f"is_credit_applied>>> {user=}")
                             if response:
                                 logger.debug(f"profile found >>>{response=}>>>>")
-                                # json_compatible_item_data = jsonable_encoder(response.get('search_results'))
-                                # pipl_response = JSONResponse(content=json_compatible_item_data)
-                                pipl_response = await client.get(url)
                                 is_record_present = True
+                                pipl_response = await client.get(url)
                                 logger.debug(f"profile found >>>{type(pipl_response)=}>>>>")
-                                # return pipl_response
+
                             else:
                                 logger.debug(f"Profile not found")
                                 user_response = await get_user(user)
