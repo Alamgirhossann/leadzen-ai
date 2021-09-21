@@ -1,7 +1,4 @@
-import os
-import sys
 import tempfile
-import traceback
 import uuid
 from typing import List
 
@@ -66,55 +63,53 @@ async def upload_csv_file(
             temp_file.seek(0)
 
             df = pandas_readfile(temp_file)
-
             logger.debug(df.head())
+            if df is None or df.empty:
+                logger.warning("No Data in uploaded file")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No Data in Uploaded File",
+                )
+
+            if "linkedin_profile_urls" not in df.columns:
+                logger.warning("linkedin_profile_urls columns not preset in file")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="linkedin_profile_urls columns not preset in file",
+                )
+
             linkedin = df.loc[df['linkedin_profile_urls'].str.contains("linkedin", case=False)]
+
             if linkedin is None or linkedin.empty:
                 print("in linkedin")
                 logger.warning("Linkedin url not in Uploaded File")
-                # raise HTTPException(
-                #     status_code=status.HTTP_400_BAD_REQUEST,
-                #     detail="Linkedin url not in Uploaded File",
-                # )
-                # return {"detail": "Linkedin url not in Uploaded File"}
-                return BulkUploadResponse(detail="Linkedin url not in Uploaded File")
-
-            if df is None or df.empty:
-                logger.warning("No Data in uploaded file")
-                # raise HTTPException(
-                #     status_code=status.HTTP_400_BAD_REQUEST,
-                #     detail="No Data in Uploaded File",
-                # )
-                return BulkUploadResponse(detail="No Data in uploaded file")
-
-            df.fillna("", inplace=True)
-            if "linkedin_profile_urls" in df.columns:
-                logger.warning("Performing LinkedIn Profile Searches")
-                outgoing_filename = (
-                    f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
-                )
-                # TODO: check Credit if not sufficient send mail and exit else continue with scrapping
-                background_tasks.add_task(
-                    handle_bulk_profile_urls,
-                    request=BulkProfileUrlRequest(
-                        urls=list(
-                            df.linkedin_profile_urls[:API_CONFIG_BULK_MAX_ROWS_IN_CSV]
-                        ),
-                        outgoing_filename=outgoing_filename,
-                        incoming_filename=file.filename,
-                        user=user,
-                    ),
-                )
-
-                return BulkUploadResponse(
-                    input_filename=file.filename, output_filename=outgoing_filename
-                )
-            else:
-                logger.warning("emails or linkedin_profile_urls columns not preset in file")
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="emails or linkedin_profile_urls columns not preset in file",
+                    detail="Linkedin url not in Uploaded File",
                 )
+
+            df.fillna("", inplace=True)
+
+            logger.warning("Performing LinkedIn Profile Searches")
+            outgoing_filename = (
+                f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
+            )
+            # TODO: check Credit if not sufficient send mail and exit else continue with scrapping
+            background_tasks.add_task(
+                handle_bulk_profile_urls,
+                request=BulkProfileUrlRequest(
+                    urls=list(
+                        df.linkedin_profile_urls[:API_CONFIG_BULK_MAX_ROWS_IN_CSV]
+                    ),
+                    outgoing_filename=outgoing_filename,
+                    incoming_filename=file.filename,
+                    user=user,
+                ),
+            )
+
+            return BulkUploadResponse(
+                input_filename=file.filename, output_filename=outgoing_filename
+            )
 
     if file.filename.endswith(".csv"):
         data = readfile(pd.read_csv)

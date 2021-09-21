@@ -29,10 +29,10 @@ const BulkSearch = (data) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      function handleError(response = null) {
-        console.log("response", response);
-        // console.error(`Error Uploading File: status: ${response?.status}`);
-        alert("Error Uploading File, Please Try Again Later");
+      async function handleError(response = null) {
+        const data = await response.json();
+        console.error(`Error Uploading File: status: ${response?.status}`);
+        alert(data.detail);
       }
 
       try {
@@ -47,18 +47,14 @@ const BulkSearch = (data) => {
         async function handleSuccess(response) {
           const json = await response.json();
           console.log("json", json);
-          if (json.detail) {
-            alert(json.detail);
-          } else {
+          if (!json) {
+            return handleError();
+          }
+          console.log(json);
             alert(
               "Search results are sent to your email as a CSV file. Please check your spam filter if our email has" +
                 " not arrived in a reasonable time. Cheers!"
             );
-          }
-          // if (!json) {
-          //   return handleError();
-          // }
-          // console.log(json);
         }
 
         function handleUnAuthorized(response = null) {}
