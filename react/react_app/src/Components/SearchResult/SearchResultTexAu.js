@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SavedListButton from "./SavedListButton";
+import { EventEmitter } from "events";
 
 export async function digestMessage(message) {
   console.log("Message....", message);
@@ -51,7 +52,7 @@ const SearchResult = (props) => {
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedSaveList, setSelectedSaveList] = useState([]);
-
+  const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
@@ -368,7 +369,7 @@ const SearchResult = (props) => {
         });
 
         const result = response.json();
-
+        newEvent.emit("updateCredit", true);
         console.log("response from saveResult>>>", result, result.search_id);
       } catch (e) {
         console.error("Exception>>", e);
@@ -543,7 +544,8 @@ const SearchResult = (props) => {
               );
 
               const result = response.json();
-
+              console.log("Emittingn event", newEvent);
+              newEvent.emit("updateCredit", true);
               console.log("response from saveResult>>>", result);
             } catch (e) {
               console.error("Exception>>", e);
@@ -670,7 +672,7 @@ const SearchResult = (props) => {
 
   return (
     <div>
-      <Header user={user} />
+      <Header user={user} newEvent={newEvent} />
 
       <div className="modal" id="bulkmodal">
         <button
@@ -790,7 +792,7 @@ const SearchResult = (props) => {
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
-                        <div>
+                          data.name!="LinkedIn Member"? <div>
                           <div className="user-container py-2" key={index}>
                             <input
                               className="box ms-3 me-3"
@@ -902,7 +904,7 @@ const SearchResult = (props) => {
                               ))}{" "}
                             </div>
                           </div>
-                        </div>
+                        </div>: console.log("not valid name")
                       ))
                     ) : (
                       <h5>Record not found</h5>

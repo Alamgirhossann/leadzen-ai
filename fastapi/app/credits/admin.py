@@ -16,6 +16,8 @@ async def add_all_credits_to_users(request: UserCreditRequest, user=Depends(fast
         update_query = users.update().values(
             profile_credit=users.c.profile_credit + request.profile_credit,
             email_credit=users.c.email_credit + request.email_credit,
+            total_profile_credits=users.c.total_profile_credits + request.profile_credit,
+            total_email_credits=users.c.total_email_credits + request.email_credit,
         ).where(users.c.email == request.email)
         logger.debug(f"{update_query=}")
 
