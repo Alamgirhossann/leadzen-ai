@@ -115,7 +115,7 @@ const NavBar = (props) => {
                   <li>
                     <div className="dropdown-progress">
                       <p className="small">
-                        Profile credits used: {user?.profile_credit} /{" "}
+                        Profile credits remaining: {user?.profile_credit} /{" "}
                         {user?.total_profile_credits}
                       </p>
                       <div className="progress mb-2">
@@ -123,18 +123,17 @@ const NavBar = (props) => {
                           className="progress-bar"
                           style={{
                             width: user
-                              ? 100 -
-                                (user.profile_credit /
-                                  user.total_profile_credits) *
+                              ?
+                                (user.profile_credit / user.total_profile_credits) *
                                   100 +
                                 "%"
-                              : "45%",
+                              : "",
                           }}
                           role="progressbar"
                           aria-valuenow={user ? user.profile_credit : "45"}
                           aria-valuemin="0"
                           aria-valuemax={
-                            user ? user.total_profile_credits : "100"
+                            user ? user.total_profile_credit : "100"
                           }
                         />
                       </div>
@@ -144,7 +143,7 @@ const NavBar = (props) => {
                   <li>
                     <div className="dropdown-progress">
                       <p className="small">
-                        Mail credits used: {user?.email_credit} /{" "}
+                        Mail credits remaining: {user?.email_credit} /{" "}
                         {user?.total_email_credits}
                       </p>
                       <div className="progress mb-2">
@@ -153,7 +152,7 @@ const NavBar = (props) => {
                           role="progressbar"
                           style={{
                             width: user
-                              ? 100 -
+                              ?
                                 (user.email_credit / user.total_email_credits) *
                                   100 +
                                 "%"
@@ -161,7 +160,7 @@ const NavBar = (props) => {
                           }}
                           aria-valuenow={user ? user.email_credit : "5"}
                           aria-valuemin="0"
-                          aria-valuemax="100"
+                          aria-valuemax={user ? user.total_email_credit : "100"}
                         />
                       </div>
 
