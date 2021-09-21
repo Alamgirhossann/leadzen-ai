@@ -470,7 +470,7 @@ const SearchResult = (props) => {
         body: JSON.stringify(requestForSaveSearch),
       });
 
-      const result = response.json();
+      const result = await response.json();
       console.log("result >>>>>>>>>>>>>>>>>", result);
       setSearchId(result.search_id);
       // result.then((value) => {

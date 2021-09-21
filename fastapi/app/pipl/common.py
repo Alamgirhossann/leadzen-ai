@@ -214,9 +214,6 @@ async def search_one(
         raise e
     except Exception as e:
         logger.critical(f"Exception in PIPL search: {str(e)}")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
         return None
 
 
@@ -252,7 +249,4 @@ async def search_all(urls: List[str], slugs: List[str], hash_key_list: List[Dict
             return list(itertools.chain(*results))
     except Exception as e:
         logger.critical(f"Exception Searching PIPL: {str(e)}")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
         return None
