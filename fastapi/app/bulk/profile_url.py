@@ -8,6 +8,8 @@ from app.pipl.profile_url import (
     add_excel_template_to_file,
 )
 from loguru import logger
+
+
 class BulkProfileUrlRequest(BulkRequest):
     urls: List[str]
 
@@ -18,11 +20,10 @@ async def handle_bulk_profile_urls(request: BulkProfileUrlRequest):
             profile_urls=request.urls, filename=request.outgoing_filename
         )
     )
+
     outgoing_filename = request.outgoing_filename
-    if outgoing_filename:
+    if outgoing_filename.endswith(".xlsx"):
         add_excel_template_to_file(outgoing_filename)
-    else:
-        logger.error("Excel file not found")
 
     await wait_and_check_for_filename(
         request=BulkRequest(

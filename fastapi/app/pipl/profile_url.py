@@ -6,12 +6,14 @@ from starlette import status
 from loguru import logger
 from pydantic import BaseModel
 
-from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY,API_CONFIG_EXCEL_FILE_PATH
+from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY, API_CONFIG_EXCEL_FILE_PATH
 from app.pipl.common import write_to_file, search_all
 
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
+
+
 class PiplDetailsFromProfileUrlRequest(BaseModel):
     profile_urls: List[str]
     filename: Optional[str] = None
@@ -20,12 +22,13 @@ class PiplDetailsFromProfileUrlRequest(BaseModel):
 class PiplDetailsFromProfileUrlResponse(BaseModel):
     filename: str
 
+
 async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     profile_urls = list(set(request.profile_urls))  # remove duplicates
     profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
 
     urls = [
-        f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'url':profile_url,'key':API_CONFIG_PIPL_API_KEY})}"
+        f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'url': profile_url, 'key': API_CONFIG_PIPL_API_KEY})}"
         for profile_url in profile_urls
         if profile_url
     ]
@@ -39,15 +42,16 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
 
     await write_to_file(responses=responses, filename=request.filename)
 
+
 def add_excel_template_to_file(outgoing_filename):
-    if  (outgoing_filename==""):
+    if outgoing_filename == "":
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str("Excel file not found"),
         )
     else:
         wb = load_workbook(f'{outgoing_filename}')
-        if (wb==""):
+        if wb == "":
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=str("Error in Work book Loading"),
@@ -84,4 +88,3 @@ def add_excel_template_to_file(outgoing_filename):
                 return outgoing_filename
             except Exception as e:
                 logger.critical("Error>>>" + str(e))
-
