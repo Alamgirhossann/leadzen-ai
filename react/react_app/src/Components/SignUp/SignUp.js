@@ -288,34 +288,6 @@ const SignUp = () => {
                         <div className="text-center mt-2">
                           <span>Sign Up using: </span>
                         </div>
-                        <div className="signup-login-with mt-3">
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <a
-                                href="#"
-                                className="btn btn-light d-flex justify-content-center align-items-center p-2 mb-3"
-                              >
-                                <img
-                                  src="assets/images/Google.png"
-                                  alt="title"
-                                />{" "}
-                                Google
-                              </a>
-                            </div>
-                            <div className="col-sm-6">
-                              <a
-                                href="#"
-                                className="btn btn-light p-2 d-flex justify-content-center align-items-center mb-3"
-                              >
-                                <img
-                                  src="assets/images/LinkedIn.png"
-                                  alt="title"
-                                />{" "}
-                                LinkedIn
-                              </a>
-                            </div>
-                          </div>
-                        </div>
                         <div className="text-center">
                           <p className="text-secondary m-0">
                             Already have an account?{" "}
