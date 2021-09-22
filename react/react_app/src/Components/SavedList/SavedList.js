@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import Moment from "react-moment";
 import Header from "../SharedComponent/Header";
 import SpecificUser from "../DetailedInfo/SpecificUser";
+
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SavedList = (props) => {
@@ -16,6 +17,7 @@ const SavedList = (props) => {
   useEffect(() => {
     fetchData();
   }, []);
+
   function handleUnAuthorized(response = null) {
     console.log("User is UnAuthorized");
     alert("Please Logout and LogIn Again");
@@ -25,6 +27,7 @@ const SavedList = (props) => {
     console.error(`Error, Status Code: ${response?.status}`);
     alert("Please Try after sometime");
   }
+
   const fetchData = async () => {
     try {
       const response = await fetch(apiServer + "/save_list/all", {
@@ -35,11 +38,13 @@ const SavedList = (props) => {
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
       });
+
       async function handleSuccess(response) {
         const result = await response.json();
         console.log("result in save List", result);
         setUserInfo(result);
       }
+
       switch (response.status) {
         case 200:
           return await handleSuccess(response);
@@ -87,11 +92,13 @@ const SavedList = (props) => {
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
       });
+
       async function handleSuccess(response) {
         const result = await response.json();
         console.log("record deleted", result);
         alert("record deleted Successfully");
       }
+
       switch (response.status) {
         case 200:
           return await handleSuccess(response);
@@ -104,6 +111,7 @@ const SavedList = (props) => {
       console.error(e);
     }
   }
+
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
       email: "",
@@ -180,6 +188,7 @@ const SavedList = (props) => {
           );
         }
       }
+
       switch (response.status) {
         case 200:
           return await handleSuccess(response);
@@ -287,61 +296,128 @@ const SavedList = (props) => {
                   userInfo.map((data) => (
                     <div className="container-style mb-2">
                       <div key={data.id} className="save-list-container">
-                        <p className="save-profile text-danger">
-                          <img
-                            src={
-                              data.save_list_results.profilePicture ||
-                              "assets/images/author-image.png"
-                            }
-                            alt=""
-                          />
-                        </p>
-                        <p className="save-name">
-                          {data.save_list_results.name}
-                        </p>
-                        <div className="save-speaker">
-                          <div>
-                            <small className="d-block">
-                              Works at {data.save_list_results.job}
-                            </small>
-                            {/*<small className="d-block">*/}
-                            {/*  Works at {data.comp}*/}
-                            {/*</small>*/}
-                          </div>
-                        </div>
-                        <div className="save-date">
-                          <div>
-                            <small className="d-block">Search Date</small>
-                            <small className="d-block">
-                              <Moment format="DD/MM/YYYY">
-                                {data.save_list_results.timestamp}
-                              </Moment>
-                            </small>
-                          </div>
-                        </div>
+                        {data.save_list_results.category === "People" ? (
+                          <React.Fragment>
+                            <p className="save-profile text-danger">
+                              <img
+                                src={
+                                  data.save_list_results.profilePicture ||
+                                  "assets/images/author-image.png"
+                                }
+                                alt=""
+                              />
+                            </p>
+                            <p className="save-name">
+                              {data.save_list_results.name}
+                            </p>
+                            <div className="save-speaker">
+                              <div>
+                                <small className="d-block">
+                                  Works at {data.save_list_results.job}
+                                </small>
+                                {/*<small className="d-block">*/}
+                                {/*  Works at {data.comp}*/}
+                                {/*</small>*/}
+                              </div>
+                            </div>
+                            <div className="save-date">
+                              <div>
+                                <small className="d-block">Search Date</small>
+                                <small className="d-block">
+                                  <Moment format="DD/MM/YYYY">
+                                    {data.save_list_results.timestamp}
+                                  </Moment>
+                                </small>
+                              </div>
+                            </div>
 
-                        <p className="save-view-btn">
-                          <a
-                            className="btn button"
-                            data-toggle="collapse"
-                            href={"#collapseExample_" + `${data.id}`}
-                            data-target={"#collapseExample_" + `${data.id}`}
-                            role="button"
-                            aria-expanded="false"
-                            aria-controls="collapseExample"
-                            onClick={() => handleProfile(data.id, data)}
-                          >
-                            View Profile
-                          </a>
-                        </p>
-                        <a
-                          href="savedList"
-                          onClick={(e) => handleDelete(data.id)}
-                        >
-                          <p className="save-close-btn">
-                            <img src="assets/images/close-user.png" alt="" />
-                          </p>
-                        </a>
+                            <p className="save-view-btn">
+                              <a
+                                className="btn button"
+                                data-toggle="collapse"
+                                href={"#collapseExample_" + `${data.id}`}
+                                data-target={"#collapseExample_" + `${data.id}`}
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="collapseExample"
+                                onClick={() => handleProfile(data.id, data)}
+                              >
+                                View Profile
+                              </a>
+                            </p>
+                            <a
+                              href="savedList"
+                              onClick={(e) => handleDelete(data.id)}
+                            >
+                              <p className="save-close-btn">
+                                <img
+                                  src="assets/images/close-user.png"
+                                  alt=""
+                                />
+                              </p>
+                            </a>
+                          </React.Fragment>
+                        ) : (
+                          <React.Fragment>
+                            <p className="save-profile text-danger">
+                              <img
+                                src={
+                                  data.save_list_results.logoUrl ||
+                                  "assets/images/author-image.png"
+                                }
+                                alt=""
+                              />
+                            </p>
+                            <p className="save-name">
+                              {data.save_list_results.name}
+                            </p>
+                            <div className="save-speaker">
+                              <div>
+                                <small className="d-block">
+                                  {data.save_list_results.description}
+                                </small>
+                                {/*<small className="d-block">*/}
+                                {/*  Works at {data.comp}*/}
+                                {/*</small>*/}
+                              </div>
+                            </div>
+                            <div className="save-date">
+                              <div>
+                                <small className="d-block">Search Date</small>
+                                <small className="d-block">
+                                  <Moment format="DD/MM/YYYY">
+                                    {data.save_list_results.timestamp}
+                                  </Moment>
+                                </small>
+                              </div>
+                            </div>
+
+                            <p className="save-view-btn">
+                              <a
+                                className="btn button"
+                                data-toggle="collapse"
+                                href={"#collapseExample_" + `${data.id}`}
+                                data-target={"#collapseExample_" + `${data.id}`}
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="collapseExample"
+                              >
+                                View Details
+                              </a>
+                            </p>
+                            <a
+                              href="savedList"
+                              onClick={(e) => handleDelete(data.id)}
+                            >
+                              <p className="save-close-btn">
+                                <img
+                                  src="assets/images/close-user.png"
+                                  alt=""
+                                />
+                              </p>
+                            </a>
+                          </React.Fragment>
+                        )}
                       </div>
                       <div
                         style={{

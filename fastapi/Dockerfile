@@ -14,7 +14,6 @@ USER appuser
 WORKDIR /home/appuser
 
 COPY --chown=appuser:appuser  requirements.txt requirements.txt
-COPY --chown=appuser:appuser  test.db test.db
 
 RUN python -m venv venv
 RUN venv/bin/pip install pip wheel setuptools --upgrade
@@ -22,6 +21,7 @@ RUN venv/bin/pip install -r requirements.txt && rm -rf ~/.cache/pip
 
 COPY --chown=appuser:appuser  app app
 COPY --chown=appuser:appuser  boot.sh ./
+COPY --chown=appuser:appuser  Excel Excel
 RUN chmod +x boot.sh
 
 EXPOSE 5000

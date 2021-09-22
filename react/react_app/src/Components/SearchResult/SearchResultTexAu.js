@@ -432,9 +432,9 @@ const SearchResult = (props) => {
     } else {
       unlockEmailDetails?.map((spec) => {
         console.log(
-            "Check details>>>>",
-            spec.index,
-            spec.details === "Record Not Found"
+          "Check details>>>>",
+          spec.index,
+          spec.details === "Record Not Found"
         );
       });
     }
@@ -838,7 +838,7 @@ const SearchResult = (props) => {
                         <h5>Records not found</h5>
                       </div>
                     ) : currentLeads ? (
-                      currentLeads.map((data, index) => (
+                      currentLeads.map((data, index) => data.name != "LinkedIn Member" ? (
                         <div>
                           <div className="user-container py-2" key={index}>
                             <input
@@ -952,7 +952,10 @@ const SearchResult = (props) => {
                             </div>
                           </div>
                         </div>
-                      ))
+                      ) : (
+                          console.log("not valid name")
+                        )
+                      )
                     ) : (
                       <h5>Record not found</h5>
                     )}

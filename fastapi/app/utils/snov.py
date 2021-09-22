@@ -1,6 +1,9 @@
 import json
-from typing import List
+from typing import List ,Optional
 from app.users import fastapi_users
+import sys
+
+
 import httpx
 import requests
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
@@ -36,6 +39,12 @@ async def add_email_into_database(user_id, query_url, email):
             user_id=user_id, query_url=query_url, email_result=email
         )
     )
+
+
+class TexAuFindLinkedInCompanyRequest(BaseModel):
+    url: Optional[str] = None
+    name: Optional[str] = None
+    cookie: Optional[str] = None
 
 
 def get_access_token():
@@ -122,19 +131,20 @@ async def get_emails_from_url(
                                 detail="Snov: Data not found",
                             )
                         if 'success' in data.keys():
-                            email_data = data["data"]["emails"]
-                            email = email_data[0]["email"]
-                            valid = email_data[0]["status"]
-                            if valid == "valid" or valid == "unknown":
-                                background_tasks.add_task(
-                                    add_email_into_database, str(user.id), url, email
-                                )
-                                background_tasks.add_task(deduct_credit, "EMAIL", user)
-                                return email
-                        raise HTTPException(
-                            status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Snov: Data not found",
-                        )
+                            if data['success']:
+                                email_data = data["data"]["emails"]
+                                email = email_data[0]["email"]
+                                valid = email_data[0]["status"]
+                                if valid == "valid" or valid == "unknown":
+                                    background_tasks.add_task(
+                                        add_email_into_database, str(user.id), url, email
+                                    )
+                                    background_tasks.add_task(deduct_credit, "EMAIL", user)
+                                    return email
+                            raise HTTPException(
+                                status_code=status.HTTP_404_NOT_FOUND,
+                                detail="Snov: Data not found",
+                            )
                     else:
                         raise HTTPException(
                             status_code=res.status_code,
@@ -147,7 +157,48 @@ async def get_emails_from_url(
                 )
     except HTTPException as e:
         raise e
+    # except Exception as e:
+    #     logger.critical(str(e))
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail="Error Getting data from snov",
+    #     )
+
+
+@router.post("/emails_for_company")
+async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
+    try:
+        token = get_access_token()
+        params = {
+            "access_token": token,
+            "domain": request.url,
+            "type": "personal",
+            "limit": 10,
+            "lastId": 0,
+            "positions[]": ["Founder", "Director", "Chief", "President", "COO", "CEO"]
+        }
+        async with httpx.AsyncClient() as client:
+            res = await client.get("https://api.snov.io/v2/domain-emails-with-info", params=params)
+
+            if res.status_code == 200:
+                return json.loads(res.text)
+
+            elif res.status_code == 400:
+                print("in 400")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str("Snov: Bad request"),
+                )
+
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=str("Snov: Data not found"),
+                )
+
     except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno)
         logger.critical(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
