@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import  List
+from typing import List
 from app.config import (
     API_CONFIG_SNOV_GRANT_TYPE,
     API_CONFIG_SNOV_CLIENT_ID,
@@ -37,7 +37,7 @@ def get_access_token():
 
 
 def add_url_for_search(url):
-    print("url2",url)
+    print("url2", url)
     token = get_access_token()
     params = {"access_token": token, "url": url}
     res = requests.post(API_CONFIG_SNOV_ADD_URL_SEARCH, data=params)
