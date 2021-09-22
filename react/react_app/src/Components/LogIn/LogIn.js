@@ -301,7 +301,7 @@ const LogIn = (props) => {
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center">
-                        <h3 className="fw-bolder">Welcome to Analystt.ai</h3>
+                        <h3 className="fw-bolder">Welcome to LeadZen.ai</h3>
                         <h5 className="text-danger mb-4">
                           Most Intelligent Lead Generation Platform
                         </h5>
