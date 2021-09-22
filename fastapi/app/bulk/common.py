@@ -23,10 +23,10 @@ class BulkRequest(BaseModel):
 
 
 async def wait_and_check_for_filename(
-    request: BulkRequest, max_timeout_counter: int = 18
+        request: BulkRequest, max_timeout_counter: int = 18
 ):
     timeout_counter = max_timeout_counter
-
+    logger.debug(f"{request=}")
     while timeout_counter > 0:
         if os.path.exists(request.outgoing_filename):
             logger.success(f"found {request.outgoing_filename=}")
@@ -65,8 +65,9 @@ async def wait_and_check_for_filename(
 
 
 class BulkUploadResponse(BaseModel):
-    input_filename: str
-    output_filename: str
+    input_filename: Optional[str] = None
+    output_filename: Optional[str] = None
+    detail: Optional[str] = None
 
 
 def generate_email_message_for_file(user: User, filename: str) -> Tuple[str, str]:
@@ -94,7 +95,7 @@ def generate_email_message_for_file(user: User, filename: str) -> Tuple[str, str
 
 async def send_success_email(user: User, filename: str):
     message, subject = generate_email_message_for_file(user=user, filename=filename)
-
+    logger.debug(f"{message=}>>>>{subject=}")
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(

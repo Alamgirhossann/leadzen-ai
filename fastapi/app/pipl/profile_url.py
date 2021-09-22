@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 from urllib.parse import urlencode
 from fastapi import HTTPException
 from starlette import status
@@ -6,15 +6,22 @@ from starlette import status
 from loguru import logger
 from pydantic import BaseModel
 
-from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY,API_CONFIG_EXCEL_FILE_PATH
+from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY, API_CONFIG_EXCEL_FILE_PATH
 from app.pipl.common import write_to_file, search_all
 
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
+
+from app.profile_search import get_profile_search
+from app.users import get_user
+from app.users import User
+
 class PiplDetailsFromProfileUrlRequest(BaseModel):
     profile_urls: List[str]
     filename: Optional[str] = None
+    hash_key_list: Optional[List[Dict]] = None
+    user: User
 
 
 class PiplDetailsFromProfileUrlResponse(BaseModel):
@@ -25,12 +32,12 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
 
     urls = [
-        f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'url':profile_url,'key':API_CONFIG_PIPL_API_KEY})}"
+        f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'url': profile_url, 'key': API_CONFIG_PIPL_API_KEY, 'match_requirements': 'phones'})}"
         for profile_url in profile_urls
         if profile_url
     ]
 
-    if not (responses := await search_all(urls=urls, slugs=profile_urls)):
+    if not (responses := await search_all(urls=urls, slugs=profile_urls, hash_key_list=request.hash_key_list, user= request.user)):
         logger.error("Error Getting Data")
         return
     if not any(responses):
@@ -39,15 +46,16 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
 
     await write_to_file(responses=responses, filename=request.filename)
 
+
 def add_excel_template_to_file(outgoing_filename):
-    if  (outgoing_filename==""):
+    if outgoing_filename == "":
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str("Excel file not found"),
         )
     else:
         wb = load_workbook(f'{outgoing_filename}')
-        if (wb==""):
+        if wb == "":
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=str("Error in Work book Loading"),
@@ -84,4 +92,3 @@ def add_excel_template_to_file(outgoing_filename):
                 return outgoing_filename
             except Exception as e:
                 logger.critical("Error>>>" + str(e))
-

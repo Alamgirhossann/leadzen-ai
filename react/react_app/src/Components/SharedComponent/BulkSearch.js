@@ -17,71 +17,76 @@ const BulkSearch = (data) => {
   const uploadCsv = async () => {
     const element = document.getElementById("csv-input");
     const file = element.files[0];
+    if (file) {
+      console.log(`file.size:${file.size} Bytes`);
 
-    console.log(`file.size:${file.size} Bytes`);
+      if (file.size > 2 * 1024 * 1024) {
+        console.warn(`file size larger than : ${2 * 1024 * 1024} Bytes`);
+        alert("Cannot Accept File Sizes larger than 2MB");
+        return;
+      }
 
-    if (file.size > 2 * 1024 * 1024) {
-      console.warn(`file size larger than : ${2 * 1024 * 1024} Bytes`);
-      alert("Cannot Accept File Sizes larger than 2MB");
-      return;
-    }
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const formData = new FormData();
-    formData.append("file", file);
+      async function handleError(response = null) {
+        const data = await response.json();
+        console.error(`Error Uploading File: status: ${response?.status}`);
+        alert(data.detail);
+      }
 
-    function handleError(response = null) {
-      console.error(`Error Uploading File: status: ${response?.status}`);
-      alert("Error Uploading File, Please Try Again Later");
-    }
+      try {
+        const response = await fetch(apiServer + "/bulk_upload/csv", {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+        });
 
-    try {
-      const response = await fetch(apiServer + "/bulk_upload/csv", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${Cookies.get("user_token")}`,
-        },
-      });
-
-      async function handleSuccess(response) {
-        const json = await response.json();
-        if (!json) {
-          return handleError();
+        async function handleSuccess(response) {
+          const json = await response.json();
+          console.log("json", json);
+          if (!json) {
+            return handleError();
+          }
+          console.log(json);
+            alert(
+              "Search results are sent to your email as a CSV file. Please check your spam filter if our email has" +
+                " not arrived in a reasonable time. Cheers!"
+            );
         }
-        console.log(json);
-        alert(
-          "Search results are sent to your email as a CSV file. Please check your spam filter if our email has" +
-            " not arrived in a reasonable time. Cheers!"
-        );
+
+        function handleUnAuthorized(response = null) {}
+
+        switch (response.status) {
+          case 200:
+            return await handleSuccess(response);
+          case 401:
+            return handleUnAuthorized();
+          default:
+            return handleError(response);
+        }
+
+        // const eventSource = new EventSource(
+        //   `${apiServer}/bulk_upload/status/stream?filename=${json.output_filename}`
+        // );
+        // eventSource.addEventListener("update", (event) => {
+        //   console.log(event);
+        // });
+        // eventSource.addEventListener("end", (event) => {
+        //   console.log(event);
+        //   const data = JSON.parse(event.data);
+        //   console.log(data);
+        //   alert(`Fetch Search Results from ${apiServer}${data.url}`);
+        //   eventSource.close();
+        // });
+      } catch (err) {
+        console.error("Error: ", err);
+        handleError();
       }
-
-      function handleUnAuthorized(response = null) {}
-
-      switch (response.status) {
-        case 200:
-          return await handleSuccess(response);
-        case 401:
-          return handleUnAuthorized();
-        default:
-          return handleError(response);
-      }
-
-      // const eventSource = new EventSource(
-      //   `${apiServer}/bulk_upload/status/stream?filename=${json.output_filename}`
-      // );
-      // eventSource.addEventListener("update", (event) => {
-      //   console.log(event);
-      // });
-      // eventSource.addEventListener("end", (event) => {
-      //   console.log(event);
-      //   const data = JSON.parse(event.data);
-      //   console.log(data);
-      //   alert(`Fetch Search Results from ${apiServer}${data.url}`);
-      //   eventSource.close();
-      // });
-    } catch (err) {
-      console.error("Error: ", err);
-      handleError();
+    } else {
+      alert("Please upload a file");
     }
   };
 
@@ -110,7 +115,7 @@ const BulkSearch = (data) => {
       <input
         id="csv-input"
         type="file"
-        accept=".csv"
+        accept=".csv,.xlsx"
         defaultValue={uploadedCSV}
         onChange={async (e) => setUploadedCSV(e.target.files[0])}
         style={{ display: "none" }}

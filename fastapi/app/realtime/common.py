@@ -18,11 +18,11 @@ from app.email import UserEmailSendRequest
 class RealTimeRequest(BaseModel):
     incoming_filename: Optional[str] = None
     outgoing_filename: str
-    user: Dict[str,str]
+    user: Dict[str, str]
 
 
 async def wait_and_check_for_filename(
-        request: RealTimeRequest, max_timeout_counter: int = 18
+    request: RealTimeRequest, max_timeout_counter: int = 18
 ):
     timeout_counter = max_timeout_counter
     while timeout_counter > 0:
@@ -92,7 +92,7 @@ async def send_success_email(user, filename: str):
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
                 json=UserEmailSendRequest(
-                    email=user['email'],
+                    email=user["email"],
                     message=message,
                     subject=subject,
                 ).dict(),
@@ -125,7 +125,9 @@ async def send_failure_email(user, filename: str):
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
                 json=UserEmailSendRequest(
-                    email=user['email'], message=message, subject=f"Request for {user['requirement']} Failed"
+                    email=user["email"],
+                    message=message,
+                    subject=f"Request for {user['requirement']} Failed",
                 ).dict(),
             )
 

@@ -5,10 +5,6 @@ import SharedHistory from "../SharedComponent/SharedHistory";
 import Header from "../SharedComponent/Header";
 
 const History = () => {
-  const [searchText, setSearchText] = useState();
-  const fetchData = async () => {
-    // TODO:Create api calls to get user profile data from the backend
-  };
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
