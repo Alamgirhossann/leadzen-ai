@@ -791,7 +791,7 @@ const SearchResult = (props) => {
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
                         <div>
-                          <div className="user-container py-2" key={index}>
+                          <div className="user-container py-2" key={data.url}>
                             <input
                               className="box ms-3 me-3"
                               id={data.url || data.profileLink}

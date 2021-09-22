@@ -27,7 +27,7 @@ const SavedList = (props) => {
   }
   const fetchData = async () => {
     try {
-      const response = await fetch(apiServer + "/save_list/all", {
+      const response = await fetch(apiServer + "/saved_list/all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -233,14 +233,15 @@ const SavedList = (props) => {
             </div>
           </form>
         </div>
-        <div className="lead-accordion accordion" id="accordionExample2">
+        {userInfo?.map((alldata,index)=>(
+            <div className="lead-accordion accordion" id="accordionExample2">
           <div className="accordion-item mb-3">
             <h2 className="accordion-header">
               <button
                 className="accordion-button alignment"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#collapseOne"
+                data-bs-target={"#a"+index.toString()}
                 style={{
                   background: "white",
                   borderRadius: "15px",
@@ -248,7 +249,7 @@ const SavedList = (props) => {
                 }}
               >
                 <div className=" first-grid head-align">
-                  <span className="me-3 fw-bold">My Leads</span>
+                  <span className="me-3 fw-bold">{alldata.list_name}</span>
                   {/* <button className="m-0">
                     <img
                       className="m-0"
@@ -278,32 +279,32 @@ const SavedList = (props) => {
               </button>
             </h2>
             <div
-              id="collapseOne"
+              id={"a"+index.toString()}
               className="accordion-collapse collapse"
               data-bs-parent="#accordionExample2"
             >
               <div className="accordion-body">
-                {userInfo.length > 0 ? (
-                  userInfo.map((data) => (
+                {alldata.list_content.length > 0 ? (
+                  alldata.list_content.map((data) => (
                     <div className="container-style mb-2">
                       <div key={data.id} className="save-list-container">
-                        {data.save_list_results.category==="People" ? <React.Fragment>
+                        {data.category==="People" ? <React.Fragment>
                         <p className="save-profile text-danger">
                           <img
                             src={
-                              data.save_list_results.profilePicture ||
+                              data.profilePicture ||
                               "assets/images/author-image.png"
                             }
                             alt=""
                           />
                         </p>
                         <p className="save-name">
-                          {data.save_list_results.name}
+                          {data.name}
                         </p>
                         <div className="save-speaker">
                           <div>
                             <small className="d-block">
-                              Works at {data.save_list_results.job}
+                              Works at {data.job}
                             </small>
                             {/*<small className="d-block">*/}
                             {/*  Works at {data.comp}*/}
@@ -315,7 +316,7 @@ const SavedList = (props) => {
                             <small className="d-block">Search Date</small>
                             <small className="d-block">
                               <Moment format="DD/MM/YYYY">
-                                {data.save_list_results.timestamp}
+                                {data.timestamp}
                               </Moment>
                             </small>
                           </div>
@@ -347,19 +348,19 @@ const SavedList = (props) => {
                         <p className="save-profile text-danger">
                           <img
                             src={
-                              data.save_list_results.logoUrl ||
+                              data.logoUrl ||
                               "assets/images/author-image.png"
                             }
                             alt=""
                           />
                         </p>
                         <p className="save-name">
-                          {data.save_list_results.name}
+                          {data.name}
                         </p>
                         <div className="save-speaker">
                           <div>
                             <small className="d-block">
-                              {data.save_list_results.description}
+                              {data.description}
                             </small>
                             {/*<small className="d-block">*/}
                             {/*  Works at {data.comp}*/}
@@ -371,7 +372,7 @@ const SavedList = (props) => {
                             <small className="d-block">Search Date</small>
                             <small className="d-block">
                               <Moment format="DD/MM/YYYY">
-                                {data.save_list_results.timestamp}
+                                {data.timestamp}
                               </Moment>
                             </small>
                           </div>
@@ -431,6 +432,8 @@ const SavedList = (props) => {
             </div>
           </div>
         </div>
+        ))}
+
       </div>
     </div>
   );
