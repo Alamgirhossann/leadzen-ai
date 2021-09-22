@@ -14,7 +14,6 @@ USER appuser
 WORKDIR /home/appuser
 
 COPY --chown=appuser:appuser  requirements.txt requirements.txt
-COPY --chown=appuser:appuser  /shared/test.db /shared/test.db
 
 RUN python -m venv venv
 RUN venv/bin/pip install pip wheel setuptools --upgrade

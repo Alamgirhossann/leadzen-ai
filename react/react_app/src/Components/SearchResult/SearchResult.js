@@ -15,6 +15,7 @@ import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { digestMessage } from "./SearchResultTexAu";
+import { EventEmitter } from "events";
 
 const SearchResult = (props) => {
   useEffect(() => {
@@ -49,6 +50,7 @@ const SearchResult = (props) => {
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   let today = new Date();
+  const newEvent = new EventEmitter();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   let dd = String(today.getDate()).padStart(2, "0");
   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -340,7 +342,7 @@ const SearchResult = (props) => {
               );
 
               const result = response.json();
-
+              newEvent.emit("updateCredit", true);
               console.log("response from saveResult>>>", result);
             } catch (e) {
               console.error("Exception>>", e);
@@ -373,11 +375,12 @@ const SearchResult = (props) => {
     } catch (err) {
       console.error("Error: ", err);
     }
+    // window.location.reload(false);
   };
 
   return (
     <div>
-      <Header user={user} />
+      <Header user={user} newEvent={newEvent} />
       <div className="modal" id="UpgradeModal">
         <button
           type="button"

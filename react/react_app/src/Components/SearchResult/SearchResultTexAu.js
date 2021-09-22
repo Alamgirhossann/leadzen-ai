@@ -14,6 +14,7 @@ import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SavedListButton from "./SavedListButton";
 import axios from "axios";
+import { EventEmitter } from "events";
 
 export async function digestMessage(message) {
   console.log("Message....", message);
@@ -52,7 +53,7 @@ const SearchResult = (props) => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
   const [selectedSaveList, setSelectedSaveList] = useState([]);
-
+  const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
@@ -380,7 +381,7 @@ const SearchResult = (props) => {
         });
 
         const result = response.json();
-
+        newEvent.emit("updateCredit", true);
         console.log("response from saveResult>>>", result, result.search_id);
       } catch (e) {
         console.error("Exception>>", e);
@@ -561,7 +562,8 @@ const SearchResult = (props) => {
               );
 
               const result = response.json();
-
+              console.log("Emittingn event", newEvent);
+              newEvent.emit("updateCredit", true);
               console.log("response from saveResult>>>", result);
             } catch (e) {
               console.error("Exception>>", e);
@@ -709,7 +711,7 @@ const SearchResult = (props) => {
 
   return (
     <div>
-      <Header user={user} />
+      <Header user={user} newEvent={newEvent} />
 
       <div className="modal" id="bulkmodal">
         <button
