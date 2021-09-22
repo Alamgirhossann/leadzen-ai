@@ -1,9 +1,14 @@
+#from _typeshed import OpenTextModeReading
 import asyncio
 import tempfile
 from typing import Dict
-
+import orjson
+import os
+import requests
+import http3
+from requests.structures import CaseInsensitiveDict
 import pandas as pd
-from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks, Depends,Request
 from loguru import logger
 from starlette import status
 
@@ -17,9 +22,11 @@ from app.elasticsearch.database import delete_index as database_delete_index
 from app.elasticsearch.database import query as database_query
 from app.elasticsearch.database import get as database_get
 from app.elasticsearch.database import search as database_search
+from app.elasticsearch.database import add_json 
 from app.elasticsearch.requests import (
     ElasticsearchAddRequest,
     ElasticsearchQueryRequest,
+    ElasticsearchAddjsonRequest
 )
 from app.requests import (
     ContactAddRequest,
@@ -34,6 +41,7 @@ from app.utils import (
     spread_comma_seperated_texts,
     check_for_mandatory_columns,
 )
+import json
 
 router = APIRouter()
 
@@ -251,3 +259,32 @@ async def search_contact_by_text(
     logger.debug(results)
 
     return ContactSearchResponse(results=results)
+
+@router.post("/upload/json", response_model=bool)
+async def load_json(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+):
+
+    lines = file.file.readlines()
+    
+    json_record = [orjson.loads((item)) for item in lines]
+    
+    logger.debug("Operation success")
+    file_name = str(file.filename)
+    file_name = file_name.replace(" ","")
+    background_tasks.add_task(
+                add_json,
+                request=ElasticsearchAddRequest(
+                    index_name=f"analystt.json.{file_name}",
+                    records=json_record,
+                ),
+            )
+
+            # this sleep is needed to prevent yet more 429 errors
+    background_tasks.add_task(
+        asyncio.sleep,
+        delay=30 * 1,
+    )
+    return True
+

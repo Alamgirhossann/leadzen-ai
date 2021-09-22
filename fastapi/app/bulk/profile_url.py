@@ -22,11 +22,8 @@ async def handle_bulk_profile_urls(request: BulkProfileUrlRequest, ):
         )
     )
     outgoing_filename = request.outgoing_filename
-    logger.debug(f"{request.incoming_filename=}")
-    if outgoing_filename:
+    if outgoing_filename.endswith(".xlsx"):
         add_excel_template_to_file(outgoing_filename)
-    else:
-        logger.error("Excel file not found")
 
     await wait_and_check_for_filename(
         request=BulkRequest(

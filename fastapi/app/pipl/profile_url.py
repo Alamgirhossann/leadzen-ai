@@ -27,17 +27,14 @@ class PiplDetailsFromProfileUrlRequest(BaseModel):
 class PiplDetailsFromProfileUrlResponse(BaseModel):
     filename: str
 
-
 async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     profile_urls = list(set(request.profile_urls))  # remove duplicates
     profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
-    print("execute_task Request>>>>>>>", request)
 
     urls = [
         f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'url': profile_url, 'key': API_CONFIG_PIPL_API_KEY, 'match_requirements': 'phones'})}"
         for profile_url in profile_urls
         if profile_url
-
     ]
 
     if not (responses := await search_all(urls=urls, slugs=profile_urls, hash_key_list=request.hash_key_list, user= request.user)):
@@ -51,14 +48,14 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
 
 
 def add_excel_template_to_file(outgoing_filename):
-    if (outgoing_filename == ""):
+    if outgoing_filename == "":
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str("Excel file not found"),
         )
     else:
         wb = load_workbook(f'{outgoing_filename}')
-        if (wb == ""):
+        if wb == "":
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=str("Error in Work book Loading"),

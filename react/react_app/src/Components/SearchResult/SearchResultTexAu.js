@@ -532,7 +532,7 @@ const SearchResult = (props) => {
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
             let obj = json_res[i];
-            // console.log("in for loop pipl>>>", obj, ">>>>");
+            console.log("in for loop pipl>>>", obj, ">>>>");
             if (obj.phones) {
               for (let j = 0; j < obj.phones.length; j++) {
                 phones.push(obj.phones[j].number);
@@ -541,7 +541,6 @@ const SearchResult = (props) => {
           }
           console.log("Phones>>>>>>", phones);
           if (phones.length >= 1) {
-            console.log("searchId>>>>**", searchId);
             let requestForSaveProfileCredit = {
               search_id: searchId,
               phone_numbers: phones,
@@ -610,10 +609,8 @@ const SearchResult = (props) => {
   const handleLeadSelectionChange = async (e) => {
     const { id, checked } = e.target;
     let hash_key = null;
-    console.log("ID$$$$$$$$$$$$$$$$$$$$$$$", id);
-    setSelectedLeads([...selectedLeads, id]);
+     setSelectedLeads([...selectedLeads, id]);
     hash_key = await digestMessage(id);
-    console.log("In >> hash keyssssssssssssssss", hash_key);
 
     tempJson[id] = hash_key;
     setSelectedLeadHashKey([...selectedLeadHashKey, tempJson]);
@@ -621,8 +618,7 @@ const SearchResult = (props) => {
     if (!checked) {
       setSelectedLeads(selectedLeads.filter((item) => item !== id));
     }
-    console.log("hash keyssssssssssssssss", hash_key, tempJson);
-  };
+     };
   console.log("seleched hash key>>>>", selectedLeadHashKey);
   const handleLeadSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
@@ -667,7 +663,6 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(inputData),
         });
-        console.log("After fetch input data >>>", inputData);
 
         async function handleSuccess(response) {
           const data = await response.json();

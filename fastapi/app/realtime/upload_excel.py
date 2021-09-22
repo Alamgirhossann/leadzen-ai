@@ -1,24 +1,21 @@
 import tempfile
 import uuid
-from app.realtimerequestmanual.realtime import RealTimeRequest, wait_and_check_for_filename,RealTimeUploadResponse
+from app.realtime.common import (
+    RealTimeRequest,
+    wait_and_check_for_filename,
+    RealTimeUploadResponse,
+)
 import pandas as pd
 import httpx
 import json
 from app.database import database
 from loguru import logger
-from fastapi import (
-    UploadFile,
-    File,
-    APIRouter,
-    Form,
-    HTTPException,
-    Depends
-)
+from fastapi import UploadFile, File, APIRouter, Form, HTTPException, Depends
 from starlette import status
 from app.users import fastapi_users
 from app.config import (
     API_CONFIG_BULK_OUTGOING_DIRECTORY,
-    API_CONFIG_GET_USER_FROM_USER_ID_URL
+    API_CONFIG_GET_USER_FROM_USER_ID_URL,
 )
 
 
@@ -30,23 +27,20 @@ async def upload_excel_file(
     user_id: str = Form(...),
     requirement: str = Form(...),
     file: UploadFile = File(...),
-    current_user=Depends(fastapi_users.get_current_active_user)
-
+    current_user=Depends(fastapi_users.get_current_active_user),
 ):
     if current_user.is_superuser:
-        query = (
-            f"SELECT * FROM user WHERE id = :user_id"
-        )
-        row = await database.fetch_one(
-            query=query, values={"user_id": str(user_id)}
-        )
+        query = f"SELECT * FROM user WHERE id = :user_id"
+        row = await database.fetch_one(query=query, values={"user_id": str(user_id)})
         user = {}
         if row:
-            user['email'] = row[1]
-            user['requirement'] = requirement
-            user['username'] = row[6]
+            user["email"] = row[1]
+            user["requirement"] = requirement
+            user["username"] = row[6]
             if file.filename.endswith(".xlsx"):
-                outgoing_filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
+                outgoing_filename = (
+                    f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
+                )
                 with tempfile.TemporaryFile() as temp_file:
                     lines = file.file.readlines()
                     temp_file.writelines(lines)

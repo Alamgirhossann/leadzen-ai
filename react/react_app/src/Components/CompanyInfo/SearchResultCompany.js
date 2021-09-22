@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Pagination from "../SharedComponent/Pagination";
 import SavedListButton from "../SearchResult/SavedListButton";
+import SpecificCompany from "./SpecificCompany";
 
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
@@ -20,10 +21,17 @@ const SearchResultCompany = (props) => {
     employeeCount: null,
   });
   const [loading, setLoading] = useState(true);
+  const [handleLoading, setHandleLoading] = useState(false);
   const tempCookie = Cookies.get("user_linkedin_cookie");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
+  const [companyDetails, setCompanyDetails] = useState("");
+  const [companyInfo, setCompanyInfo] = useState("");
+  const [specificUserDetails, setSpecificUserDetails] = useState([
+    { index: null, details: null },
+  ]);
+  const [secondLoader, setSecondLoader] = useState(false);
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
@@ -163,7 +171,7 @@ const SearchResultCompany = (props) => {
         }
 
         console.log(`Got Response ${json}`);
-        checkExecutionStatus(json.execution_id);
+        checkExecutionStatus(json.execution_id, "");
       }
 
       switch (response.status) {
@@ -181,7 +189,8 @@ const SearchResultCompany = (props) => {
     }
   };
 
-  const checkExecutionStatus = (executionId = null) => {
+  const checkExecutionStatus = (executionId, handleFrom) => {
+    // const [executionId,handleFrom] = args
     if (!executionId) {
       console.log("executionId is Null");
       return;
@@ -225,8 +234,13 @@ const SearchResultCompany = (props) => {
           if (timeoutId) clearTimeout(timeoutId);
           clearInterval(intervalId);
 
-          setMyLeads(json.data);
-          await saveSearchedRecord(json.data, "texAuCompany");
+          if (handleFrom === "handleProfile") {
+            setCompanyDetails(json.data);
+            setHandleLoading(false);
+          } else {
+            setMyLeads(json.data);
+            await saveSearchedRecord(json.data, "texAuCompany");
+          }
         }
 
         function handleUnAuthorized(response = null) {
@@ -308,6 +322,147 @@ const SearchResultCompany = (props) => {
       console.error("Exception>>", e);
     }
   };
+
+  function handleError(status) {
+    setLoading(false);
+    setMyLeads([]);
+    console.error(`Got HTTP Error ${status}`);
+    // alert("Error Searching For Leads");
+  }
+
+  function handleNotFound() {
+    console.log("Not Found Yet, Waiting...");
+  }
+
+  function handleCookieError(response) {
+    console.log("Response cookie error", response.statusText);
+    handleError();
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    handleError();
+    alert("Please Logout and LogIn Again");
+  }
+
+  const handleProfile = async (index, data) => {
+    let reqJsonPipl = {
+      name: data.name,
+    };
+    console.log("in Handle profile...", `${currentPage}${index}`, data);
+    console.log("reqJsonPipl", reqJsonPipl);
+    setHandleLoading(true);
+    setSecondLoader(true);
+    try {
+      let isDuplicate = false;
+
+      specificUserDetails.map((spec) => {
+        console.log("spec>>>", spec.index);
+        if (spec.index === `${currentPage}${index}`) {
+          isDuplicate = true;
+        }
+      });
+      console.log("isDuplicate>>>>", isDuplicate);
+      if (isDuplicate === false) {
+        console.log("In Fetch......");
+        const response = await fetch(
+          apiServer + "/texau/linkedin/find_company_domain",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(reqJsonPipl),
+          }
+        );
+
+        async function handleSuccess(response) {
+          let json_res = await response.json();
+          console.log("Data Pipl..>>>>>>>>>>>", json_res);
+          checkExecutionStatus(json_res.execution_id, "handleProfile");
+          setSpecificUserDetails((prev) => [
+            ...prev,
+            { index: `${currentPage}${index}`, details: json_res },
+          ]);
+        }
+
+        switch (response.status) {
+          case 200:
+            return handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 403:
+            return handleCookieError();
+          case 404:
+            return handleNotFound();
+          default:
+            return handleError();
+        }
+      }
+    } catch (err) {
+      console.error("Error: ", err);
+      setSpecificUserDetails((prev) => [
+        ...prev,
+        { index: `${currentPage}${index}`, details: "Record Not Found" },
+      ]);
+    }
+
+    console.log("dataa", data);
+  };
+
+  async function callApi(reqJsonPipl) {
+    try {
+      setHandleLoading(true);
+      const response = await fetch(
+        apiServer + `/texau/linkedin/get_all_company_data`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify({ url: reqJsonPipl }),
+        }
+      );
+
+      async function handleSuccess(response) {
+        const companyResponse = await response.json();
+        console.log("next call", companyResponse);
+        setCompanyInfo(companyResponse);
+        setHandleLoading(false);
+      }
+
+      switch (response.status) {
+        case 200:
+          return handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        case 403:
+          return handleCookieError();
+        case 404:
+          return handleNotFound();
+        default:
+          return handleError();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    if (companyDetails != null && companyDetails.length > 0) {
+      console.log(
+        "companyDetails in handle profile",
+        companyDetails[0].website
+      );
+      callApi(companyDetails[0].website);
+    }
+  }, [companyDetails]);
+
+  console.log("companyInfo", companyInfo);
 
   return (
     <div>
@@ -493,13 +648,7 @@ const SearchResultCompany = (props) => {
                                   <div className="col d-flex align-items-center">
                                     <div>
                                       <p className="d-block">{data.name} </p>
-                                      <small className="d-block">
-                                        {/*<img*/}
-                                        {/*  src="assets/images/accord-map-pin.png"*/}
-                                        {/*  alt=""*/}
-                                        {/*/>*/}
-                                        {/*Alpharetta, Georgia*/}
-                                      </small>
+                                      <small className="d-block"></small>
                                     </div>
                                   </div>
                                   <div className="col d-flex align-items-center">
@@ -509,7 +658,24 @@ const SearchResultCompany = (props) => {
                               </div>
 
                               <div className="search-view-btn d-flex align-items-center">
-                                <a className="button">View Details</a>
+                                <a
+                                  className="btn button"
+                                  data-toggle="collapse"
+                                  href={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  data-target={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  role="button"
+                                  aria-expanded="false"
+                                  aria-controls="collapseExample"
+                                  onClick={() => handleProfile(index, data)}
+                                >
+                                  View Details
+                                </a>
                               </div>
 
                               <div className="search-close-btn d-flex align-items-center">
@@ -519,9 +685,9 @@ const SearchResultCompany = (props) => {
                                 {/*    alt=""*/}
                                 {/*  />*/}
                                 {/*</a>*/}
-                                  <p>
-                              <SavedListButton data={data} />
-                              </p>
+                                <p>
+                                  <SavedListButton data={data} />
+                                </p>
                               </div>
                             </div>
                             <div
@@ -537,15 +703,34 @@ const SearchResultCompany = (props) => {
                                   "collapseExample_" + `${currentPage}${index}`
                                 }
                               >
-                                {/*{specificUserDetails?.map((spec) => (*/}
-                                {/*  <span>*/}
-                                {/*    {spec.index === `${currentPage}${index}` ? (*/}
-                                {/*      <span>*/}
-                                {/*        <SpecificUser details={spec.details} />*/}
-                                {/*      </span>*/}
-                                {/*    ) : null}*/}
-                                {/*  </span>*/}
-                                {/*))}{" "}*/}
+                                {specificUserDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}` ? (
+                                      <span>
+                                        {!handleLoading ? (
+                                          secondLoader ? (
+                                            <SpecificCompany
+                                              data={companyInfo}
+                                            />
+                                          ) : (
+                                            <h5>Record not found</h5>
+                                          )
+                                        ) : (
+                                          <div className="d-flex justify-content-center">
+                                            <div
+                                              className="spinner-border"
+                                              role="status"
+                                            >
+                                              <span className="sr-only">
+                                                Loading...
+                                              </span>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                ))}
                               </div>
                             </div>
                           </div>
@@ -569,134 +754,6 @@ const SearchResultCompany = (props) => {
                     paginate={paginate}
                   />
                 </div>
-                {/*<div className="user-widget-box text-center p-4 my-3">*/}
-                {/*  <div className="user-promote-logo">*/}
-                {/*    <img src="assets/images/user-company-brand.png" alt="title" />*/}
-                {/*  </div>*/}
-                {/*  <div className="user-promote-slider">*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Want to extract contacts of group members in a LinkedIn*/}
-                {/*          group?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Need a list of companies in semi-conductor space with*/}
-                {/*          1000+ employees in US?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Need a detailed list of all the people working for*/}
-                {/*          Flipkart?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Want to extract contacts of group members in a LinkedIn*/}
-                {/*          group?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Need a detailed list of all the people working for*/}
-                {/*          Flipkart?*/}
-                {/*        </p>*/}
-
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*    <div className="item">*/}
-                {/*      <div className="user-promote-item">*/}
-                {/*        <p className="">*/}
-                {/*          Want to extract contacts of group members in a LinkedIn*/}
-                {/*          group?*/}
-                {/*        </p>*/}
-                {/*        <div*/}
-                {/*          className="px-3 pb-4"*/}
-                {/*          style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            bottom: "5px",*/}
-                {/*            content: "",*/}
-                {/*          }}*/}
-                {/*        >*/}
-                {/*          <a href="/searchResult" className="small m-0">*/}
-                {/*            Try This*/}
-                {/*          </a>*/}
-                {/*        </div>*/}
-                {/*      </div>*/}
-                {/*    </div>*/}
-                {/*  </div>*/}
-                {/*</div>*/}
               </div>
             </div>
           </div>

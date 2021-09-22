@@ -36,10 +36,11 @@ router = APIRouter(prefix="/bulk_upload", tags=["Bulk Search"])
 @router.post("/csv", response_model=BulkUploadResponse)
 @cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def upload_csv_file(
-    background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),
-    user=Depends(fastapi_users.get_current_active_user),
+        background_tasks: BackgroundTasks,
+        file: UploadFile = File(...),
+        user=Depends(fastapi_users.get_current_active_user),
 ):
+
     if file.content_type not in API_CONFIG_ALLOWED_CONTENT_TYPES:
         logger.warning(
             f"Uploaded File does not contain CSV Content: {file.content_type=}, {API_CONFIG_ALLOWED_CONTENT_TYPES=}"
@@ -49,57 +50,46 @@ async def upload_csv_file(
             detail="Uploaded File does not contain CSV Content",
         )
 
-    if not file.filename.endswith(".csv"):
-        logger.warning(f"Not a CSV File: {file.filename=}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Uploaded File is Not a CSV File",
-        )
-
     # this is due to a known defect in the SpooledTemporary file library
     # as it dont implement the readable interface that pandas needs to read data
     # so i make a copy of the spooled temp file into a regular temp file
     # and then use it for pandas to read, and since both these files are temp files
     # they will vanish as soon as close as called, hence using the with context manager
-    with tempfile.TemporaryFile() as temp_file:
-        lines = file.file.readlines()
-        temp_file.writelines(lines)
-        temp_file.seek(0)
 
-        df = pd.read_csv(temp_file)
+    def readfile(pandas_readfile):
+        with tempfile.TemporaryFile() as temp_file:
+            lines = file.file.readlines()
+            temp_file.writelines(lines)
+            temp_file.seek(0)
 
-        logger.debug(df.head())
+            df = pandas_readfile(temp_file)
+            logger.debug(df.head())
+            if df is None or df.empty:
+                logger.warning("No Data in uploaded file")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No Data in Uploaded File",
+                )
 
-        if df is None or df.empty:
-            logger.warning("No Data in uploaded file")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="No Data in Uploaded File",
-            )
+            if "linkedin_profile_urls" not in df.columns:
+                logger.warning("linkedin_profile_urls columns not preset in file")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="linkedin_profile_urls columns not preset in file",
+                )
 
-        df.fillna("", inplace=True)
+            linkedin = df.loc[df['linkedin_profile_urls'].str.contains("linkedin", case=False)]
 
-        if "emails" in df.columns:
-            logger.warning("Performing Email Searches")
-            #TODO: check Credit if not sufficient send mail and exit else continue with scrapping
-            outgoing_filename = (
-                f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
-            )
+            if linkedin is None or linkedin.empty:
+                print("in linkedin")
+                logger.warning("Linkedin url not in Uploaded File")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Linkedin url not in Uploaded File",
+                )
 
-            background_tasks.add_task(
-                handle_bulk_emails,
-                request=BulkEmailRequest(
-                    emails=list(df.emails[:API_CONFIG_BULK_MAX_ROWS_IN_CSV]),
-                    incoming_filename=file.filename,
-                    outgoing_filename=outgoing_filename,
-                    user=user,
-                ),
-            )
+            df.fillna("", inplace=True)
 
-            return BulkUploadResponse(
-                input_filename=file.filename, output_filename=outgoing_filename
-            )
-        elif "linkedin_profile_urls" in df.columns:
             logger.warning("Performing LinkedIn Profile Searches")
             outgoing_filename = (
                 f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
@@ -120,12 +110,19 @@ async def upload_csv_file(
             return BulkUploadResponse(
                 input_filename=file.filename, output_filename=outgoing_filename
             )
-        else:
-            logger.warning("emails or linkedin_profile_urls columns not preset in file")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="emails or linkedin_profile_urls columns not preset in file",
-            )
+
+    if file.filename.endswith(".csv"):
+        data = readfile(pd.read_csv)
+        return data
+    elif file.filename.endswith(".xlsx"):
+        data = readfile(pd.read_excel)
+        return data
+    else:
+        logger.warning(f"File format not excel or csv: {file.filename=}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File format not excel or csv",
+        )
 
 
 @router.get("/status/stream")
@@ -142,9 +139,9 @@ class BulkExportToExcelRequest(BaseModel):
 @router.post("/export/excel", response_model=BulkUploadResponse)
 @cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def export_excel_file(
-    app_request: BulkExportToExcelRequest,
-    background_tasks: BackgroundTasks,
-    user=Depends(fastapi_users.get_current_active_user),
+        app_request: BulkExportToExcelRequest,
+        background_tasks: BackgroundTasks,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     user_response = await get_user(user)
     logger.debug(f"{app_request=}>>>{len(app_request.profile_urls)=}")
