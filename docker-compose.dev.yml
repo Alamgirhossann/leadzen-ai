@@ -12,6 +12,8 @@ services:
     person_fastapi:
         image: "analystt/person_fastapi:latest"
         container_name: "person_fastapi"
+        volumes:
+            - ./shared:/home/appuser/shared
         ports:
             - 12001:5000
         environment:
