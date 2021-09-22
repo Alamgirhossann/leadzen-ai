@@ -50,10 +50,12 @@ def get_access_token():
             res_text = res.text.encode("ascii", "ignore")
             return json.loads(res_text)["access_token"]
         else:
-            return JSONResponse(
+            raise HTTPException(
                 status_code=res.status_code,
-                content={"message": "Error Getting Token for snov"},
+                detail="Error Getting Token for snov",
             )
+    except HTTPException as e:
+        raise e
     except Exception as e:
         logger.critical(e)
         raise HTTPException(
@@ -71,10 +73,12 @@ def add_url_for_search(url):
         if res.status_code == 200:
             return json.loads(res.text)
         else:
-            return JSONResponse(
+            raise HTTPException(
                 status_code=res.status_code,
-                content={"message": "Error Adding url for search"},
+                detail="Error Adding url for search",
             )
+    except HTTPException as e:
+        raise e
     except Exception as e:
         logger.critical(e)
         raise HTTPException(
@@ -112,8 +116,12 @@ async def get_emails_from_url(
                 async with httpx.AsyncClient() as client:
                     res = await client.post(API_CONFIG_SNOV_GET_EMAIL, data=params)
                     if res.status_code == 200:
-                        data = json.loads(res.text)
-                        if data["success"]:
+                        if not (data := res.json()):
+                            raise HTTPException(
+                                status_code=status.HTTP_404_NOT_FOUND,
+                                detail="Snov: Data not found",
+                            )
+                        if 'success' in data.keys():
                             email_data = data["data"]["emails"]
                             email = email_data[0]["email"]
                             valid = email_data[0]["status"]
@@ -123,20 +131,22 @@ async def get_emails_from_url(
                                 )
                                 background_tasks.add_task(deduct_credit, "EMAIL", user)
                                 return email
-                        return JSONResponse(
-                            status_code=404,
-                            content={"message": "Snov: Data not found"},
+                        raise HTTPException(
+                            status_code=status.HTTP_404_NOT_FOUND,
+                            detail="Snov: Data not found",
                         )
                     else:
-                        return JSONResponse(
+                        raise HTTPException(
                             status_code=res.status_code,
-                            content={"message": "Error Getting Data From snov"},
+                            detail="Error Getting Data From snov",
                         )
             else:
-                return JSONResponse(
-                    status_code=402,
-                    content={"message": "Insufficient Credits"},
+                raise HTTPException(
+                    status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                    detail="Insufficient Credits",
                 )
+    except HTTPException as e:
+        raise e
     except Exception as e:
         logger.critical(str(e))
         raise HTTPException(
