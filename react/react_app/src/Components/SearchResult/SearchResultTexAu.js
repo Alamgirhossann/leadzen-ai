@@ -15,6 +15,8 @@ import Loader from "../../Loader";
 import SavedListButton from "./SavedListButton";
 import axios from "axios";
 import { EventEmitter } from "events";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
 export async function digestMessage(message) {
   console.log("Message....", message);
@@ -815,8 +817,36 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
+               {loading=== false?(
+                     <div>
+              <form
+              className="search-form4 d-flex mb-3"
+            >
+              <div className="input-group" >
+                <div className="input-placeholder" style={{'width':'1000px'}}>
+                  <input
+                    className="ps-3"
+                    required
+                  />
+                  <div className="placeholder">
+                   Search Here
+                  </div>
+                </div>
+                <button
+                  className="btn text-white"
+                >
+                  <span className="pe-1">
+                    <FontAwesomeIcon icon={faSearch} />
+                  </span>
+                  Search
+                </button>
+              </div>
+            </form>
+           </div>
+              ):null
+              }
               <div className="user-search-wrapper">
-                <div className="detailed-search">
+                <div className="detailed-search " style={{'paddingLeft':"40px"}}>
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
@@ -870,7 +900,6 @@ const SearchResult = (props) => {
                   </div>
                 </div>
               </div>
-
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
