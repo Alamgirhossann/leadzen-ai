@@ -18,9 +18,10 @@ const PopUp=(props)=> {
                     Accept: "application/json",
                     Authorization: `Bearer ${Cookies.get("user_token")}`,
                 },
-                body: JSON.stringify({content: props.data, search_type: "texAu"}),
+                body: JSON.stringify({content: props.data, search_type: props.type}),
             });
             if (response.status === 200) {
+                props.indexbool(true)
                 setPopUp(false)
                 return "success"
             }

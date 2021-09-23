@@ -453,7 +453,6 @@ const SavedList = (props) => {
                           </a>
                         </p>
                         <a
-                          href="savedList"
                           onClick={(e) => handleIndexDelete(alldata.id,index)}
                         >
                           <p className="save-close-btn">

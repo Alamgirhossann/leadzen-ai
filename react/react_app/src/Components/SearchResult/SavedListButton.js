@@ -3,12 +3,13 @@ import React, { useState ,useEffect } from "react";
 import PopUp from "../SavedList/PopUp";
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
-const SavedListButton = ({data}) => {
-  let [selectedButton, setSelectedButton] = useState(false);
-  const [popup,setPopup] = useState(false);
-  const [name,setName] = useState();
-
-    let handleSaveList=async()=> {
+const SavedListButton = (props) => {
+    let data = props.data
+    let [selectedButton, setSelectedButton] = useState(false);
+    const [popup, setPopup] = useState(false);
+    const [name, setName] = useState();
+    const [change, setChange] = useState(false);
+    let handleSaveList = async () => {
     try {
       const response = await fetch(apiServer + "/saved_list/all/names", {
         method: "GET",
@@ -46,6 +47,11 @@ const SavedListButton = ({data}) => {
     }
 
   }
+   if(change)
+    {
+        setChange(false)
+        props.changeindex(props.index)
+    }
 
   return (
     <>
@@ -60,9 +66,10 @@ const SavedListButton = ({data}) => {
       ) :""}
       {
         popup?<div>
-          <PopUp triger={popup} name={name} data={data}/>
-        </div>:""
-      }
+          <PopUp triger={popup} name={name} data={data} type={props.type} indexbool={(changebool)=>setChange(changebool) }/>
+        </div>:""}
+
+
     </>
   );
 };
