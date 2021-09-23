@@ -70,3 +70,14 @@ class UserCreditRequest(BaseModel):
 
 class UserCreditResponse(BaseModel):
     row_updated: int
+
+
+class EmailSearchAddRequest(BaseModel):
+    user_id: str
+    query_url: str
+    email_result: str
+
+
+class EmailSearchGetRequest(BaseModel):
+    user_id : str
+    query_url : str
