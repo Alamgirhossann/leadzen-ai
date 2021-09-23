@@ -138,6 +138,8 @@ async def get_user(user):
             profile_credit=res_dct.get("profile_credit"),
             email_credit=res_dct.get("email_credit"),
             hashed_password=res_dct.get("hashed_password"),
+            total_profile_credits=res_dct.get('total_profile_credits'),
+            total_email_credits=res_dct.get('total_email_credits')
         )
 
     except Exception as e:

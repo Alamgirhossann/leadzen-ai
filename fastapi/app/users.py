@@ -134,7 +134,9 @@ async def get_user(user):
         logger.debug(f"{res_dct=}")
         return UserDB(id=res_dct.get('id'), username=res_dct.get('username'), onboarded=res_dct.get('onboarded'),
                       profile_credit=res_dct.get('profile_credit'), email_credit=res_dct.get('email_credit'),
-                      hashed_password=res_dct.get('hashed_password')
+                      hashed_password=res_dct.get('hashed_password'),
+                      total_profile_credits=res_dct.get('total_profile_credits'),
+                      total_email_credits=res_dct.get('total_email_credits')
                       )
 
     except Exception as e:
