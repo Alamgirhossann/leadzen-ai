@@ -27,6 +27,10 @@ class SavedListUpdateRequest(BaseModel):
     search_type: Optional[str] = None
 
 
+class SavedListDeleteRequest(BaseModel):
+    list_index: int
+
+
 class SavedListResponse(BaseModel):
     id: str
 
@@ -336,4 +340,68 @@ async def update_search_save_list(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error Patching in Database",
+        )
+
+
+@router.delete("/index/{saved_list_id}", response_model=SavedListResponse)
+async def delete_saved_list_by_index(
+    saved_list_id: str,
+    request: SavedListDeleteRequest,
+    user=Depends(fastapi_users.get_current_active_user),
+):
+    logger.debug(f"{saved_list_id=}, {user=}")
+    try:
+        values = {}
+        query = "SELECT list_content FROM saved_list WHERE  id = :id and user_id = :user_id "
+        if not (
+            rows := await database.fetch_all(
+                query=query, values={"id": saved_list_id, "user_id": str(user.id)}
+            )
+        ):
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+        if rows[0][0]:
+            list_data = json.loads(rows[0][0])
+            if request.list_index < 0 or request.list_index >= len(list_data):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Bad Request",
+                )
+            del list_data[request.list_index]
+            if len(list_data) > 0:
+                values["list_content"] = json.dumps(list_data)
+            else:
+                values["list_content"] = None
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Bad Request",
+            )
+        update_query = (
+            saved_list.update()
+            .values(values)
+            .where(
+                saved_list.c.id == saved_list_id
+                and saved_list.c.user_id == str(user.id)
+            )
+        )
+
+        if not (row := await database.execute(update_query)):
+            logger.warning("Invalid Query Results")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            )
+
+        logger.debug(f"{row=}")
+
+        return SavedListResponse(id=saved_list_id)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.critical(f"Exception Querying Database: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Deleting from Database",
         )
