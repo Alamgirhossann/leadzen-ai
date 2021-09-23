@@ -51,6 +51,15 @@ saved_list = sqlalchemy.Table(
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
+email_search = sqlalchemy.Table(
+    "email_search",
+    metadata,
+    sqlalchemy.Column("id", sqlalchemy.String, primary_key=True),
+    sqlalchemy.Column("user_id", sqlalchemy.String),
+    sqlalchemy.Column("query_url", sqlalchemy.String),
+    sqlalchemy.Column("email_result", sqlalchemy.String),
+    sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+)
 
 profile_search = sqlalchemy.Table(
     "profile_search",

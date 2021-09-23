@@ -13,11 +13,12 @@ from loguru import logger
 from starlette import status
 
 from app.bulk.router import router as bulk_router
-from app.realtimerequestmanual.upload_excel import router as realtime_router
+from app.realtime.upload_excel import router as realtime_router
 from app.config import (
     API_CONFIG_LINKEDIN_CSV_FILE,
     API_CONFIG_JWT_SECRET,
 )
+
 # from app.credits import router as credits_router
 from app.customize_filter import router as filter_router
 from app.database import database
@@ -49,73 +50,91 @@ from fastapi_cache.decorator import cache
 
 current_active_user = fastapi_users.current_user(active=True)
 
-app = FastAPI()
+
+def app_factory():
+    app = FastAPI(
+        title="LeadZen Internal API",
+        description="LeadZen Internal API. Do not share endpoints externally",
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    app.mount("/api/bulk", StaticFiles(directory="bulk"), name="bulk")
+
+    app.include_router(router=pipl_router, prefix="/api")
+    app.include_router(router=filter_router, prefix="/api")
+    app.include_router(router=texau_router, prefix="/api")
+    app.include_router(router=bulk_router, prefix="/api")
+    app.include_router(router=realtime_router, prefix="/api")
+    app.include_router(router=history_router, prefix="/api")
+    app.include_router(router=credits_profile_router, prefix="/api")
+    app.include_router(router=profile_search_router, prefix="/api")
+    app.include_router(router=credits_admin_router, prefix="/api")
+    app.include_router(router=truemail_router, prefix="/api")
+    app.include_router(router=snov_router, prefix="/api")
+    app.include_router(router=proxycurl_router, prefix="/api")
+    app.include_router(router=save_list_router, prefix="/api")
+
+    app.include_router(
+        fastapi_users.get_auth_router(jwt_authentication),
+        prefix="/api/auth/jwt",
+        tags=["auth"],
+    )
+    app.include_router(
+        fastapi_users.get_register_router(on_after_register),
+        prefix="/api/auth",
+        tags=["auth"],
+    )
+    app.include_router(
+        fastapi_users.get_reset_password_router(
+            API_CONFIG_JWT_SECRET, after_forgot_password=on_after_forgot_password
+        ),
+        prefix="/api/auth",
+        tags=["auth"],
+    )
+    app.include_router(
+        fastapi_users.get_verify_router(
+            API_CONFIG_JWT_SECRET, after_verification_request=after_verification_request
+        ),
+        prefix="/api/auth",
+        tags=["auth"],
+    )
+    app.include_router(
+        fastapi_users.get_users_router(), prefix="/api/users", tags=["Users"]
+    )
+    app.include_router(router=email_router, prefix="/api")
+
+    return app
+
+
+async def app_startup(app):
+    logger.info("Connecting to Database")
+    await database.connect()
+    logger.info("Initializing In Memory Cache")
+    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+
+
+async def app_shutdown(app):
+    logger.info("Disconnecting from Database")
+    await database.disconnect()
+    logger.info("Clearing Memory Cache")
+    await FastAPICache.clear()
+
+
 load_dotenv()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.mount("/api/bulk", StaticFiles(directory="bulk"), name="bulk")
+app = app_factory()
 
 
 @app.get("/")
 async def root():
     return {"message": "Analyst People API Endpoint"}
-
-
-app.include_router(router=pipl_router, prefix="/api")
-app.include_router(router=filter_router, prefix="/api")
-app.include_router(router=texau_router, prefix="/api")
-app.include_router(router=bulk_router, prefix="/api")
-app.include_router(router=realtime_router, prefix="/api")
-app.include_router(router=history_router, prefix="/api")
-app.include_router(router=credits_profile_router, prefix="/api")
-app.include_router(router=credits_email_router, prefix="/api")
-app.include_router(router=profile_search_router, prefix="/api")
-app.include_router(router=credits_admin_router, prefix="/api")
-app.include_router(router=truemail_router, prefix="/api")
-app.include_router(router=snov_router, prefix="/api")
-app.include_router(router=proxycurl_router, prefix="/api")
-app.include_router(router=save_list_router, prefix="/api")
-# app.include_router(
-#     router=search_operations,
-#     prefix="/api",
-#     dependencies=[Depends(fastapi_users.get_current_active_user)],
-# )
-
-app.include_router(
-    fastapi_users.get_auth_router(jwt_authentication),
-    prefix="/api/auth/jwt",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_register_router(on_after_register),
-    prefix="/api/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_reset_password_router(
-        API_CONFIG_JWT_SECRET, after_forgot_password=on_after_forgot_password
-    ),
-    prefix="/api/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_verify_router(
-        API_CONFIG_JWT_SECRET, after_verification_request=after_verification_request
-    ),
-    prefix="/api/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_users_router(), prefix="/api/users", tags=["Users"]
-)
-app.include_router(router=email_router, prefix="/api")
 
 
 @app.on_event("startup")
@@ -127,7 +146,7 @@ def job():
         data = list(csv.reader(f))
         logger.debug("data", data)
     # header = ['cookie']
-    with open(API_CONFIG_LINKEDIN_CSV_FILE, 'wb') as f:
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "wb") as f:
         writer = csv.writer(f)
         for row in data:
             if row[2] != "0":
@@ -151,18 +170,12 @@ def refresh_linkedin_cookie_manually():
 
 @app.on_event("startup")
 async def startup():
-    logger.info("Connecting to Database")
-    await database.connect()
-    logger.info("Initializing In Memory Cache")
-    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+    await app_startup(app)
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    logger.info("Disconnecting from Database")
-    await database.disconnect()
-    logger.info("Clearing Memory Cache")
-    await FastAPICache.clear()
+    await app_shutdown(app)
 
 
 @app.get("/test_auth")

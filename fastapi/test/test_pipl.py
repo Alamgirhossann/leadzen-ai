@@ -1,13 +1,12 @@
 import httpx
 import pytest
 
-from app.main import app
 from app.pipl.router import PiplRequest, PiplName
-from test.common import TEST_CONFIG_HEADERS
+from test.common import TEST_CONFIG_HEADERS, app
 
 
 @pytest.mark.asyncio
-async def test_pipl_search():
+async def test_pipl_search(app):
     async with httpx.AsyncClient(app=app, base_url="http://test") as client:
         response = await client.post(
             "/api/pipl/search",

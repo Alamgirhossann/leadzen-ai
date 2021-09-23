@@ -1,3 +1,5 @@
+import ast
+import json
 import uuid
 from typing import Optional, List
 from urllib.parse import urlencode
@@ -86,7 +88,10 @@ async def people_search(
             logger.debug(f"is_credit_applied>>>{response=}, {user=}")
             if response:
 
-                return response.get('search_results')
+                logger.debug(f">>type response result>>{type(response.get('search_results'))}")
+                json_data = eval(response.get('search_results'))
+                logger.debug(f"{json_data=},>>>>>>>>>>>>{type(json_data)}")
+                return json_data
             else:
                 logger.debug(f"Profile not found")
                 user_response = await get_user(user)
@@ -105,7 +110,7 @@ async def people_search(
                 else:
                     search_type = "texAu"
                     pipl_res = await send_pipl_request(params)
-                # logger.debug(f"{pipl_res=}")
+                logger.debug(f"{pipl_res=}, >> {type(pipl_res)}")
                 if pipl_res:
                     logger.debug(f" in pipl res >>>>{user_response=}")
                     credit_res = await deduct_credit("PROFILE", user_response)
@@ -113,9 +118,9 @@ async def people_search(
                     request = {
                         "search_type": search_type,
                         "hash_key": app_request.hash_key,
-                        "search_results": [
+                        "search_results":
                             pipl_res
-                        ]
+
                     }
                     background_tasks.add_task(add_profile, request=request, user=user_response)
                     # add_profile_res = await add_profile(request, user_response)

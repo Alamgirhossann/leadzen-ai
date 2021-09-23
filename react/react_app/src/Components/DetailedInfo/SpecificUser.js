@@ -332,11 +332,6 @@ const SpecificUser = (props) => {
               </div>
             </div>
           </section>
-          <div className="item-section" align="center">
-            <p className="fw-bold">Lead Rating</p>
-            <img src="assets/images/Group 1908.png" alt="" />
-            <p>{props.details.rating} Rating</p>
-          </div>
         </div>
       )}
     </div>

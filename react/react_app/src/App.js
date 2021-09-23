@@ -37,8 +37,8 @@ import RealTimePage from "./Components/RealTimeInfo/RealTimePage";
 import RealTimeListView from "./Components/RealTimeInfo/RealTimeListView";
 import FirstTimeUserCompany from "./Components/CompanyInfo/FirstTimeUserCompany";
 import SearchResultCompany from "./Components/CompanyInfo/SearchResultCompany";
-import DetailInfoCompany from "./Components/CompanyInfo/DetailInfoCompany";
 import PrivateRoute from "./Components/SharedComponent/PrivateRoute";
+import SpecificCompany from "./Components/CompanyInfo/SpecificCompany";
 
 const App = () => {
   return (
@@ -181,12 +181,7 @@ const App = () => {
           component={SearchResultCompany}
           exact
         />
-
-        <PrivateRoute
-          path="/detailInfoCompany"
-          component={DetailInfoCompany}
-          exact
-        />
+        <Route path="/SpecificCompany" component={SpecificCompany} />
       </Switch>
     </Router>
   );
