@@ -20,6 +20,8 @@ class User(models.BaseUser):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 class UserCreate(models.BaseUserCreate):
@@ -27,6 +29,8 @@ class UserCreate(models.BaseUserCreate):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 class UserUpdate(User, models.BaseUserUpdate):
@@ -34,6 +38,8 @@ class UserUpdate(User, models.BaseUserUpdate):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 class UserDB(User, models.BaseUserDB):
@@ -41,6 +47,8 @@ class UserDB(User, models.BaseUserDB):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 Base: DeclarativeMeta = declarative_base()
@@ -51,7 +59,8 @@ class UserTable(Base, SQLAlchemyBaseUserTable):
     onboarded = Column(Boolean, default=True)
     profile_credit = Column(Integer, default=5)
     email_credit = Column(Integer, default=5)
-    company_credit = Column(Integer, default=5)
+    total_profile_credits = Column(Integer, default=5)
+    total_email_credits = Column(Integer, default=5)
 
 
 Base.metadata.create_all(engine)

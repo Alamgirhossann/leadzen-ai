@@ -12,6 +12,15 @@ const NavBar = (props) => {
     await getUser();
   }, []);
 
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    alert("Please Logout and LogIn Again");
+  }
+
   const getUser = async (e = null) => {
     try {
       console.log("In credit check>>>>>>>>");
@@ -21,13 +30,22 @@ const NavBar = (props) => {
         },
       });
       console.log("user_res>>>>>>>>", user_res);
-      if (user_res.status === 200) {
+       async function handleUserSuccess(user_res) {
         const response = await user_res.json();
         console.log("in success status....", response);
         setUser(response);
       }
+      switch (user_res.status) {
+            case 200:
+              return await handleUserSuccess(user_res);
+            case 401:
+              return handleUnAuthorized(user_res);
+            default:
+              return handleError(user_res);
+          }
+
     } catch (err) {
-      // handleError(err);
+      handleError(err);
       // setResponse({ ...response, message: "user not found" });
     }
   };
