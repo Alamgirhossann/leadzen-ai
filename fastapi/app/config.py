@@ -311,3 +311,9 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0,
 )
+API_CONFIG_DATABASE_GET_EMAIL = os.getenv(
+    "API_CONFIG_DATABASE_GET_EMAIL", "http://localhost:12005/api/credits/email_search/get"
+)
+API_CONFIG_DATABASE_ADD_EMAIL = os.getenv(
+    "API_CONFIG_DATABASE_ADD_EMAIL", "http://localhost:12005/api/credits/email_search/add"
+)
