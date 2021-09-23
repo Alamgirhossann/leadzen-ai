@@ -2,10 +2,59 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 const NavBar = (props) => {
-  const [user, setUser] = useState(props.user);
+  const [user, setUser] = useState();
+  // const [userRes, setUserRes] = useState();
+  const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+  useEffect(async () => {
+    await getUser();
+  }, []);
 
+  function handleError(status) {
+    console.error(`Got HTTP Error ${status}`);
+  }
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    alert("Please Logout and LogIn Again");
+  }
+
+  const getUser = async (e = null) => {
+    try {
+      console.log("In credit check>>>>>>>>");
+      const user_res = await fetch(apiServer + "/users/me", {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+      });
+      console.log("user_res>>>>>>>>", user_res);
+       async function handleUserSuccess(user_res) {
+        const response = await user_res.json();
+        console.log("in success status....", response);
+        setUser(response);
+      }
+      switch (user_res.status) {
+            case 200:
+              return await handleUserSuccess(user_res);
+            case 401:
+              return handleUnAuthorized(user_res);
+            default:
+              return handleError(user_res);
+          }
+
+    } catch (err) {
+      handleError(err);
+      // setResponse({ ...response, message: "user not found" });
+    }
+  };
+  if (props.newEvent) {
+    props.newEvent.on("updateCredit", getUser);
+  }
+  useEffect(() => {
+    console.log("User useEffect>>>", user);
+  }, [user]);
   function handleSetLinkedInCookie() {
     const cookie = prompt("Please paste your LinkedIn cookie here");
     if (!cookie) {
@@ -67,7 +116,7 @@ const NavBar = (props) => {
                   className="credit-btn btn btn-outline-danger nav-link"
                   href="/profile"
                 >
-                  4 Credits Left
+                  {user?.profile_credit + user?.email_credit} Credits Left
                 </a>
 
                 <ul className="dropdown-menu">
@@ -84,18 +133,27 @@ const NavBar = (props) => {
                   <li>
                     <div className="dropdown-progress">
                       <p className="small">
-                        Profile credits used:
-                        {user.subscription.profile_credits} / 1000
+                        Profile credits remaining: {user?.profile_credit} /{" "}
+                        {user?.total_profile_credits}
                       </p>
                       <div className="progress mb-2">
                         <div
                           className="progress-bar"
-                          style={{ width: "45%" }}
+                          style={{
+                            width: user
+                              ?
+                                (user.profile_credit / user.total_profile_credits) *
+                                  100 +
+                                "%"
+                              : "",
+                          }}
                           role="progressbar"
-                          aria-valuenow="45"
+                          aria-valuenow={user ? user.profile_credit : "45"}
                           aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
+                          aria-valuemax={
+                            user ? user.total_profile_credit : "100"
+                          }
+                        />
                       </div>
                     </div>
                   </li>
@@ -103,18 +161,25 @@ const NavBar = (props) => {
                   <li>
                     <div className="dropdown-progress">
                       <p className="small">
-                        Mail credits used:
-                        {user.subscription.mail_credits} / 2000
+                        Mail credits remaining: {user?.email_credit} /{" "}
+                        {user?.total_email_credits}
                       </p>
                       <div className="progress mb-2">
                         <div
                           className="progress-bar"
                           role="progressbar"
-                          style={{ width: "65%" }}
-                          aria-valuenow="65"
+                          style={{
+                            width: user
+                              ?
+                                (user.email_credit / user.total_email_credits) *
+                                  100 +
+                                "%"
+                              : "65%",
+                          }}
+                          aria-valuenow={user ? user.email_credit : "5"}
                           aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
+                          aria-valuemax={user ? user.total_email_credit : "100"}
+                        />
                       </div>
 
                       <span className="small">Limit resets in 5 days</span>
@@ -137,9 +202,7 @@ const NavBar = (props) => {
                   <li>
                     <div className="dropdown-credit">
                       <span className="fw-bold">
-                        {user.subscription.profile_credits +
-                          user.subscription.mail_credits}
-                        credits
+                        {user?.profile_credit + user?.email_credit} credits
                         <br /> pending
                       </span>
                       <img src="assets/images/credit-icon.png" alt="title" />

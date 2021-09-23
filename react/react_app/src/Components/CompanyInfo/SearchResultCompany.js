@@ -623,7 +623,7 @@ const SearchResultCompany = (props) => {
                     <div className="search-container mb-2">
                       {myLeads && myLeads.length === 0 ? (
                         <div>
-                          <h5>Records not found</h5>
+                          <h5>Records Not Found</h5>
                         </div>
                       ) : currentLeads ? (
                         currentLeads.map((data, index) => (
@@ -715,7 +715,7 @@ const SearchResultCompany = (props) => {
                                               data={companyInfo}
                                             />
                                           ) : (
-                                            <h5>Record not found</h5>
+                                            <h5>Record Not Found</h5>
                                           )
                                         ) : (
                                            <div className="d-flex justify-content-center">
@@ -733,7 +733,7 @@ const SearchResultCompany = (props) => {
                           </div>
                         ))
                       ) : (
-                        <h5>Record not found</h5>
+                        <h5>Record Not Found</h5>
                       )}
                     </div>
                   ) : (
