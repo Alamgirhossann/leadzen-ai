@@ -107,7 +107,7 @@ const SavedList = (props) => {
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
       });
-      async function handleSuccess(response) {
+      function handleSuccess(response) {
         fetchData()
       }
       switch (response.status) {
@@ -115,6 +115,40 @@ const SavedList = (props) => {
           return await handleSuccess(response);
         case 401:
           return handleUnAuthorized(response);
+        default:
+          return handleError(response);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function handleIndexDelete(id,index) {
+    try {
+      const response = await fetch(apiServer + `/saved_list/index/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify({list_index: index})
+      });
+      function handleSuccess(response) {
+        fetchData()
+      }
+      function handleBadRequest(response)
+      {
+        console.log("badRequest")
+        alert("Bad request please refresh the page.")
+      }
+      switch (response.status) {
+        case 200:
+          return await handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        case 400:
+          return handleBadRequest(response);
         default:
           return handleError(response);
       }
@@ -366,7 +400,7 @@ const SavedList = (props) => {
               data-bs-parent="#accordionExample2"
             >
               <div className="accordion-body">
-                {alldata.list_content.length > 0 ? (
+                {alldata.list_content?(
                   alldata.list_content.map((data , index) => (
                     <div key={index}  className="container-style mb-2">
                       <div className="save-list-container">
@@ -420,7 +454,7 @@ const SavedList = (props) => {
                         </p>
                         <a
                           href="savedList"
-                          onClick={(e) => handleDelete(data.id)}
+                          onClick={(e) => handleIndexDelete(alldata.id,index)}
                         >
                           <p className="save-close-btn">
                             <img src="assets/images/close-user.png" alt="" />
