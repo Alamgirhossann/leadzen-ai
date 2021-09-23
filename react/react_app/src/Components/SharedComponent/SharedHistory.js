@@ -187,7 +187,7 @@ const SharedHistory = () => {
             </div>
           ))
         ) : (
-          <div>Records not found</div>
+          <div>Records Not Found</div>
         )}
         {/*{myTags.map((data) => (*/}
         {/*  <div className="container-style mt-3">*/}

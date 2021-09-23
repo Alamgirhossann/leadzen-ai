@@ -23,6 +23,8 @@ class User(models.BaseUser):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 class UserCreate(models.BaseUserCreate):
@@ -30,6 +32,8 @@ class UserCreate(models.BaseUserCreate):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 class UserUpdate(User, models.BaseUserUpdate):
@@ -37,6 +41,8 @@ class UserUpdate(User, models.BaseUserUpdate):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credit: Optional[int] = 5
+    total_email_credit: Optional[int] = 5
 
 
 class UserDB(User, models.BaseUserDB):
@@ -44,6 +50,8 @@ class UserDB(User, models.BaseUserDB):
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
+    total_profile_credits: Optional[int] = 5
+    total_email_credits: Optional[int] = 5
 
 
 Base: DeclarativeMeta = declarative_base()
@@ -54,7 +62,8 @@ class UserTable(Base, SQLAlchemyBaseUserTable):
     onboarded = Column(Boolean, default=True)
     profile_credit = Column(Integer, default=5)
     email_credit = Column(Integer, default=5)
-    company_credit = Column(Integer, default=5)
+    total_profile_credits = Column(Integer, default=5)
+    total_email_credits = Column(Integer, default=5)
 
 
 Base.metadata.create_all(engine)
@@ -123,9 +132,11 @@ async def get_user(user):
         logger.debug(f"{rows=},{len(rows)}")
         res_dct = {k: v for element in rows for k, v in element.items()}
         logger.debug(f"{res_dct=}")
-        return UserDB(id=res_dct.get('id'),username=res_dct.get('username'), onboarded=res_dct.get('onboarded'),
+        return UserDB(id=res_dct.get('id'), username=res_dct.get('username'), onboarded=res_dct.get('onboarded'),
                       profile_credit=res_dct.get('profile_credit'), email_credit=res_dct.get('email_credit'),
-                      hashed_password=res_dct.get('hashed_password')
+                      hashed_password=res_dct.get('hashed_password'),
+                      total_profile_credits=res_dct.get('total_profile_credits'),
+                      total_email_credits=res_dct.get('total_email_credits')
                       )
 
     except Exception as e:

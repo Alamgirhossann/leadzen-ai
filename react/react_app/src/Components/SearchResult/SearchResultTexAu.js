@@ -10,10 +10,11 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
-import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SavedListButton from "./SavedListButton";
+import axios from "axios";
+import { EventEmitter } from "events";
 
 export async function digestMessage(message) {
   console.log("Message....", message);
@@ -51,8 +52,9 @@ const SearchResult = (props) => {
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
+  const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
   const [selectedSaveList, setSelectedSaveList] = useState([]);
-
+  const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
   const [searchId, setSearchId] = useState();
@@ -74,6 +76,35 @@ const SearchResult = (props) => {
   };
 
   today = dd + "/" + mm + "/" + yyyy;
+
+  function handleUnAuthorized(response = null) {
+    console.log("User is UnAuthorized");
+    handleError();
+    alert("Please Logout and LogIn Again");
+  }
+
+  function handleCookieError(response) {
+    // got cookie error - no need to check again, results will not change
+    console.log("Response cookie error", response.statusText);
+    handleError();
+  }
+
+  function handleNotFound() {
+    console.log("Not Found Yet, Waiting...");
+  }
+
+  function handleError(status) {
+    setLoading(false);
+    setMyLeads([]);
+    console.error(`Got HTTP Error ${status}`);
+    alert("Error Searching For Leads");
+  }
+
+  function handleInsufficientBalance(response) {
+    console.error("Insufficient credits...", response);
+    alert("Insufficient Credits");
+  }
+
   useEffect(async () => {
     console.log(">>>>>>>>>>", props);
     if (
@@ -170,12 +201,17 @@ const SearchResult = (props) => {
           }
         );
         let json_res = await response.json();
-        setTimeout(() => {
-          setSearchId(json_res.search_id);
-          console.log("Data>>>>>>>>>>>loading..", json_res, loading);
-          setLoading(false);
-          setMyLeads(json_res.search_results);
-        }, 60000);
+        setSearchId(json_res.id);
+        // setTimeout(() => {
+        console.log(
+          "174 Data>>>>>>>>>>>loading..",
+          json_res.id,
+          json_res,
+          loading
+        );
+        setLoading(false);
+        setMyLeads(json_res.search_results);
+        // }, 60000);
       } catch (err) {
         console.error("Error: ", err);
       }
@@ -183,13 +219,6 @@ const SearchResult = (props) => {
   }, [props.location.state.customSearch]);
 
   const sendForExecution = async (endpoint, inputData) => {
-    function handleError(status) {
-      setLoading(false);
-      setMyLeads([]);
-      console.error(`Got HTTP Error ${status}`);
-      alert("Error Searching For Leads");
-    }
-
     console.log(`endpoint: ${endpoint}, inputData: ${inputData}`);
     console.log(inputData);
 
@@ -284,29 +313,13 @@ const SearchResult = (props) => {
           await saveSearchedRecord(json.data, "texAu");
         }
 
-        function handleUnAuthorized(response = null) {
-          console.log("User is UnAuthorized");
-          handleError();
-          alert("Please Logout and LogIn Again");
-        }
-
-        function handleCookieError() {
-          // got cookie error - no need to check again, results will not change
-          console.log("Response cookie error", response.statusText);
-          handleError();
-        }
-
-        function handleNotFound() {
-          console.log("Not Found Yet, Waiting...");
-        }
-
         switch (response.status) {
           case 200:
             return handleSuccess(response);
           case 401:
             return handleUnAuthorized(response);
           case 403:
-            return handleCookieError();
+            return handleCookieError(response);
           case 404:
             return handleNotFound();
           default:
@@ -370,7 +383,7 @@ const SearchResult = (props) => {
         });
 
         const result = response.json();
-
+        newEvent.emit("updateCredit", true);
         console.log("response from saveResult>>>", result, result.search_id);
       } catch (e) {
         console.error("Exception>>", e);
@@ -445,6 +458,9 @@ const SearchResult = (props) => {
     setShow(new Array(myLeads.length).fill().map((item) => false));
   }, [currentLeads]);
 
+  useEffect(() => {
+    console.log("set>>>", selectedLeadHashKey);
+  }, [selectedLeadHashKey]);
   const clickSelect = (e) => {
     e.preventDefault();
     // if (!selected) setSelected(true);
@@ -504,11 +520,13 @@ const SearchResult = (props) => {
         body: JSON.stringify(requestForSaveSearch),
       });
 
-      const result = response.json();
-      result.then((value) => {
-        console.log("value >>>>> ", value);
-        if (value) setSearchId(value.search_id);
-      });
+      const result = await response.json();
+      console.log("result >>>>>>>>>>>>>>>>>", result);
+      setSearchId(result.search_id);
+      // result.then((value) => {
+      //   console.log("value >>>>> ", value);
+      //   if (value)
+      // });
       console.log("response from saveResult>>>", result, result.search_id);
     } catch (e) {
       console.error("Exception>>", e);
@@ -559,6 +577,7 @@ const SearchResult = (props) => {
         if (response.status === 200) {
           json_res = await response.json();
         }
+        console.log("json_res>>>>>", json_res);
         let phones = [];
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
@@ -592,7 +611,8 @@ const SearchResult = (props) => {
               );
 
               const result = response.json();
-
+              console.log("Emittingn event", newEvent);
+              newEvent.emit("updateCredit", true);
               console.log("response from saveResult>>>", result);
             } catch (e) {
               console.error("Exception>>", e);
@@ -636,15 +656,21 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
-
-  const handleLeadSelectionChange = (e) => {
+  let tempJson = {};
+  const handleLeadSelectionChange = async (e) => {
     const { id, checked } = e.target;
-    setSelectedLeads([...selectedLeads, id]);
+    let hash_key = null;
+     setSelectedLeads([...selectedLeads, id]);
+    hash_key = await digestMessage(id);
+
+    tempJson[id] = hash_key;
+    setSelectedLeadHashKey([...selectedLeadHashKey, tempJson]);
+    // setSelectedLeadHashKey(...selectedLeadHashKey, await digestMessage(id));
     if (!checked) {
       setSelectedLeads(selectedLeads.filter((item) => item !== id));
     }
-  };
-
+     };
+  console.log("seleched hash key>>>>", selectedLeadHashKey);
   const handleLeadSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
     setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
@@ -663,8 +689,21 @@ const SearchResult = (props) => {
       }
 
       try {
-        const inputData = { profile_urls: selectedLeads };
-        console.log(inputData);
+        let reqJson = {};
+
+        console.log(
+          ">>>>>>>>>>>",
+
+          ">>>> 625 ",
+          selectedLeadHashKey
+        );
+
+        const inputData = {
+          profile_urls: selectedLeads,
+          hash_key_list: selectedLeadHashKey,
+        };
+        console.log("reqJson input data 631 >>>", JSON.stringify(reqJson));
+        console.log("input data >>>", JSON.stringify(inputData));
 
         const response = await fetch(apiServer + "/bulk_upload/export/excel", {
           method: "POST",
@@ -698,6 +737,8 @@ const SearchResult = (props) => {
             return await handleSuccess(response);
           case 401:
             return handleUnAuthorized(response);
+          case 402:
+            return handleInsufficientBalance(response);
           default:
             return handleError(response);
         }
@@ -719,7 +760,7 @@ const SearchResult = (props) => {
 
   return (
     <div>
-      <Header user={user} />
+      <Header user={user} newEvent={newEvent} />
 
       <div className="modal" id="bulkmodal">
         <button
@@ -835,7 +876,7 @@ const SearchResult = (props) => {
                   <div className="search-container mb-2">
                     {myLeads && myLeads.length === 0 ? (
                       <div>
-                        <h5>Records not found</h5>
+                        <h5>Records Not Found</h5>
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => data.name != "LinkedIn Member" ? (
@@ -957,7 +998,7 @@ const SearchResult = (props) => {
                         )
                       )
                     ) : (
-                      <h5>Record not found</h5>
+                      <h5>Record Not Found</h5>
                     )}
                   </div>
                 ) : (
