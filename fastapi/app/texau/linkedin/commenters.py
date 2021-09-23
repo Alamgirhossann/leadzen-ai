@@ -28,6 +28,7 @@ async def handle_find_post_commenters(
                 "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_POST_COMMENTERS_FUNC_ID,
                 "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_POST_COMMENTERS_SPICE_ID,
                 "inputs": {
+                    "maxCount": "100",
                     "postUrl": request.url,
                     "li_at": request.cookie,
                     "proxy": TEXAU_PROXY,
