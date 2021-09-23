@@ -67,7 +67,7 @@ def refresh_linkedin_cookie_manually():
     logger.debug("linkedin cookie...")
     data = fetch_linkedin_cookie()
     header = ["cookie"]
-    with open(f"./{API_CONFIG_LINKEDIN_CSV_FILE}", "w") as f:
+    with open(API_CONFIG_LINKEDIN_CSV_FILE, "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
         writer.writerow([data])
