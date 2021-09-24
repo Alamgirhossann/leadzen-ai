@@ -27,19 +27,27 @@ mkdir "bulk" "bulk/incoming" "bulk/outgoing"
 echo "> Done"
 echo "..."
 
-echo "> ================================"
-echo "> Copying shared migrations folder"
-echo "> ================================"
-mv alembic alembic."$TIMESTAMP"
-cp -r ./shared/alembic alembic
-sync
+echo "> ============================================"
+echo "> Checking if Alembic Migration already exists"
+echo "> ============================================"
+if [[ ! -d shared/alembic ]]; then
+    echo "> Creating new Alembic Migration"
+    alembic init shared/alembic
+    cp alembic.env.py shared/alembic/env.py
+    
+    echo ">> Forcing sync to shared folder"
+    sync
+else;
+    echo ">> Alembic Migration already exists"
+fi
 echo "> Done"
-
 echo "..."
 
 echo "> ==================="
 echo "> Migrating Databases"
 echo "> ==================="
+TIMESTAMP=$(date +%s)
+
 while true; 
 do
     echo "> Starting migrations"
@@ -49,19 +57,6 @@ do
     if [[ "$?" == "0" ]];
     then
         echo ">> Upgrade succeeded"
-
-        echo "..."
-        
-        echo ">> Moving existing migrations to a timestamped folder"        
-        mv ./shared/alembic ./shared/alembic."$TIMESTAMP"
-        echo ">> Done"
-
-        echo "..."
-        
-        echo ">> Copying current migrations to shared for use in later upgrades"
-        cp -rf alembic ./shared/
-        echo ">> Done"
-        
         echo "..."
         
         echo ">> Forcing sync to shared folder"
@@ -76,18 +71,6 @@ do
         
         echo "..."
     
-        echo "> re-copying shared migrations folder"
-        cp -rf ./shared/alembic alembic
-        echo ">> Done"
-
-        echo "..."
-
-        echo ">> Forcing sync from shared folder"
-        sync
-        echo ">> Done"
-
-        echo "..."
-
         echo "> Retrying migration again"
 
         echo "..."
