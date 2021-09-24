@@ -15,6 +15,7 @@ profile_credit_history = sqlalchemy.Table(
     sqlalchemy.Column("phone_number", sqlalchemy.String),
     sqlalchemy.Column("search_index", sqlalchemy.Integer),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+    sqlalchemy.Column("search_index_2", sqlalchemy.Integer),
 )
 
 email_credit_history = sqlalchemy.Table(
@@ -60,5 +61,7 @@ profile_search = sqlalchemy.Table(
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
-engine = sqlalchemy.create_engine(API_CONFIG_DATABASE_URL)
+engine = sqlalchemy.create_engine(
+    API_CONFIG_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 metadata.create_all(engine)

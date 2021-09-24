@@ -23,10 +23,8 @@ COPY --chown=appuser:appuser  app app
 COPY --chown=appuser:appuser  alembic.env.py ./
 COPY --chown=appuser:appuser  alembic.ini ./
 COPY --chown=appuser:appuser  boot.sh ./
-COPY --chown=appuser:appuser  wait_for_it.sh ./
 COPY --chown=appuser:appuser  Excel Excel
 RUN chmod +x boot.sh
-RUN chmod +x wait_for_it.sh
 EXPOSE 5000
 
 ENTRYPOINT ["./boot.sh"]

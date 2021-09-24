@@ -30,14 +30,15 @@ echo "..."
 echo "> ============================================"
 echo "> Checking if Alembic Migration already exists"
 echo "> ============================================"
-if [[ ! -d shared/alembic ]]; then
+if [[ ! -d shared/alembic ]]; 
+then
     echo "> Creating new Alembic Migration"
     alembic init shared/alembic
     cp alembic.env.py shared/alembic/env.py
     
     echo ">> Forcing sync to shared folder"
     sync
-else;
+else
     echo ">> Alembic Migration already exists"
 fi
 echo "> Done"
