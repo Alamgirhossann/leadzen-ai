@@ -28,6 +28,7 @@ async def handle_find_post_likers(
                 "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_POST_LIKERS_FUNC_ID,
                 "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_POST_LIKERS_SPICE_ID,
                 "inputs": {
+                    "maxCount":"100",
                     "postUrl": request.url,
                     "li_at": request.cookie,
                     "proxy": TEXAU_PROXY,
@@ -44,7 +45,6 @@ async def handle_find_post_likers(
             )
 
         logger.debug(f"{execution_id=}")
-
         return TexAuExecutionResponse(execution_id=execution_id)
     except HTTPException as e:
         logger.critical(str(e))
