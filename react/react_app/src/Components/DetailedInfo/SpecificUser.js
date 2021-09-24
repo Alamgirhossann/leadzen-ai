@@ -24,7 +24,7 @@ const SpecificUser = (props) => {
                     Accept: "application/json",
                     Authorization: `Bearer ${Cookies.get("user_token")}`,
                 },
-                body: JSON.stringify({"phone": phone}),
+                body: JSON.stringify({"phones": phone}),
             })
             async function handleSuccess(response) {
                 const json = await response.json();
@@ -49,7 +49,7 @@ const SpecificUser = (props) => {
 
 
     useEffect(async () => {
-        if (props.details !== null) {
+        if (props.details.phones) {
             console.log("props specific>>>>>", props.details.phones);
             props.details.phones.map((number) => (
                 tempList.push(number.number)

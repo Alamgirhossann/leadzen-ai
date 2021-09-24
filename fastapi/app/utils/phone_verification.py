@@ -17,12 +17,12 @@ router = APIRouter(prefix="/phone", tags=["Phone Verification"])
 
 
 class PhoneRequest(BaseModel):
-    phone: List[str] = []
+    phones: List[str]=[]
 
 @router.post("/phone_verification")
 async def phone_verification(request:PhoneRequest,user=Depends(fastapi_users.get_current_active_user)):
     logger.info(f"{user=}")
-    if request.phone:
+    if request.phones:
         async def async_call(phone_number):
             url = API_CONFIG_GET_PHONE_VERIFICATION_URL
             payload = {
@@ -47,7 +47,7 @@ async def phone_verification(request:PhoneRequest,user=Depends(fastapi_users.get
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail=str("Phone Verification: Data not found"),
                     )
-        coros = [async_call(_i) for _i in request.phone]
+        coros = [async_call(_i) for _i in request.phones]
         results = await asyncio.gather(*coros)
         return results
     else:
