@@ -27,6 +27,7 @@ email_credit_history = sqlalchemy.Table(
     sqlalchemy.Column("email_address", sqlalchemy.String),
     sqlalchemy.Column("search_index", sqlalchemy.Integer),
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
+    sqlalchemy.Column("search_index_2", sqlalchemy.Integer),
 )
 
 search_history = sqlalchemy.Table(

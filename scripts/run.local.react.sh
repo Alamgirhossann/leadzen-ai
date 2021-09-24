@@ -83,8 +83,19 @@ fi
 echo "> Done"
 echo "..."
 
+echo "> --------------------------------"
+echo "> Stopping Other Docker Containers"
+echo "> --------------------------------"
+sudo docker rm -f person_fastapi_external person_fastapi person_react selenium redis pgadmin postgres
+if [ $? != 0 ]; then
+    echo ">>> Unable to Stop Docker Containers"
+    exit 1
+fi
+echo "> Done"
+echo "..."
 
-echo "> ---------------------------"
-echo "> Running Built Docker Images"
-echo "> ---------------------------"
+
+echo "> -------------------------"
+echo "> Running Docker Containers"
+echo "> -------------------------"
 sudo docker-compose -f docker-compose.dev.yml up --remove-orphans
