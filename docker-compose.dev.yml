@@ -5,7 +5,7 @@ services:
     image: "selenium/standalone-chrome:latest"
     container_name: "selenium"
     ports:
-      - "4445:4444"
+      - "14007:4444"
     volumes:
       - /dev/shm:/dev/shm
 
@@ -13,30 +13,57 @@ services:
     image: "redis:alpine"
     container_name: "redis"
     ports:
-      - "6379:6379"
+      - "14006:6379"
 
   person_fastapi:
     image: "analystt/person_fastapi:latest"
     container_name: "person_fastapi"
     ports:
-      - 12001:5000
+      - "14001:5000"
     volumes:
       - ./shared:/home/appuser/shared
     environment:
       - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
       - API_CONFIG_PORT_NUM_INTERNAL=5000
+      - API_CONFIG_DATABASE_HOST=postgres
+      - API_CONFIG_DATABASE_USER=postgres
+      - API_CONFIG_DATABASE_PASSWORD=docker
+      - API_CONFIG_DATABASE_DB=people_db
+      - API_CONFIG_DATABASE_PORT=5432
       - API_CONFIG_SELF_BASE_URL=http://localhost:5000
-      - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:12002
-      - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12002/login
-      - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12002/signUp
+      - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:14005
+      - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:14005/login
+      - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:14005/signUp
     depends_on:
       - selenium
+  postgres:
+    image: "postgres:alpine"
+    container_name: "postgres"
+    ports:
+      - "14002:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=docker
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
+  pgadmin:
+    image: "dpage/pgadmin4"
+    container_name: "pgadmin"
+    ports:
+      - "14003:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=raveen.b@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
   person_fastapi_external:
     image: "analystt/person_fastapi_external:latest"
     container_name: "person_fastapi_external"
     ports:
-      - 12003:5000
+      - 14004:5000
     environment:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
@@ -50,6 +77,12 @@ services:
     image: "analystt/person_react:latest"
     container_name: "person_react"
     ports:
-      - 12002:80
+      - 14005:80
     depends_on:
       - person_fastapi
+
+volumes:
+  postgres-data:
+    driver: local
+  pgadmin-data:
+    driver: local

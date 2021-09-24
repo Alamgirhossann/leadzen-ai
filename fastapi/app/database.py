@@ -60,7 +60,5 @@ profile_search = sqlalchemy.Table(
     sqlalchemy.Column("created_on", sqlalchemy.DateTime),
 )
 
-engine = sqlalchemy.create_engine(
-    API_CONFIG_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = sqlalchemy.create_engine(API_CONFIG_DATABASE_URL)
 metadata.create_all(engine)
