@@ -4,12 +4,15 @@ import Cookies from "js-cookie";
 import Moment from "react-moment";
 import Header from "../SharedComponent/Header";
 import SpecificUser from "../DetailedInfo/SpecificUser";
-
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SavedList = (props) => {
   const [serachText, setSearchText] = useState({ text: null });
   const [userInfo, setUserInfo] = useState([]);
+  const [description, setDescription] = useState("");
+  const[boolupdateName,setBoolUpdateName]=useState({index:-1})
+  const[boolupdatedescription,setBoolUpdateDescription]=useState({index:-1})
+  const [updateName, setUpdateName] = useState("");
   const [specificUserDetails, setSpecificUserDetails] = useState({
     index: "",
     details: "",
@@ -22,15 +25,18 @@ const SavedList = (props) => {
     console.log("User is UnAuthorized");
     alert("Please Logout and LogIn Again");
   }
+  function handleNotFound(response = null) {
+    console.log("No data Found");
+    alert("No data Found")
+  }
 
   function handleError(response = null) {
     console.error(`Error, Status Code: ${response?.status}`);
     alert("Please Try after sometime");
   }
-
   const fetchData = async () => {
     try {
-      const response = await fetch(apiServer + "/save_list/all", {
+      const response = await fetch(apiServer + "/saved_list/all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -38,11 +44,17 @@ const SavedList = (props) => {
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
       });
-
       async function handleSuccess(response) {
         const result = await response.json();
         console.log("result in save List", result);
         setUserInfo(result);
+        setBoolUpdateName({index:-1})
+        setBoolUpdateDescription({index:-1})
+        setDescription("")
+        setUpdateName("")
+      }
+      function handleNotFound(response = null) {
+        console.log("No data Found");
       }
 
       switch (response.status) {
@@ -50,6 +62,8 @@ const SavedList = (props) => {
           return await handleSuccess(response);
         case 401:
           return handleUnAuthorized(response);
+        case 404:
+            return handleNotFound(response);
         default:
           return handleError(response);
       }
@@ -57,6 +71,7 @@ const SavedList = (props) => {
       console.error(e);
     }
   };
+
   console.info("user in state", userInfo);
   const handleSearch = (e) => {
     setSearchText({ ...serachText, text: e.target.value });
@@ -84,7 +99,7 @@ const SavedList = (props) => {
 
   async function handleDelete(id) {
     try {
-      const response = await fetch(apiServer + `/save_list/id/${id}`, {
+      const response = await fetch(apiServer + `/saved_list/id/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -92,13 +107,9 @@ const SavedList = (props) => {
           Authorization: `Bearer ${Cookies.get("user_token")}`,
         },
       });
-
-      async function handleSuccess(response) {
-        const result = await response.json();
-        console.log("record deleted", result);
-        alert("record deleted Successfully");
+      function handleSuccess(response) {
+        fetchData()
       }
-
       switch (response.status) {
         case 200:
           return await handleSuccess(response);
@@ -112,6 +123,86 @@ const SavedList = (props) => {
     }
   }
 
+  async function handleIndexDelete(id,index) {
+    try {
+      const response = await fetch(apiServer + `/saved_list/index/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify({list_index: index})
+      });
+      function handleSuccess(response) {
+        fetchData()
+      }
+      function handleBadRequest(response)
+      {
+        console.log("badRequest")
+        alert("Bad request please refresh the page.")
+      }
+      switch (response.status) {
+        case 200:
+          return await handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        case 400:
+          return handleBadRequest(response);
+        default:
+          return handleError(response);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+   const UpdateData = async (id) => {
+    try {
+      const response = await fetch(apiServer + `/saved_list/id/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${Cookies.get("user_token")}`,
+        },
+        body: JSON.stringify({list_name: updateName,list_description: description})
+      });
+      function handleSuccess(response) {
+        fetchData()
+      }
+      function handleNotFound(response = null) {
+        console.log("No data Found");
+        alert("please refresh the pages")
+      }
+
+      switch (response.status) {
+        case 200:
+          return await handleSuccess(response);
+        case 401:
+          return handleUnAuthorized(response);
+        case 404:
+            return handleNotFound(response);
+        default:
+          return handleError(response);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  let handleUpdate=(name,index,type)=>{
+    if(type==="name")
+    {
+      setUpdateName(name)
+      setBoolUpdateName({index: index});
+    }
+    if(type==="description")
+    {
+      setDescription(name)
+      setBoolUpdateDescription({index: index})
+    }
+
+  }
   const handleProfile = async (index, data) => {
     let reqJsonPipl = {
       email: "",
@@ -188,7 +279,6 @@ const SavedList = (props) => {
           );
         }
       }
-
       switch (response.status) {
         case 200:
           return await handleSuccess(response);
@@ -230,7 +320,7 @@ const SavedList = (props) => {
                 type="text"
                 className="form-control"
                 placeholder="Search"
-                onChange={handleSearch}
+                // onChange={handleSearch}
               />
               <button
                 className="btn btn-danger"
@@ -242,14 +332,15 @@ const SavedList = (props) => {
             </div>
           </form>
         </div>
-        <div className="lead-accordion accordion" id="accordionExample2">
+        {userInfo?.map((alldata,index)=>(
+            <div key={alldata.id} className="lead-accordion accordion" id="accordionExample2">
           <div className="accordion-item mb-3">
             <h2 className="accordion-header">
               <button
                 className="accordion-button alignment"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#collapseOne"
+                data-bs-target={"#a"+index.toString()}
                 style={{
                   background: "white",
                   borderRadius: "15px",
@@ -257,25 +348,42 @@ const SavedList = (props) => {
                 }}
               >
                 <div className=" first-grid head-align">
-                  <span className="me-3 fw-bold">My Leads</span>
-                  {/* <button className="m-0">
+                  {boolupdateName.index==index?<input
+                    type="text"
+                    className="form-control"
+                    style={{borderRadius:"15px"}}
+                    placeholder="Add Description..."
+                    value={updateName}
+                    onChange={(e)=>setUpdateName(e.target.value)}
+                    onBlur={(e)=>UpdateData(alldata.id)}
+                  />:<span><span className="me-3 fw-bold">{alldata.list_name}</span>
+                  <button className="m-0" onClick={()=>handleUpdate(alldata.list_name,index,"name")}>
                     <img
                       className="m-0"
                       src="assets/images/edit (4).png"
                       alt=""
-                    />
-                  </button> */}
+                    /></button></span>}
+
                 </div>
                 <div className="second-grid">
-                  <input
+                  {boolupdatedescription.index==index?<input
                     type="text"
                     className="description"
                     placeholder="Add Description..."
-                  />
+                    value={description}
+                    onChange={(e)=>setDescription(e.target.value)}
+                    onBlur={(e)=>UpdateData(alldata.id)}
+                  />:<input
+                    type="text"
+                    className="description"
+                    placeholder="Add Description..."
+                    value={alldata.list_description}
+                    onClick={()=>handleUpdate(alldata.list_description,index,"description")}
+                  />}
                 </div>
                 <div className="third-grid">
                   <div className="d-flex justify-content-end">
-                    <button className="m-0">
+                    <button className="m-0" onClick={()=>handleDelete(alldata.id)}>
                       <img
                         className="m-0"
                         src="assets/images/Delete.png"
@@ -287,137 +395,126 @@ const SavedList = (props) => {
               </button>
             </h2>
             <div
-              id="collapseOne"
+              id={"a"+index.toString()}
               className="accordion-collapse collapse"
               data-bs-parent="#accordionExample2"
             >
               <div className="accordion-body">
-                {userInfo.length > 0 ? (
-                  userInfo.map((data) => (
-                    <div className="container-style mb-2">
-                      <div key={data.id} className="save-list-container">
-                        {data.save_list_results.category === "People" ? (
-                          <React.Fragment>
-                            <p className="save-profile text-danger">
-                              <img
-                                src={
-                                  data.save_list_results.profilePicture ||
-                                  "assets/images/author-image.png"
-                                }
-                                alt=""
-                              />
-                            </p>
-                            <p className="save-name">
-                              {data.save_list_results.name}
-                            </p>
-                            <div className="save-speaker">
-                              <div>
-                                <small className="d-block">
-                                  Works at {data.save_list_results.job}
-                                </small>
-                                {/*<small className="d-block">*/}
-                                {/*  Works at {data.comp}*/}
-                                {/*</small>*/}
-                              </div>
-                            </div>
-                            <div className="save-date">
-                              <div>
-                                <small className="d-block">Search Date</small>
-                                <small className="d-block">
-                                  <Moment format="DD/MM/YYYY">
-                                    {data.save_list_results.timestamp}
-                                  </Moment>
-                                </small>
-                              </div>
-                            </div>
+                {alldata.list_content?(
+                  alldata.list_content.map((data , index) => (
+                    <div key={index}  className="container-style mb-2">
+                      <div className="save-list-container">
+                        {data.category==="People" ? <React.Fragment>
+                        <p className="save-profile text-danger">
+                          <img
+                            src={
+                              data.profilePicture ||
+                              "assets/images/author-image.png"
+                            }
+                            alt=""
+                          />
+                        </p>
+                        <p className="save-name">
+                          {data.name}
+                        </p>
+                        <div className="save-speaker">
+                          <div>
+                            <small className="d-block">
+                              Works at {data.job}
+                            </small>
+                            {/*<small className="d-block">*/}
+                            {/*  Works at {data.comp}*/}
+                            {/*</small>*/}
+                          </div>
+                        </div>
+                        <div className="save-date">
+                          <div>
+                            <small className="d-block">Search Date</small>
+                            <small className="d-block">
+                              <Moment format="DD/MM/YYYY">
+                                {data.timestamp}
+                              </Moment>
+                            </small>
+                          </div>
+                        </div>
 
-                            <p className="save-view-btn">
-                              <a
-                                className="btn button"
-                                data-toggle="collapse"
-                                href={"#collapseExample_" + `${data.id}`}
-                                data-target={"#collapseExample_" + `${data.id}`}
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                                onClick={() => handleProfile(data.id, data)}
-                              >
-                                View Profile
-                              </a>
-                            </p>
-                            <a
-                              href="savedList"
-                              onClick={(e) => handleDelete(data.id)}
-                            >
-                              <p className="save-close-btn">
-                                <img
-                                  src="assets/images/close-user.png"
-                                  alt=""
-                                />
-                              </p>
-                            </a>
-                          </React.Fragment>
-                        ) : (
-                          <React.Fragment>
-                            <p className="save-profile text-danger">
-                              <img
-                                src={
-                                  data.save_list_results.logoUrl ||
-                                  "assets/images/author-image.png"
-                                }
-                                alt=""
-                              />
-                            </p>
-                            <p className="save-name">
-                              {data.save_list_results.name}
-                            </p>
-                            <div className="save-speaker">
-                              <div>
-                                <small className="d-block">
-                                  {data.save_list_results.description}
-                                </small>
-                                {/*<small className="d-block">*/}
-                                {/*  Works at {data.comp}*/}
-                                {/*</small>*/}
-                              </div>
-                            </div>
-                            <div className="save-date">
-                              <div>
-                                <small className="d-block">Search Date</small>
-                                <small className="d-block">
-                                  <Moment format="DD/MM/YYYY">
-                                    {data.save_list_results.timestamp}
-                                  </Moment>
-                                </small>
-                              </div>
-                            </div>
+                        <p className="save-view-btn">
+                          <a
+                            className="btn button"
+                            data-toggle="collapse"
+                            href={"#collapseExample_" + `${data.id}`}
+                            data-target={"#collapseExample_" + `${data.id}`}
+                            role="button"
+                            aria-expanded="false"
+                            aria-controls="collapseExample"
+                            onClick={() => handleProfile(data.id, data)}
+                          >
+                            View Profile
+                          </a>
+                        </p>
+                        <a
+                          onClick={(e) => handleIndexDelete(alldata.id,index)}
+                        >
+                          <p className="save-close-btn">
+                            <img src="assets/images/close-user.png" alt="" />
+                          </p>
+                        </a>
+                        </React.Fragment>: <React.Fragment>
+                        <p className="save-profile text-danger">
+                          <img
+                            src={
+                              data.logoUrl ||
+                              "assets/images/author-image.png"
+                            }
+                            alt=""
+                          />
+                        </p>
+                        <p className="save-name">
+                          {data.name}
+                        </p>
+                        <div className="save-speaker">
+                          <div>
+                            <small className="d-block">
+                              {data.description}
+                            </small>
+                            {/*<small className="d-block">*/}
+                            {/*  Works at {data.comp}*/}
+                            {/*</small>*/}
+                          </div>
+                        </div>
+                        <div className="save-date">
+                          <div>
+                            <small className="d-block">Search Date</small>
+                            <small className="d-block">
+                              <Moment format="DD/MM/YYYY">
+                                {data.timestamp}
+                              </Moment>
+                            </small>
+                          </div>
+                        </div>
 
-                            <p className="save-view-btn">
-                              <a
-                                className="btn button"
-                                data-toggle="collapse"
-                                href={"#collapseExample_" + `${data.id}`}
-                                data-target={"#collapseExample_" + `${data.id}`}
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                              >
-                                View Details
-                              </a>
-                            </p>
-                            <a
-                              href="savedList"
-                              onClick={(e) => handleDelete(data.id)}
-                            >
-                              <p className="save-close-btn">
-                                <img
-                                  src="assets/images/close-user.png"
-                                  alt=""
-                                />
-                              </p>
-                            </a>
-                          </React.Fragment>
-                        )}
+                        <p className="save-view-btn">
+                          <a
+                            className="btn button"
+                            data-toggle="collapse"
+                            href={"#collapseExample_" + `${data.id}`}
+                            data-target={"#collapseExample_" + `${data.id}`}
+                            role="button"
+                            aria-expanded="false"
+                            aria-controls="collapseExample"
+                          >
+                            View Details
+                          </a>
+                        </p>
+                        <a
+                          href="savedList"
+                          // onClick={(e) => handleDelete(data.id)}
+                        >
+                          <p className="save-close-btn">
+                            <img src="assets/images/close-user.png" alt="" />
+                          </p>
+                        </a>
+                        </React.Fragment>}
                       </div>
                       <div
                         style={{
@@ -450,6 +547,8 @@ const SavedList = (props) => {
             </div>
           </div>
         </div>
+        ))}
+
       </div>
     </div>
   );
