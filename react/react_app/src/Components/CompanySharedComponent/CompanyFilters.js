@@ -183,7 +183,7 @@ const CompanyFilters = (props) => {
           >
             <div className="accordion-body">
               <input
-                className="customize-search"
+                className="customize-search w-100"
                 onChange={handleName}
                 value={customSearch.name}
                 type="text"
@@ -212,7 +212,7 @@ const CompanyFilters = (props) => {
           >
             <div className="accordion-body">
               <input
-                className="customize-search"
+                className="customize-search w-100"
                 onChange={handleLocation}
                 type="text"
                 placeholder="Search Location"
@@ -241,7 +241,7 @@ const CompanyFilters = (props) => {
           >
             <div className="accordion-body">
               <input
-                className="customize-search"
+                className="customize-search w-100"
                 onChange={handleIndustry}
                 type="text"
                 placeholder="Search Industry"
@@ -268,7 +268,7 @@ const CompanyFilters = (props) => {
           >
             <div className="accordion-body">
               <input
-                className="customize-search"
+                className="customize-search w-100"
                 onChange={handleEmployeeCount}
                 type="text"
                 placeholder="Search Job title"

@@ -16,6 +16,8 @@ async def add_all_credits_to_users(request: UserCreditRequest, user=Depends(fast
         update_query = users.update().values(
             profile_credit=users.c.profile_credit + request.profile_credit,
             email_credit=users.c.email_credit + request.email_credit,
+            total_profile_credits=users.c.total_profile_credits + request.profile_credit,
+            total_email_credits=users.c.total_email_credits + request.email_credit,
         ).where(users.c.email == request.email)
         logger.debug(f"{update_query=}")
 
@@ -60,14 +62,14 @@ async def deduct_credit(credit_type, user):
                     raise HTTPException(
                         status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient credits"
                     )
-                values = {"email_credit": user.email_credit - 1}
+                values = {"email_credit": users.c.email_credit - 1}
             if credit_type == 'PROFILE':
                 if not user.profile_credit >= 1:
                     logger.warning("Insufficient credits")
                     raise HTTPException(
                         status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient credits"
                     )
-                values = {"profile_credit": user.profile_credit - 1 }
+                values = {"profile_credit": users.c.profile_credit - 1 }
         logger.debug(f"{values=}")
         update_query = users.update().values(values).where(users.c.id == user.id)
         logger.debug(f"{update_query=}")

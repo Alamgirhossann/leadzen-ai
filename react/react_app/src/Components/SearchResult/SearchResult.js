@@ -15,6 +15,7 @@ import Lottie from "react-lottie";
 import Loader from "../../Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { digestMessage } from "./SearchResultTexAu";
+import { EventEmitter } from "events";
 
 const SearchResult = (props) => {
   useEffect(() => {
@@ -49,6 +50,7 @@ const SearchResult = (props) => {
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
   let today = new Date();
+  const newEvent = new EventEmitter();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
   let dd = String(today.getDate()).padStart(2, "0");
   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -340,7 +342,7 @@ const SearchResult = (props) => {
               );
 
               const result = response.json();
-
+              newEvent.emit("updateCredit", true);
               console.log("response from saveResult>>>", result);
             } catch (e) {
               console.error("Exception>>", e);
@@ -373,11 +375,12 @@ const SearchResult = (props) => {
     } catch (err) {
       console.error("Error: ", err);
     }
+    // window.location.reload(false);
   };
 
   return (
     <div>
-      <Header user={user} />
+      <Header user={user} newEvent={newEvent} />
       <div className="modal" id="UpgradeModal">
         <button
           type="button"
@@ -562,12 +565,12 @@ const SearchResult = (props) => {
                   <div className="search-container mb-2">
                     {myLeads.length === 0 ? (
                       <div>
-                        <h5>Record not found</h5>
+                        <h5>Record Not Found</h5>
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
                         <div>
-                          <div className="user-container py-2" key={index}>
+                          <div className="search-user-container py-2" key={index}>
                             <input
                               className="box ms-3 me-3"
                               type="checkbox"
@@ -697,7 +700,7 @@ const SearchResult = (props) => {
                         </div>
                       ))
                     ) : (
-                      <h5>Record not found</h5>
+                      <h5>Record Not Found</h5>
                     )}
                   </div>
                 ) : (

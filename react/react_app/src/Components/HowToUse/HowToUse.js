@@ -52,7 +52,7 @@ const HowToUse = () => {
                   generation platform before you make it your go to platform
                 </p>
                 <p className="pt-5">
-                  <a href="#" className="text-danger">
+                  <a href="/signUp" className="text-danger">
                     Back
                   </a>
                 </p>

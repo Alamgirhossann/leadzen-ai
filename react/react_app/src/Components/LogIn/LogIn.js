@@ -301,7 +301,7 @@ const LogIn = (props) => {
                   <div className="col-md-6 order-md-1">
                     <div className="sign-up-form">
                       <div className="text-center">
-                        <h3 className="fw-bolder">Welcome to Analystt.ai</h3>
+                        <h3 className="fw-bolder">Welcome to LeadZen.ai</h3>
                         <h5 className="text-danger mb-4">
                           Most Intelligent Lead Generation Platform
                         </h5>
@@ -360,37 +360,6 @@ const LogIn = (props) => {
                         <button type="submit" className="btn text-white w-100">
                           Sign In
                         </button>
-                        <div className="text-center mt-2">
-                          <span>Sign In using: </span>
-                        </div>
-                        <div className="signup-login-with mt-3">
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <a
-                                href="#"
-                                className="btn btn-light p-2 d-flex justify-content-center align-items-center mb-3"
-                              >
-                                <img
-                                  src="assets/images/Google.png"
-                                  alt="title"
-                                />{" "}
-                                Google
-                              </a>
-                            </div>
-                            <div className="col-sm-6">
-                              <a
-                                href="#"
-                                className="btn btn-light p-2 d-flex justify-content-center align-items-center mb-3"
-                              >
-                                <img
-                                  src="assets/images/LinkedIn.png"
-                                  alt="title"
-                                />{" "}
-                                LinkedIn
-                              </a>
-                            </div>
-                          </div>
-                        </div>
                         <div className="text-center">
                           <p className="text-secondary m-0">
                             Don't have an account?{" "}
