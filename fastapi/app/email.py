@@ -63,27 +63,11 @@ async def send_account_verification_email(
     request: UserEmailVerificationEmailRequest, background_tasks: BackgroundTasks
 ):
     logger.debug(f"{request=}")
-
-    email_text = (
-        # f"Dear {request.name}, \n"
-        # f"Please click the link below to verify your email: \n"
-        # f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
-        # f"--- \n"
-        # f"Thanks \n"
-        # f"LeadZen Team"
-
+    link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
+    await sendinblue_email_verification(
+        first_name=request.name, email_to=request.email, verification_link=link
     )
-    link=f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
-    sendinblue_email_verification(first_name=request.name,email_to=request.email,verification_link=link)
-    # message = MessageSchema(
-    #     subject="LeadZen Email Verification",
-    #     recipients=[request.email],
-    #     body=email_text,
-    # )
-
-    # fast_mail = FastMail(conf)
-    # background_tasks.add_task(fast_mail.send_message, message)
-    # logger.success(f"Verification Email Sent, {request.email=}")
+    logger.success(f"Verification Email Sent, {request.email=}")
     return True
 
 
