@@ -187,7 +187,7 @@ const CompanyFilters = (props) => {
                 onChange={handleName}
                 value={customSearch.name}
                 type="text"
-                placeholder="Search Location"
+                placeholder="Search Name"
               />
             </div>
           </div>
@@ -271,7 +271,7 @@ const CompanyFilters = (props) => {
                 className="customize-search"
                 onChange={handleEmployeeCount}
                 type="text"
-                placeholder="Search Job title"
+                placeholder="Search Employee Count"
               />
             </div>
           </div>
