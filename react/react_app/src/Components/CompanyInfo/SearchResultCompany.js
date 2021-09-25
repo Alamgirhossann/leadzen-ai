@@ -12,7 +12,8 @@ import { v4 as uuidv4 } from "uuid";
 import Pagination from "../SharedComponent/Pagination";
 import SavedListButton from "../SearchResult/SavedListButton";
 import SpecificCompany from "./SpecificCompany";
-
+import Lottie from "react-lottie";
+import Loader from "../../Loader";
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
     name: null,
@@ -124,11 +125,12 @@ const SearchResultCompany = (props) => {
         );
 
         let json_res = await response.json();
+        setTimeout(() => {
         setSearchId(json_res.search_id);
         console.log("Data>>>>>>>>>>>loading..", json_res, loading);
         setLoading(false);
-
         setMyLeads(json_res.search_results);
+        }, 60000);
       } catch (err) {
         console.error("Error: ", err);
       }
@@ -621,7 +623,7 @@ const SearchResultCompany = (props) => {
                     <div className="search-container mb-2">
                       {myLeads && myLeads.length === 0 ? (
                         <div>
-                          <h5>Records not found</h5>
+                          <h5>Records Not Found</h5>
                         </div>
                       ) : currentLeads ? (
                         currentLeads.map((data, index) => (
@@ -713,19 +715,14 @@ const SearchResultCompany = (props) => {
                                               data={companyInfo}
                                             />
                                           ) : (
-                                            <h5>Record not found</h5>
+                                            <h5>Record Not Found</h5>
                                           )
                                         ) : (
-                                          <div className="d-flex justify-content-center">
-                                            <div
-                                              className="spinner-border"
-                                              role="status"
-                                            >
-                                              <span className="sr-only">
-                                                Loading...
-                                              </span>
-                                            </div>
-                                          </div>
+                                           <div className="d-flex justify-content-center">
+                                             <div role="status" style={{ height: "400px" }}>
+                                                 <Lottie options={Loader} />
+                                             </div>
+                                           </div>
                                         )}
                                       </span>
                                     ) : null}
@@ -736,15 +733,15 @@ const SearchResultCompany = (props) => {
                           </div>
                         ))
                       ) : (
-                        <h5>Record not found</h5>
+                        <h5>Record Not Found</h5>
                       )}
                     </div>
                   ) : (
-                    <div className="d-flex justify-content-center">
-                      <div className="spinner-border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </div>
-                    </div>
+                   <div className="d-flex justify-content-center">
+                     <div role="status" style={{ height: "400px" }}>
+                       <Lottie options={Loader} />
+                     </div>
+                   </div>
                   )}
                 </div>
                 <div className="d-flex justify-content-center">

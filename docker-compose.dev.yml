@@ -1,55 +1,35 @@
-version: "3.3"
+version: '3.3'
 
 services:
-  selenium:
-    image: "selenium/standalone-chrome:latest"
-    container_name: "selenium"
-    ports:
-      - "14007:4444"
-    volumes:
-      - /dev/shm:/dev/shm
+    selenium:
+        image: "selenium/standalone-chrome:latest"
+        container_name: "selenium"
+        ports:
+            - "4445:4444"
+        volumes:
+            - /dev/shm:/dev/shm
 
-  redis:
-    image: "redis:alpine"
-    container_name: "redis"
-    ports:
-      - "14006:6379"
-
-  person_fastapi:
-    image: "analystt/person_fastapi:latest"
-    container_name: "person_fastapi"
-    ports:
-      - "14001:5000"
-    volumes:
-      - ./shared:/home/appuser/shared
-    environment:
-      - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
-      - API_CONFIG_PORT_NUM_INTERNAL=5000
-      - API_CONFIG_SELF_BASE_URL=http://localhost:5000
-      - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:14005
-      - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:14005/login
-      - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:14005/signUp
-    depends_on:
-      - selenium
-
-  person_fastapi_external:
-    image: "analystt/person_fastapi_external:latest"
-    container_name: "person_fastapi_external"
-    ports:
-      - 14004:5000
-    environment:
-      - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
-      - API_CONFIG_REDIS_URL=redis://redis
-    volumes:
-      - ./shared:/home/appuser/shared
-    depends_on:
-      - person_fastapi
-      - redis
-
-  person_react:
-    image: "analystt/person_react:latest"
-    container_name: "person_react"
-    ports:
-      - 14005:80
-    depends_on:
-      - person_fastapi
+    person_fastapi:
+        image: "analystt/person_fastapi:latest"
+        container_name: "person_fastapi"
+        volumes:
+            - ./shared:/home/appuser/shared
+        ports:
+            - 12001:5000
+        environment:
+            - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
+            - API_CONFIG_PORT_NUM_INTERNAL=5000
+            - API_CONFIG_SELF_BASE_URL=http://localhost:5000
+            - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:12002
+            - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12002/login
+            - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12002/signUp
+        depends_on: 
+            - selenium
+    
+    person_react:
+        image: "analystt/person_react:latest"
+        container_name: "person_react"
+        ports: 
+            - 12002:80
+        depends_on:
+            - person_fastapi

@@ -1,6 +1,6 @@
 import tempfile
 import uuid
-from typing import List
+from typing import List, Optional, Dict
 
 import pandas as pd
 from fastapi import (
@@ -28,7 +28,7 @@ from app.config import (
     API_CONFIG_BULK_MAX_ROWS_IN_CSV,
     API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
 )
-from app.users import fastapi_users
+from app.users import fastapi_users, get_user
 
 router = APIRouter(prefix="/bulk_upload", tags=["Bulk Search"])
 
@@ -133,6 +133,7 @@ async def send_status_stream(filename: str, request: Request):
 
 class BulkExportToExcelRequest(BaseModel):
     profile_urls: List[str]
+    hash_key_list: Optional[List[Dict]]
 
 
 @router.post("/export/excel", response_model=BulkUploadResponse)
@@ -142,15 +143,24 @@ async def export_excel_file(
         background_tasks: BackgroundTasks,
         user=Depends(fastapi_users.get_current_active_user),
 ):
+    user_response = await get_user(user)
+    logger.debug(f"{app_request=}>>>{len(app_request.profile_urls)=}")
+    logger.debug(f"{user_response=}, {type(user_response)}")
+    if user_response and user_response.profile_credit < len(app_request.profile_urls):
+        logger.warning("Insufficient Credits")
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
+        )
     outgoing_filename = f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.xlsx"
 
     background_tasks.add_task(
         handle_bulk_profile_urls,
         request=BulkProfileUrlRequest(
             urls=app_request.profile_urls,
+            hash_key_list=app_request.hash_key_list,
             outgoing_filename=outgoing_filename,
             user=user,
-        ),
+        )
     )
 
     return BulkUploadResponse(input_filename="-", output_filename=outgoing_filename)
