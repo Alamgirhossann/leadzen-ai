@@ -81,7 +81,7 @@ const ExtractContacts = (data) => {
 
   return (
     <div className="user-widget-box p-4 my-3 text-center">
-      <h5 className="text-danger">Now Extract contacts</h5>
+      <h5 className="text-danger">Now Fetch Contacts</h5>
       <p className="text-dark mb-3">
         {/*of Followers, Likers, Commentors & Group Members & Job Seekers From*/}
         of Likers and Commenters From Supported Social Media Posts
