@@ -575,8 +575,8 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify({"url":data.url}),
         }),]);
-         const proxyCurlJson = await proxyCurlResponse.json();
-        console.log("proxyCurlJson",proxyCurlJson)
+
+
 
         if (response.status === 402) {
           alert(
@@ -587,9 +587,12 @@ const SearchResult = (props) => {
           console.log("Not able to get Details");
         }
         let json_res = null;
+        let proxyCurlJson = null;
         if (response.status || proxyCurlResponse.status === 200) {
           json_res = await response.json();
+          proxyCurlJson = await proxyCurlResponse.json();
         }
+        console.log("proxyCurlJson",proxyCurlJson)
         console.log("json_res_ls>>>>>", json_res);
         let phones = [];
         if (json_res) {
@@ -632,7 +635,7 @@ const SearchResult = (props) => {
             }
             setSpecificUserDetails((prev) => [
               ...prev,
-              { index: `${currentPage}${index}`, details: json_res[0],proxyCurl:proxyCurlJson },
+              { index: `${currentPage}${index}`, details: json_res[0],proxyCurl:proxyCurlJson !== null ? proxyCurlJson:null },
             ]);
           }
           // else {
