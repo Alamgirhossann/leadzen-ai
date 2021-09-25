@@ -1,9 +1,12 @@
 from logging.config import fileConfig
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+
 from app.config import API_CONFIG_DATABASE_URL
 from app.database import metadata
 from app.users import Base
+
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -19,7 +22,6 @@ fileConfig(config.config_file_name)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = [metadata, Base.metadata]
-
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -44,8 +46,6 @@ def run_migrations_offline():
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
-        compare_type=True,
-        compare_server_default=True,
         dialect_opts={"paramstyle": "named"},
     )
 
