@@ -15,30 +15,6 @@ services:
     ports:
       - "14006:6379"
 
-  postgres:
-    image: "postgres:alpine"
-    container_name: "postgres"
-    ports:
-      - "14002:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - ./shared/database/postgres:/var/lib/postgresql/data
-
-  pgadmin:
-    image: "dpage/pgadmin4"
-    container_name: "pgadmin"
-    ports:
-      - "14003:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=postgres@leadzen.ai
-      - PGADMIN_DEFAULT_PASSWORD=postgres
-    volumes:
-      - ./shared/database/pgadmin:/var/lib/pgadmin
-    depends_on:
-      - postgres
-
   person_fastapi:
     image: "analystt/person_fastapi:latest"
     container_name: "person_fastapi"
@@ -49,14 +25,12 @@ services:
     environment:
       - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
       - API_CONFIG_PORT_NUM_INTERNAL=5000
-      - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
       - API_CONFIG_SELF_BASE_URL=http://localhost:5000
       - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:14005
       - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:14005/login
       - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:14005/signUp
     depends_on:
       - selenium
-      - postgres
 
   person_fastapi_external:
     image: "analystt/person_fastapi_external:latest"
@@ -66,13 +40,11 @@ services:
     environment:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
-      - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
     volumes:
       - ./shared:/home/appuser/shared
     depends_on:
       - person_fastapi
       - redis
-      - postgres
 
   person_react:
     image: "analystt/person_react:latest"
