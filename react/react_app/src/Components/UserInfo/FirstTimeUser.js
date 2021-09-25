@@ -136,11 +136,11 @@ const FirstTimeUser = () => {
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
               </div>
-              {/* <SpecificSearchBtn/> */}
+              {/* <SpecificSearchBtn/>
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <Filters />
-              </div>
+              </div> */}
               <BulkSearch />
               <SidebarExtractContact />
             </div>
