@@ -38,7 +38,7 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    { index: null, details: null },
+    { index: null, details: null,proxyCurl:null },
   ]);
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
@@ -536,6 +536,7 @@ const SearchResult = (props) => {
 
   const handleProfile = async (index, data) => {
     let hash_key = await digestMessage(data.url);
+    console.log("url:data.url",data.url)
     console.log("hash_key>>>>>>>>>>", hash_key);
     let reqJsonPipl = {
       email: "",
@@ -556,7 +557,8 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         console.log("In Fetch......");
-        const response = await fetch(apiServer + "/pipl/search", {
+        const [response, proxyCurlResponse] = await Promise.all([
+          fetch(apiServer + "/pipl/search", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -564,21 +566,31 @@ const SearchResult = (props) => {
             Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
           body: JSON.stringify(reqJsonPipl),
-        });
+        }),fetch(apiServer + "/proxycurl/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify({"url":data.url}),
+        }),]);
+         const proxyCurlJson = await proxyCurlResponse.json();
+        console.log("proxyCurlJson",proxyCurlJson)
 
         if (response.status === 402) {
           alert(
             "You have insufficient profile credit. Buy Credits to get details."
           );
         }
-        if (response.status === 500) {
+        if (response.status || proxyCurlResponse.status === 500) {
           console.log("Not able to get Details");
         }
         let json_res = null;
-        if (response.status === 200) {
+        if (response.status || proxyCurlResponse.status === 200) {
           json_res = await response.json();
         }
-        console.log("json_res>>>>>", json_res);
+        console.log("json_res_ls>>>>>", json_res);
         let phones = [];
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
@@ -620,7 +632,7 @@ const SearchResult = (props) => {
             }
             setSpecificUserDetails((prev) => [
               ...prev,
-              { index: `${currentPage}${index}`, details: json_res[0] },
+              { index: `${currentPage}${index}`, details: json_res[0],proxyCurl:proxyCurlJson },
             ]);
           }
           // else {
@@ -992,7 +1004,7 @@ const SearchResult = (props) => {
                                 <span>
                                   {spec.index === `${currentPage}${index}` ? (
                                     <span>
-                                      <SpecificUser details={spec.details} />
+                                      <SpecificUser details={spec.details} proxyData={spec.proxyCurl} />
                                     </span>
                                   ) : null}
                                 </span>
