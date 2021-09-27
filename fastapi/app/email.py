@@ -7,6 +7,7 @@ from loguru import logger
 from pydantic import BaseModel, EmailStr
 from starlette.responses import JSONResponse, RedirectResponse
 from app.utils.sendinblue import sendinblue_email_verification
+from app.config import API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID
 
 from app.config import (
     API_CONFIG_GSUITE_EMAIL,
@@ -64,7 +65,7 @@ async def send_account_verification_email(
 ):
     logger.debug(f"{request=}")
     link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
-    background_tasks.add_task(sendinblue_email_verification, first_name=request.name, email_to=request.email, verification_link=link)
+    background_tasks.add_task(sendinblue_email_verification, templates_id=API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID, name=request.name, email_to=request.email, link=link)
     logger.success(f"Verification Email Sent, {request.email=}")
     return True
 

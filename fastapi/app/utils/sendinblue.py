@@ -7,7 +7,7 @@ from loguru import logger
 import httpx
 from fastapi import HTTPException
 from starlette import status
-from app.config import API_CONFIG_SENDINBLUE_API_KEY,API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID
+from app.config import API_CONFIG_SENDINBLUE_API_KEY,API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID, API_CONFIG_SENDINBLUE_REPLY_MAIL, API_CONFIG_SENDINBLUE_REPLY_NAME
 
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key[
@@ -22,7 +22,7 @@ api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
 def sendinblue_email_verification(templates_id, name, email_to, link):
     template_id = templates_id
     to = [{"email": email_to}]
-    reply_to = {"email": "malhar@analystt.ai", "name": "LeadZen.ai"}
+    reply_to = {"email": API_CONFIG_SENDINBLUE_REPLY_MAIL, "name": API_CONFIG_SENDINBLUE_REPLY_NAME}
     params = {"name": name, "link": link}
     send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
         to=to, reply_to=reply_to, template_id=template_id, params=params
