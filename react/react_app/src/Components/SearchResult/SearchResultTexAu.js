@@ -55,6 +55,8 @@ const SearchResult = (props) => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
   const [selectedSaveList, setSelectedSaveList] = useState([]);
+  const [searchText , setSearchText]=useState('')
+  const [searchedList, setSearchedList] = useState([])
   const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
@@ -70,9 +72,9 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads && Array.isArray(myLeads)
-        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
-        : 0
+      searchedList && Array.isArray(searchedList)
+        ? searchedList.slice(pageNumber * 10 - 10, pageNumber * 10)
+        :0
     );
   };
 
@@ -343,7 +345,7 @@ const SearchResult = (props) => {
 
   useEffect(() => {
     paginate(1);
-  }, [myLeads]);
+  }, [searchedList]);
 
   useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
   console.log("myLeads>>>>>>>>>>>", myLeads);
@@ -759,6 +761,20 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
+  useEffect(()=> {
+   if(searchText!=""){
+     setSearchedList(myLeads.filter(data=>{
+       return (
+           data.name.toLowerCase().includes(searchText.toLowerCase())||
+               data.location.toLowerCase().includes(searchText.toLowerCase())||
+               data.job.toLowerCase().includes(searchText.toLowerCase())
+       )
+     }))
+   }
+   else {
+     setSearchedList(myLeads)
+   }
+  },[searchText,myLeads])
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -816,8 +832,25 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
+                  {loading=== false?(
+                     <div className="search-form4 d-flex mb-3">
+              <div className="input-group" >
+                <div className="input-placeholder" style={{'width':'1000px','height':'50px'}}>
+                  <input
+                    className="ps-3"
+                    required
+                    onChange={e => setSearchText(e.target.value)}
+                  />
+                  <div className="placeholder">
+                   Search Here
+                  </div>
+                </div>
+              </div>
+           </div>
+              ):null
+              }
               <div className="user-search-wrapper">
-                <div className="detailed-search">
+                <div className="detailed-search"  style={{'paddingLeft':"40px"}}>
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
@@ -875,7 +908,7 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads && myLeads.length === 0 ? (
+                    {currentLeads && currentLeads.length === 0 ? (
                       <div>
                         <h5>Records Not Found</h5>
                       </div>
