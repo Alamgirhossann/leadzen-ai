@@ -28,6 +28,7 @@ class ProxyCurlRequest(BaseModel):
 async def search(request: ProxyCurlRequest,user=Depends(fastapi_users.get_current_active_user),):
     logger.info(f"{request=}")
     try:
+        print("jbhhggvh",request.url)
         url = API_CONFIG_PROXY_CURL_ENDPOINT
         headers = {"Authorization": f"Bearer {API_CONFIG_PROXY_CURL_API_KEY}"}
         params = {

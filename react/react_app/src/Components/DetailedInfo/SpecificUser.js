@@ -231,7 +231,7 @@ const SpecificUser = (props) => {
 
                                 <div className="ms-2 d-flex align-items-center mb-3">
                                     <small>
-                                        {props.proxyData.city?props.proxyData.city+",":null} {props.proxyData.state?props.proxyData.state+",":null} {props.proxyData.country_full_name?props.proxyData.country_full_name:null}
+                                        {props.proxyData&&props.proxyData.city?props.proxyData.city+",":null} {props.proxyData&&props.proxyData.state?props.proxyData.state+",":null} {props.proxyData&&props.proxyData.country_full_name?props.proxyData.country_full_name:null}
                                     </small>
                                 </div>
                                                 </div>
@@ -245,7 +245,7 @@ const SpecificUser = (props) => {
                     <section className="item-section">
                         <div style={{width: "900px"}}>
                             <h4>Associated Jobs and Companies</h4>
-                            {props.proxyData.experiences
+                            {props.proxyData && props.proxyData.experiences
                                 ? props.proxyData.experiences.map((comp) => (
                                     <div className="table-alignment container-fluid">
                                         <td>{comp.company}</td>
@@ -274,7 +274,7 @@ const SpecificUser = (props) => {
                     <section className="item-section">
                         <div style={{width: "900px"}}>
                             <h4>Probable Education Associated</h4>
-                            {props.proxyData.education
+                            {props.proxyData && props.proxyData.education
                                 ? props.proxyData.education.map((edu) => (
                                     <div className="table-alignment container-fluid">
                                         <td>{edu.degree_name||"--"}</td>
@@ -316,7 +316,7 @@ const SpecificUser = (props) => {
                             </div>
                             <h4 className="text-center">Probable People Associated</h4>
                             <div className="user-promote-slider">
-                                {props.proxyData.people_also_viewed
+                                {props.proxyData&&props.proxyData.people_also_viewed
                                     ? props.proxyData.people_also_viewed.map((profile) => (
                                         <div>
                                             <div

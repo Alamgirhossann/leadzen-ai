@@ -38,7 +38,7 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    { index: null, details: null,proxyCurl:null },
+    { index: null, details: null,proxyCurl:null  },
   ]);
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
@@ -55,6 +55,8 @@ const SearchResult = (props) => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
   const [selectedSaveList, setSelectedSaveList] = useState([]);
+  const [searchText , setSearchText]=useState('')
+  const [searchedList, setSearchedList] = useState([])
   const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
@@ -70,9 +72,9 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads && Array.isArray(myLeads)
-        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
-        : 0
+      searchedList && Array.isArray(searchedList)
+        ? searchedList.slice(pageNumber * 10 - 10, pageNumber * 10)
+        :0
     );
   };
 
@@ -343,7 +345,7 @@ const SearchResult = (props) => {
 
   useEffect(() => {
     paginate(1);
-  }, [myLeads]);
+  }, [searchedList]);
 
   useEffect(() => console.log(specificUserDetails), [specificUserDetails]);
   console.log("myLeads>>>>>>>>>>>", myLeads);
@@ -536,7 +538,6 @@ const SearchResult = (props) => {
 
   const handleProfile = async (index, data) => {
     let hash_key = await digestMessage(data.url);
-    console.log("url:data.url",data.url)
     console.log("hash_key>>>>>>>>>>", hash_key);
     let reqJsonPipl = {
       email: "",
@@ -544,6 +545,9 @@ const SearchResult = (props) => {
       url: data.url,
       hash_key: hash_key,
     };
+    function handleError(response){
+      console.error(response.statusText)
+    }
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     try {
       let isDuplicate = false;
@@ -557,6 +561,7 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         console.log("In Fetch......");
+        let proxyCurlJson = null
         const [response, proxyCurlResponse] = await Promise.all([
           fetch(apiServer + "/pipl/search", {
           method: "POST",
@@ -575,25 +580,29 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify({"url":data.url}),
         }),]);
-
-
-
+        if (proxyCurlResponse.status === 200) {
+          proxyCurlJson = await proxyCurlResponse.json();
+        }
         if (response.status === 402) {
           alert(
             "You have insufficient profile credit. Buy Credits to get details."
           );
         }
-        if (response.status || proxyCurlResponse.status === 500) {
-          console.log("Not able to get Details");
+        if (response.status === 500 || proxyCurlResponse.status === 500) {
+          handleError(response)
         }
         let json_res = null;
-        let proxyCurlJson = null;
-        if (response.status || proxyCurlResponse.status === 200) {
+        if (response.status === 200) {
           json_res = await response.json();
-          proxyCurlJson = await proxyCurlResponse.json();
         }
-        console.log("proxyCurlJson",proxyCurlJson)
-        console.log("json_res_ls>>>>>", json_res);
+
+        if (response.status === 400 || proxyCurlResponse.status===400){
+          handleError(response)
+        }
+        if (response.status === 401 || proxyCurlResponse.status===401){
+          handleError(response)
+        }
+        console.log("json_res>>>>>", json_res);
         let phones = [];
         if (json_res) {
           for (let i = 0; i < json_res.length; i++) {
@@ -635,7 +644,7 @@ const SearchResult = (props) => {
             }
             setSpecificUserDetails((prev) => [
               ...prev,
-              { index: `${currentPage}${index}`, details: json_res[0],proxyCurl:proxyCurlJson !== null ? proxyCurlJson:null },
+              { index: `${currentPage}${index}`, details: json_res[0],proxyCurl:proxyCurlJson !== null ? proxyCurlJson:null  },
             ]);
           }
           // else {
@@ -774,6 +783,20 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
+  useEffect(()=> {
+   if(searchText!=""){
+     setSearchedList(myLeads.filter(data=>{
+       return (
+           data.name.toLowerCase().includes(searchText.toLowerCase())||
+               data.location.toLowerCase().includes(searchText.toLowerCase())||
+               data.job.toLowerCase().includes(searchText.toLowerCase())
+       )
+     }))
+   }
+   else {
+     setSearchedList(myLeads)
+   }
+  },[searchText,myLeads])
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -831,8 +854,25 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
+                  {loading=== false?(
+                     <div className="search-form4 d-flex mb-3">
+              <div className="input-group" >
+                <div className="input-placeholder" style={{'width':'1000px','height':'50px'}}>
+                  <input
+                    className="ps-3"
+                    required
+                    onChange={e => setSearchText(e.target.value)}
+                  />
+                  <div className="placeholder">
+                   Search Here
+                  </div>
+                </div>
+              </div>
+           </div>
+              ):null
+              }
               <div className="user-search-wrapper">
-                <div className="detailed-search">
+                <div className="detailed-search"  style={{'paddingLeft':"40px"}}>
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
@@ -890,7 +930,7 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads && myLeads.length === 0 ? (
+                    {currentLeads && currentLeads.length === 0 ? (
                       <div>
                         <h5>Records Not Found</h5>
                       </div>
