@@ -570,7 +570,7 @@ const SearchResult = (props) => {
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
                         <div>
-                          <div className="user-container py-2" key={index}>
+                          <div className="search-user-container py-2" key={index}>
                             <input
                               className="box ms-3 me-3"
                               type="checkbox"

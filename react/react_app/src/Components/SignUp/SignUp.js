@@ -285,9 +285,6 @@ const SignUp = () => {
                         >
                           Grab Your 5 Free Credits Now
                         </button>
-                        <div className="text-center mt-2">
-                          <span>Sign Up using: </span>
-                        </div>
                         <div className="text-center">
                           <p className="text-secondary m-0">
                             Already have an account?{" "}

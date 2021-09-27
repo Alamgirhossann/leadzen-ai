@@ -6,6 +6,8 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from loguru import logger
 from pydantic import BaseModel, EmailStr
 from starlette.responses import JSONResponse, RedirectResponse
+from app.utils.sendinblue import sendinblue_email_verification
+from app.config import API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID
 
 from app.config import (
     API_CONFIG_GSUITE_EMAIL,
@@ -62,24 +64,8 @@ async def send_account_verification_email(
     request: UserEmailVerificationEmailRequest, background_tasks: BackgroundTasks
 ):
     logger.debug(f"{request=}")
-
-    email_text = (
-        f"Dear {request.name}, \n"
-        f"Please click the link below to verify your email: \n"
-        f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
-        f"--- \n"
-        f"Thanks \n"
-        f"LeadZen Team"
-    )
-
-    message = MessageSchema(
-        subject="LeadZen Email Verification",
-        recipients=[request.email],
-        body=email_text,
-    )
-
-    fast_mail = FastMail(conf)
-    background_tasks.add_task(fast_mail.send_message, message)
+    link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
+    background_tasks.add_task(sendinblue_email_verification, templates_id=API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID, name=request.name, email_to=request.email, link=link)
     logger.success(f"Verification Email Sent, {request.email=}")
     return True
 

@@ -88,7 +88,7 @@ const RealTimePage = () => {
               <div className="tranding-lead">
                 <img src="assets/images/realtime (5).png" alt="" />
                 <h4>Real Time Trending Leads</h4>
-                <p>Get Real Time Verified Leads With Analystt.AI</p>
+                <p>Get Real Time Verified Leads With LeadZen.ai</p>
                 <p>Grab your Leads Now !</p>
               </div>
             </div>

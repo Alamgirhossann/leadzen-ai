@@ -25,7 +25,7 @@
     margin: 0px 5px;
     padding: 8px 20px;
   }
-  .user-container{
+  .search-user-container{
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-areas: 'b a u u u l e e e v v c';
@@ -81,7 +81,7 @@
           overflow-x: scroll;
       }
 
-      .user-container {
+      .search-user-container {
           width: 850px;
       }
   }

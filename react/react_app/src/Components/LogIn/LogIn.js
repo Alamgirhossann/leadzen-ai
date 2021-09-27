@@ -360,9 +360,6 @@ const LogIn = (props) => {
                         <button type="submit" className="btn text-white w-100">
                           Sign In
                         </button>
-                        <div className="text-center mt-2">
-                          <span>Sign In using: </span>
-                        </div>
                         <div className="text-center">
                           <p className="text-secondary m-0">
                             Don't have an account?{" "}
