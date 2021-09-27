@@ -11,6 +11,7 @@ const CompanyFilters = (props) => {
     location: null,
     industry: null,
     employeeCount: null,
+    keywords:null,
   });
 
   const handleName = (e) => {
@@ -23,9 +24,14 @@ const CompanyFilters = (props) => {
     setCustomSearch({ ...customSearch, industry: e.target.value });
   };
   const handleEmployeeCount = (e) => {
-    setCustomSearch({ ...customSearch, employeeCount: e.target.value });
+if(e.target.value!=='A') {
+    setCustomSearch({...customSearch, employeeCount: e.target.value});
+}
+    console.log("this is custom search data ", customSearch ,e.target.value)
   };
-
+const handleKeywords = (e) => {
+    setCustomSearch({ ...customSearch, keywords: e.target.value });
+  };
   const handleCustomSubmit = (e) => {
     e.preventDefault();
     console.log("handleCustomSubmit....", customSearch);
@@ -50,6 +56,9 @@ const CompanyFilters = (props) => {
 
     if (type === "employeeCount") {
       setCustomSearch({ ...customSearch, employeeCount: "" });
+    }
+    if (type === "keywords") {
+      setCustomSearch({ ...customSearch, keywords: "" });
     }
   };
 
@@ -149,6 +158,25 @@ const CompanyFilters = (props) => {
                 />
               </p>
             ) : null}
+            {isHide && customSearch.keywords ? (
+              <p
+                className="text-left top-search"
+                style={{ width: "fit-content" }}
+              >
+                <img
+                  style={{ width: "8px", marginRight: "5px" }}
+                  src="assets/images/users.png"
+                  alt=""
+                />
+                {customSearch.keywords}
+                <img
+                  className="ps-4"
+                  src="assets/images/cross-icon.png"
+                  alt=""
+                  onClick={() => handleCloseCompany("keywords")}
+                />
+              </p>
+            ) : null}
 
             <div className="d-flex justify-content-between">
               <a onClick={() => handleHide()}>
@@ -164,34 +192,36 @@ const CompanyFilters = (props) => {
               </a>
             </div>
           </div>
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#one"
+        </div>
+         <div className="accordion-item">
+            <h2 className="accordion-header">
+              <button
+                className="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#six"
+              >
+                <img src="assets/images/accord-key.png" alt="title" />
+                Keywords
+              </button>
+            </h2>
+            <div
+              id="six"
+              className="accordion-collapse collapse"
+              data-bs-parent="#accordionExample"
             >
-              <img src="assets/images/Group 2346.png" alt="title" />
-              Name
-            </button>
-          </h2>
-
-          <div
-            id="one"
-            className="accordion-collapse collapse"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <input
-                className="customize-search"
-                onChange={handleName}
-                value={customSearch.name}
-                type="text"
-                placeholder="Search Location"
-              />
+              <div className="accordion-body">
+                <input
+                  className="customize-search"
+                  value={customSearch.keywords}
+                  onChange={handleKeywords}
+                  type="text"
+                  placeholder="Search Keywords"
+                  list="keywords"
+                />
+              </div>
             </div>
           </div>
-        </div>
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button
@@ -220,7 +250,6 @@ const CompanyFilters = (props) => {
             </div>
           </div>
         </div>
-
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button
@@ -267,15 +296,49 @@ const CompanyFilters = (props) => {
             data-bs-parent="#accordionExample"
           >
             <div className="accordion-body">
-              <input
-                className="customize-search"
+             <select id = "dropdown"  className="customize-search"
                 onChange={handleEmployeeCount}
-                type="text"
-                placeholder="Search Job title"
-              />
+             ><option value='A'>Select Employees Count</option>
+              <option value="B">1-10 Employees</option>
+              <option value="C">11-50 Employees</option>
+              <option value="D">51-200 Employees</option>
+              <option value="E">201-500 Employees</option>
+               <option value="F">501-1000 Employees</option>
+               <option value="G">1001-5000 Employees</option>
+               <option value="H">5001-10000 Employees</option>
+               <option value="I">10000+ Employees</option>
+              </select>
             </div>
           </div>
         </div>
+        <div className="accordion-item">
+         <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#one"
+            >
+              <img src="assets/images/Group 2346.png" alt="title" />
+              Name
+            </button>
+          </h2>
+          <div
+            id="one"
+            className="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body">
+              <input
+                className="customize-search"
+                onChange={handleName}
+                value={customSearch.name}
+                type="text"
+                placeholder="Search Name"
+              />
+            </div>
+          </div>
+           </div>
       </div>
 
       <button

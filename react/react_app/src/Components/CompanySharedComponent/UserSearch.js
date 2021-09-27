@@ -55,8 +55,7 @@ const UserSearch = () => {
                     required
                   />
                   <div className="placeholder">
-                    Eg: I want to <span>email IDs</span> of people following{" "}
-                    <span>Flipkart Facebook Page</span>
+                    Eg: I want to <span>IT companies in mumbai</span> with more than 10 employees{" "}
                   </div>
                 </div>
                 <button
@@ -73,7 +72,7 @@ const UserSearch = () => {
             </form>
             <p className="fst-italic">
               Hey, Get started by putting a{" "}
-              <span className="text-danger">name, social media URL</span> or{" "}
+              <span className="text-danger">company name, company website URL</span> or{" "}
               <br /> state your requirement above
             </p>
             <a href="/userGuide" className="text-danger">
