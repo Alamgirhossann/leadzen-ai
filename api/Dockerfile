@@ -22,7 +22,8 @@ RUN venv/bin/pip install -r requirements.txt && rm -rf ~/.cache/pip
 COPY --chown=appuser:appuser  app app
 COPY --chown=appuser:appuser  patches patches
 COPY --chown=appuser:appuser  boot.sh ./
-RUN chmod +x boot.sh
+COPY --chown=appuser:appuser  wait_for_it.sh ./
+RUN chmod +x boot.sh wait_for_it.sh
 
 EXPOSE 5000
 

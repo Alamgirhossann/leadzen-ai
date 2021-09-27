@@ -114,7 +114,8 @@ API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_FUNC_ID = os.getenv(
 API_CONFIG_ALLOWED_CONTENT_TYPES = [
     x.strip()
     for x in os.getenv(
-        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "API_CONFIG_ALLOWED_CONTENT_TYPES",
+        "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ).split(",")
     if x
 ]
@@ -168,7 +169,7 @@ API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv(
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
 
 API_CONFIG_DATABASE_URL = os.getenv(
-    "API_CONFIG_DATABASE_URL", "sqlite:///./shared/test.db"
+    "API_CONFIG_DATABASE_URL", "sqlite:///./shared/database/sqlite/test.db"
 )
 API_CONFIG_EMAIL_SEND_URL = (
     f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send"
@@ -176,7 +177,6 @@ API_CONFIG_EMAIL_SEND_URL = (
 API_CONFIG_BULK_MAX_ROWS_IN_CSV = int(
     os.getenv("API_CONFIG_BULK_MAX_ROWS_IN_CSV", "50")
 )
-
 # https://docs.pipl.com/docs/rate-limiting-your-queries
 API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT = int(
     os.getenv("API_CONFIG_PIPL_RATE_LIMIT_MAX_CALLS", "10")
