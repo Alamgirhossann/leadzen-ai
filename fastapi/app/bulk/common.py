@@ -6,6 +6,7 @@ import httpx
 import pandas as pd
 from loguru import logger
 from pydantic import BaseModel
+from app.utils.sendinblue import sendinblue_email_verification
 
 from app.config import (
     API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL,
@@ -71,49 +72,39 @@ class BulkUploadResponse(BaseModel):
 
 
 def generate_email_message_for_file(user: User, filename: str) -> Tuple[str, str]:
+    check = ""
+    for i in range(len(filename)):
+        if i != 0 or i != 1:
+            check = check + filename[i]
     if filename.endswith(".xlsx"):
-        operation = "Your Excel Export of contacts is ready."
-        subject = "Excel Export Results Ready"
+        template_id=4
+        download_link=f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{check} \n"
     else:
-        operation = "Your Bulk Search results are ready."
-        subject = "Bulk Search Results Ready"
+        template_id=3
+        download_link=f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{check} \n"
 
-    message = (
-        f"Dear {user.username}, \n"
-        f"{operation} \n"
-        f"Please click on the link below to download the results. The download should start automatically, "
-        f"however in case it doesn't kindly right click on the link and download the linked file. Get your lead "
-        f"details as you open the file in Excel.\n"
-        f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{filename.removeprefix('./')} \n"
-        f"--- \n"
-        f"Thanks \n"
-        f"LeadZen Team "
-    )
 
-    return message, subject
+    # message = (
+    #     f"Dear {user.username}, \n"
+    #     f"{operation} \n"
+    #     f"Please click on the link below to download the results. The download should start automatically, "
+    #     f"however in case it doesn't kindly right click on the link and download the linked file. Get your lead "
+    #     f"details as you open the file in Excel.\n"
+    #
+    #     f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{check} \n"
+    #     f"--- \n"
+    #     f"Thanks \n"
+    #     f"LeadZen Team "
+    # )
+
+    return template_id, download_link
 
 
 async def send_success_email(user: User, filename: str):
-    message, subject = generate_email_message_for_file(user=user, filename=filename)
-    logger.debug(f"{message=}>>>>{subject=}")
+    template_id, download_link = generate_email_message_for_file(user=user, filename=filename)
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                API_CONFIG_EMAIL_SEND_URL,
-                json=UserEmailSendRequest(
-                    email=user.email,
-                    message=message,
-                    subject=subject,
-                ).dict(),
-            )
-
-            if response.status_code != 200:
-                logger.error(
-                    f"Error sending email, {response.status_code=}, {response.text=}"
-                )
-                return
-
-            logger.success(f"Email Sent Successfully, {user.email=}, {filename=}")
+        sendinblue_email_verification(template_id,user.username,user.email,download_link)
+        logger.success(f"Email Sent Successfully, {user.email=}, {filename=}")
     except httpx.ReadTimeout as e:
         logger.warning(f"ReadTimeout - can be ignored: {str(e)}")
     except Exception as e:
