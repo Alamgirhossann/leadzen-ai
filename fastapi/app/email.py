@@ -15,6 +15,7 @@ from app.config import (
     API_CONFIG_REACT_LOGIN_PAGE_URL,
     API_CONFIG_SELF_BASE_URL,
     API_CONFIG_SELF_BASE_EXTERNAL_URL,
+    API_CONFIG_SENDINBLUE_WELCOME_TEMPLATE_ID,
 )
 
 
@@ -76,7 +77,7 @@ async def send_account_verification_email(
 
 
 @router.get("/verify/account/{token}")
-async def verify_email_by_token(token: str):
+async def verify_email_by_token(token: str, background_tasks: BackgroundTasks):
     logger.debug(f"{token=}")
 
     try:
@@ -113,7 +114,14 @@ async def verify_email_by_token(token: str):
                     status_code=401,
                     content={"message": "Error Verifying Email"},
                 )
-
+            if response.status_code == 200:
+                background_tasks.add_task(
+                    sendinblue_email_send,
+                    templates_id=API_CONFIG_SENDINBLUE_WELCOME_TEMPLATE_ID,
+                    name=data["username"],
+                    email_to=data["email"],
+                    link="",
+                )
             logger.success("User Verified, Redirecting to login page")
 
             params = urlencode({"email": data.get("email"), "emailVerified": "true"})
