@@ -114,7 +114,8 @@ API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_FUNC_ID = os.getenv(
 API_CONFIG_ALLOWED_CONTENT_TYPES = [
     x.strip()
     for x in os.getenv(
-        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "API_CONFIG_ALLOWED_CONTENT_TYPES",
+        "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ).split(",")
     if x
 ]
@@ -303,9 +304,18 @@ API_CONFIG_SENTRY_DSN = os.getenv(
     "API_CONFIG_SENTRY_DSN",
     "https://5c82fcb5179441aaa52475dec4c2b507@o818106.ingest.sentry.io/5950717",
 )
-API_CONFIG_GET_PHONE_VERIFICATION_URL = os.getenv("API_CONFIG_GET_PHONE_VERIFICATION_URL", "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php")
-API_CONFIG_GET_PHONE_VERIFICATION_APIKEY = os.getenv("API_CONFIG_GET_PHONE_VERIFICATION_APIKEY", "dCCTClKPTnDb55DxrIYnSkxiKwiWg8NWWuHjP6i9")
-API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL = os.getenv("API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL", "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php")
+API_CONFIG_GET_PHONE_VERIFICATION_URL = os.getenv(
+    "API_CONFIG_GET_PHONE_VERIFICATION_URL",
+    "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php",
+)
+API_CONFIG_GET_PHONE_VERIFICATION_APIKEY = os.getenv(
+    "API_CONFIG_GET_PHONE_VERIFICATION_APIKEY",
+    "dCCTClKPTnDb55DxrIYnSkxiKwiWg8NWWuHjP6i9",
+)
+API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL = os.getenv(
+    "API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL",
+    "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php",
+)
 
 
 sentry_sdk.init(
@@ -316,14 +326,17 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
 )
 API_CONFIG_DATABASE_GET_EMAIL = os.getenv(
-    "API_CONFIG_DATABASE_GET_EMAIL", "http://localhost:12005/api/credits/email_search/get"
+    "API_CONFIG_DATABASE_GET_EMAIL",
+    "http://localhost:12005/api/credits/email_search/get",
 )
 API_CONFIG_DATABASE_ADD_EMAIL = os.getenv(
-    "API_CONFIG_DATABASE_ADD_EMAIL", "http://localhost:12005/api/credits/email_search/add"
+    "API_CONFIG_DATABASE_ADD_EMAIL",
+    "http://localhost:12005/api/credits/email_search/add",
 )
 
 API_CONFIG_SENDINBLUE_API_KEY = os.getenv(
-    "API_CONFIG_SENDINBLUE_API_KEY", "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"
+    "API_CONFIG_SENDINBLUE_API_KEY",
+    "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",
 )
 
 API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID = os.getenv(
