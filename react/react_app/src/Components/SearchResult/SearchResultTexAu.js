@@ -46,6 +46,7 @@ const SearchResult = (props) => {
   const [unlockplus, setUnlockPlus] = useState({});
   const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
@@ -561,6 +562,7 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         console.log("In Fetch......");
+        setLoadingProfile(true)
         let proxyCurlJson = null
         const [response, proxyCurlResponse] = await Promise.all([
           fetch(apiServer + "/pipl/search", {
@@ -580,6 +582,7 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify({"url":data.url}),
         }),]);
+        setLoadingProfile(false)
         if (proxyCurlResponse.status === 200) {
           proxyCurlJson = await proxyCurlResponse.json();
         }
@@ -1043,15 +1046,19 @@ const SearchResult = (props) => {
                               className="panel-collapse collapse in"
                               id={"collapseExample_" + `${currentPage}${index}`}
                             >
-                              {specificUserDetails?.map((spec) => (
-                                <span>
+                              {!loadingProfile?(specificUserDetails?.map((spec) => (
+                                  <span>
                                   {spec.index === `${currentPage}${index}` ? (
-                                    <span>
-                                      <SpecificUser details={spec.details} proxyData={spec.proxyCurl} />
+                                      <span>
+                                      <SpecificUser details={spec.details} proxyData={spec.proxyCurl}/>
                                     </span>
                                   ) : null}
                                 </span>
-                              ))}{" "}
+                              ))):<div>
+                    <section className="item-section" style={{textAlign: "center"}}>
+                        Please Wait..
+                    </section>
+                </div>}{" "}
                             </div>
                           </div>
                         </div>
