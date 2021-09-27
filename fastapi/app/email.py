@@ -64,9 +64,7 @@ async def send_account_verification_email(
 ):
     logger.debug(f"{request=}")
     link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
-    sendinblue_email_verification(
-        first_name=request.name, email_to=request.email, verification_link=link
-    )
+    background_tasks.add_task(sendinblue_email_verification, first_name=request.name, email_to=request.email, verification_link=link)
     logger.success(f"Verification Email Sent, {request.email=}")
     return True
 
