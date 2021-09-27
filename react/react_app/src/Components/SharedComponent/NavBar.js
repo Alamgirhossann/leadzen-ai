@@ -227,11 +227,6 @@ const NavBar = (props) => {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item disabled" href="/history">
-                      Export History
-                    </a>
-                  </li>
-                  <li>
                     <a
                       className="dropdown-item"
                       href="#"

@@ -175,7 +175,7 @@ const SharedHistory = () => {
                     }}
                     className="button"
                   >
-                    Unlock Profile
+                    View result
                   </a>
                 </p>
                 <a href="/history" onClick={(name) => handleDelete(data.name)}>

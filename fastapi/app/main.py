@@ -42,6 +42,7 @@ from app.users import (
 from app.utils.proxy_curl import router as proxycurl_router
 from app.utils.snov import router as snov_router
 from app.utils.truemail import router as truemail_router
+from app.utils.phone_verification import router as phone_router
 
 
 from fastapi_cache import FastAPICache
@@ -80,6 +81,7 @@ def app_factory():
     app.include_router(router=snov_router, prefix="/api")
     app.include_router(router=proxycurl_router, prefix="/api")
     app.include_router(router=save_list_router, prefix="/api")
+    app.include_router(router=phone_router, prefix="/api")
 
     app.include_router(
         fastapi_users.get_auth_router(jwt_authentication),

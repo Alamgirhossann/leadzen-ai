@@ -43,6 +43,7 @@ const SearchResult = (props) => {
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
   ]);
+  const [unlockplus, setUnlockPlus] = useState({});
   const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -914,7 +915,7 @@ const SearchResult = (props) => {
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => data.name != "LinkedIn Member" ? (
                         <div>
-                          <div className="user-container py-2" key={index}>
+                          <div className="user-container py-2" key={`${currentPage}${index}`}>
                             <input
                               className="box ms-3 me-3"
                               id={data.url || data.profileLink}
@@ -1000,7 +1001,13 @@ const SearchResult = (props) => {
                               </a>
                             </p>
                             <p>
-                              <SavedListButton data={data} />
+                              {unlockplus[`${currentPage}${index}`] ? <img src="assets/images/Frame 543.png" alt=""/> :
+                                  <SavedListButton data={data} type="texau" index={`${currentPage}${index}`}
+                                                   changeindex={saveindex => setUnlockPlus((prev) => ({
+                                                     ...prev,
+                                                     [saveindex]: true
+                                                   }))}/>
+                              }
                             </p>
                           </div>
                           <div
