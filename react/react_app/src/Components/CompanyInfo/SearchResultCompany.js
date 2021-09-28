@@ -777,11 +777,14 @@ const SearchResultCompany = (props) => {
                   )}
                 </div>
                 <div className="d-flex justify-content-center">
-                  <Pagination
+                  {loading===false?(
+                       <Pagination
                     postsPerPage={10}
-                    totalPosts={myLeads ? myLeads.length : 1}
+                    totalPosts={searchedList ? searchedList.length : 1}
                     paginate={paginate}
                   />
+                  ):null
+                  }
                 </div>
               </div>
             </div>
