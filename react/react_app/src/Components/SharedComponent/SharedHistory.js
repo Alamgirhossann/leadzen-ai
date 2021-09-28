@@ -124,9 +124,11 @@ const SharedHistory = () => {
         <form action="#" className="search-form-sm">
           <div className="input-group">
             <input
+              id="shared-history-search-input"
               type="text"
               className="form-control"
               onBlur={handleSearch}
+              onInput={handleSearch}
               placeholder="Search"
             />
             <button

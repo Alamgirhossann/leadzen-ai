@@ -475,6 +475,7 @@ const SearchResult = (props) => {
                     <div className="search-promote-content">
                       <form className=" d-flex my-2 my-lg-0">
                         <input
+                          id="search-result-search-input"
                           className="form-control mr-sm-2"
                           type="search"
                           // onBlur={handleHeadSearch}
@@ -570,7 +571,10 @@ const SearchResult = (props) => {
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
                         <div>
-                          <div className="search-user-container py-2" key={index}>
+                          <div
+                            className="search-user-container py-2"
+                            key={index}
+                          >
                             <input
                               className="box ms-3 me-3"
                               type="checkbox"

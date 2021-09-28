@@ -314,6 +314,7 @@ const LogIn = (props) => {
                             autoComplete="off"
                             value={userLogin.email}
                             onChange={handleInput}
+                            onInput={handleInput}
                             name="email"
                             placeholder="Enter your email"
                             id="email"
@@ -327,6 +328,7 @@ const LogIn = (props) => {
                             autoComplete="off"
                             value={userLogin.password}
                             onChange={handleInput}
+                            onInput={handleInput}
                             name="password"
                             placeholder="Enter your password"
                             id="password"
