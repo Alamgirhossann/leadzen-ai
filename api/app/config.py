@@ -1,9 +1,12 @@
 import os
-
+from urllib.parse import quote
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
-API_CONFIG_DATABASE_URL = os.getenv(
-    "API_CONFIG_DATABASE_URL", "sqlite:///./shared/database/sqlite/test.db"
-)
+API_CONFIG_POSTGRES_HOST="peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com"
+API_CONFIG_POSTGRES_USER="munifadmin"
+API_CONFIG_POSTGRES_PASSWORD=quote('People!702^3$')
+API_CONFIG_POSTGRES_PORT="6442"
+API_CONFIG_POSTGRES_DB="person_db"
+API_CONFIG_DATABASE_URL=os.getenv("API_CONFIG_DATABASE_URL",f"postgresql://{API_CONFIG_POSTGRES_USER}:{API_CONFIG_POSTGRES_PASSWORD}@{API_CONFIG_POSTGRES_HOST}:{API_CONFIG_POSTGRES_PORT}/{API_CONFIG_POSTGRES_DB}")
 API_CONFIG_INTERNAL_URL = os.getenv("API_CONFIG_INTERNAL_URL", "http://localhost:12005")
 API_CONFIG_REDIS_URL = os.getenv("API_CONFIG_REDIS_URL", "redis://localhost")
 API_CONFIG_RATELIMIT_ALLOWED_COUNT = int(
