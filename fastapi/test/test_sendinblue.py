@@ -2,13 +2,12 @@ import asyncio
 
 import httpx
 import pytest
-from app.main import app
 from app.bulk.router import BulkExportToExcelRequest
-from test.common import TEST_CONFIG_HEADERS
+from test.common import TEST_CONFIG_HEADERS, app
 
 
 @pytest.mark.asyncio
-async def test_sendinblue_export_excel_sucess_mail():
+async def test_sendinblue_export_excel_sucess_mail(app):
     async with httpx.AsyncClient(app=app, base_url="http://test") as client:
         response = await client.post(
             "/api/bulk_upload/export/excel",
@@ -20,6 +19,7 @@ async def test_sendinblue_export_excel_sucess_mail():
         )
     assert response
     assert response.status_code == 200
+
 
 
 
