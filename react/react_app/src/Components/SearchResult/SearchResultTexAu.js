@@ -320,8 +320,10 @@ const SearchResult = (props) => {
           case 200:
             return handleSuccess(response);
           case 401:
+            clearInterval(intervalId);
             return handleUnAuthorized(response);
           case 403:
+            clearInterval(intervalId);
             return handleCookieError(response);
           case 404:
             return handleNotFound();
