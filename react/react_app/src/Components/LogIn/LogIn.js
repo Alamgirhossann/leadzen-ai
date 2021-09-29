@@ -238,6 +238,15 @@ const LogIn = (props) => {
 
     fetchData();
   };
+  useEffect(() => {
+    console.log("kishanhistory",historyState)
+    if(historyState!="")
+    {
+      alert(historyState+" please check your email for verification.")
+    }
+
+  }, [historyState]);
+
 
   return (
     <div>
@@ -248,23 +257,6 @@ const LogIn = (props) => {
           role="alert"
         >
           <strong>{email}</strong> You have verified successfully.
-          <button
-            type="button"
-            className="close"
-            data-dismiss="alert"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      ) : null}
-      {historyState !== "" ? (
-        <div
-          className="alert alert-warning alert-dismissible fade show"
-          role="alert"
-        >
-          <strong>{historyState}</strong> please check your email for
-          verification.
           <button
             type="button"
             className="close"
