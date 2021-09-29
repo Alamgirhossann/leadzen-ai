@@ -116,7 +116,7 @@ jwt_authentication = JWTAuthentication(
 async def get_user(user):
     logger.debug(f"In Get User>>{user=}")
     try:
-        query = "SELECT * FROM user WHERE id = :user_id"
+        query = "SELECT * FROM public.user WHERE id = :user_id"
 
         if not (
                 rows := await database.fetch_all(

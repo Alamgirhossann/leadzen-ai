@@ -148,8 +148,8 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
         for row in rows:
             search_id = row["id"]
 
-            query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
-
+            # query_profile_count = "SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id = :user_id AND search_id =:search_id  union all SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history  WHERE  user_id = :user_id_email AND search_id =:search_id_email "
+            query_profile_count="select x.profile_count,y.email_count from (SELECT COUNT(DISTINCT(search_index)) as profile_count FROM profile_credit_history  WHERE  user_id =:user_id  AND search_id =:search_id ) as x,(SELECT COUNT(DISTINCT (search_index)) as email_count FROM email_credit_history   WHERE  user_id =:user_id_email AND search_id =:search_id_email) as y"
             if not (
                     profile := await database.fetch_all(
                         query=query_profile_count,
@@ -165,11 +165,12 @@ async def get_all_search_history(user=Depends(fastapi_users.get_current_active_u
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
                 )
-
-            processed_rows_profile = [item for x in profile for item in x]
-            row["email_count"] = processed_rows_profile[1]
-            row["profile_count"] = processed_rows_profile[0]
+            processed_rows_profile=[dict(x) for x in profile]
+            # processed_rows_profile = [item for x in profile for item in x]
+            row["email_count"] = processed_rows_profile[0]['email_count']
+            row["profile_count"] = processed_rows_profile[0]['profile_count']
             logger.debug(f"{processed_rows_profile=}")
+
 
         return [SearchHistoryShortResponse(**x) for x in rows if x]
 
