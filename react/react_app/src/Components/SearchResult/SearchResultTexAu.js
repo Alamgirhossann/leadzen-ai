@@ -11,7 +11,7 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import personLoader from "../Loader/personLoader"
 import SavedListButton from "./SavedListButton";
 import axios from "axios";
 import { EventEmitter } from "events";
@@ -772,7 +772,7 @@ const SearchResult = (props) => {
      }))
    }
    else {
-     setSearchedList(myLeads)
+     setSearchedList(myLeads.filter(data=> !!data.name))
    }
   },[searchText,myLeads])
   return (
@@ -1044,7 +1044,7 @@ const SearchResult = (props) => {
                 ) : (
                   <div className="d-flex justify-content-center">
                     <div role="status" style={{ height: "400px" }}>
-                      <Lottie options={Loader} />
+                      <Lottie options={personLoader} />
                     </div>
                   </div>
                 )}
@@ -1056,7 +1056,7 @@ const SearchResult = (props) => {
                   paginate={paginate}
                 />
               </div>
-              <AskJarvis />
+              {/*<AskJarvis />*/}
             </div>
           </div>
         </div>

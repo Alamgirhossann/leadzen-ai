@@ -100,7 +100,7 @@ const FirstTimeUserCompany = (props) => {
             <div className="col-md-8 col-lg-9">
               <UserSearch />
               <div>
-                <AskJarvis />
+                {/*<AskJarvis />*/}
               </div>
               <ExtractContacts data={true} />
             </div>
