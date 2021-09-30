@@ -206,7 +206,7 @@ const NavBar = (props) => {
                     </div>
                   </li>
                   <li>
-                    <a className="dropdown-item active" href="#">
+                    <a className="dropdown-item" href="/pricing">
                       Upgrade to premium
                     </a>
                   </li>
