@@ -235,6 +235,7 @@ const SignUp = () => {
                             autoComplete="off"
                             value={userRegistration.username}
                             onChange={handleInput}
+                            onInput={handleInput}
                             name="username"
                             placeholder="Enter your name"
                             id="username"
@@ -249,6 +250,7 @@ const SignUp = () => {
                             autoComplete="off"
                             value={userRegistration.email}
                             onChange={handleInput}
+                            onInput={handleInput}
                             name="email"
                             placeholder="Enter your email"
                             id="email"
@@ -263,6 +265,7 @@ const SignUp = () => {
                             autoComplete="off"
                             value={userRegistration.password}
                             onChange={handleInput}
+                            onInput={handleInput}
                             name="password"
                             placeholder="Enter your password"
                             id="password"

@@ -84,6 +84,7 @@ const ResetPassword = () => {
                     placeholder="Enter new password"
                     id="password"
                     onBlur={handleBlurPass}
+                    onInput={handleBlurPass}
                   />
                   <a href="" onClick={handlePassClick}>
                     <img
@@ -105,6 +106,7 @@ const ResetPassword = () => {
                     placeholder="Confirm new password"
                     id="password"
                     onBlur={handleBlurPass}
+                    onInput={handleBlurPass}
                   />
                   <a href="" onClick={handlePassClick}>
                     <img

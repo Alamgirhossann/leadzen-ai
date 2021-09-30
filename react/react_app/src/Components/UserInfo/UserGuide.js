@@ -146,14 +146,14 @@ const UserGuide = () => {
                       </div>
                       <div className="col-sm-6">
                         <div className="user-guide-box p-3 my-3">
-                          <button className="user-btn text-white mb-3">
+                          <button className="user-btn text-white mb-3 mx-1">
                             <img
                               src="assets/images/user-guide-icon3.png"
                               alt="title"
                             />{" "}
                             Designer
                           </button>
-                          <button className="user-btn text-white mb-3">
+                          <button className="user-btn text-white mb-3 mx-1">
                             <img
                               src="assets/images/user-guide-icon4.png"
                               alt="title"
@@ -174,7 +174,7 @@ const UserGuide = () => {
                             Give me list of employee in Amazon
                           </button>
                           <p className="text-dark mb-4">
-                            Search asper you requirement
+                            Search as per your requirement
                           </p>
                           <a href="/searchResult" className="btn try-it-btn">
                             Try it!
