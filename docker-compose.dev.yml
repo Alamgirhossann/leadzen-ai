@@ -69,8 +69,8 @@ services:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
       - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-    volumes:
-      - ./shared:/home/appuser/shared
+    # volumes:
+    #   - ./shared:/home/appuser/shared
     depends_on:
       - person_fastapi
       - redis

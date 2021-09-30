@@ -25,12 +25,12 @@ then
     echo "..."
 fi
 
-echo "> =============================="
-echo "> Change owner for shared folder"
-echo "> =============================="
-sudo chown -R appuser:appuser /home/appuser/shared
-echo "> Done"
-echo "..."
+# echo "> =============================="
+# echo "> Change owner for shared folder"
+# echo "> =============================="
+# sudo chown -R appuser:appuser /home/appuser/shared
+# echo "> Done"
+# echo "..."
 
 echo "> ========================"
 echo "> Making a few directories"
@@ -44,14 +44,20 @@ echo "> Checking if Alembic Migration already exists"
 echo "> ============================================"
 if [[ ! -d shared/alembic ]]; 
 then
+    echo "> Creating alembic directory"
+    sudo mkdir /home/appuser/shared/alembic
+    echo "> Changing owner of alembic directory"
+    sudo chown -R appuser:appuser /home/appuser/shared/alembic
     echo "> Creating new Alembic Migration"
     alembic init shared/alembic
-    cp alembic.env.py shared/alembic/env.py
-    
+    echo "> Patching Alembic Migration"
+    cp alembic.env.py shared/alembic/env.py    
     echo ">> Forcing sync to shared folder"
     sync
 else
     echo ">> Alembic Migration already exists"
+    echo "> Changing owner of alembic directory"
+    sudo chown -R appuser:appuser /home/appuser/shared/alembic
 fi
 echo "> Done"
 echo "..."
