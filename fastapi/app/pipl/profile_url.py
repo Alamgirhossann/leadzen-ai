@@ -1,33 +1,98 @@
+import asyncio
+import hashlib
+import urllib
 from typing import Optional, List, Dict
-from urllib.parse import urlencode
+from urllib.parse import urlparse, urlunparse, urlencode
 from fastapi import HTTPException
 from starlette import status
 
 from loguru import logger
-from pydantic import BaseModel
-
+from pydantic import BaseModel, HttpUrl
+from app.history import add_history
 from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY, API_CONFIG_EXCEL_FILE_PATH
-from app.pipl.common import write_to_file, search_all
+from app.credits.admin import deduct_credit
+from app.pipl.common import write_to_file, search_all, search_all_by_pipl, search_all_by_texAu
 from datetime import date
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
 
-from app.profile_search import get_profile_search
+from app.profile_search import get_profile_search, add_profile
 from app.users import get_user
 from app.users import User
+
 
 class PiplDetailsFromProfileUrlRequest(BaseModel):
     profile_urls: List[str]
     filename: Optional[str] = None
     hash_key_list: Optional[List[Dict]] = None
     user: User
+    export_type: Optional[str] = None
+    search_id: Optional[str] = None
+    search_index: Optional[List[Dict]] = None
 
 
 class PiplDetailsFromProfileUrlResponse(BaseModel):
     filename: str
 
+
 async def execute_task(request: PiplDetailsFromProfileUrlRequest):
+    responses = None
+    logger.debug(f"################{request.export_type=}")
+    if request.export_type == "texAu":
+        profile_urls = list(set(request.profile_urls))  # remove duplicates
+        profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
+
+        urls = [
+            f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode({'url': profile_url, 'key': API_CONFIG_PIPL_API_KEY, 'match_requirements': 'phones'})}"
+            for profile_url in profile_urls
+            if profile_url
+        ]
+
+        if not (
+                responses := await search_all_by_texAu(
+                    urls=urls,
+                    slugs=profile_urls,
+                    hash_key_list=request.hash_key_list,
+                    search_id=request.search_id,
+                    search_index=request.search_index,
+                    user=request.user,
+                )
+        ):
+            logger.error("Error Getting Data")
+            return
+        if not any(responses):
+            logger.error("no valid responses found")
+            return
+        await write_to_file(responses=responses, filename=request.filename)
+
+    elif request.export_type == "PIPL":
+        logger.debug(f"In PIPL")
+        if not (
+                responses := await search_all_by_pipl(
+                    urls=request.profile_urls,
+                    slugs=request.profile_urls,
+                    hash_key_list=request.hash_key_list,
+                    search_id=request.search_id,
+                    search_index=request.search_index,
+                    user=request.user,
+                )
+        ):
+            logger.error("Error Getting Data")
+            return
+        if not any(responses):
+            logger.error("no valid responses found")
+            return
+        await write_to_file(responses=responses, filename=request.filename)
+    else:
+        logger.debug(f"In Bulk csv")
+        responses = await handle_bulk_search(request=request)
+        await write_to_file(responses=responses, filename=request.filename)
+
+
+
+async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
+    logger.debug(f"{len(request.profile_urls[0])=}>>>{request.profile_urls[0]}")
     profile_urls = list(set(request.profile_urls))  # remove duplicates
     profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
 
@@ -37,32 +102,192 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
         if profile_url
     ]
 
-    if not (responses := await search_all(urls=urls, slugs=profile_urls, hash_key_list=request.hash_key_list, user= request.user)):
+    def filter_results(results: List[Dict]) -> Dict:
+        found_in_history = [x for x in results if x[0]]
+        not_found_in_history = [[x for x in results if not x[0]]]
+        return {"found": found_in_history, "not_found": not_found_in_history}
+
+    history_search_result = await search_in_history(urls=urls, user=request.user)
+    logger.debug(f"{history_search_result=}")
+    history_search_result_1 = filter_results(history_search_result)
+    logger.debug(f"{history_search_result_1=}")
+    if not (not_founds := history_search_result_1.get("not_found")):
+        return await write_to_file(
+            responses=history_search_result_1.get("founds"), filename=request.filename
+        )
+    logger.debug(f"{not_founds=}>>>")
+    not_found_urls=None
+    if not not_founds:
+        return
+    not_found_urls = [x[0] for x in not_founds if x]
+    logger.debug(f"{not_found_urls=}>>>")
+    if not not_found_urls:
+        return
+    not_found_urls = [x[1] for x in not_found_urls if x]
+
+    if not (
+            pipl_search_results := await search_all(urls=not_found_urls, slugs=not_found_urls)
+    ):
         logger.error("Error Getting Data")
         return
-    if not any(responses):
+    logger.debug(f"Before pipl_search_result>>>{pipl_search_results=}>>>>")
+    if not any(pipl_search_results):
         logger.error("no valid responses found")
         return
 
-    await write_to_file(responses=responses, filename=request.filename)
+    pipl_search_result = await check_result_exists_in_profile_search_history(
+        responses=pipl_search_results, urls=urls, user=request.user
+    )
+    updated_responses = None
+    logger.debug(f"{pipl_search_result=}>>>>")
+    if history_search_result_1.get("founds") is not None and pipl_search_result is not None:
+        updated_responses = history_search_result_1.get("founds").extend(pipl_search_result)
+    if history_search_result_1.get("founds") is None and pipl_search_result is not None:
+        updated_responses = pipl_search_result
+
+    return await write_to_file(responses=updated_responses, filename=request.filename)
+
+
+async def search_in_history(urls: List[str], user: User) -> Dict:
+    # coroutines_url_hash_key = [make_url_hash_key(url=x) for x in urls]
+
+    async def check_hash_key_exists_in_profile_search_history(
+            url_hash: str, user: User
+    ) -> Optional[Dict]:
+        # check for url hashes and respond with first result
+        if not (response_profile_search := await get_profile_search(url_hash, user)):
+            return None
+        return response_profile_search
+
+    async def check_one_result(url: str, user: User):
+        parsed = urlparse(url)
+        url_split_temp = parsed.query.split("&")[0]
+        split_url = url_split_temp.split("=")[1]
+        url_hash_key_initial = urllib.parse.unquote(split_url)
+
+        url_hash_key = await make_url_hash_key(url=url_hash_key_initial)
+
+        logger.debug(f">>>{ len(url_hash_key_initial)=}>>>{url_hash_key_initial=}>>>{url_hash_key=}")
+        if not (
+                result := await check_hash_key_exists_in_profile_search_history(
+                    url_hash=url_hash_key, user=user
+                )
+        ):
+            return None, url
+
+        return result, url
+
+    coroutines = [check_one_result(url=x, user=user) for x in urls]
+
+    results = await asyncio.gather(*coroutines)
+    return results
+    # return filter_results(results)
+
+
+async def make_url_hash_key(url: str) -> str:
+    encoded = url.encode()
+    result = hashlib.sha256(encoded)
+    return result.hexdigest()
+
+
+async def check_result_exists_in_profile_search_history(
+        responses: List[Dict], urls: List[str], user: User
+):
+    # def make_url_hash_key(url: str) -> str:
+    #     pass
+
+    def make_result_hash_key(result: Dict) -> str:
+        logger.debug(f"{str(result)}")
+        encoded = str(result).encode()
+        result = hashlib.sha256(encoded)
+        return result.hexdigest()
+
+    async def add_to_history(result: Dict, user):
+
+        logger.debug(f"{result=}")
+        return await add_history('Bulk', 'Bulk', result, user)
+
+    async def add_to_profile_credit(search_id, result, user):
+        logger.debug(f"{search_id=}>>>{type(result)=}>>>{result}")
+        phones = result.get("phones")
+        phone_list = []
+        for phone in phones:
+            phone_list.append(str(phone.get("number")))
+        # logger.debug(f"{phone_list=}>>>{search_index}>>>{type(search_index)}")
+        # bulk_add_credit_profile(search_id=request.search_id, phone_numbers=request.phone_numbers,
+        #                         search_index=request.search_index, user=user)
+
+    async def check_hash_key_exists_in_profile_search_history(
+            result_hash: str
+    ) -> Optional[Dict]:
+        if not (response_profile_search := await get_profile_search(result_hash, user)):
+            return None
+        logger.debug(f"{type(response_profile_search)}>>>>{response_profile_search=}")
+        return response_profile_search
+
+    async def add_to_profile_search(search_type: str, hash_key: str, search_results: Dict, user):
+        request_add_profile = {
+            "search_type": search_type,
+            "hash_key": hash_key,
+            "search_results": [search_results],
+        }
+        return await add_profile(request_add_profile, user)
+
+    async def deduct_user_profile_credit(user):
+        user_response = await get_user(user)
+        if user_response and user_response.profile_credit <= 0:
+            logger.warning("Insufficient Credits")
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail="Insufficient Credits",
+            )
+        return await deduct_credit("PROFILE", user_response)
+
+    async def check_one_result(url: str, result: Dict):
+        # url_hash_key = make_url_hash_key(url=url)
+        logger.debug(f"in after result {result=}")
+        result_hash_key = make_result_hash_key(result=result)
+        logger.debug(f"{result_hash_key=}")
+        if not (exists_response := await check_hash_key_exists_in_profile_search_history(
+                result_hash=result_hash_key
+        )):
+            logger.debug("profile not found>>>")
+            await add_to_profile_search(
+                search_type="PIPL",
+                hash_key=result_hash_key,
+                search_results=result, user=user
+            )
+            await deduct_user_profile_credit(user)
+            history_id = await add_to_history(result, user)
+            await add_to_profile_credit(history_id, result, user)
+            logger.debug(f"{result=}")
+            return result
+        logger.debug(f"{exists_response=}")
+        return exists_response.get('search_results')
+
+    coroutines = [check_one_result(url=x[0], result=x[1]) for x in zip(urls, responses)]
+
+    results = await asyncio.gather(*coroutines)
+    logger.debug(f"{results=}")
+    return results
 
 
 def add_excel_template_to_file(outgoing_filename, user):
-    if  (outgoing_filename==""):
+    if (outgoing_filename == ""):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str("Excel file not found"),
         )
     else:
         wb_orginal = load_workbook(f'{outgoing_filename}')
-        if (wb_orginal==""):
+        if (wb_orginal == ""):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=str("Error in Work book Loading"),
             )
         else:
             try:
-                wb_template=load_workbook(f'{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx')
+                wb_template = load_workbook(f'{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx')
                 index_sheet = wb_template.get_sheet_by_name('Index')
                 data = wb_orginal.get_sheet_by_name('Sheet1')
                 financial_advisor_sheet = wb_template.get_sheet_by_name('Financial Advisor')
@@ -71,17 +296,17 @@ def add_excel_template_to_file(outgoing_filename, user):
                 for row in range(1, data_sheet_row_count + 1):
                     for col in range(1, data_sheet_col_count + 1):
                         c = data.cell(row=row, column=col)
-                        financial_advisor_sheet.cell(row=row+5, column=col).value = c.value
+                        financial_advisor_sheet.cell(row=row + 5, column=col).value = c.value
                 for rows in financial_advisor_sheet.iter_rows(min_row=6, max_row=6, min_col=1):
                     for cell in rows:
                         cell.fill = PatternFill(fgColor="B4C9D9", patternType="solid")
-                no_of_record=index_sheet['J18']
+                no_of_record = index_sheet['J18']
                 requested_by = index_sheet['J20']
                 request_date = index_sheet['J22']
-                no_of_record.value=data_sheet_row_count-1
-                requested_by.value=user.username
+                no_of_record.value = data_sheet_row_count - 1
+                requested_by.value = user.username
                 today = date.today()
-                request_date.value=today.strftime("%d/%m/%Y")
+                request_date.value = today.strftime("%d/%m/%Y")
                 wb_template.save(outgoing_filename)
                 return outgoing_filename
             except Exception as e:

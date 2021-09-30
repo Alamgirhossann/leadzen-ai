@@ -59,10 +59,11 @@ const SearchResult = (props) => {
   const [searchedList, setSearchedList] = useState([]);
   const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
-
+  const [selectedLeadIndex, setSelectedLeadIndex] = useState([]);
   const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+    const postsPerPage = 10;
 
   let dd = String(today.getDate()).padStart(2, "0");
   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -482,7 +483,7 @@ const SearchResult = (props) => {
   };
 
   useEffect(() => {
-    setShow(new Array(myLeads.length).fill().map((item) => false));
+    setShow(new Array(myLeads?.length).fill().map((item) => false));
   }, [currentLeads]);
 
   useEffect(() => {
@@ -683,28 +684,73 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
-  let tempJson = {};
-  const handleLeadSelectionChange = async (e) => {
+    const handleLeadSelectionChange = async (e, index) => {
+    console.log(
+      "selectedLeads.length === currentLeads.length>>>",
+      selectedLeads.length === currentLeads.length,
+      selectedLeadIndex.length,
+      currentLeads.length
+    );
+    if (selectedLeads.length === currentLeads.length) {
+      setIsCheckAll(!isCheckAll);
+    }
     const { id, checked } = e.target;
     let hash_key = null;
+    let tempJson = {};
+    let index_json = {};
+    console.log("id...", id,index);
     setSelectedLeads([...selectedLeads, id]);
     hash_key = await digestMessage(id);
 
     tempJson[id] = hash_key;
+    index_json[hash_key] = `${index}`;
     setSelectedLeadHashKey([...selectedLeadHashKey, tempJson]);
-    // setSelectedLeadHashKey(...selectedLeadHashKey, await digestMessage(id));
+    setSelectedLeadIndex([...selectedLeadIndex, index_json]);
     if (!checked) {
       setSelectedLeads(selectedLeads.filter((item) => item !== id));
+      setSelectedLeadHashKey(
+        selectedLeadHashKey.filter((item) => item[id] !== hash_key)
+      );
+      setSelectedLeadIndex(
+        selectedLeadIndex.filter((item) => item[hash_key] !== index)
+      );
     }
+    console.log(
+      "seleched hash key>>>>",
+      selectedLeadHashKey,
+      ">>>>",
+      selectedLeadIndex,
+      ">>>>>",
+      selectedLeads
+    );
   };
-  console.log("seleched hash key>>>>", selectedLeadHashKey);
-  const handleLeadSelectAll = (e) => {
+
+  const handleLeadSelectAll = async (e) => {
     setIsCheckAll(!isCheckAll);
-    setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
+    console.log("In select All", isCheckAll);
     if (isCheckAll) {
       setSelectedLeads([]);
+      setSelectedLeadHashKey([]);
+      setSelectedLeadIndex([]);
+    } else {
+      for (let i = 0; i < currentLeads.length; i++) {
+        console.log("in loop.....",currentLeads.length);
+        let hash_list_selected = {};
+        let index_list_selected = {};
+        let hash_key_i = await digestMessage(
+          JSON.stringify(currentLeads[i].url)
+        );
+        console.log("hash_key_i>>>>", hash_key_i);
+        hash_list_selected[currentLeads[i].url] = hash_key_i;
+        index_list_selected[hash_key_i] = `${currentPage}${i}`;
+        setSelectedLeadHashKey((prev) => [...prev, hash_list_selected]);
+        setSelectedLeadIndex((prev) => [...prev, index_list_selected]);
+      }
+
+      setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
     }
   };
+
 
   const handleLeadSelectionExportExcel = (e) => {
     e.preventDefault();
@@ -728,6 +774,9 @@ const SearchResult = (props) => {
         const inputData = {
           profile_urls: selectedLeads,
           hash_key_list: selectedLeadHashKey,
+          search_id: searchId,
+          search_index: selectedLeadIndex,
+          export_type: "texAu",
         };
         console.log("reqJson input data 631 >>>", JSON.stringify(reqJson));
         console.log("input data >>>", JSON.stringify(inputData));
@@ -957,7 +1006,7 @@ const SearchResult = (props) => {
                                 checked={selectedLeads.includes(
                                   data.url || data.profileLink
                                 )}
-                                onChange={handleLeadSelectionChange}
+                                onChange={(e)=>handleLeadSelectionChange(e,`${currentPage}${index}`)}
                               />
                               <div className="search-author text-danger ">
                                 <img
@@ -1103,7 +1152,7 @@ const SearchResult = (props) => {
               <div className="d-flex justify-content-center">
                 {loading===false?(
                       <Pagination
-                  postsPerPage={10}
+                  postsPerPage={postsPerPage}
                   totalPosts={searchedList ? searchedList.length : 1}
                   paginate={paginate}
                 />

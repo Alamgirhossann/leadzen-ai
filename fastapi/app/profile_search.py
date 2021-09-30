@@ -122,9 +122,7 @@ async def add_profile(request, user):
                 row_id := await database.execute(query)
         ):
             logger.warning("Bad Request")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Bad Request"
-            )
+            return None
 
         logger.debug(f"{row_id=}")
 

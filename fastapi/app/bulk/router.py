@@ -134,6 +134,9 @@ async def send_status_stream(filename: str, request: Request):
 class BulkExportToExcelRequest(BaseModel):
     profile_urls: List[str]
     hash_key_list: Optional[List[Dict]]
+    export_type: Optional[str] = None
+    search_id: Optional[str] = None
+    search_index: Optional[List[Dict]] = None
 
 
 @router.post("/export/excel", response_model=BulkUploadResponse)
@@ -160,6 +163,9 @@ async def export_excel_file(
             hash_key_list=app_request.hash_key_list,
             outgoing_filename=outgoing_filename,
             user=user,
+            export_type=app_request.export_type,
+            search_id=app_request.search_id,
+            search_index=app_request.search_index
         )
     )
 
