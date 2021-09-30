@@ -27,7 +27,8 @@ const Profile = () => {
           email: userStatus.data.email,
           subscription: {
             product: "Free Analystt",
-            price: "100 INR",
+            email_credit: userStatus.data.email_credit,
+            profile_credit: userStatus.data.profile_credit,
             period: "Yearly",
             last_renewal: "01/02/2020",
             expiry_date: "02/08/2021",
@@ -121,11 +122,12 @@ const Profile = () => {
                         <label for="inputPassword" class="col-sm-2 ">
                           Current Password
                         </label>
-                        <div class="col-sm-10 d-flex align-items-center">
+                        <div class="col-sm-10 d-flex align-items-center" >
                           <div>
                             <input
+                              style={{ borderRadius:"10px" }}
                               type="password"
-                              class=""
+                              className=""
                               id="inputPassword"
                             />
                             <div>
@@ -139,8 +141,8 @@ const Profile = () => {
                         <label for="inputPassword" class="col-sm-2 ">
                           New Password
                         </label>
-                        <div class="col-sm-10 d-flex align-items-center">
-                          <input type="password" class="" id="inputPassword" />
+                        <div className="col-sm-10 d-flex align-items-center" >
+                          <input style={{ borderRadius:"10px" }} type="password" class="" id="inputPassword" />
                         </div>
                       </div>
                       <div class="mb-3 row text-right">
@@ -148,7 +150,7 @@ const Profile = () => {
                           Verify Password
                         </label>
                         <div class="col-sm-10 d-flex align-items-center">
-                          <input type="password" class="" id="inputPassword" />
+                          <input style={{ borderRadius:"10px" }} type="password" class="" id="inputPassword" />
                         </div>
                       </div>
                     </div>
@@ -164,17 +166,8 @@ const Profile = () => {
                         <th className="fw-bold fs-5">Subscription Details</th>
                         <th className="text-white">this is not showing</th>
                         <th className="text-end">
-                          <span className="text-muted">
-                            Date of Last Renewal:{" "}
-                          </span>
-                          &nbsp;{user?.subscription.last_renewal}
                         </th>
-                        <th className="text-center">
-                          {" "}
-                          <span className="text-muted">Plan Expiry Date:</span>
-                          &nbsp;{user?.subscription.expiry_date}
-                        </th>
-                        <th className="">
+                        <th className="text-end">
                           <button
                             className="accordion-button "
                             type="button"
@@ -193,21 +186,21 @@ const Profile = () => {
                     <tbody id="collapseTwo">
                       <tr>
                         <td className="text-center">
-                          <p>Product</p>{" "}
+                          <p>Total Credit</p>{" "}
                           <span className="text-color">
-                            {user?.subscription.product}
+                            {user?.subscription.email_credit + user?.subscription.profile_credit}
                           </span>
                         </td>
                         <td className="text-center">
-                          <p>Price</p>{" "}
+                          <p>Email Credit</p>{" "}
                           <span className="text-color">
-                            {user?.subscription.price}
+                            {user?.subscription.email_credit}
                           </span>
                         </td>
                         <td className="text-center">
-                          <p>Period</p>{" "}
+                          <p>Profile Credit</p>{" "}
                           <span className="text-color">
-                            {user?.subscription.period}
+                            {user?.subscription.profile_credit}
                           </span>
                         </td>
                         <td className="text-center">
