@@ -505,19 +505,6 @@ const SearchResult = (props) => {
                     <small>Last Updated: {today}</small>
                   </div>
                 </div> */}
-                <div>
-                  <p className="mt-3">
-                    Extracted Results for:{" "}
-                    <span className="link-style">
-                      <img src="assets/images/Vector (2).png" alt="" />{" "}
-                      https://www.instagram.com/
-                    </span>
-                    <span className="link-style">Followers</span>{" "}
-                    <a className="text-danger" href="#">
-                      Clear All
-                    </a>
-                  </p>
-                </div>
               </div>
               <div className="user-widget-box  my-3">
                 <div className="d-flex align-items-center justify-content-between py-3">
