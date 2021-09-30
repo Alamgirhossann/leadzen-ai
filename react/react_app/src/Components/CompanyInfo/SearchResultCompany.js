@@ -163,7 +163,7 @@ const SearchResultCompany = (props) => {
 
       function handleUnAuthorized(response = null) {
         console.log("User is UnAuthorized");
-        alert("Please Logout and LogIn Again");
+        // alert("Please Logout and LogIn Again");
         setLoading(false);
         setMyLeads([]);
       }

@@ -238,7 +238,7 @@ const SearchResult = (props) => {
 
       function handleUnAuthorized(response = null) {
         console.log("User is UnAuthorized");
-        alert("Please Logout and LogIn Again");
+        // alert("Please Logout and LogIn Again");
         setLoading(false);
         setMyLeads([]);
       }
@@ -320,8 +320,10 @@ const SearchResult = (props) => {
           case 200:
             return handleSuccess(response);
           case 401:
+            clearInterval(intervalId);
             return handleUnAuthorized(response);
           case 403:
+            clearInterval(intervalId);
             return handleCookieError(response);
           case 404:
             return handleNotFound();
