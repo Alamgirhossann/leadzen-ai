@@ -1,3 +1,4 @@
+import sys
 from typing import Optional
 
 import httpx
@@ -116,7 +117,7 @@ jwt_authentication = JWTAuthentication(
 async def get_user(user):
     logger.debug(f"In Get User>>{user=}")
     try:
-        query = "SELECT * FROM user WHERE id = :user_id"
+        query = "SELECT * FROM public.user WHERE id = :user_id"
 
         if not (
                 rows := await database.fetch_all(
@@ -141,9 +142,7 @@ async def get_user(user):
 
     except Exception as e:
         logger.critical(f"Exception in get User: {str(e)}")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
+
 
 
 fastapi_users = FastAPIUsers(

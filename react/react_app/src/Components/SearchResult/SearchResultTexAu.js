@@ -370,40 +370,21 @@ const SearchResult = (props) => {
     });
     console.log("isDuplicate>>>>", isDuplicate);
     if (isDuplicate === false) {
-      let requestForSaveEmailCredit = {
-        user_id: Cookies.get("user_id"),
-        search_id: searchId,
-        email_addresses: ["sff", "ddsg"],
-        search_index: parseInt(`${currentPage}${index}`),
-      };
-      try {
-        const response = await fetch(apiServer + "/credits/email/bulk_add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(requestForSaveEmailCredit),
-        });
-
-        const result = response.json();
-        newEvent.emit("updateCredit", true);
-        console.log("response from saveResult>>>", result, result.search_id);
-      } catch (e) {
-        console.error("Exception>>", e);
-      }
       let urls = "";
       for (let i = 0; i < data.url.length; i++) {
-        if (data.url[i] == "?") {
+        if (data.url[i] === "?") {
           break;
         } else {
           urls = urls + data.url[i];
         }
       }
       let url = [urls];
-      let requestforemail = {
+      console.log("url>>>", url);
+      let hash_key = await digestMessage(url);
+      console.log("hash_key>>>>>>>>", hash_key);
+      let requestForEmail = {
         url: url,
+        hash_key: hash_key,
       };
       try {
         const responseEmail = await fetch(apiServer + "/snov/emails_for_url", {
@@ -413,7 +394,7 @@ const SearchResult = (props) => {
             Accept: "application/json",
             Authorization: `Bearer ${Cookies.get("user_token")}`,
           },
-          body: JSON.stringify(requestforemail),
+          body: JSON.stringify(requestForEmail),
         });
         if (responseEmail.status === 401) {
           alert("Please Logout and Login again.");
@@ -432,6 +413,46 @@ const SearchResult = (props) => {
               details: { email: resultEmail },
             },
           ]);
+          if (resultEmail) {
+            let requestForSaveEmailCredit = {
+              search_id: searchId,
+              email_addresses: [resultEmail],
+              search_index: parseInt(`${currentPage}${index}`),
+            };
+
+            try {
+              const response = await fetch(
+                apiServer + "/credits/email/bulk_add",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                  },
+                  body: JSON.stringify(requestForSaveEmailCredit),
+                }
+              );
+
+              const result = response.json();
+              newEvent.emit("updateCredit", true);
+              console.log(
+                "response from saveResult>>>",
+                result,
+                result.search_id
+              );
+            } catch (e) {
+              console.error("Exception>>", e);
+            }
+          } else {
+            setUnlockEmailDetails((prev) => [
+              ...prev,
+              {
+                index: `${currentPage}${index}`,
+                details: { email: `Not Found` },
+              },
+            ]);
+          }
         }
         if (responseEmail.status === 404) {
           setUnlockEmailDetails((prev) => [
@@ -442,7 +463,7 @@ const SearchResult = (props) => {
             },
           ]);
         }
-        if (responseEmail.status == 500) {
+        if (responseEmail.status === 500) {
           alert("Error getting data from server.Please try again.");
         }
       } catch (err) {
@@ -765,7 +786,7 @@ const SearchResult = (props) => {
   console.log("isCheck....", selectedLeads);
 
   useEffect(() => {
-    if (searchText != "") {
+    if (searchText !== "") {
       setSearchedList(
         myLeads.filter((data) => {
           return (
