@@ -6,8 +6,8 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from loguru import logger
 from pydantic import BaseModel, EmailStr
 from starlette.responses import JSONResponse, RedirectResponse
-from app.utils.sendinblue import sendinblue_email_verification
 from app.config import API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID
+from app.utils.sendinblue import sendinblue_email_send
 
 from app.config import (
     API_CONFIG_GSUITE_EMAIL,
@@ -15,6 +15,7 @@ from app.config import (
     API_CONFIG_REACT_LOGIN_PAGE_URL,
     API_CONFIG_SELF_BASE_URL,
     API_CONFIG_SELF_BASE_EXTERNAL_URL,
+    API_CONFIG_SENDINBLUE_WELCOME_TEMPLATE_ID,
 )
 
 
@@ -38,23 +39,22 @@ router = APIRouter(prefix="/email", tags=["Email"])
 
 
 class UserEmailSendRequest(BaseModel):
+    template_id: int
+    name: str
     email: EmailStr
-    message: str
-    subject: str
+    link: str
 
 
 @router.post("/send", response_model=bool)
 async def send_email(request: UserEmailSendRequest, background_tasks: BackgroundTasks):
     logger.debug(f"{request=}")
-
-    message = MessageSchema(
-        subject=request.subject,
-        recipients=[request.email],
-        body=request.message,
+    background_tasks.add_task(
+        sendinblue_email_send,
+        templates_id=request.template_id,
+        name=request.name,
+        email_to=request.email,
+        link=request.link,
     )
-
-    fast_mail = FastMail(conf)
-    background_tasks.add_task(fast_mail.send_message, message)
     logger.success(f"Email Sent, {request.email=}")
     return True
 
@@ -65,13 +65,19 @@ async def send_account_verification_email(
 ):
     logger.debug(f"{request=}")
     link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/email/verify/account/{request.token} \n"
-    background_tasks.add_task(sendinblue_email_verification, templates_id=API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID, name=request.name, email_to=request.email, link=link)
+    background_tasks.add_task(
+        sendinblue_email_send,
+        templates_id=API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID,
+        name=request.name,
+        email_to=request.email,
+        link=link,
+    )
     logger.success(f"Verification Email Sent, {request.email=}")
     return True
 
 
 @router.get("/verify/account/{token}")
-async def verify_email_by_token(token: str):
+async def verify_email_by_token(token: str, background_tasks: BackgroundTasks):
     logger.debug(f"{token=}")
 
     try:
@@ -108,7 +114,14 @@ async def verify_email_by_token(token: str):
                     status_code=401,
                     content={"message": "Error Verifying Email"},
                 )
-
+            if response.status_code == 200:
+                background_tasks.add_task(
+                    sendinblue_email_send,
+                    templates_id=API_CONFIG_SENDINBLUE_WELCOME_TEMPLATE_ID,
+                    name=data["username"],
+                    email_to=data["email"],
+                    link="",
+                )
             logger.success("User Verified, Redirecting to login page")
 
             params = urlencode({"email": data.get("email"), "emailVerified": "true"})

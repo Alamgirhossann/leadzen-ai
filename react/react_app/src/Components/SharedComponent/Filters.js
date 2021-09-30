@@ -220,10 +220,12 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
+                  id="filter-search-location-input"
                   className="customize-search w-100"
                   type="text"
                   placeholder="Search Location"
                   onChange={handleLocation}
+                  onInput={handleLocation}
                   value={customSearch.location}
                   list="location"
                 />
@@ -251,8 +253,10 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
+                  id="filter-search-industry-input"
                   className="customize-search w-100"
                   onChange={handleIndustry}
+                  onInput={handleIndustry}
                   value={customSearch.industry}
                   type="text"
                   placeholder="Search Industry"
@@ -280,9 +284,11 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
+                  id="filter-search-job-input"
                   className="customize-search w-100"
                   value={customSearch.job_title}
                   onChange={handleJob}
+                  onInput={handleJob}
                   type="text"
                   placeholder="Search Job title"
                   list="job-title"
@@ -309,9 +315,11 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
+                  id="filter-search-education-input"
                   className="customize-search w-100"
                   value={customSearch.education}
                   onChange={handleEducation}
+                  onInput={handleEducation}
                   type="text"
                   placeholder="Search Education"
                   list="education"
@@ -339,9 +347,11 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
+                  id="filter-search-company-input"
                   className="customize-search w-100"
                   value={customSearch.company_name}
                   onChange={handleCompany}
+                  onInput={handleCompany}
                   type="text"
                   placeholder="Search Company Name"
                   list="company"
@@ -368,9 +378,11 @@ const Filters = (props) => {
             >
               <div className="accordion-body">
                 <input
+                  id="filter-search-keywords-input"
                   className="customize-search w-100"
                   value={customSearch.keywords}
                   onChange={handleKeywords}
+                  onInput={handleKeywords}
                   type="text"
                   placeholder="Search Keywords"
                   list="keywords"

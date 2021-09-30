@@ -165,50 +165,54 @@ const CompanyFilters = (props) => {
               </button>
             </h2>
 
-            <div
-              id="one"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <input
-                  className="customize-search w-100"
-                  onChange={handleName}
-                  value={customSearch.name}
-                  type="text"
-                  placeholder="Search Name"
-                />
-              </div>
+          <div
+            id="one"
+            className="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body">
+              <input
+                id="company-filters-search-name-input"
+                className="customize-search w-100"
+                onChange={handleName}
+                onInput={handleName}
+                value={customSearch.name}
+                type="text"
+                placeholder="Search Name"
+              />
             </div>
           </div>
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#two"
-              >
-                <img src="assets/images/accord-map-pin.png" alt="title" />
-                Location
-              </button>
-            </h2>
+        </div>
+        <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#two"
+            >
+              <img src="assets/images/accord-map-pin.png" alt="title" />
+              Location
+            </button>
+          </h2>
 
-            <div
-              id="two"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <input
-                  className="customize-search w-100"
-                  onChange={handleLocation}
-                  type="text"
-                  placeholder="Search Location"
-                />
-              </div>
+          <div
+            id="two"
+            className="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body">
+              <input
+                id="company-filters-search-location-input"
+                className="customize-search w-100"
+                onChange={handleLocation}
+                onInput={handleLocation}
+                type="text"
+                placeholder="Search Location"
+              />
             </div>
           </div>
+        </div>
 
           <div className="accordion-item">
             <h2 className="accordion-header">
@@ -223,49 +227,53 @@ const CompanyFilters = (props) => {
               </button>
             </h2>
 
-            <div
-              id="tree"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <input
-                  className="customize-search w-100"
-                  onChange={handleIndustry}
-                  type="text"
-                  placeholder="Search Industry"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="accordion-item">
-            <h2 className="accordion-header">
-              <button
-                className="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#four"
-              >
-                <img src="assets/images/users.png" alt="title" />
-                Employee Count
-              </button>
-            </h2>
-            <div
-              id="four"
-              className="accordion-collapse collapse"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <input
-                  className="customize-search w-100"
-                  onChange={handleEmployeeCount}
-                  type="text"
-                  placeholder="Search Employee Count"
-                />
-              </div>
+          <div
+            id="tree"
+            className="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body">
+              <input
+                id="company-filters-search-industry-input"
+                className="customize-search w-100"
+                onChange={handleIndustry}
+                onInput={handleIndustry}
+                type="text"
+                placeholder="Search Industry"
+              />
             </div>
           </div>
         </div>
+        <div className="accordion-item">
+          <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#four"
+            >
+              <img src="assets/images/users.png" alt="title" />
+              Employee Count
+            </button>
+          </h2>
+          <div
+            id="four"
+            className="accordion-collapse collapse"
+            data-bs-parent="#accordionExample"
+          >
+            <div className="accordion-body">
+              <input
+                id="company-filters-search-employee-count-input"
+                className="customize-search w-100"
+                onChange={handleEmployeeCount}
+                onInput={handleEmployeeCount}
+                type="text"
+                placeholder="Search Employee Count"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
         <button
           style={{ background: "#FB3E3E" }}

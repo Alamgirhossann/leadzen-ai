@@ -55,8 +55,8 @@ const SearchResult = (props) => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
   const [selectedSaveList, setSelectedSaveList] = useState([]);
-  const [searchText , setSearchText]=useState('')
-  const [searchedList, setSearchedList] = useState([])
+  const [searchText, setSearchText] = useState("");
+  const [searchedList, setSearchedList] = useState([]);
   const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
 
@@ -74,7 +74,7 @@ const SearchResult = (props) => {
     setCurrentLeads(
       searchedList && Array.isArray(searchedList)
         ? searchedList.slice(pageNumber * 10 - 10, pageNumber * 10)
-        :0
+        : 0
     );
   };
 
@@ -238,7 +238,7 @@ const SearchResult = (props) => {
 
       function handleUnAuthorized(response = null) {
         console.log("User is UnAuthorized");
-        alert("Please Logout and LogIn Again");
+        // alert("Please Logout and LogIn Again");
         setLoading(false);
         setMyLeads([]);
       }
@@ -320,8 +320,10 @@ const SearchResult = (props) => {
           case 200:
             return handleSuccess(response);
           case 401:
+            clearInterval(intervalId);
             return handleUnAuthorized(response);
           case 403:
+            clearInterval(intervalId);
             return handleCookieError(response);
           case 404:
             return handleNotFound();
@@ -354,7 +356,7 @@ const SearchResult = (props) => {
   // const [selected, setSelected] = useState(false);
 
   const handleUnlockEmail = async (e, index, data) => {
-    setWait(`${currentPage}${index}`)
+    setWait(`${currentPage}${index}`);
     e.preventDefault();
     console.log("in handle unlock>>>>", data);
     // try {
@@ -393,16 +395,16 @@ const SearchResult = (props) => {
       }
       let urls = "";
       for (let i = 0; i < data.url.length; i++) {
-        if (data.url[i] == '?') {
+        if (data.url[i] == "?") {
           break;
         } else {
-          urls = urls + data.url[i]
+          urls = urls + data.url[i];
         }
       }
-      let url = [urls]
+      let url = [urls];
       let requestforemail = {
-        url: url
-      }
+        url: url,
+      };
       try {
         const responseEmail = await fetch(apiServer + "/snov/emails_for_url", {
           method: "POST",
@@ -413,11 +415,13 @@ const SearchResult = (props) => {
           },
           body: JSON.stringify(requestforemail),
         });
-        if(responseEmail.status ===401){
-          alert("Please Logout and Login again.")
+        if (responseEmail.status === 401) {
+          alert("Please Logout and Login again.");
         }
         if (responseEmail.status === 402) {
-          alert("You have insufficient profile credit. Buy Credits to get details.")
+          alert(
+            "You have insufficient profile credit. Buy Credits to get details."
+          );
         }
         if (responseEmail.status === 200) {
           const resultEmail = await responseEmail.json();
@@ -425,22 +429,21 @@ const SearchResult = (props) => {
             ...prev,
             {
               index: `${currentPage}${index}`,
-              details: {email: resultEmail},
+              details: { email: resultEmail },
             },
           ]);
         }
-        if(responseEmail.status === 404){
+        if (responseEmail.status === 404) {
           setUnlockEmailDetails((prev) => [
             ...prev,
             {
               index: `${currentPage}${index}`,
-              details: {email: `Not Found`},
+              details: { email: `Not Found` },
             },
           ]);
         }
-        if (responseEmail.status == 500)
-        {
-          alert("Error getting data from server.Please try again.")
+        if (responseEmail.status == 500) {
+          alert("Error getting data from server.Please try again.");
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -454,7 +457,7 @@ const SearchResult = (props) => {
         );
       });
     }
-    setWait(null)
+    setWait(null);
   };
 
   useEffect(() => {
@@ -663,7 +666,7 @@ const SearchResult = (props) => {
   const handleLeadSelectionChange = async (e) => {
     const { id, checked } = e.target;
     let hash_key = null;
-     setSelectedLeads([...selectedLeads, id]);
+    setSelectedLeads([...selectedLeads, id]);
     hash_key = await digestMessage(id);
 
     tempJson[id] = hash_key;
@@ -672,7 +675,7 @@ const SearchResult = (props) => {
     if (!checked) {
       setSelectedLeads(selectedLeads.filter((item) => item !== id));
     }
-     };
+  };
   console.log("seleched hash key>>>>", selectedLeadHashKey);
   const handleLeadSelectAll = (e) => {
     setIsCheckAll(!isCheckAll);
@@ -761,20 +764,21 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
-  useEffect(()=> {
-   if(searchText!=""){
-     setSearchedList(myLeads.filter(data=>{
-       return (
-           data.name.toLowerCase().includes(searchText.toLowerCase())||
-               data.location.toLowerCase().includes(searchText.toLowerCase())||
-               data.job.toLowerCase().includes(searchText.toLowerCase())
-       )
-     }))
-   }
-   else {
-     setSearchedList(myLeads)
-   }
-  },[searchText,myLeads])
+  useEffect(() => {
+    if (searchText != "") {
+      setSearchedList(
+        myLeads.filter((data) => {
+          return (
+            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.location.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.job.toLowerCase().includes(searchText.toLowerCase())
+          );
+        })
+      );
+    } else {
+      setSearchedList(myLeads);
+    }
+  }, [searchText, myLeads]);
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -832,25 +836,29 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
-                  {loading=== false?(
-                     <div className="search-form4 d-flex mb-3">
-              <div className="input-group" >
-                <div className="input-placeholder" style={{'width':'1000px','height':'50px'}}>
-                  <input
-                    className="ps-3"
-                    required
-                    onChange={e => setSearchText(e.target.value)}
-                  />
-                  <div className="placeholder">
-                   Search Here
+              {loading === false ? (
+                <div className="search-form4 d-flex mb-3">
+                  <div className="input-group">
+                    <div
+                      className="input-placeholder"
+                      style={{ width: "1000px", height: "50px" }}
+                    >
+                      <input
+                        id="search-result-texau-search-input"
+                        className="ps-3"
+                        required
+                        onChange={(e) => setSearchText(e.target.value)}
+                      />
+                      <div className="placeholder">Search Here</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-           </div>
-              ):null
-              }
+              ) : null}
               <div className="user-search-wrapper">
-                <div className="detailed-search"  style={{'paddingLeft':"40px"}}>
+                <div
+                  className="detailed-search"
+                  style={{ paddingLeft: "40px" }}
+                >
                   <div>
                     <small>Last Updated: {today}</small>
                   </div>
@@ -913,127 +921,149 @@ const SearchResult = (props) => {
                         <h5>Records Not Found</h5>
                       </div>
                     ) : currentLeads ? (
-                      currentLeads.map((data, index) => data.name != "LinkedIn Member" ? (
-                        <div>
-                          <div className="user-container py-2" key={`${currentPage}${index}`}>
-                            <input
-                              className="box ms-3 me-3"
-                              id={data.url || data.profileLink}
-                              type="checkbox"
-                              name={data.name}
-                              checked={selectedLeads.includes(
-                                data.url || data.profileLink
-                              )}
-                              onChange={handleLeadSelectionChange}
-                            />
-                            <div className="search-author text-danger ">
-                              <img
-                                style={{ borderRadius: "50%" }}
-                                src={
-                                  data.profilePicture
-                                    ? data.profilePicture
-                                    : "assets/images/author-image.png"
-                                }
-                                alt=""
+                      currentLeads.map((data, index) =>
+                        data.name != "LinkedIn Member" ? (
+                          <div>
+                            <div
+                              className="user-container py-2"
+                              key={`${currentPage}${index}`}
+                            >
+                              <input
+                                className="box ms-3 me-3"
+                                id={data.url || data.profileLink}
+                                type="checkbox"
+                                name={data.name}
+                                checked={selectedLeads.includes(
+                                  data.url || data.profileLink
+                                )}
+                                onChange={handleLeadSelectionChange}
                               />
-                            </div>
-                            <div className="search-user ps-3">
-                              <p>{data.length === 0 ? null : data.name}</p>
-                              <small className="d-block">
-                                Works at {data.length === 0 ? null : data.job}
-                              </small>
-                              <small className="d-block">
-                                {data.length === 0 ? null : data.location}
-                              </small>
-                            </div>
-                            <div className="linkedin-icon d-flex justify-content-end">
-                              <span>
-                                <a href={data.url} target="_blank">
+                              <div className="search-author text-danger ">
+                                <img
+                                  style={{ borderRadius: "50%" }}
+                                  src={
+                                    data.profilePicture
+                                      ? data.profilePicture
+                                      : "assets/images/author-image.png"
+                                  }
+                                  alt=""
+                                />
+                              </div>
+                              <div className="search-user ps-3">
+                                <p>{data.length === 0 ? null : data.name}</p>
+                                <small className="d-block">
+                                  Works at {data.length === 0 ? null : data.job}
+                                </small>
+                                <small className="d-block">
+                                  {data.length === 0 ? null : data.location}
+                                </small>
+                              </div>
+                              <div className="linkedin-icon d-flex justify-content-end">
+                                <span>
+                                  <a href={data.url} target="_blank">
+                                    <img
+                                      src="assets/images/linkedin1.png"
+                                      alt=""
+                                    />
+                                  </a>
+                                </span>
+                              </div>
+                              <div className="search-email text-center">
+                                <small
+                                // className={
+                                //   show[index] ? "d-block" : "d-block blur"
+                                // }
+                                >
+                                  {unlockEmailDetails?.map((spec) => (
+                                    <span>
+                                      {spec.index === `${currentPage}${index}`
+                                        ? spec.details.email
+                                        : null}
+                                    </span>
+                                  ))}
+                                </small>
+                                {wait === `${currentPage}${index}` ? (
+                                  <p>please wait...</p>
+                                ) : (
+                                  <a
+                                    href="#"
+                                    onClick={(e) =>
+                                      handleUnlockEmail(e, index, data)
+                                    }
+                                  >
+                                    <small className="d-block text-danger">
+                                      Unlock
+                                    </small>
+                                  </a>
+                                )}
+                              </div>
+                              <p className="search-view-btn ">
+                                <a
+                                  className="btn button"
+                                  data-toggle="collapse"
+                                  href={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  data-target={
+                                    "#collapseExample_" +
+                                    `${currentPage}${index}`
+                                  }
+                                  role="button"
+                                  aria-expanded="false"
+                                  aria-controls="collapseExample"
+                                  onClick={() => handleProfile(index, data)}
+                                >
+                                  View Profile
+                                </a>
+                              </p>
+                              <p>
+                                {unlockplus[`${currentPage}${index}`] ? (
                                   <img
-                                    src="assets/images/linkedin1.png"
+                                    src="assets/images/Frame 543.png"
                                     alt=""
                                   />
-                                </a>
-                              </span>
+                                ) : (
+                                  <SavedListButton
+                                    data={data}
+                                    type="texau"
+                                    index={`${currentPage}${index}`}
+                                    changeindex={(saveindex) =>
+                                      setUnlockPlus((prev) => ({
+                                        ...prev,
+                                        [saveindex]: true,
+                                      }))
+                                    }
+                                  />
+                                )}
+                              </p>
                             </div>
-                            <div className="search-email text-center">
-                              <small
-                              // className={
-                              //   show[index] ? "d-block" : "d-block blur"
-                              // }
-                              >
-                                {unlockEmailDetails?.map((spec) => (
-                                  <span>
-                                    {spec.index === `${currentPage}${index}`
-                                      ? spec.details.email
-                                      : null}
-                                  </span>
-                                ))}
-                              </small>
-                              {wait ===`${currentPage}${index}`?<p>please wait...</p>:
-                              <a
-                                href="#"
-                                onClick={(e) =>
-                                  handleUnlockEmail(e, index, data)
-                                }
-                              >
-                                <small className="d-block text-danger">
-                                  Unlock
-                                </small>
-                              </a>}
-                            </div>
-                            <p className="search-view-btn ">
-                              <a
-                                className="btn button"
-                                data-toggle="collapse"
-                                href={
-                                  "#collapseExample_" + `${currentPage}${index}`
-                                }
-                                data-target={
-                                  "#collapseExample_" + `${currentPage}${index}`
-                                }
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                                onClick={() => handleProfile(index, data)}
-                              >
-                                View Profile
-                              </a>
-                            </p>
-                            <p>
-                              {unlockplus[`${currentPage}${index}`] ? <img src="assets/images/Frame 543.png" alt=""/> :
-                                  <SavedListButton data={data} type="texau" index={`${currentPage}${index}`}
-                                                   changeindex={saveindex => setUnlockPlus((prev) => ({
-                                                     ...prev,
-                                                     [saveindex]: true
-                                                   }))}/>
-                              }
-                            </p>
-                          </div>
-                          <div
-                            style={{
-                              background: "white",
-                              borderRadius: "20px",
-                              padding: "20px",
-                            }}
-                          >
                             <div
-                              className="panel-collapse collapse in"
-                              id={"collapseExample_" + `${currentPage}${index}`}
+                              style={{
+                                background: "white",
+                                borderRadius: "20px",
+                                padding: "20px",
+                              }}
                             >
-                              {specificUserDetails?.map((spec) => (
-                                <span>
-                                  {spec.index === `${currentPage}${index}` ? (
-                                    <span>
-                                      <SpecificUser details={spec.details} />
-                                    </span>
-                                  ) : null}
-                                </span>
-                              ))}{" "}
+                              <div
+                                className="panel-collapse collapse in"
+                                id={
+                                  "collapseExample_" + `${currentPage}${index}`
+                                }
+                              >
+                                {specificUserDetails?.map((spec) => (
+                                  <span>
+                                    {spec.index === `${currentPage}${index}` ? (
+                                      <span>
+                                        <SpecificUser details={spec.details} />
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                ))}{" "}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ) : (
+                        ) : (
                           console.log("not valid name")
                         )
                       )
@@ -1050,11 +1080,14 @@ const SearchResult = (props) => {
                 )}
               </div>
               <div className="d-flex justify-content-center">
-                <Pagination
+                {loading===false?(
+                      <Pagination
                   postsPerPage={10}
-                  totalPosts={myLeads ? myLeads.length : 1}
+                  totalPosts={searchedList ? searchedList.length : 1}
                   paginate={paginate}
                 />
+                ):null
+                }
               </div>
               <AskJarvis />
             </div>
