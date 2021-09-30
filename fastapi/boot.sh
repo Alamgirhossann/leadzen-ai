@@ -20,6 +20,7 @@ then
     echo "> ==============================================="
 
     ./wait_for_it.sh --host=postgres --port=5432 --timeout=90
+    ./wait_for_it.sh --host=pgadmin --port=80 --timeout=90
     
     echo "> Done"
     echo "..."
