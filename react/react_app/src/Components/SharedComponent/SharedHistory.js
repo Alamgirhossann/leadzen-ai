@@ -124,9 +124,11 @@ const SharedHistory = () => {
         <form action="#" className="search-form-sm">
           <div className="input-group">
             <input
+              id="shared-history-search-input"
               type="text"
               className="form-control"
               onBlur={handleSearch}
+              onInput={handleSearch}
               placeholder="Search"
             />
             <button
@@ -178,7 +180,7 @@ const SharedHistory = () => {
                     View result
                   </a>
                 </p>
-                <a href="/history" onClick={(name) => handleDelete(data.name)}>
+                <a href="/repeatedUser" onClick={(name) => handleDelete(data.name)}>
                   <p className="close-btn">
                     <img src="assets/images/close-user.png" alt="" />
                   </p>
