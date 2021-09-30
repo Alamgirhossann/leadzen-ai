@@ -122,8 +122,8 @@ const BulkSearch = (data) => {
       />
 
       <div className="browse-file">
-        <p>Drag and Drop File</p>
-        <p>or</p>
+        {/* <p>Drag and Drop File</p>
+        <p>or</p> */}
         <button
           className="browse-btn"
           onClick={handleCsvUpload}
