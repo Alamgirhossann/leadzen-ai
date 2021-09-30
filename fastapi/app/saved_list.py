@@ -241,7 +241,7 @@ async def get_all_saved_list_names(
 
     try:
         query = (
-            """SELECT DISTINCT id, list_name,list_description FROM saved_list WHERE user_id = :user_id ORDER BY created_on DESC"""
+            """SELECT DISTINCT id, list_name,list_description,created_on FROM saved_list WHERE user_id = :user_id ORDER BY created_on DESC"""
         )
 
         if not (
@@ -271,13 +271,25 @@ async def get_all_saved_list_names(
         )
 
 
-@router.patch("/id/{saved_list_id}", response_model=SavedListResponse)
+@router.patch("/id/{saved_list_id}")
 async def update_search_save_list(
         saved_list_id: str,
         request: SavedListUpdateRequest,
         user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{request=}, {user=}")
+    # print("saved_list_id",saved_list_id)
+    # logger.debug(f"{request=}, {user=}")
+    # update_query = saved_list.update().where(saved_list.c.id == saved_list_id).values(list_content=str(json.dumps(request.content)))
+    # print("update",update_query)
+    # if not (row := await database.execute(update_query)):
+    #     print("row",row)
+    #     logger.warning("Invalid Query Results")
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+    #     )
+    # print("roww",row)
+    #
+    # return {"SavedListResponse":saved_list_id}
 
     try:
         values = {}
@@ -289,7 +301,7 @@ async def update_search_save_list(
             values["list_description"] = request.list_description
 
         if request.content:
-            query = "SELECT list_content FROM saved_list WHERE  id = :id and user_id = :user_id "
+            query = "SELECT list_content FROM saved_list WHERE  id = :id AND user_id = :user_id "
 
             if not (
                     rows := await database.fetch_all(
@@ -306,8 +318,7 @@ async def update_search_save_list(
 
                 values["list_content"] = json.dumps(list_data)
             else:
-                list_data = []
-                list_data.append(request.content)
+                list_data = [request.content]
                 values["list_content"] = json.dumps(list_data)
 
         if request.search_type:
@@ -323,10 +334,11 @@ async def update_search_save_list(
         )
 
         if not (row := await database.execute(update_query)):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
+            return None
+            # logger.warning("Invalid Query Results")
+            # raise HTTPException(
+            #     status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            # )
 
         logger.debug(f"{row=}")
 
@@ -350,7 +362,7 @@ async def delete_saved_list_by_index(
     logger.debug(f"{saved_list_id=}, {user=}")
     try:
         values = {}
-        query = "SELECT list_content FROM saved_list WHERE  id = :id and user_id = :user_id "
+        query = "SELECT list_content FROM saved_list WHERE  id = :id AND user_id = :user_id "
         if not (
                 rows := await database.fetch_all(
                     query=query, values={"id": saved_list_id, "user_id": str(user.id)}
