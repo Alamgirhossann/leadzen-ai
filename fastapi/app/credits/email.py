@@ -148,29 +148,17 @@ async def add_bulk_email_credit_history(
             ]
         ]
         email_credit_ids = [item.get("id") for item in values]
+        logger.debug(f"{email_credit_ids=}")
         query = email_credit_history.insert().values(values)
+        logger.debug(f"{query=}")
         if not (row_id := await database.execute(query)):
-            logger.warning("Invalid Request")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
-            )
+            logger.warning(f"Invalid Request>>{row_id=}")
+            return None
         logger.debug(f"{row_id=}")
-
-        # async with httpx.AsyncClient() as client:
-        #
-        #     response = await client.put(
-        #         f"{API_CONFIG_SELF_BASE_URL}/api/credits/deduct/EMAIL",
-        #
-        #     )
-        #     if not response:
-        #         logger.debug(f"credit deduct {response=}")
 
         return EmailCreditBulkAddResponse(email_credit_ids=email_credit_ids)
 
     except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print("line->" + str(exc_tb.tb_lineno))
-        print("Exception" + str(e))
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

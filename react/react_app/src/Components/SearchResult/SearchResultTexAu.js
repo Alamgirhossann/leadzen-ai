@@ -372,13 +372,12 @@ const SearchResult = (props) => {
     if (isDuplicate === false) {
       let urls = "";
       for (let i = 0; i < data.url.length; i++) {
-        if (data.url[i] == "?") {
+        if (data.url[i] === "?") {
           break;
         } else {
           urls = urls + data.url[i];
         }
       }
-
       let url = [urls];
       console.log("url>>>", url);
       let hash_key = await digestMessage(url);
@@ -787,7 +786,7 @@ const SearchResult = (props) => {
   console.log("isCheck....", selectedLeads);
 
   useEffect(() => {
-    if (searchText != "") {
+    if (searchText !== "") {
       setSearchedList(
         myLeads.filter((data) => {
           return (
