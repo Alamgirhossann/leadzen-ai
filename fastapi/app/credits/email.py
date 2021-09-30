@@ -32,9 +32,9 @@ async def get_all_email_credits(user=Depends(fastapi_users.get_current_active_us
         query = "SELECT * FROM email_credit_history WHERE user_id = :user_id ORDER BY id DESC"
 
         if not (
-            rows := await database.fetch_all(
-                query=query, values={"user_id": str(user.id)}
-            )
+                rows := await database.fetch_all(
+                    query=query, values={"user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -62,16 +62,16 @@ async def get_all_email_credits(user=Depends(fastapi_users.get_current_active_us
     response_model=List[EmailCreditResponse],
 )
 async def get_email_credits_used_in_search_id(
-    search_id: str, user=Depends(fastapi_users.get_current_active_user)
+        search_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{search_id=}, {user=}")
     try:
         query = f"SELECT * FROM email_credit_history WHERE search_id = :search_id AND user_id = :user_id"
 
         if not (
-            rows := await database.fetch_all(
-                query=query, values={"search_id": search_id, "user_id": str(user.id)}
-            )
+                rows := await database.fetch_all(
+                    query=query, values={"search_id": search_id, "user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -94,8 +94,8 @@ async def get_email_credits_used_in_search_id(
 
 @router.post("/email/add", response_model=EmailCreditAddResponse)
 async def add_email_credit_history(
-    request: EmailCreditAddRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        request: EmailCreditAddRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
@@ -126,8 +126,8 @@ async def add_email_credit_history(
 
 @router.post("/email/bulk_add", response_model=EmailCreditBulkAddResponse)
 async def add_bulk_email_credit_history(
-    request: EmailCreditBulkAddRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        request: EmailCreditBulkAddRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
@@ -202,20 +202,25 @@ async def add_email_search(request: EmailSearchAddRequest):
 
 @router.post("/email_search/get")
 async def get_email_search(
-    request: EmailSearchGetRequest,
+        request: EmailSearchGetRequest, user=Depends(fastapi_users.get_current_active_user),
 ):
+    return get_email_by_hash_key(request.query_url, user)
+
+
+async def get_email_by_hash_key(query_url, user):
+    logger.debug(f"{query_url=}>>{type(query_url)=}>>{user=}>>>{type(user.id)=}")
+    if not query_url or not user:
+        return None
     try:
         query = f"SELECT * FROM email_search WHERE user_id = :user_id AND query_url = :query_url"
         if not (
-            rows := await database.fetch_all(
-                query=query,
-                values={"user_id": request.user_id, "query_url": request.query_url},
-            )
+                rows := await database.fetch_all(
+                    query=query,
+                    values={"user_id": str(user.id), "query_url": query_url},
+                )
         ):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
+            logger.warning(f"Invalid Query Results>>{rows=}")
+            return None
         logger.debug(f"{rows=}")
         processed_rows = [dict(x) for x in rows]
         for i in processed_rows[0]:
@@ -223,6 +228,9 @@ async def get_email_search(
                 return processed_rows[0][i]
     except Exception as e:
         logger.critical(f"Exception Querying Database: {str(e)}")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("line->" + str(exc_tb.tb_lineno))
+        print('Exception' + str(e))
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Error Querying Database"
         )
