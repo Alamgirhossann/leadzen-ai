@@ -8,7 +8,11 @@ services:
             - "4445:4444"
         volumes:
             - /dev/shm:/dev/shm
-
+    redis:
+        image: "redis:alpine"
+        container_name: "redis"
+        ports:
+            - "6380:6379"
     person_fastapi:
         image: "analystt/person_fastapi:latest"
         container_name: "person_fastapi"
@@ -20,9 +24,10 @@ services:
             - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
             - API_CONFIG_PORT_NUM_INTERNAL=5000
             - API_CONFIG_SELF_BASE_URL=http://localhost:5000
-            - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:12002
-            - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12002/login
-            - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12002/signUp
+            - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:12004
+            - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12004/login
+            - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12004/signUp
+            - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_pinaki2
         depends_on: 
             - selenium
     person_fastapi_external:
@@ -33,6 +38,7 @@ services:
         environment:
             - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
             - API_CONFIG_REDIS_URL=redis://redis
+            - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_pinaki2
         volumes:
             - ./shared:/home/appuser/shared
         depends_on:
@@ -42,6 +48,6 @@ services:
         image: "analystt/person_react:latest"
         container_name: "person_react"
         ports: 
-            - 12002:80
+            - 12004:80
         depends_on:
             - person_fastapi

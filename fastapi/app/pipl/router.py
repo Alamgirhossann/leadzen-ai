@@ -3,7 +3,7 @@ import json
 import uuid
 from typing import Optional, List
 from urllib.parse import urlencode
-
+import sys
 import httpx
 from fastapi import APIRouter, HTTPException, status, BackgroundTasks, Depends
 from fastapi_cache.decorator import cache
@@ -94,8 +94,9 @@ async def people_search(
                 return json_data
             else:
                 logger.debug(f"Profile not found")
+                # breakpoint()
                 user_response = await get_user(user)
-
+                
                 logger.debug(f"{user_response=}, {type(user_response)}")
                 if user_response and user_response.profile_credit <= 0:
                     logger.warning("Insufficient Credits")

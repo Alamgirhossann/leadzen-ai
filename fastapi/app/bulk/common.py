@@ -6,6 +6,12 @@ import httpx
 import pandas as pd
 from loguru import logger
 from pydantic import BaseModel
+from app.config import (
+    API_CONFIG_SENDINBLUE_BULK_FAILURE_TEMPLATE_ID,
+    API_CONFIG_SENDINBLUE_EXCEL_EXPORT_FAILURE_TEMPLATE_ID,
+    API_CONFIG_SENDINBLUE_EXCEL_EXPORT_SUCCESS_TEMPLATE_ID,
+    API_CONFIG_SENDINBLUE_BULK_EXPORT_SUCCESS_TEMPLATE_ID,
+)
 
 from app.config import (
     API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL,
@@ -23,7 +29,7 @@ class BulkRequest(BaseModel):
 
 
 async def wait_and_check_for_filename(
-        request: BulkRequest, max_timeout_counter: int = 18
+    request: BulkRequest, max_timeout_counter: int = 18
 ):
     timeout_counter = max_timeout_counter
     logger.debug(f"{request=}")
@@ -71,39 +77,33 @@ class BulkUploadResponse(BaseModel):
 
 
 def generate_email_message_for_file(user: User, filename: str) -> Tuple[str, str]:
+    check = ""
+    for i in range(len(filename)):
+        if i != 0 or i != 1:
+            check = check + filename[i]
     if filename.endswith(".xlsx"):
-        operation = "Your Excel Export of contacts is ready."
-        subject = "Excel Export Results Ready"
+        template_id = API_CONFIG_SENDINBLUE_EXCEL_EXPORT_SUCCESS_TEMPLATE_ID
+        download_link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{check} \n"
     else:
-        operation = "Your Bulk Search results are ready."
-        subject = "Bulk Search Results Ready"
+        template_id = API_CONFIG_SENDINBLUE_BULK_EXPORT_SUCCESS_TEMPLATE_ID
+        download_link = f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{check} \n"
 
-    message = (
-        f"Dear {user.username}, \n"
-        f"{operation} \n"
-        f"Please click on the link below to download the results. The download should start automatically, "
-        f"however in case it doesn't kindly right click on the link and download the linked file. Get your lead "
-        f"details as you open the file in Excel.\n"
-        f"{API_CONFIG_SELF_BASE_EXTERNAL_URL}/api/{filename.removeprefix('./')} \n"
-        f"--- \n"
-        f"Thanks \n"
-        f"LeadZen Team "
-    )
-
-    return message, subject
+    return template_id, download_link
 
 
 async def send_success_email(user: User, filename: str):
-    message, subject = generate_email_message_for_file(user=user, filename=filename)
-    logger.debug(f"{message=}>>>>{subject=}")
+    template_id, download_link = generate_email_message_for_file(
+        user=user, filename=filename
+    )
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
                 json=UserEmailSendRequest(
+                    template_id=template_id,
+                    name=user.username,
                     email=user.email,
-                    message=message,
-                    subject=subject,
+                    link=download_link,
                 ).dict(),
             )
 
@@ -121,20 +121,19 @@ async def send_success_email(user: User, filename: str):
 
 
 async def send_failure_email(user: User, filename: str):
-    message = (
-        f"Dear {user.username}, \n"
-        f"Your Bulk Search request for {filename} has failed. \n "
-        f"--- \n"
-        f"Thanks \n"
-        f"LeadZen Team "
-    )
-
     try:
+        if filename.endswith(".csv"):
+            template_id = API_CONFIG_SENDINBLUE_BULK_FAILURE_TEMPLATE_ID
+        else:
+            template_id = API_CONFIG_SENDINBLUE_EXCEL_EXPORT_FAILURE_TEMPLATE_ID
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 API_CONFIG_EMAIL_SEND_URL,
                 json=UserEmailSendRequest(
-                    email=user.email, message=message, subject="Bulk Search Failed"
+                    template_id=template_id,
+                    name=user.username,
+                    email=user.email,
+                    link="",
                 ).dict(),
             )
 

@@ -141,6 +141,9 @@ async def get_user(user):
 
     except Exception as e:
         logger.critical(f"Exception in get User: {str(e)}")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("line->" + str(exc_tb.tb_lineno))
+        print('Exception' + str(e))
 
 
 fastapi_users = FastAPIUsers(
