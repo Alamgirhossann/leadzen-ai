@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
-
+import dateFormat from "dateformat";
 const SharedHistory = () => {
   const [searchText, setSearchText] = useState();
   const history = useHistory();
@@ -152,7 +152,7 @@ const SharedHistory = () => {
                 <div className="date">
                   <div>
                     <small className="d-block">Search Date</small>
-                    <small className="d-block">{data.created_on}</small>
+                    <small className="d-block">{dateFormat(data.created_on, "yyyy/mm/dd hh:MM")}</small>
                   </div>
                 </div>
                 <div className="credit">
