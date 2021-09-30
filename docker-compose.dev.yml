@@ -54,8 +54,10 @@ services:
       - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12004/login
       - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12004/signUp
       - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+      - API_CONFIG_WAIT_FOR_DATABASE=1
     depends_on:
       - selenium
+      - pgadmin
       - postgres
 
   person_fastapi_external:
@@ -72,6 +74,7 @@ services:
     depends_on:
       - person_fastapi
       - redis
+      - pgadmin
       - postgres
 
   person_react:

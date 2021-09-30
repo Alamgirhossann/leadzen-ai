@@ -13,6 +13,18 @@ source venv/bin/activate
 echo "> Done"
 echo "..."
 
+if [[ "$API_CONFIG_WAIT_FOR_DATABASE" == "1" ]];
+then
+    echo "> ==============================================="
+    echo ">> Waiting for Local Database to become available"
+    echo "> ==============================================="
+
+    ./wait_for_it.sh --host=postgres --port=5432 --timeout=90
+    
+    echo "> Done"
+    echo "..."
+fi
+
 echo "> =============================="
 echo "> Change owner for shared folder"
 echo "> =============================="
