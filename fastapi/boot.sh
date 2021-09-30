@@ -16,7 +16,7 @@ echo "..."
 echo "> =============================="
 echo "> Change owner for shared folder"
 echo "> =============================="
-sudo chown appuser:appuser /home/appuser/shared
+sudo chown -R appuser:appuser /home/appuser/shared
 echo "> Done"
 echo "..."
 

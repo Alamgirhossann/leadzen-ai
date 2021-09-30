@@ -125,6 +125,7 @@ const ExtractContacts = (data) => {
             type="url"
             className="form-control"
             onBlur={handleUrlChange}
+            onInput={handleUrlChange}
             placeholder="Paste Social Media URL"
             disabled={data.data}
           />

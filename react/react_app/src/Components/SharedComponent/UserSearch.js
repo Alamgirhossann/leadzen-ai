@@ -8,8 +8,11 @@ const UserSearch = () => {
   const [searchText, setSearchText] = useState({ text: null });
 
   const handleHeadSearch = (e) => {
+    console.log(`handlingOnChange: value: ${e.target.value}`);
     setSearchText({ ...searchText, text: e.target.value });
+    console.log(`handlingOnChange: state: ${searchText}`);
   };
+
   function WordCount(str) {
     return str.split(" ").length;
   }
@@ -137,10 +140,11 @@ const UserSearch = () => {
               <div className="input-group">
                 <div className="input-placeholder">
                   <input
-                    id="inputText"
+                    id="user-search-input"
                     className="ps-3"
                     name="searchString"
                     onChange={handleHeadSearch}
+                    onInput={handleHeadSearch}
                     required
                   />
                   <div className="placeholder">
