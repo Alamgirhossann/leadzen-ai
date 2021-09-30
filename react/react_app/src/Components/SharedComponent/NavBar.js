@@ -56,9 +56,6 @@ const NavBar = (props) => {
   }, [user]);
   function handleSetLinkedInCookie() {
     const cookie = prompt("Please paste your LinkedIn cookie here");
-    if (!cookie) {
-      alert("Invalid Cookie");
-    }
     Cookies.set("user_linkedin_cookie", cookie);
   }
   const handleLogout = (event) => {
