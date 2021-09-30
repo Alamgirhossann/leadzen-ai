@@ -30,20 +30,19 @@ const NavBar = (props) => {
         },
       });
       console.log("user_res>>>>>>>>", user_res);
-       async function handleUserSuccess(user_res) {
+      async function handleUserSuccess(user_res) {
         const response = await user_res.json();
         console.log("in success status....", response);
         setUser(response);
       }
       switch (user_res.status) {
-            case 200:
-              return await handleUserSuccess(user_res);
-            case 401:
-              return handleUnAuthorized(user_res);
-            default:
-              return handleError(user_res);
-          }
-
+        case 200:
+          return await handleUserSuccess(user_res);
+        case 401:
+          return handleUnAuthorized(user_res);
+        default:
+          return handleError(user_res);
+      }
     } catch (err) {
       handleError(err);
       // setResponse({ ...response, message: "user not found" });
@@ -59,7 +58,6 @@ const NavBar = (props) => {
     const cookie = prompt("Please paste your LinkedIn cookie here");
     Cookies.set("user_linkedin_cookie", cookie);
   }
-
   const handleLogout = (event) => {
     console.log("document.cookie()...handle", document.cookie);
     Cookies.remove("user_token", { path: "" });
@@ -138,8 +136,8 @@ const NavBar = (props) => {
                           className="progress-bar"
                           style={{
                             width: user
-                              ?
-                                (user.profile_credit / user.total_profile_credits) *
+                              ? (user.profile_credit /
+                                  user.total_profile_credits) *
                                   100 +
                                 "%"
                               : "",
@@ -167,8 +165,7 @@ const NavBar = (props) => {
                           role="progressbar"
                           style={{
                             width: user
-                              ?
-                                (user.email_credit / user.total_email_credits) *
+                              ? (user.email_credit / user.total_email_credits) *
                                   100 +
                                 "%"
                               : "65%",
@@ -206,7 +203,7 @@ const NavBar = (props) => {
                     </div>
                   </li>
                   <li>
-                    <a className="dropdown-item active" href="#">
+                    <a className="dropdown-item" href="/pricing">
                       Upgrade to premium
                     </a>
                   </li>

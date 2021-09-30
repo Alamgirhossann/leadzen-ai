@@ -109,6 +109,7 @@ const RealTimePage = () => {
                   <form className="search-form-sm ">
                     <div className="input-group">
                       <input
+                        id="realtime-page-search-input"
                         type="text"
                         className="form-control"
                         placeholder="Search"
@@ -317,6 +318,7 @@ const RealTimePage = () => {
                         id="real-time-request"
                         className="form-control"
                         onBlur={handleUrlChange}
+                        onInput={handleUrlChange}
                         placeholder="  Tell us your requirement"
                       />
                     </p>
