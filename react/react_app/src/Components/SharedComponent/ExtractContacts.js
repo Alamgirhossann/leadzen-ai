@@ -81,7 +81,7 @@ const ExtractContacts = (data) => {
 
   return (
     <div className="user-widget-box p-4 my-3 text-center">
-      <h5 className="text-danger">Now Extract contacts</h5>
+      <h5 className="text-danger">Now Fetch Contacts</h5>
       <p className="text-dark mb-3">
         {/*of Followers, Likers, Commentors & Group Members & Job Seekers From*/}
         of Likers and Commenters From Supported Social Media Posts
@@ -125,6 +125,7 @@ const ExtractContacts = (data) => {
             type="url"
             className="form-control"
             onBlur={handleUrlChange}
+            onInput={handleUrlChange}
             placeholder="Paste Social Media URL"
             disabled={data.data}
           />
@@ -230,11 +231,11 @@ const ExtractContacts = (data) => {
         </span>{" "}
         Search
       </button>
-      <p className="m-0 mt-2">
-        <a href={data.data ? "" : "/userGuide"} className="learn-link">
-          Learn More{" "}
-        </a>
-      </p>
+      {/*<p className="m-0 mt-2">*/}
+      {/*  <a href={data.data ? "" : "/userGuide"} className="learn-link">*/}
+      {/*    Learn More{" "}*/}
+      {/*  </a>*/}
+      {/*</p>*/}
     </div>
   );
 };

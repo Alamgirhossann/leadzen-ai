@@ -62,9 +62,11 @@ const ExtractContacts = () => {
       <form action="#" className="search-form-lg m-auto">
         <div className="input-group">
           <input
+            id="extract-contact-social-media-url-input"
             type="text"
             className="form-control"
             onBlur={handleURL}
+            onInput={handleURL}
             placeholder="Paste Social Media URL"
             disabled={true}
           />

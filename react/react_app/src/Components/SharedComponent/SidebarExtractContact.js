@@ -81,7 +81,7 @@ const SidebarExtractContact = (data) => {
   return (
     <div>
       <div className="sidebar-search-for sidebar-widget p-4 my-3">
-        <h6 className="text-danger mb-3">Now Extract contacts</h6>
+        <h6 className="text-danger mb-3">Now Fetch Contacts</h6>
         <p>
           {/*of Followers, Likers, Commentors & Group Members & Job Seekers From*/}
           of Likers and Commenters From Supported Social Media Posts
@@ -122,9 +122,11 @@ const SidebarExtractContact = (data) => {
         <form>
           <div className="mb-3">
             <input
+              id="sidebar-extract-contact-url-input"
               type="url"
               className="form-control"
               onBlur={handleUrlChange}
+              onInput={handleUrlChange}
               placeholder="Paste Social Media URL"
               disabled={data.data}
             />

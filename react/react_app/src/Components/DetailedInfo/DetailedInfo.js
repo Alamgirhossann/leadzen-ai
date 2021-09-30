@@ -288,9 +288,11 @@ const DetailedInfo = () => {
                   <div className="search-promote-content">
                     <form className=" d-flex my-2 my-lg-0">
                       <input
+                        id="detailed-info-search-input"
                         className="form-control mr-sm-2"
                         type="search"
                         onBlur={handleHeadSearch}
+                        onInput={handleHeadSearch}
                         placeholder="Search"
                         aria-label="Search"
                       />

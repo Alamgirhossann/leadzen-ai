@@ -14756,6 +14756,7 @@ a:hover {
     color: #fb3e3e;
     padding: 5px 10px;
     border-radius: 5px;
+    cursor: pointer;
 }
 .detailed-search {
   display: grid;
