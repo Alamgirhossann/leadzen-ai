@@ -6,6 +6,22 @@ env
 echo "> Done"
 echo "..."
 
+echo "> ========================================================"
+echo "> Checking and waiting for person_fastapi to become active"
+echo "> ========================================================"
+./wait_for_it.sh --host=person_fastapi --port=5000 --timeout=90
+# shellcheck disable=SC2181
+if [[ "$?" == "0" ]];
+then
+    echo "> person_fastapi is up and running, proceeding"
+    echo "Done"
+    echo "..."        
+else
+    echo "> person_fastapi is not up for the past 1 min"
+    echo "> Exiting"
+    exit 1
+fi
+
 echo "> ============================="
 echo "> Activating Python Environment"
 echo "> ============================="

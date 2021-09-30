@@ -29,6 +29,8 @@ const SearchResultCompany = (props) => {
   const [myLeads, setMyLeads] = useState([]);
   const [companyDetails, setCompanyDetails] = useState("");
   const [companyInfo, setCompanyInfo] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchedList, setSearchedList] = useState([]);
   const [specificUserDetails, setSpecificUserDetails] = useState([
     { index: null, details: null },
   ]);
@@ -59,15 +61,15 @@ const SearchResultCompany = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
-      myLeads && Array.isArray(myLeads)
-        ? myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+      searchedList && Array.isArray(searchedList)
+        ? searchedList.slice(pageNumber * 10 - 10, pageNumber * 10)
         : 0
     );
   };
 
   useEffect(() => {
     paginate(1);
-  }, [myLeads]);
+  }, [searchedList]);
   useEffect(async () => {
     let requestForTexAu = {};
     if (props.location.state.customSearch) {
@@ -126,10 +128,10 @@ const SearchResultCompany = (props) => {
 
         let json_res = await response.json();
         setTimeout(() => {
-        setSearchId(json_res.search_id);
-        console.log("Data>>>>>>>>>>>loading..", json_res, loading);
-        setLoading(false);
-        setMyLeads(json_res.search_results);
+          setSearchId(json_res.search_id);
+          console.log("Data>>>>>>>>>>>loading..", json_res, loading);
+          setLoading(false);
+          setMyLeads(json_res.search_results);
         }, 60000);
       } catch (err) {
         console.error("Error: ", err);
@@ -161,7 +163,7 @@ const SearchResultCompany = (props) => {
 
       function handleUnAuthorized(response = null) {
         console.log("User is UnAuthorized");
-        alert("Please Logout and LogIn Again");
+        // alert("Please Logout and LogIn Again");
         setLoading(false);
         setMyLeads([]);
       }
@@ -466,6 +468,20 @@ const SearchResultCompany = (props) => {
 
   console.log("companyInfo", companyInfo);
 
+  useEffect(() => {
+    if (searchText != "") {
+      setSearchedList(
+        myLeads.filter((data) => {
+          return (
+            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.description.toLowerCase().includes(searchText.toLowerCase())
+          );
+        })
+      );
+    } else {
+      setSearchedList(myLeads);
+    }
+  }, [searchText, myLeads]);
   return (
     <div>
       <div>
@@ -562,8 +578,30 @@ const SearchResultCompany = (props) => {
                 <SidebarExtractContact data={true} />
               </div>
               <div className="col-md-8 col-lg-9">
+                {loading === false ? (
+                  <div className="search-form4 d-flex mb-3">
+                    <div className="input-group">
+                      <div
+                        className="input-placeholder"
+                        style={{ width: "1000px", height: "50px" }}
+                      >
+                        <input
+                          id="search-result-company-search-text-input"
+                          className="ps-3"
+                          required
+                          onChange={(e) => setSearchText(e.target.value)}
+                          onInput={(e) => setSearchText(e.target.value)}
+                        />
+                        <div className="placeholder">Search Here</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="user-search-wrapper">
-                  <div className="detailed-search">
+                  <div
+                    className="detailed-search"
+                    style={{ paddingLeft: "40px" }}
+                  >
                     <div>
                       <small>Last Updated: {today}</small>
                     </div>
@@ -621,7 +659,7 @@ const SearchResultCompany = (props) => {
                 <div className="user-widget-box  my-3">
                   {loading === false ? (
                     <div className="search-container mb-2">
-                      {myLeads && myLeads.length === 0 ? (
+                      {currentLeads && currentLeads.length === 0 ? (
                         <div>
                           <h5>Records Not Found</h5>
                         </div>
@@ -718,11 +756,14 @@ const SearchResultCompany = (props) => {
                                             <h5>Record Not Found</h5>
                                           )
                                         ) : (
-                                           <div className="d-flex justify-content-center">
-                                             <div role="status" style={{ height: "400px" }}>
-                                                 <Lottie options={Loader} />
-                                             </div>
-                                           </div>
+                                          <div className="d-flex justify-content-center">
+                                            <div
+                                              role="status"
+                                              style={{ height: "400px" }}
+                                            >
+                                              <Lottie options={Loader} />
+                                            </div>
+                                          </div>
                                         )}
                                       </span>
                                     ) : null}
@@ -737,11 +778,11 @@ const SearchResultCompany = (props) => {
                       )}
                     </div>
                   ) : (
-                   <div className="d-flex justify-content-center">
-                     <div role="status" style={{ height: "400px" }}>
-                       <Lottie options={Loader} />
-                     </div>
-                   </div>
+                    <div className="d-flex justify-content-center">
+                      <div role="status" style={{ height: "400px" }}>
+                        <Lottie options={Loader} />
+                      </div>
+                    </div>
                   )}
                 </div>
                 <div className="d-flex justify-content-center">
