@@ -7,6 +7,7 @@ const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 const Profile = () => {
   const acess_token = Cookies.get("user_token");
   const [user, setUser] = useState();
+  const [status_user, setStatusUser] = useState("Not Active");
   useEffect(async () => {
     try {
       const userStatusResponse = await axios.get(apiServer + "/users/me", {
@@ -16,6 +17,10 @@ const Profile = () => {
       });
       const userStatus = await userStatusResponse;
       if (userStatus.status == 200) {
+        if(userStatus.data.is_active)
+        {
+          setStatusUser("Active")
+        }
         console.log("kishan", userStatus);
         setUser({
           name: userStatus.data.username,
@@ -24,7 +29,6 @@ const Profile = () => {
             product: "Free Analystt",
             price: "100 INR",
             period: "Yearly",
-            status: "Active",
             last_renewal: "01/02/2020",
             expiry_date: "02/08/2021",
             profile_credits: 500,
@@ -209,7 +213,7 @@ const Profile = () => {
                         <td className="text-center">
                           <p>Status</p>{" "}
                           <span className="text-active">
-                            {user?.subscription.status}
+                            {status_user}
                           </span>
                         </td>
                       </tr>
