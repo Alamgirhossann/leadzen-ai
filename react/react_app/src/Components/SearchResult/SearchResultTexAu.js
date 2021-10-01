@@ -570,6 +570,9 @@ const SearchResult = (props) => {
       hash_key: hash_key,
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
+    function handleError(status) {
+    console.error(`Got HTTP Error ${status.statusText}`);
+  }
     try {
       let isDuplicate = false;
 
