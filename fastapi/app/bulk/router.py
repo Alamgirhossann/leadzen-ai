@@ -157,7 +157,8 @@ async def export_excel_file(
     user_response = await get_user(user)
     logger.debug(f"{app_request=}>>>{len(app_request.profile_urls)=}")
     logger.debug(f"{user_response=}, {type(user_response)}")
-    if user_response and user_response.profile_credit < len(app_request.profile_urls):
+    if user_response and (user_response.profile_credit < len(app_request.profile_urls)
+                          or (user_response.email_credit < len(app_request.profile_urls))):
         logger.warning("Insufficient Credits")
         raise HTTPException(
             status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"

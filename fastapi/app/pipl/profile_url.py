@@ -8,6 +8,8 @@ from starlette import status
 
 from loguru import logger
 from pydantic import BaseModel, HttpUrl
+
+from app.credits.email import get_email_by_hash_key
 from app.history import add_history
 from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY, API_CONFIG_EXCEL_FILE_PATH
 from app.credits.admin import deduct_credit
@@ -113,6 +115,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
     found_urls = []
     founds = history_search_result_1.get("found")
     logger.debug(f"In found>@@@@@@@@@@@@@@{type(founds)=}>>>>{len(founds)=}>>>>")
+
     pipl_search_results_found = None
     filtered_list = []
     for items in founds:
@@ -126,7 +129,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             logger.error("Error Getting Data")
             return
         logger.debug(f"&&&&&&&&{pipl_search_results_found=}")
-        
+
         for items in pipl_search_results_found:
             items = tuple(items)
             logger.debug(f"{type(items)=}>>>>")
@@ -166,12 +169,17 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             pipl_search_results_res.append(items[0])
             filtered_list.append(items[1])
 
-        pipl_search_result = await check_result_exists_in_profile_search_history(
+        await check_result_exists_in_profile_search_history(
             responses=pipl_search_results_res, urls=urls, user=request.user
         )
 
-    logger.debug(f"{len(filtered_list)=}>>>>>>")
-    return await write_to_file(responses=filtered_list, filename=request.filename)
+    await check_result_exists_in_email_search_history(
+        responses=filtered_list, urls=urls, user=request.user
+    )
+
+    logger.debug(f"{type(filtered_list)=}>>>>>>{filtered_list=}")
+
+    # return await write_to_file(responses=filtered_list, filename=request.filename)
 
 
 async def search_in_history(urls: List[str], user: User) -> tuple[
@@ -266,16 +274,6 @@ async def check_result_exists_in_profile_search_history(
         }
         return await add_profile(request_add_profile, user)
 
-    async def deduct_user_profile_credit(user):
-        user_response = await get_user(user)
-        if user_response and user_response.profile_credit <= 0:
-            logger.warning("Insufficient Credits")
-            raise HTTPException(
-                status_code=status.HTTP_402_PAYMENT_REQUIRED,
-                detail="Insufficient Credits",
-            )
-        return await deduct_credit("PROFILE", user_response)
-
     async def check_one_result(url: str, result: Dict):
         # url_hash_key = make_url_hash_key(url=url)
         logger.debug(f"in after result {result=}")
@@ -291,7 +289,7 @@ async def check_result_exists_in_profile_search_history(
                 hash_key=result_hash_key,
                 search_results=result, user=user
             )
-            await deduct_user_profile_credit(user)
+            await deduct_user_profile_credit("PROFILE", user)
 
             exists_response = result
         logger.debug(f"{exists_response=}")
@@ -302,6 +300,25 @@ async def check_result_exists_in_profile_search_history(
     results = await asyncio.gather(*coroutines)
     logger.debug(f"{results=}")
     return results
+
+
+async def deduct_user_profile_credit(credit_type, user):
+    user_response = await get_user(user)
+    if credit_type == "PROFILE":
+        if user_response and user_response.profile_credit <= 0:
+            logger.warning("Insufficient Credits")
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail="Insufficient Credits",
+            )
+    if credit_type == "EMAIL":
+        if user_response and user_response.email_credit <= 0:
+            logger.warning("Insufficient Credits")
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail="Insufficient Credits",
+            )
+    return await deduct_credit(credit_type, user_response)
 
 
 def add_excel_template_to_file(outgoing_filename, user):
@@ -343,3 +360,40 @@ def add_excel_template_to_file(outgoing_filename, user):
                 return outgoing_filename
             except Exception as e:
                 logger.critical("Error>>>" + str(e))
+
+
+async def check_result_exists_in_email_search_history(responses, urls, user):
+    logger.debug(f"check_result_exists_in_email_search_history{type(responses)=}>>>>{responses=}>>>>{urls=}>>>>{user}")
+
+    async def check_hash_key_exists_in_email_search_history(url_hash, user):
+        if url_hash and user:
+            email_response = await get_email_by_hash_key(url_hash, user)
+
+            if not email_response:
+                await deduct_credit("EMAIL", user)
+
+
+    async def check_one_result(url, result):
+        logger.debug(f"{url=}>>>{result=}")
+        parsed = urlparse(url)
+        url_split_temp = parsed.query.split("&")[0]
+        split_url = url_split_temp.split("=")[1]
+        url_hash_key_initial = urllib.parse.unquote(split_url)
+
+        url_hash_key = await make_url_hash_key(url=url_hash_key_initial)
+
+        logger.debug(f">>>{ len(url_hash_key_initial)=}>>>{url_hash_key_initial=}>>>{url_hash_key=}")
+        if not (
+                result := await check_hash_key_exists_in_email_search_history(
+                    url_hash=url_hash_key, user=user
+                )
+        ):
+            return None, url
+
+        return result, url
+
+    coroutines = [check_one_result(url=x[0], result=x[1]) for x in zip(urls, responses)]
+
+    results = await asyncio.gather(*coroutines)
+    logger.debug(f"{results=}")
+    return results

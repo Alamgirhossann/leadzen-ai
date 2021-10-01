@@ -382,7 +382,7 @@ const SearchResult = (props) => {
       }
       let url = [urls];
       console.log("url>>>", url);
-      let hash_key = await digestMessage(url);
+      let hash_key = await digestMessage(data.url);
       console.log("hash_key>>>>>>>>", hash_key);
       let requestForEmail = {
         url: url,
