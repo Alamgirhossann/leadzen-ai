@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Row, Col, Form } from "react-bootstrap";
 import Cookies from "js-cookie";
+
 const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const PopUp = (props) => {
@@ -75,6 +76,7 @@ const PopUp = (props) => {
 
   return (
     <>
+      {" "}
       {popup ? (
         <div style={{ width: "450px" }}>
           {" "}
@@ -83,9 +85,10 @@ const PopUp = (props) => {
               <div className="container-fluid">
                 <div className="row">
                   <div className="col-6 ">
-                    <Modal.Title>Saved leads</Modal.Title>
-                  </div>
+                    <Modal.Title> Saved leads </Modal.Title>{" "}
+                  </div>{" "}
                   <div className="col-6 col-xs-3">
+                    {" "}
                     {searchicon ? (
                       <div
                         className="float-right"
@@ -101,7 +104,7 @@ const PopUp = (props) => {
                           viewBox="0 0 16 16"
                         >
                           <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                        </svg>
+                        </svg>{" "}
                       </div>
                     ) : (
                       <input
@@ -116,37 +119,38 @@ const PopUp = (props) => {
                           setSearch(event.target.value);
                         }}
                       />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </Modal.Header>
-
+                    )}{" "}
+                  </div>{" "}
+                </div>{" "}
+              </div>{" "}
+            </Modal.Header>{" "}
             <Modal.Body
               className="modal-dialog-scrollable"
               style={{ height: "150px", overflow: "auto" }}
             >
+              {" "}
               {formname ? (
                 <div>
                   <form onSubmit={handleSubmit}>
                     <label>
-                      List Name
+                      List Name{" "}
                       <input
                         id="popup-form-list-name-input"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         onInput={(e) => setName(e.target.value)}
-                      />
-                    </label>
+                      />{" "}
+                    </label>{" "}
                     <input className="col-xs-3" type="submit" value="Save" />
-                  </form>
+                  </form>{" "}
                 </div>
               ) : (
                 <div>
+                  {" "}
                   {props.name
                     ?.filter((data) => {
-                      if (search == "") {
+                      if (search === "") {
                         return data;
                       } else if (
                         data.list_name
@@ -167,7 +171,8 @@ const PopUp = (props) => {
                         }}
                       >
                         <span style={{ marginLeft: "10px" }}>
-                          {data.list_name}
+                          {" "}
+                          {data.list_name}{" "}
                           <input
                             style={{ marginRight: "20px" }}
                             type="radio"
@@ -175,15 +180,15 @@ const PopUp = (props) => {
                             name="gender"
                             className="float-right"
                             onClick={() => handleSaveList(data.id)}
-                          />
-                        </span>
+                          />{" "}
+                        </span>{" "}
                       </div>
-                    ))}
+                    ))}{" "}
                 </div>
-              )}
-            </Modal.Body>
-
+              )}{" "}
+            </Modal.Body>{" "}
             <Modal.Footer className="justify-content-center">
+              {" "}
               {!formname ? (
                 <Button
                   className="btn btn-primary "
@@ -195,7 +200,7 @@ const PopUp = (props) => {
                   }}
                   onClick={() => setFormName(true)}
                 >
-                  Add new list
+                  Add new list{" "}
                   <span style={{ marginLeft: "5px" }}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -206,18 +211,18 @@ const PopUp = (props) => {
                       viewBox="0 0 16 16"
                     >
                       <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                    </svg>
-                  </span>
+                    </svg>{" "}
+                  </span>{" "}
                 </Button>
               ) : (
                 ""
-              )}
-            </Modal.Footer>
-          </Modal.Dialog>
+              )}{" "}
+            </Modal.Footer>{" "}
+          </Modal.Dialog>{" "}
         </div>
       ) : (
         <img src="assets/images/Frame 543.png" alt="" />
-      )}
+      )}{" "}
     </>
   );
 };
