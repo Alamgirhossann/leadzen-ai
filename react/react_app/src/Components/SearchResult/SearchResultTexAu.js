@@ -571,8 +571,8 @@ const SearchResult = (props) => {
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     function handleError(status) {
-    console.error(`Got HTTP Error ${status.statusText}`);
-  }
+      console.error(`Got HTTP Error ${status.statusText}`);
+    }
     try {
       let isDuplicate = false;
 
@@ -831,6 +831,17 @@ const SearchResult = (props) => {
       setSearchedList(myLeads);
     }
   }, [searchText, myLeads]);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "assets/js/app.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
