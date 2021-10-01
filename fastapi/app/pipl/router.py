@@ -127,14 +127,7 @@ async def people_search(
                             pipl_res
 
                     }
-                    for res in pipl_res:
-                        for email_dict in res.get('emails'):
-                            email_result = email_dict['address']
-                            email_check_valid = requests.get(f"{API_CONFIG_CHECK_EMAIL}={email_result}")
-                            if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
-                                email_dict['valid'] = "valid"
-                            else:
-                                email_dict['valid'] = "Not Valid"
+                    pipl_res = await verify_mail(pipl_res)
                     background_tasks.add_task(add_profile, request=request, user=user_response)
                     # add_profile_res = await add_profile(request, user_response)
                     # logger.debug(f"{add_profile_res=}")
@@ -150,6 +143,21 @@ async def people_search(
         logger.critical(f"Exception in PIPL search: {str(e)}")
         return None
 
+
+async def verify_mail(result):
+    for res in result:
+        for email_dict in res.get('emails'):
+            email_result = email_dict['address']
+    
+            async with httpx.AsyncClient() as client:
+                email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email_result}")
+                if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
+                    email_dict['valid'] = "valid"
+                    return result
+                else:
+                    email_dict['valid'] = "Not Valid"
+                    return result
+                    
 
 async def send_pipl_request(params):
     url = f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode(params)}"

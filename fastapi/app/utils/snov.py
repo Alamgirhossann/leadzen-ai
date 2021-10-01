@@ -161,11 +161,7 @@ async def get_emails_from_url(
                                 email_data = data["data"]["emails"]
                                 logger.debug(email_data)
                                 email = email_data[0]["email"]
-                                email_check_valid = requests.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
-                                if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
-                                    valid = "valid"
-                                else:
-                                    valid = "Not Valid"
+                                valid = verify_mail(email)
                                 logger.debug(email)
                                 logger.debug(valid)
                                 if valid == "valid" or valid == "unknown":
@@ -199,6 +195,13 @@ async def get_emails_from_url(
             detail="Error Getting data from snov",
         )
 
+async def verify_mail(email):
+    async with httpx.AsyncClient() as client:
+        email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
+        if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
+            return "valid"
+        else:
+            return "Not Valid"
 
 @router.post("/emails_for_company")
 async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
