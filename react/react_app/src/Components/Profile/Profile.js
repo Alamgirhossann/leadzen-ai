@@ -92,71 +92,71 @@ const Profile = () => {
                 </div>
               </div>
 
-              <div className="pb-4">
-                <div className="container-bg p-2">
-                  <div className="">
-                    <div className="row">
-                      <div className="col">
-                        <h3 className="fw-bold fs-5">Change Password</h3>
-                      </div>
-                      <div className="col">
-                        <div className="accordion-header">
-                          <button
-                            className="accordion-button "
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapseOne"
-                            style={{
-                              background: "white",
-                              borderRadius: "50%",
-                              paddingRight: "15px",
-                              border: "none",
-                            }}
-                          ></button>
-                        </div>
-                      </div>
-                    </div>
+              {/*<div className="pb-4">*/}
+              {/*  <div className="container-bg p-2">*/}
+              {/*    <div className="">*/}
+              {/*      <div className="row">*/}
+              {/*        <div className="col">*/}
+              {/*          <h3 className="fw-bold fs-5">Change Password</h3>*/}
+              {/*        </div>*/}
+              {/*        <div className="col">*/}
+              {/*          <div className="accordion-header">*/}
+              {/*            <button*/}
+              {/*              className="accordion-button "*/}
+              {/*              type="button"*/}
+              {/*              data-bs-toggle="collapse"*/}
+              {/*              data-bs-target="#collapseOne"*/}
+              {/*              style={{*/}
+              {/*                background: "white",*/}
+              {/*                borderRadius: "50%",*/}
+              {/*                paddingRight: "15px",*/}
+              {/*                border: "none",*/}
+              {/*              }}*/}
+              {/*            ></button>*/}
+              {/*          </div>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
 
-                    <div id="collapseOne">
-                      <div class="mb-3 row text-right">
-                        <label for="inputPassword" class="col-sm-2 ">
-                          Current Password
-                        </label>
-                        <div class="col-sm-10 d-flex align-items-center" >
-                          <div>
-                            <input
-                              style={{ borderRadius:"10px",outline:"none" }}
-                              type="password"
-                              className=""
-                              id="inputPassword"
-                            />
-                            <div>
-                             <a href="#">Forgot your password ?</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+              {/*      <div id="collapseOne">*/}
+              {/*        <div class="mb-3 row text-right">*/}
+              {/*          <label for="inputPassword" class="col-sm-2 ">*/}
+              {/*            Current Password*/}
+              {/*          </label>*/}
+              {/*          <div class="col-sm-10 d-flex align-items-center" >*/}
+              {/*            <div>*/}
+              {/*              <input*/}
+              {/*                style={{ borderRadius:"10px",outline:"none" }}*/}
+              {/*                type="password"*/}
+              {/*                className=""*/}
+              {/*                id="inputPassword"*/}
+              {/*              />*/}
+              {/*              <div>*/}
+              {/*               <a href="#">Forgot your password ?</a>*/}
+              {/*              </div>*/}
+              {/*            </div>*/}
+              {/*          </div>*/}
+              {/*        </div>*/}
 
-                      <div class="mb-3 row text-right">
-                        <label for="inputPassword" class="col-sm-2 ">
-                          New Password
-                        </label>
-                        <div className="col-sm-10 d-flex align-items-center" >
-                          <input style={{ borderRadius:"10px",outline:"none"}} type="password" class="" id="inputPassword" />
-                        </div>
-                      </div>
-                      <div class="mb-3 row text-right">
-                        <label for="inputPassword" class="col-sm-2 ">
-                          Verify Password
-                        </label>
-                        <div class="col-sm-10 d-flex align-items-center">
-                          <input style={{ borderRadius:"10px",outline:"none" }} type="password" class="" id="inputPassword" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/*        <div class="mb-3 row text-right">*/}
+              {/*          <label for="inputPassword" class="col-sm-2 ">*/}
+              {/*            New Password*/}
+              {/*          </label>*/}
+              {/*          <div className="col-sm-10 d-flex align-items-center" >*/}
+              {/*            <input style={{ borderRadius:"10px",outline:"none"}} type="password" class="" id="inputPassword" />*/}
+              {/*          </div>*/}
+              {/*        </div>*/}
+              {/*        <div class="mb-3 row text-right">*/}
+              {/*          <label for="inputPassword" class="col-sm-2 ">*/}
+              {/*            Verify Password*/}
+              {/*          </label>*/}
+              {/*          <div class="col-sm-10 d-flex align-items-center">*/}
+              {/*            <input style={{ borderRadius:"10px",outline:"none" }} type="password" class="" id="inputPassword" />*/}
+              {/*          </div>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
 
               <div className="table-responsive pb-4">
                 <div className="container-bg p-2">
