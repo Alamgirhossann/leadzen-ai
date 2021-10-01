@@ -13,7 +13,7 @@ import Pagination from "../SharedComponent/Pagination";
 import SavedListButton from "../SearchResult/SavedListButton";
 import SpecificCompany from "./SpecificCompany";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import Loader from "../../companyLoader";
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
     name: null,
