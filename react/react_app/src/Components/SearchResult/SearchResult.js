@@ -16,6 +16,7 @@ import Loader from "../Loader/Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { digestMessage } from "./SearchResultTexAu";
 import { EventEmitter } from "events";
+import SavedListButton from "./SavedListButton";
 
 const SearchResult = (props) => {
   useEffect(() => {
@@ -824,6 +825,9 @@ const SearchResult = (props) => {
                             {/*    />*/}
                             {/*  </p>*/}
                             {/*</a>*/}
+                            <p>
+                              <SavedListButton data={data} searchType="pipl" />
+                            </p>
                           </div>
                           <div
                             style={{

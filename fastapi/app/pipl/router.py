@@ -242,6 +242,7 @@ async def add_email_verification_data(email_verification_request):
 async def send_pipl_request(params):
     url = f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode(params)}"
     logger.debug(f"{url=}")
+    print("ur;;;;;;",url)
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
         if not response.status_code == 200:
