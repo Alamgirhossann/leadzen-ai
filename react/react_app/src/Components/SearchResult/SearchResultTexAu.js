@@ -996,15 +996,19 @@ const SearchResult = (props) => {
                                   src={
                                     data.profilePicture
                                       ? data.profilePicture
-                                      : "assets/images/author-image.png"
+                                      : data.image? data.image
+                                            :"assets/images/author-image.png"
                                   }
                                   alt=""
                                 />
                               </div>
                               <div className="search-user ps-3">
-                                <p>{data.length === 0 ? null : data.name}</p>
+                                <p>{data.length === 0 ? null :<React.Fragment>
+                                  {data.name?data.name :data.fullName}
+                               </React.Fragment>}</p>
+                                {/*<p>{data.length === 0 ? null : data.fullName}</p>*/}
                                 <small className="d-block">
-                                  Works at {data.length === 0 ? null : data.job}
+                                  Works at {data.length === 0 ? null : data.job?data.job:data.occupation}
                                 </small>
                                 <small className="d-block">
                                   {data.length === 0 ? null : data.location}
@@ -1012,7 +1016,7 @@ const SearchResult = (props) => {
                               </div>
                               <div className="linkedin-icon d-flex justify-content-end">
                                 <span>
-                                  <a href={data.url} target="_blank">
+                                  <a href={data.url?data.url:data.profileLink} target="_blank">
                                     <img
                                       src="assets/images/linkedin1.png"
                                       alt=""
