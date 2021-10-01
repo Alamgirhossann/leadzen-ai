@@ -64,7 +64,6 @@ const NavBar = (props) => {
     Cookies.remove("user_email", { path: "" });
     console.log("document.cookie()...", document.cookie);
   };
-  const desable= '';
 
   return (
     <div style={{ paddingRight: "0px" }}>
