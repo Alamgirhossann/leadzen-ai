@@ -87,138 +87,120 @@ const Filters = (props) => {
 
   return (
     <div>
+      <div className="px-4">
+        {isHide && customSearch.location ? (
+          <p className="text-left top-search" style={{ width: "fit-content" }}>
+            <img
+              style={{ width: "10px", marginRight: "5px" }}
+              src="assets/images/cil_location-pin.png"
+              alt=""
+            />
+            {customSearch.location}
+            <img
+              className="ps-4"
+              src="assets/images/cross-icon.png"
+              alt=""
+              onClick={() => handleCloseCompany("location")}
+            />
+          </p>
+        ) : null}
+        {isHide && customSearch.industry ? (
+          <p className="text-left top-search" style={{ width: "fit-content" }}>
+            <img
+              style={{ width: "8px", marginRight: "5px" }}
+              src="assets/images/pro-profile.png"
+              alt=""
+            />
+            {isHide && customSearch.industry}
+            <img
+              className="ps-4"
+              src="assets/images/cross-icon.png"
+              alt=""
+              onClick={() => handleCloseCompany("industry")}
+            />
+          </p>
+        ) : null}
+        {isHide && customSearch.job_title ? (
+          <p className="text-left top-search" style={{ width: "fit-content" }}>
+            <img
+              style={{ width: "8px", marginRight: "5px" }}
+              src="assets/images/pro-profile.png"
+              alt=""
+            />
+            {customSearch.job_title}
+            <img
+              className="ps-4"
+              src="assets/images/cross-icon.png"
+              alt=""
+              onClick={() => handleCloseCompany("job_title")}
+            />
+          </p>
+        ) : null}
+        {isHide && customSearch.education ? (
+          <p className="text-left top-search" style={{ width: "fit-content" }}>
+            <img
+              style={{ width: "8px", marginRight: "5px" }}
+              src="assets/images/pro-profile.png"
+              alt=""
+            />
+            {customSearch.education}
+            <img
+              className="ps-4"
+              src="assets/images/cross-icon.png"
+              alt=""
+              onClick={() => handleCloseCompany("education")}
+            />
+          </p>
+        ) : null}
+        {isHide && customSearch.company_name ? (
+          <p className="text-left top-search" style={{ width: "fit-content" }}>
+            <img
+              style={{ width: "8px", marginRight: "5px" }}
+              src="assets/images/pro-profile.png"
+              alt=""
+            />
+            {customSearch.company_name}
+            <img
+              className="ps-4"
+              src="assets/images/cross-icon.png"
+              alt=""
+              onClick={() => handleCloseCompany("company_name")}
+            />
+          </p>
+        ) : null}
+        {isHide && customSearch.keywords ? (
+          <p className="text-left top-search" style={{ width: "fit-content" }}>
+            <img
+              style={{ width: "8px", marginRight: "5px" }}
+              src="assets/images/pro-profile.png"
+              alt=""
+            />
+            {customSearch.keywords}
+            <img
+              className="ps-4"
+              src="assets/images/cross-icon.png"
+              alt=""
+              onClick={() => handleCloseCompany("keywords")}
+            />
+          </p>
+        ) : null}
+        <div className="d-flex justify-content-between">
+          <a onClick={() => handleHide()}>
+            <img
+              style={{ width: "10px", marginRight: "5px" }}
+              src="assets/images/combined-eye.png"
+              alt=""
+            />
+            {isHide ? <h7> Hide</h7> : <h7> Show </h7>}
+          </a>
+          <a className="text-danger" onClick={() => handleClearAll()}>
+            Clear All
+          </a>
+        </div>
+      </div>
       <div className="sidebar-search-for sidebar-widget px-4 pb-3 my-3">
         <div className="sidebar-accordion accordion" id="accordionExample">
           <div className="accordion-item">
-            <div>
-              {isHide && customSearch.location ? (
-                <p
-                  className="text-left top-search"
-                  style={{ width: "fit-content" }}
-                >
-                  <img
-                    style={{ width: "10px", marginRight: "5px" }}
-                    src="assets/images/cil_location-pin.png"
-                    alt=""
-                  />
-                  {customSearch.location}
-                  <img
-                    className="ps-4"
-                    src="assets/images/cross-icon.png"
-                    alt=""
-                    onClick={() => handleCloseCompany("location")}
-                  />
-                </p>
-              ) : null}
-              {isHide && customSearch.industry ? (
-                <p
-                  className="text-left top-search"
-                  style={{ width: "fit-content" }}
-                >
-                  <img
-                    style={{ width: "8px", marginRight: "5px" }}
-                    src="assets/images/pro-profile.png"
-                    alt=""
-                  />
-                  {isHide && customSearch.industry}
-                  <img
-                    className="ps-4"
-                    src="assets/images/cross-icon.png"
-                    alt=""
-                    onClick={() => handleCloseCompany("industry")}
-                  />
-                </p>
-              ) : null}
-              {isHide && customSearch.job_title ? (
-                <p
-                  className="text-left top-search"
-                  style={{ width: "fit-content" }}
-                >
-                  <img
-                    style={{ width: "8px", marginRight: "5px" }}
-                    src="assets/images/pro-profile.png"
-                    alt=""
-                  />
-                  {customSearch.job_title}
-                  <img
-                    className="ps-4"
-                    src="assets/images/cross-icon.png"
-                    alt=""
-                    onClick={() => handleCloseCompany("job_title")}
-                  />
-                </p>
-              ) : null}
-              {isHide && customSearch.education ? (
-                <p
-                  className="text-left top-search"
-                  style={{ width: "fit-content" }}
-                >
-                  <img
-                    style={{ width: "8px", marginRight: "5px" }}
-                    src="assets/images/pro-profile.png"
-                    alt=""
-                  />
-                  {customSearch.education}
-                  <img
-                    className="ps-4"
-                    src="assets/images/cross-icon.png"
-                    alt=""
-                    onClick={() => handleCloseCompany("education")}
-                  />
-                </p>
-              ) : null}
-              {isHide && customSearch.company_name ? (
-                <p
-                  className="text-left top-search"
-                  style={{ width: "fit-content" }}
-                >
-                  <img
-                    style={{ width: "8px", marginRight: "5px" }}
-                    src="assets/images/pro-profile.png"
-                    alt=""
-                  />
-                  {customSearch.company_name}
-                  <img
-                    className="ps-4"
-                    src="assets/images/cross-icon.png"
-                    alt=""
-                    onClick={() => handleCloseCompany("company_name")}
-                  />
-                </p>
-              ) : null}
-              {isHide && customSearch.keywords ? (
-                <p
-                  className="text-left top-search"
-                  style={{ width: "fit-content" }}
-                >
-                  <img
-                    style={{ width: "8px", marginRight: "5px" }}
-                    src="assets/images/pro-profile.png"
-                    alt=""
-                  />
-                  {customSearch.keywords}
-                  <img
-                    className="ps-4"
-                    src="assets/images/cross-icon.png"
-                    alt=""
-                    onClick={() => handleCloseCompany("keywords")}
-                  />
-                </p>
-              ) : null}
-              <div className="d-flex justify-content-between">
-                <a onClick={() => handleHide()}>
-                  <img
-                    style={{ width: "10px", marginRight: "5px" }}
-                    src="assets/images/combined-eye.png"
-                    alt=""
-                  />
-                  {isHide ? <h7> Hide</h7> : <h7> Show </h7>}
-                </a>
-                <a className="text-danger" onClick={() => handleClearAll()}>
-                  Clear All
-                </a>
-              </div>
-            </div>
             <h2 className="accordion-header">
               <button
                 className="accordion-button collapsed"

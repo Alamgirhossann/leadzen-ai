@@ -786,14 +786,13 @@ const SearchResultCompany = (props) => {
                   )}
                 </div>
                 <div className="d-flex justify-content-center">
-                  {loading===false?(
-                       <Pagination
-                    postsPerPage={10}
-                    totalPosts={searchedList ? searchedList.length : 1}
-                    paginate={paginate}
-                  />
-                  ):null
-                  }
+                  {loading === false ? (
+                    <Pagination
+                      postsPerPage={10}
+                      totalPosts={searchedList ? searchedList.length : 1}
+                      paginate={paginate}
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>

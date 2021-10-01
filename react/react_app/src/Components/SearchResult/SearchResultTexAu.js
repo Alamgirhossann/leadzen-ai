@@ -38,11 +38,12 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    { index: null, details: null },
+    { index: null, details: null, proxyCurl: null },
   ]);
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
   ]);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [unlockplus, setUnlockPlus] = useState({});
   const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ const SearchResult = (props) => {
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
-  const [selectedSaveList, setSelectedSaveList] = useState([]);
+  // const [selectedSaveList, setSelectedSaveList] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedList, setSearchedList] = useState([]);
   const newEvent = new EventEmitter();
@@ -489,10 +490,10 @@ const SearchResult = (props) => {
   useEffect(() => {
     console.log("set>>>", selectedLeadHashKey);
   }, [selectedLeadHashKey]);
-  const clickSelect = (e) => {
-    e.preventDefault();
-    // if (!selected) setSelected(true);
-  };
+  // const clickSelect = (e) => {
+  //   e.preventDefault();
+  //   // if (!selected) setSelected(true);
+  // };
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -571,6 +572,9 @@ const SearchResult = (props) => {
       hash_key: hash_key,
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
+    function handleError(status) {
+    console.error(`Got HTTP Error ${status.statusText}`);
+  }
     try {
       let isDuplicate = false;
 
@@ -583,27 +587,51 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         console.log("In Fetch......");
-        const response = await fetch(apiServer + "/pipl/search", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(reqJsonPipl),
-        });
+        setLoadingProfile(true);
+        let proxyCurlJson = null;
+        const [response, proxyCurlResponse] = await Promise.all([
+          fetch(apiServer + "/pipl/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(reqJsonPipl),
+          }),
+          fetch(apiServer + "/proxycurl/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify({ url: data.url }),
+          }),
+        ]);
+
+        setLoadingProfile(false);
+        if (proxyCurlResponse.status === 200) {
+          proxyCurlJson = await proxyCurlResponse.json();
+        }
 
         if (response.status === 402) {
           alert(
             "You have insufficient profile credit. Buy Credits to get details."
           );
         }
-        if (response.status === 500) {
-          console.log("Not able to get Details");
+        if (response.status === 500 || proxyCurlResponse.status === 500) {
+          handleError(response);
         }
         let json_res = null;
         if (response.status === 200) {
           json_res = await response.json();
+        }
+        if (response.status === 400 || proxyCurlResponse.status === 400) {
+          handleError(response);
+        }
+        if (response.status === 401 || proxyCurlResponse.status === 401) {
+          handleError(response);
         }
         console.log("json_res>>>>>", json_res);
         let phones = [];
@@ -647,7 +675,11 @@ const SearchResult = (props) => {
             }
             setSpecificUserDetails((prev) => [
               ...prev,
-              { index: `${currentPage}${index}`, details: json_res[0] },
+              {
+                index: `${currentPage}${index}`,
+                details: json_res[0],
+                proxyCurl: proxyCurlJson !== null ? proxyCurlJson : null,
+              },
             ]);
           }
           // else {
@@ -750,7 +782,6 @@ const SearchResult = (props) => {
       setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
     }
   };
-
 
   const handleLeadSelectionExportExcel = (e) => {
     e.preventDefault();
@@ -1087,26 +1118,26 @@ const SearchResult = (props) => {
                                   View Profile
                                 </a>
                               </p>
-                              <p>
-                                {unlockplus[`${currentPage}${index}`] ? (
-                                  <img
-                                    src="assets/images/Frame 543.png"
-                                    alt=""
-                                  />
-                                ) : (
-                                  <SavedListButton
-                                    data={data}
-                                    type="texau"
-                                    index={`${currentPage}${index}`}
-                                    changeindex={(saveindex) =>
-                                      setUnlockPlus((prev) => ({
-                                        ...prev,
-                                        [saveindex]: true,
-                                      }))
-                                    }
-                                  />
-                                )}
-                              </p>
+                              {/*<p>*/}
+                              {/*  {unlockplus[`${currentPage}${index}`] ? (*/}
+                              {/*    <img*/}
+                              {/*      src="assets/images/Frame 543.png"*/}
+                              {/*      alt=""*/}
+                              {/*    />*/}
+                              {/*  ) : (*/}
+                              {/*    <SavedListButton*/}
+                              {/*      data={data}*/}
+                              {/*      type="texau"*/}
+                              {/*      index={`${currentPage}${index}`}*/}
+                              {/*      changeindex={(saveindex) =>*/}
+                              {/*        setUnlockPlus((prev) => ({*/}
+                              {/*          ...prev,*/}
+                              {/*          [saveindex]: true,*/}
+                              {/*        }))*/}
+                              {/*      }*/}
+                              {/*    />*/}
+                              {/*  )}*/}
+                              {/*</p>*/}
                             </div>
                             <div
                               style={{
@@ -1121,15 +1152,30 @@ const SearchResult = (props) => {
                                   "collapseExample_" + `${currentPage}${index}`
                                 }
                               >
-                                {specificUserDetails?.map((spec) => (
-                                  <span>
-                                    {spec.index === `${currentPage}${index}` ? (
-                                      <span>
-                                        <SpecificUser details={spec.details} />
-                                      </span>
-                                    ) : null}
-                                  </span>
-                                ))}{" "}
+                                {!loadingProfile ? (
+                                  specificUserDetails?.map((spec) => (
+                                    <span>
+                                      {spec.index ===
+                                      `${currentPage}${index}` ? (
+                                        <span>
+                                          <SpecificUser
+                                            details={spec.details}
+                                            proxyData={spec.proxyCurl}
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <div>
+                                    <section
+                                      className="item-section"
+                                      style={{ textAlign: "center" }}
+                                    >
+                                      Please Wait..
+                                    </section>
+                                  </div>
+                                )}{" "}
                               </div>
                             </div>
                           </div>
@@ -1150,14 +1196,13 @@ const SearchResult = (props) => {
                 )}
               </div>
               <div className="d-flex justify-content-center">
-                {loading===false?(
-                      <Pagination
-                  postsPerPage={postsPerPage}
-                  totalPosts={searchedList ? searchedList.length : 1}
-                  paginate={paginate}
-                />
-                ):null
-                }
+                {loading === false ? (
+                  <Pagination
+                    postsPerPage={postsPerPage}
+                    totalPosts={searchedList ? searchedList.length : 1}
+                    paginate={paginate}
+                  />
+                ) : null}
               </div>
               <AskJarvis />
             </div>

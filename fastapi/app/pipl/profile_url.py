@@ -110,7 +110,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
     history_search_result_1 = filter_results(history_search_result)
     logger.debug(f"{history_search_result_1=}")
 
-    found_urls=[]
+    found_urls = []
     founds = history_search_result_1.get("found")
     logger.debug(f"In found>@@@@@@@@@@@@@@{type(founds)=}>>>>{len(founds)=}>>>>")
     pipl_search_results_found = None
@@ -126,14 +126,12 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             logger.error("Error Getting Data")
             return
         logger.debug(f"&&&&&&&&{pipl_search_results_found=}")
-        # pipl_search_results_res_found=[]
+        
         for items in pipl_search_results_found:
             items = tuple(items)
             logger.debug(f"{type(items)=}>>>>")
             filtered_list.append(items[1])
             print(len(items))
-            # if len(items) <= 2:
-            #     pipl_search_results_found.append(items[1])
 
     if (not_founds := history_search_result_1.get("not_found")):
 
@@ -146,14 +144,8 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
         not_found_urls_only = []
         if not_founds:
             for item in not_founds:
-
                 logger.debug(f"{item=}>>>")
-                # for it in item:
-                #     if it:
                 not_found_urls_only.append(item[1])
-            # if not not_found_urls_only:
-            #     logger.debug(f"not any>>>>>")
-            #     continue
         not_found_urls = [x[1] for x in not_founds if x]
         logger.debug(f"{not_found_urls_only=}")
         pipl_search_results = None
@@ -168,7 +160,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             logger.error("no valid responses found")
             return
         pipl_search_results_res = []
-        # filtered_list = []
+
         for items in pipl_search_results:
             logger.debug(f"{items[0]=}")
             pipl_search_results_res.append(items[0])
@@ -178,26 +170,13 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             responses=pipl_search_results_res, urls=urls, user=request.user
         )
 
-
-
-    # updated_responses = None
-    # logger.debug(f"{len(pipl_search_results_res)=}>>>>")
     logger.debug(f"{len(filtered_list)=}>>>>>>")
-    #
-    # if history_search_result_1.get("founds") is not None and pipl_search_results_res is not None:
-    #     updated_responses = history_search_result_1.get("founds").extend(pipl_search_result)
-    # if history_search_result_1.get("founds") is None and pipl_search_result is not None:
-    #     updated_responses = pipl_search_result
-    # # history_id = await add_to_history(result, user)
-    # await add_to_profile_credit(history_id, result, user)
-    # logger.debug(f"{result=}")
-    # return result
     return await write_to_file(responses=filtered_list, filename=request.filename)
 
 
-
 async def search_in_history(urls: List[str], user: User) -> tuple[
-    Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[
+    Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[HTTPException, BaseException],
+    Union[HTTPException, BaseException], Union[
         HTTPException, BaseException]]:
     # coroutines_url_hash_key = [make_url_hash_key(url=x) for x in urls]
 
@@ -228,7 +207,7 @@ async def search_in_history(urls: List[str], user: User) -> tuple[
         return result, url
 
     coroutines = [check_one_result(url=x, user=user) for x in urls]
-    
+
     results = await asyncio.gather(*coroutines)
     logger.debug(f"{results=}")
     return results

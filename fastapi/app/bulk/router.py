@@ -62,8 +62,7 @@ async def upload_csv_file(
             temp_file.writelines(lines)
             temp_file.seek(0)
 
-            df = pandas_readfile(temp_file)
-            logger.debug(f"<<<<<<<{len(df)=}")
+            df = pandas_readfile(temp_file,sep=' ', dtype={2:'str'})
             logger.debug(df.head())
             if df is None or df.empty:
                 logger.warning("No Data in uploaded file")
