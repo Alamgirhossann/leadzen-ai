@@ -3,12 +3,11 @@ import uuid
 from datetime import datetime
 from typing import List, Dict, Optional
 
+from app.database import database, saved_list
+from app.users import fastapi_users
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 from pydantic import BaseModel
-
-from app.database import database, saved_list
-from app.users import fastapi_users
 
 router = APIRouter(prefix="/saved_list", tags=["Saved Lists"])
 
@@ -48,8 +47,8 @@ class SavedListName(BaseModel):
 
 @router.post("/add", response_model=SavedListResponse)
 async def add_to_saved_list(
-    request: SavedListAddRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        request: SavedListAddRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
@@ -85,7 +84,7 @@ async def add_to_saved_list(
 
 @router.delete("/id/{saved_list_id}", response_model=SavedListResponse)
 async def delete_saved_list_by_id(
-    saved_list_id: str, user=Depends(fastapi_users.get_current_active_user)
+        saved_list_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{saved_list_id=}, {user=}")
     try:
@@ -96,10 +95,10 @@ async def delete_saved_list_by_id(
         logger.debug(f"{query=}")
 
         if not (
-            row := await database.execute(
-                query=query,
-                values={"saved_list_id": saved_list_id, "user_id": str(user.id)},
-            )
+                row := await database.execute(
+                    query=query,
+                    values={"saved_list_id": saved_list_id, "user_id": str(user.id)},
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -121,7 +120,7 @@ async def delete_saved_list_by_id(
 
 @router.get("/id/{saved_list_id}")
 async def get_saved_list_by_id(
-    saved_list_id: str, user=Depends(fastapi_users.get_current_active_user)
+        saved_list_id: str, user=Depends(fastapi_users.get_current_active_user)
 ):
     logger.debug(f"{user=}, {saved_list_id=}")
 
@@ -129,13 +128,13 @@ async def get_saved_list_by_id(
         query = "SELECT * FROM saved_list WHERE id = :saved_list_id AND user_id = :user_id ORDER BY created_on DESC"
 
         if not (
-            row := await database.fetch_one(
-                query=query,
-                values={
-                    "saved_list_id": saved_list_id,
-                    "user_id": str(user.id),
-                },
-            )
+                row := await database.fetch_one(
+                    query=query,
+                    values={
+                        "saved_list_id": saved_list_id,
+                        "user_id": str(user.id),
+                    },
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -170,9 +169,9 @@ async def get_all_saved_lists(user=Depends(fastapi_users.get_current_active_user
         )
 
         if not (
-            rows := await database.fetch_all(
-                query=query, values={"user_id": str(user.id)}
-            )
+                rows := await database.fetch_all(
+                    query=query, values={"user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -202,8 +201,8 @@ async def get_all_saved_lists(user=Depends(fastapi_users.get_current_active_user
 
 @router.post("/add_name", response_model=SavedListResponse)
 async def add_saved_list_name(
-    request: SavedListAddNameRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        request: SavedListAddNameRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
 
@@ -236,20 +235,19 @@ async def add_saved_list_name(
 
 @router.get("/all/names", response_model=List[SavedListName])
 async def get_all_saved_list_names(
-    user=Depends(fastapi_users.get_current_active_user),
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{user=}")
 
     try:
         query = (
-            "SELECT DISTINCT id, list_name,list_description FROM saved_list WHERE user_id = :user_id ORDER BY "
-            "created_on DESC "
+            """SELECT DISTINCT id, list_name,list_description,created_on FROM saved_list WHERE user_id = :user_id ORDER BY created_on DESC"""
         )
 
         if not (
-            rows := await database.fetch_all(
-                query=query, values={"user_id": str(user.id)}
-            )
+                rows := await database.fetch_all(
+                    query=query, values={"user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -273,13 +271,25 @@ async def get_all_saved_list_names(
         )
 
 
-@router.patch("/id/{saved_list_id}", response_model=SavedListResponse)
+@router.patch("/id/{saved_list_id}")
 async def update_search_save_list(
-    saved_list_id: str,
-    request: SavedListUpdateRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        saved_list_id: str,
+        request: SavedListUpdateRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{request=}, {user=}")
+    # print("saved_list_id",saved_list_id)
+    # logger.debug(f"{request=}, {user=}")
+    # update_query = saved_list.update().where(saved_list.c.id == saved_list_id).values(list_content=str(json.dumps(request.content)))
+    # print("update",update_query)
+    # if not (row := await database.execute(update_query)):
+    #     print("row",row)
+    #     logger.warning("Invalid Query Results")
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+    #     )
+    # print("roww",row)
+    #
+    # return {"SavedListResponse":saved_list_id}
 
     try:
         values = {}
@@ -291,12 +301,12 @@ async def update_search_save_list(
             values["list_description"] = request.list_description
 
         if request.content:
-            query = "SELECT list_content FROM saved_list WHERE  id = :id and user_id = :user_id "
+            query = "SELECT list_content FROM saved_list WHERE  id = :id AND user_id = :user_id "
 
             if not (
-                rows := await database.fetch_all(
-                    query=query, values={"id": saved_list_id, "user_id": str(user.id)}
-                )
+                    rows := await database.fetch_all(
+                        query=query, values={"id": saved_list_id, "user_id": str(user.id)}
+                    )
             ):
                 logger.warning("Invalid Query Results")
                 raise HTTPException(
@@ -308,8 +318,7 @@ async def update_search_save_list(
 
                 values["list_content"] = json.dumps(list_data)
             else:
-                list_data = []
-                list_data.append(request.content)
+                list_data = [request.content]
                 values["list_content"] = json.dumps(list_data)
 
         if request.search_type:
@@ -317,18 +326,19 @@ async def update_search_save_list(
 
         update_query = (
             saved_list.update()
-            .values(values)
-            .where(
+                .values(values)
+                .where(
                 saved_list.c.id == saved_list_id
                 and saved_list.c.user_id == str(user.id)
             )
         )
 
         if not (row := await database.execute(update_query)):
-            logger.warning("Invalid Query Results")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
-            )
+            return None
+            # logger.warning("Invalid Query Results")
+            # raise HTTPException(
+            #     status_code=status.HTTP_404_NOT_FOUND, detail="Invalid Query Result"
+            # )
 
         logger.debug(f"{row=}")
 
@@ -345,18 +355,18 @@ async def update_search_save_list(
 
 @router.delete("/index/{saved_list_id}", response_model=SavedListResponse)
 async def delete_saved_list_by_index(
-    saved_list_id: str,
-    request: SavedListDeleteRequest,
-    user=Depends(fastapi_users.get_current_active_user),
+        saved_list_id: str,
+        request: SavedListDeleteRequest,
+        user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{saved_list_id=}, {user=}")
     try:
         values = {}
-        query = "SELECT list_content FROM saved_list WHERE  id = :id and user_id = :user_id "
+        query = "SELECT list_content FROM saved_list WHERE  id = :id AND user_id = :user_id "
         if not (
-            rows := await database.fetch_all(
-                query=query, values={"id": saved_list_id, "user_id": str(user.id)}
-            )
+                rows := await database.fetch_all(
+                    query=query, values={"id": saved_list_id, "user_id": str(user.id)}
+                )
         ):
             logger.warning("Invalid Query Results")
             raise HTTPException(
@@ -381,8 +391,8 @@ async def delete_saved_list_by_index(
             )
         update_query = (
             saved_list.update()
-            .values(values)
-            .where(
+                .values(values)
+                .where(
                 saved_list.c.id == saved_list_id
                 and saved_list.c.user_id == str(user.id)
             )
