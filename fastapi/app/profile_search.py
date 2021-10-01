@@ -121,7 +121,7 @@ async def add_profile(request, user):
         if not (
                 row_id := await database.execute(query)
         ):
-            logger.warning("Bad Request")
+            # logger.warning("Bad Request")
             return None
 
         logger.debug(f"{row_id=}")

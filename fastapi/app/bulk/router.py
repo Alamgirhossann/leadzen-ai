@@ -56,13 +56,14 @@ async def upload_csv_file(
     # and then use it for pandas to read, and since both these files are temp files
     # they will vanish as soon as close as called, hence using the with context manager
 
-    def readfile(pandas_readfile):
+    async def readfile(pandas_readfile):
         with tempfile.TemporaryFile() as temp_file:
             lines = file.file.readlines()
             temp_file.writelines(lines)
             temp_file.seek(0)
 
             df = pandas_readfile(temp_file)
+            logger.debug(f"<<<<<<<{len(df)=}")
             logger.debug(df.head())
             if df is None or df.empty:
                 logger.warning("No Data in uploaded file")
@@ -94,7 +95,15 @@ async def upload_csv_file(
             outgoing_filename = (
                 f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             )
-            # TODO: check Credit if not sufficient send mail and exit else continue with scrapping
+            user_response = await get_user(user)
+
+            logger.debug(f"{user_response=}, {type(user_response)}")
+            if user_response and user_response.profile_credit < len(df) or user_response.email_credit < len(df):
+                logger.warning("Insufficient Credits")
+                raise HTTPException(
+                    status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
+                )
+
             background_tasks.add_task(
                 handle_bulk_profile_urls,
                 request=BulkProfileUrlRequest(
@@ -112,10 +121,10 @@ async def upload_csv_file(
             )
 
     if file.filename.endswith(".csv"):
-        data = readfile(pd.read_csv)
+        data = await readfile(pd.read_csv)
         return data
     elif file.filename.endswith(".xlsx"):
-        data = readfile(pd.read_excel)
+        data = await readfile(pd.read_excel)
         return data
     else:
         logger.warning(f"File format not excel or csv: {file.filename=}")

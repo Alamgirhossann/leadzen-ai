@@ -1,7 +1,7 @@
 import asyncio
 import hashlib
 import urllib
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Union
 from urllib.parse import urlparse, urlunparse, urlencode
 from fastapi import HTTPException
 from starlette import status
@@ -86,9 +86,7 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
         await write_to_file(responses=responses, filename=request.filename)
     else:
         logger.debug(f"In Bulk csv")
-        responses = await handle_bulk_search(request=request)
-        await write_to_file(responses=responses, filename=request.filename)
-
+        await handle_bulk_search(request=request)
 
 
 async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
@@ -104,51 +102,103 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
 
     def filter_results(results: List[Dict]) -> Dict:
         found_in_history = [x for x in results if x[0]]
-        not_found_in_history = [[x for x in results if not x[0]]]
+        not_found_in_history = [x for x in results if not x[0]]
         return {"found": found_in_history, "not_found": not_found_in_history}
 
     history_search_result = await search_in_history(urls=urls, user=request.user)
-    logger.debug(f"{history_search_result=}")
+
     history_search_result_1 = filter_results(history_search_result)
     logger.debug(f"{history_search_result_1=}")
-    if not (not_founds := history_search_result_1.get("not_found")):
-        return await write_to_file(
-            responses=history_search_result_1.get("founds"), filename=request.filename
+
+    found_urls=[]
+    founds = history_search_result_1.get("found")
+    logger.debug(f"In found>@@@@@@@@@@@@@@{type(founds)=}>>>>{len(founds)=}>>>>")
+    pipl_search_results_found = None
+    filtered_list = []
+    for items in founds:
+        logger.debug(f"In founds>>>>>>>>>{type(items)=}>>>{items[1]=}")
+        found_urls.append(items[1])
+    # logger.debug(f"%%%%%%{len(found_urls}")
+    if found_urls:
+        if not (
+                pipl_search_results_found := await search_all(urls=found_urls, slugs=found_urls)
+        ):
+            logger.error("Error Getting Data")
+            return
+        logger.debug(f"&&&&&&&&{pipl_search_results_found=}")
+        # pipl_search_results_res_found=[]
+        for items in pipl_search_results_found:
+            items = tuple(items)
+            logger.debug(f"{type(items)=}>>>>")
+            filtered_list.append(items[0])
+            print(len(items))
+            # if len(items) <= 2:
+            #     pipl_search_results_found.append(items[1])
+
+    if (not_founds := history_search_result_1.get("not_found")):
+
+        logger.debug(f"{not_founds=}>>{type(not_founds)=}>>>{found_urls=}")
+        not_found_urls = None
+        if not found_urls and not not_founds and not any(not_founds):
+            logger.debug(f"not any>>>>>1111")
+            return
+        # not_found_urls = [item[1] for item in not_founds]
+        not_found_urls_only = []
+        if not_founds:
+            for item in not_founds:
+
+                logger.debug(f"{item=}>>>")
+                # for it in item:
+                #     if it:
+                not_found_urls_only.append(item[1])
+            # if not not_found_urls_only:
+            #     logger.debug(f"not any>>>>>")
+            #     continue
+        not_found_urls = [x[1] for x in not_founds if x]
+        logger.debug(f"{not_found_urls_only=}")
+        pipl_search_results = None
+        if not_found_urls_only:
+            if not (
+                    pipl_search_results := await search_all(urls=not_found_urls_only, slugs=not_found_urls_only)
+            ):
+                logger.error("Error Getting Data")
+                return
+        logger.debug(f"Before pipl_search_result>>>{len(pipl_search_results)=}>>>>")
+        if not any(pipl_search_results):
+            logger.error("no valid responses found")
+            return
+        pipl_search_results_res = []
+        # filtered_list = []
+        for items in pipl_search_results:
+            logger.debug(f"{items[0]=}")
+            pipl_search_results_res.append(items[0])
+            filtered_list.append(items[1])
+
+        pipl_search_result = await check_result_exists_in_profile_search_history(
+            responses=pipl_search_results_res, urls=urls, user=request.user
         )
-    logger.debug(f"{not_founds=}>>>")
-    not_found_urls=None
-    if not not_founds:
-        return
-    not_found_urls = [x[0] for x in not_founds if x]
-    logger.debug(f"{not_found_urls=}>>>")
-    if not not_found_urls:
-        return
-    not_found_urls = [x[1] for x in not_found_urls if x]
-
-    if not (
-            pipl_search_results := await search_all(urls=not_found_urls, slugs=not_found_urls)
-    ):
-        logger.error("Error Getting Data")
-        return
-    logger.debug(f"Before pipl_search_result>>>{pipl_search_results=}>>>>")
-    if not any(pipl_search_results):
-        logger.error("no valid responses found")
-        return
-
-    pipl_search_result = await check_result_exists_in_profile_search_history(
-        responses=pipl_search_results, urls=urls, user=request.user
-    )
-    updated_responses = None
-    logger.debug(f"{pipl_search_result=}>>>>")
-    if history_search_result_1.get("founds") is not None and pipl_search_result is not None:
-        updated_responses = history_search_result_1.get("founds").extend(pipl_search_result)
-    if history_search_result_1.get("founds") is None and pipl_search_result is not None:
-        updated_responses = pipl_search_result
-
-    return await write_to_file(responses=updated_responses, filename=request.filename)
 
 
-async def search_in_history(urls: List[str], user: User) -> Dict:
+
+    # updated_responses = None
+    # logger.debug(f"{len(pipl_search_results_res)=}>>>>")
+    logger.debug(f"{len(filtered_list)=}>>>>>>")
+    #
+    # if history_search_result_1.get("founds") is not None and pipl_search_results_res is not None:
+    #     updated_responses = history_search_result_1.get("founds").extend(pipl_search_result)
+    # if history_search_result_1.get("founds") is None and pipl_search_result is not None:
+    #     updated_responses = pipl_search_result
+    # # history_id = await add_to_history(result, user)
+    # await add_to_profile_credit(history_id, result, user)
+    # logger.debug(f"{result=}")
+    # return result
+    return await write_to_file(responses=filtered_list, filename=request.filename)
+
+
+
+async def search_in_history(urls: List[str], user: User) -> tuple[
+    Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[
+        HTTPException, BaseException]]:
     # coroutines_url_hash_key = [make_url_hash_key(url=x) for x in urls]
 
     async def check_hash_key_exists_in_profile_search_history(
@@ -178,8 +228,9 @@ async def search_in_history(urls: List[str], user: User) -> Dict:
         return result, url
 
     coroutines = [check_one_result(url=x, user=user) for x in urls]
-
+    
     results = await asyncio.gather(*coroutines)
+    logger.debug(f"{results=}")
     return results
     # return filter_results(results)
 
@@ -205,10 +256,13 @@ async def check_result_exists_in_profile_search_history(
     async def add_to_history(result: Dict, user):
 
         logger.debug(f"{result=}")
-        return await add_history('Bulk', 'Bulk', result, user)
+        return await add_history('Bulk', 'Bulk', [result], user)
 
     async def add_to_profile_credit(search_id, result, user):
         logger.debug(f"{search_id=}>>>{type(result)=}>>>{result}")
+        result = {
+            k: v for list_item in result for (k, v) in list_item.items()
+        }
         phones = result.get("phones")
         phone_list = []
         for phone in phones:
@@ -252,18 +306,17 @@ async def check_result_exists_in_profile_search_history(
                 result_hash=result_hash_key
         )):
             logger.debug("profile not found>>>")
+            logger.debug(f"{exists_response=}")
             await add_to_profile_search(
                 search_type="PIPL",
                 hash_key=result_hash_key,
                 search_results=result, user=user
             )
             await deduct_user_profile_credit(user)
-            history_id = await add_to_history(result, user)
-            await add_to_profile_credit(history_id, result, user)
-            logger.debug(f"{result=}")
-            return result
+
+            exists_response = result
         logger.debug(f"{exists_response=}")
-        return exists_response.get('search_results')
+        return exists_response
 
     coroutines = [check_one_result(url=x[0], result=x[1]) for x in zip(urls, responses)]
 

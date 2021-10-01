@@ -4,7 +4,7 @@ import json
 import os
 import sys
 import urllib
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union, Any
 
 import httpx
 import jmespath
@@ -93,7 +93,7 @@ def filter_data(person: Dict, slug: str) -> Dict:
 
 async def write_to_file(responses: List[Dict], filename: str):
     try:
-        logger.debug(f"writing {len(responses)=} responses")
+        logger.debug(f"writing {responses=} responses")
         # logger.debug(f"{responses=}")
         df = pd.DataFrame([x for x in responses if x])
         logger.debug(df.head())
@@ -494,7 +494,7 @@ async def search_all_by_pipl(
 
 async def search_one(
     url: str, client: httpx.AsyncClient, slug: str, limiter: AsyncLimiter
-) -> Optional[List[Dict]]:
+) -> Union[None, tuple[Any, list[dict]], tuple[None, None]]:
     try:
         logger.debug(url)
 
@@ -522,16 +522,18 @@ async def search_one(
             logger.debug(data.keys())
 
             if data["@persons_count"] == 1 and data.get("person"):
-                return [filter_data(person=data.get("person"), slug=slug)]
+                return data.get("person"),[filter_data(person=data.get("person"), slug=slug)]
+                # return [filter_data(person=data.get("person"), slug=slug)]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
-                return [
-                    filter_data(person=x, slug=slug)
-                    for x in data.get("possible_persons")
-                    if x
-                ]
+                # return [
+                #     filter_data(person=x, slug=slug)
+                #     for x in data.get("possible_persons")
+                #     if x
+                #
+                return None,None
             else:
                 logger.warning(f"{data=}")
-                return None
+                return None,None
     except Exception as e:
         logger.critical(f"Exception in PIPL search: {str(e)}")
         return None
@@ -564,7 +566,7 @@ async def search_all(urls: List[str], slugs: List[str]) -> Optional[List[Dict]]:
             if not any(results):
                 logger.warning("No Results Found")
                 return None
-            # logger.debug(f"{list(itertools.chain(results))=}")
+            logger.debug(f"{list(itertools.chain(results))=}")
             return list(itertools.chain(results))
     except Exception as e:
         logger.critical(f"Exception Searching PIPL: {str(e)}")
