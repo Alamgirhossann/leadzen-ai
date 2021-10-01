@@ -30,8 +30,8 @@ from app.users import get_user
 from urllib.parse import urlparse, urlunparse
 
 
-def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
-    logger.debug(f"{person=}>>>{slug=}>>>{is_email_required=}")
+async def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
+    logger.debug(f"{person=}---{slug=}---{is_email_required=}")
     result = {
         "Input": slug,
         "Names": None,
@@ -82,7 +82,20 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
 
     if "phones" in person:
         phones = jmespath.search("phones[*].display_international", person)
+        # verified_phone = []
+        # if phones:
+        #     print("phones", phones)
+        #     payload = {"phones": phones}
+        #     async with httpx.AsyncClient() as client:
+        #         phones_check_valid = await client.post('http://127.0.0.1:12005/api/phone/phone_verification', data=json.dumps(payload))
+        #         print("phones_check_valid", phones_check_valid.text)
+        #     temp_data = phones_check_valid.text
+        #     for x in temp_data:
+        #         if x["status"] == "Success":
+        #             verified_phone.append(x["phone"])
+        # print("verified_phone",verified_phone)
         result["Phones"] = ", ".join(phones)
+        # result["Phones"] = verified_phone
 
     if "gender" in person:
         gender = jmespath.search("gender", person)
@@ -241,7 +254,7 @@ async def search_one_texAu(
                     logger.debug(
                         f'In data["@persons_count"] == 1 and data.get("person"){data["@persons_count"] == 1 and data.get("person")=} '
                     )
-                    result = filter_data(
+                    result = await filter_data(
                         person=data.get("person"), slug=slug, is_email_required=False
                     )
                     logger.debug(f"{is_record_present=}")
@@ -404,7 +417,7 @@ async def search_one_pipl(
                                         return None
                                     logger.debug(f"data 200>>>")
                                     logger.debug(data.keys())
-                                    result = filter_data(
+                                    result = await filter_data(
                                         person=data, slug=slug, is_email_required=False
                                     )
                                     logger.debug(f"{is_credit_applied=}")
@@ -570,16 +583,24 @@ async def search_one(
                 return None
             logger.debug(data)
             # logger.debug(data.keys())
-
+            parsed = urlparse(url)
+            url_split_temp = parsed.query.split("&")[0]
+            split_url = url_split_temp.split("=")[1]
+            linkedin_url = urllib.parse.unquote(split_url)
+            logger.debug(f"{linkedin_url=}")
             if data["@persons_count"] == 1 and data.get("person"):
                 parsed = urlparse(url)
                 url_split_temp = parsed.query.split("&")[0]
                 split_url = url_split_temp.split("=")[1]
                 linkedin_url = urllib.parse.unquote(split_url)
                 logger.debug(f"{linkedin_url=}")
-                return data.get("person"), filter_data(
-                    person=data.get("person"), slug=linkedin_url, is_email_required=True
-                )
+                return data.get("person"), [
+                    await filter_data(
+                        person=data.get("person"),
+                        slug=linkedin_url,
+                        is_email_required=True,
+                    )
+                ]
                 # return [filter_data(person=data.get("person"), slug=slug)]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
                 # return [

@@ -20,8 +20,8 @@ class PhoneRequest(BaseModel):
     phones: List[str]=[]
 
 @router.post("/phone_verification")
-async def phone_verification(request:PhoneRequest,user=Depends(fastapi_users.get_current_active_user)):
-    logger.info(f"{user=}")
+async def phone_verification(request:PhoneRequest):
+    # logger.info(f"{user=}")
     if request.phones:
         async def async_call(phone_number):
             url = API_CONFIG_GET_PHONE_VERIFICATION_URL
