@@ -11,7 +11,7 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import personLoader from "../Loader/personLoader"
 import SavedListButton from "./SavedListButton";
 import axios from "axios";
 import { EventEmitter } from "events";
@@ -865,21 +865,20 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
-  useEffect(() => {
-    if (searchText !== "") {
-      setSearchedList(
-        myLeads.filter((data) => {
-          return (
-            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            data.location.toLowerCase().includes(searchText.toLowerCase()) ||
-            data.job.toLowerCase().includes(searchText.toLowerCase())
-          );
-        })
-      );
-    } else {
-      setSearchedList(myLeads);
-    }
-  }, [searchText, myLeads]);
+  useEffect(()=> {
+   if(searchText!=""){
+     setSearchedList(myLeads.filter(data=>{
+       return (
+           data.name.toLowerCase().includes(searchText.toLowerCase())||
+               data.location.toLowerCase().includes(searchText.toLowerCase())||
+               data.job.toLowerCase().includes(searchText.toLowerCase())
+       )
+     }))
+   }
+   else {
+     setSearchedList(myLeads.filter(data=> !!data.name))
+   }
+  },[searchText,myLeads])
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -929,7 +928,7 @@ const SearchResult = (props) => {
           <div className="row">
             <div className="col-md-4 col-lg-3">
               <SpecificSearchBtn details={true} />
-              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3"  style={loading ?{'opacity':'0.4', 'pointerEvents':'none'}:{}}>
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
               </div>
@@ -937,24 +936,24 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
-              {loading === false ? (
-                <div className="search-form4 d-flex mb-3">
-                  <div className="input-group">
-                    <div
-                      className="input-placeholder"
-                      style={{ width: "1000px", height: "50px" }}
-                    >
-                      <input
-                        id="search-result-texau-search-input"
-                        className="ps-3"
-                        required
-                        onChange={(e) => setSearchText(e.target.value)}
-                      />
-                      <div className="placeholder">Search Here</div>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
+              {/*{loading === false ? (*/}
+              {/*  <div className="search-form4 d-flex mb-3">*/}
+              {/*    <div className="input-group">*/}
+              {/*      <div*/}
+              {/*        className="input-placeholder"*/}
+              {/*        style={{ width: "1000px", height: "50px" }}*/}
+              {/*      >*/}
+              {/*        <input*/}
+              {/*          id="search-result-texau-search-input"*/}
+              {/*          className="ps-3"*/}
+              {/*          required*/}
+              {/*          onChange={(e) => setSearchText(e.target.value)}*/}
+              {/*        />*/}
+              {/*        <div className="placeholder">Search Here</div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*) : null}*/}
               <div className="user-search-wrapper">
                 <div
                   className="detailed-search"
@@ -1045,15 +1044,19 @@ const SearchResult = (props) => {
                                   src={
                                     data.profilePicture
                                       ? data.profilePicture
-                                      : "assets/images/author-image.png"
+                                      : data.image? data.image
+                                            :"assets/images/author-image.png"
                                   }
                                   alt=""
                                 />
                               </div>
                               <div className="search-user ps-3">
-                                <p>{data.length === 0 ? null : data.name}</p>
+                                <p>{data.length === 0 ? null :<React.Fragment>
+                                  {data.name?data.name :data.fullName}
+                               </React.Fragment>}</p>
+                                {/*<p>{data.length === 0 ? null : data.fullName}</p>*/}
                                 <small className="d-block">
-                                  Works at {data.length === 0 ? null : data.job}
+                                  Works at {data.length === 0 ? null : data.job?data.job:data.occupation}
                                 </small>
                                 <small className="d-block">
                                   {data.length === 0 ? null : data.location}
@@ -1061,7 +1064,7 @@ const SearchResult = (props) => {
                               </div>
                               <div className="linkedin-icon d-flex justify-content-end">
                                 <span>
-                                  <a href={data.url} target="_blank">
+                                  <a href={data.url?data.url:data.profileLink} target="_blank">
                                     <img
                                       src="assets/images/linkedin1.png"
                                       alt=""
@@ -1190,7 +1193,7 @@ const SearchResult = (props) => {
                 ) : (
                   <div className="d-flex justify-content-center">
                     <div role="status" style={{ height: "400px" }}>
-                      <Lottie options={Loader} />
+                      <Lottie options={personLoader} />
                     </div>
                   </div>
                 )}
@@ -1204,7 +1207,7 @@ const SearchResult = (props) => {
                   />
                 ) : null}
               </div>
-              <AskJarvis />
+              {/*<AskJarvis />*/}
             </div>
           </div>
         </div>

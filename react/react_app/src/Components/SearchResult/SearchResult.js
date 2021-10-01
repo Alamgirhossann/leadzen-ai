@@ -12,7 +12,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import Loader from "../Loader/Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { digestMessage } from "./SearchResultTexAu";
 import { EventEmitter } from "events";
@@ -617,43 +617,43 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
-              <div className="user-search-wrapper">
-                <div className="user-search-wrapper">
-                  <div className="detailed-search">
-                    <div className="search-promote-content">
-                      <form className=" d-flex my-2 my-lg-0">
-                        <input
-                          id="search-result-search-input"
-                          className="form-control mr-sm-2"
-                          type="search"
-                          // onBlur={handleHeadSearch}
-                          placeholder="Search"
-                          aria-label="Search"
-                        />
-                        <button
-                          className="btn text-white w-auto d-flex ms-3"
-                          // onClick={handleHeadSearchSubmit}
-                          style={{ background: "#FB3E3E" }}
-                          type="submit"
-                        >
-                          <span className="pe-1">
-                            <FontAwesomeIcon icon={faSearch} />
-                          </span>{" "}
-                          Search
-                        </button>
-                      </form>
-                    </div>
-                    <div>
-                      <small>Last Updated: {today}</small>
-                    </div>
-                  </div>
-                </div>
-                {/* <div className="detailed-search">
-                  <div>
-                    <small>Last Updated: {today}</small>
-                  </div>
-                </div> */}
-              </div>
+              {/*<div className="user-search-wrapper">*/}
+              {/*  <div className="user-search-wrapper">*/}
+              {/*    <div className="detailed-search">*/}
+              {/*      <div className="search-promote-content">*/}
+              {/*        <form className=" d-flex my-2 my-lg-0">*/}
+              {/*          <input*/}
+              {/*            id="search-result-search-input"*/}
+              {/*            className="form-control mr-sm-2"*/}
+              {/*            type="search"*/}
+              {/*            // onBlur={handleHeadSearch}*/}
+              {/*            placeholder="Search"*/}
+              {/*            aria-label="Search"*/}
+              {/*          />*/}
+              {/*          <button*/}
+              {/*            className="btn text-white w-auto d-flex ms-3"*/}
+              {/*            // onClick={handleHeadSearchSubmit}*/}
+              {/*            style={{ background: "#FB3E3E" }}*/}
+              {/*            type="submit"*/}
+              {/*          >*/}
+              {/*            <span className="pe-1">*/}
+              {/*              <FontAwesomeIcon icon={faSearch} />*/}
+              {/*            </span>{" "}*/}
+              {/*            Search*/}
+              {/*          </button>*/}
+              {/*        </form>*/}
+              {/*      </div>*/}
+              {/*      <div>*/}
+              {/*        <small>Last Updated: {today}</small>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  /!* <div className="detailed-search">*/}
+              {/*    <div>*/}
+              {/*      <small>Last Updated: {today}</small>*/}
+              {/*    </div>*/}
+              {/*  </div> *!/*/}
+              {/*</div>*/}
               <div className="user-widget-box  my-3">
                 <div className="d-flex align-items-center justify-content-between py-3">
                   <div className="d-flex align-items-center ">

@@ -40,7 +40,7 @@ class PiplDetailsFromProfileUrlResponse(BaseModel):
 
 async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     responses = None
-    logger.debug(f"################{request.export_type=}")
+    logger.debug(f"{request.export_type=}")
     if request.export_type == "texAu":
         profile_urls = list(set(request.profile_urls))  # remove duplicates
         profile_urls = [x for x in profile_urls if x]  # remove empty profile_urls
@@ -179,7 +179,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
 
     logger.debug(f"{type(filtered_list)=}>>>>>>{filtered_list=}")
 
-    # return await write_to_file(responses=filtered_list, filename=request.filename)
+    return await write_to_file(responses=filtered_list, filename=request.filename)
 
 
 async def search_in_history(urls: List[str], user: User) -> tuple[
