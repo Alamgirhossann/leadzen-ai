@@ -475,6 +475,7 @@ const SearchResult = (props) => {
                     <div className="search-promote-content">
                       <form className=" d-flex my-2 my-lg-0">
                         <input
+                          id="search-result-search-input"
                           className="form-control mr-sm-2"
                           type="search"
                           // onBlur={handleHeadSearch}
@@ -504,19 +505,6 @@ const SearchResult = (props) => {
                     <small>Last Updated: {today}</small>
                   </div>
                 </div> */}
-                <div>
-                  <p className="mt-3">
-                    Extracted Results for:{" "}
-                    <span className="link-style">
-                      <img src="assets/images/Vector (2).png" alt="" />{" "}
-                      https://www.instagram.com/
-                    </span>
-                    <span className="link-style">Followers</span>{" "}
-                    <a className="text-danger" href="#">
-                      Clear All
-                    </a>
-                  </p>
-                </div>
               </div>
               <div className="user-widget-box  my-3">
                 <div className="d-flex align-items-center justify-content-between py-3">
@@ -570,7 +558,10 @@ const SearchResult = (props) => {
                     ) : currentLeads ? (
                       currentLeads.map((data, index) => (
                         <div>
-                          <div className="user-container py-2" key={index}>
+                          <div
+                            className="search-user-container py-2"
+                            key={index}
+                          >
                             <input
                               className="box ms-3 me-3"
                               type="checkbox"
@@ -659,18 +650,18 @@ const SearchResult = (props) => {
                               </a>
                             </p>
 
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
+                            {/*<a href="#" onClick={clickSelect}>*/}
+                            {/*  <p className="search-close-btn">*/}
+                            {/*    <img*/}
+                            {/*      src={*/}
+                            {/*        selected*/}
+                            {/*          ? "assets/images/Frame 543.png"*/}
+                            {/*          : "assets/images/Group 1863.png"*/}
+                            {/*      }*/}
+                            {/*      alt=""*/}
+                            {/*    />*/}
+                            {/*  </p>*/}
+                            {/*</a>*/}
                           </div>
                           <div
                             style={{

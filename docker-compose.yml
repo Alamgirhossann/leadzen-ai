@@ -5,7 +5,7 @@ services:
     image: "traefik:latest"
     container_name: "traefik"
     command:
-      - "--log.level=DEBUG"
+      #- "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -55,6 +55,7 @@ services:
       - API_CONFIG_SELF_BASE_EXTERNAL_URL=https://leadzen-dev.analystt.ai
       - API_CONFIG_REACT_LOGIN_PAGE=https://leadzen-dev.analystt.ai/login
       - API_CONFIG_REACT_SIGNUP_PAGE=https://leadzen-dev.analystt.ai/signUp
+      - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_dev2
     depends_on:
       - selenium
 
@@ -63,12 +64,14 @@ services:
     container_name: "person_fastapi_external"
     ports:
       - "8001:5000"
-    volumes:
-      - ./shared:/home/appuser/shared
+    # volumes:
+    #   - ./shared:/home/appuser/shared
     environment:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
+      - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_dev2
     depends_on:
+      - person_fastapi
       - redis
     labels:
       - "traefik.enable=true"

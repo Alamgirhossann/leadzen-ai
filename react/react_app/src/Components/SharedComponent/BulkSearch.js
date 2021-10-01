@@ -106,7 +106,7 @@ const BulkSearch = (data) => {
       </p>
       <a
         className="text-danger"
-        href="assets/sample.csv"
+        href="assets/Sample Bulk Upload.csv"
         onClick={(e) => setSampleChecked(true)}
       >
         {data.data ? "" : "Click here to download csv format"}
@@ -122,8 +122,8 @@ const BulkSearch = (data) => {
       />
 
       <div className="browse-file">
-        <p>Drag and Drop File</p>
-        <p>or</p>
+        {/* <p>Drag and Drop File</p>
+        <p>or</p> */}
         <button
           className="browse-btn"
           onClick={handleCsvUpload}

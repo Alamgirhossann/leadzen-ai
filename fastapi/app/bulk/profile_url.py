@@ -21,9 +21,10 @@ async def handle_bulk_profile_urls(request: BulkProfileUrlRequest, ):
             profile_urls=request.urls,  filename=request.outgoing_filename, hash_key_list=request.hash_key_list, user=request.user
         )
     )
+    user = request.user
     outgoing_filename = request.outgoing_filename
     if outgoing_filename.endswith(".xlsx"):
-        add_excel_template_to_file(outgoing_filename)
+        add_excel_template_to_file(outgoing_filename, user)
 
     await wait_and_check_for_filename(
         request=BulkRequest(

@@ -114,7 +114,8 @@ API_CONFIG_TEXAU_LINKEDIN_FIND_EMAIL_FUNC_ID = os.getenv(
 API_CONFIG_ALLOWED_CONTENT_TYPES = [
     x.strip()
     for x in os.getenv(
-        "API_CONFIG_ALLOWED_CONTENT_TYPES", "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "API_CONFIG_ALLOWED_CONTENT_TYPES",
+        "text/csv, application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ).split(",")
     if x
 ]
@@ -168,7 +169,7 @@ API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv(
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
 
 API_CONFIG_DATABASE_URL = os.getenv(
-    "API_CONFIG_DATABASE_URL", "sqlite:///./shared/test.db"
+    "API_CONFIG_DATABASE_URL", "postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_priyanka"
 )
 API_CONFIG_EMAIL_SEND_URL = (
     f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send"
@@ -176,7 +177,6 @@ API_CONFIG_EMAIL_SEND_URL = (
 API_CONFIG_BULK_MAX_ROWS_IN_CSV = int(
     os.getenv("API_CONFIG_BULK_MAX_ROWS_IN_CSV", "50")
 )
-
 # https://docs.pipl.com/docs/rate-limiting-your-queries
 API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT = int(
     os.getenv("API_CONFIG_PIPL_RATE_LIMIT_MAX_CALLS", "10")
@@ -303,9 +303,18 @@ API_CONFIG_SENTRY_DSN = os.getenv(
     "API_CONFIG_SENTRY_DSN",
     "https://5c82fcb5179441aaa52475dec4c2b507@o818106.ingest.sentry.io/5950717",
 )
-API_CONFIG_GET_PHONE_VERIFICATION_URL = os.getenv("API_CONFIG_GET_PHONE_VERIFICATION_URL", "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php")
-API_CONFIG_GET_PHONE_VERIFICATION_APIKEY = os.getenv("API_CONFIG_GET_PHONE_VERIFICATION_APIKEY", "dCCTClKPTnDb55DxrIYnSkxiKwiWg8NWWuHjP6i9")
-API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL = os.getenv("API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL", "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php")
+API_CONFIG_GET_PHONE_VERIFICATION_URL = os.getenv(
+    "API_CONFIG_GET_PHONE_VERIFICATION_URL",
+    "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php",
+)
+API_CONFIG_GET_PHONE_VERIFICATION_APIKEY = os.getenv(
+    "API_CONFIG_GET_PHONE_VERIFICATION_APIKEY",
+    "dCCTClKPTnDb55DxrIYnSkxiKwiWg8NWWuHjP6i9",
+)
+API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL = os.getenv(
+    "API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL",
+    "https://2f-hlr.2factor.in/API/UserModules/SEND/HLR/api.php",
+)
 
 
 sentry_sdk.init(
@@ -316,8 +325,48 @@ sentry_sdk.init(
     traces_sample_rate=1.0,
 )
 API_CONFIG_DATABASE_GET_EMAIL = os.getenv(
-    "API_CONFIG_DATABASE_GET_EMAIL", "http://localhost:12005/api/credits/email_search/get"
+    "API_CONFIG_DATABASE_GET_EMAIL",
+    "http://localhost:12005/api/credits/email_search/get",
 )
 API_CONFIG_DATABASE_ADD_EMAIL = os.getenv(
-    "API_CONFIG_DATABASE_ADD_EMAIL", "http://localhost:12005/api/credits/email_search/add"
+    "API_CONFIG_DATABASE_ADD_EMAIL",
+    "http://localhost:12005/api/credits/email_search/add",
+)
+
+API_CONFIG_SENDINBLUE_API_KEY = os.getenv(
+    "API_CONFIG_SENDINBLUE_API_KEY",
+    "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",
+)
+
+API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID = os.getenv(
+    "API_CONFIG_SENDINBLUE_EMAIL_VERIFICATION_TEMPLATE_ID", 2
+)
+
+API_CONFIG_SENDINBLUE_BULK_FAILURE_TEMPLATE_ID = os.getenv(
+    "API_CONFIG_SENDINBLUE_BULK_FAILURE_TEMPLATE_ID", 15
+)
+
+API_CONFIG_SENDINBLUE_EXCEL_EXPORT_FAILURE_TEMPLATE_ID = os.getenv(
+    "API_CONFIG_SENDINBLUE_EXCEL_EXPORT_FAILURE_TEMPLATE_ID", 13
+)
+
+API_CONFIG_SENDINBLUE_EXCEL_EXPORT_SUCCESS_TEMPLATE_ID = os.getenv(
+    "API_CONFIG_SENDINBLUE_EXCEL_EXPORT_SUCCESS_TEMPLATE_ID", 4
+)
+
+API_CONFIG_SENDINBLUE_BULK_EXPORT_SUCCESS_TEMPLATE_ID = os.getenv(
+    "API_CONFIG_SENDINBLUE_BULK_EXPORT_SUCCESS_TEMPLATE_ID", 3
+)
+
+API_CONFIG_SENDINBLUE_WELCOME_TEMPLATE_ID = os.getenv(
+    "API_CONFIG_SENDINBLUE_WELCOME_TEMPLATE_ID", 6
+)
+
+
+API_CONFIG_SENDINBLUE_REPLY_MAIL = os.getenv(
+    "API_CONFIG_SENDINBLUE_REPLY_MAIL", "malhar@analystt.ai"
+)
+
+API_CONFIG_SENDINBLUE_REPLY_NAME = os.getenv(
+    "API_CONFIG_SENDINBLUE_REPLY_NAME", "LeadZen.ai"
 )

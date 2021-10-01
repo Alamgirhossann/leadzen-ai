@@ -48,7 +48,7 @@ const UserSearch = () => {
               <div className="input-group">
                 <div className="input-placeholder">
                   <input
-                    id="inputText"
+                    id="user-search-input"
                     className="ps-3"
                     name="searchString"
                     onChange={handleHeadSearch}
