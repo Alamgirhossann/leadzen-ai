@@ -76,6 +76,7 @@ def app_factory():
     app.include_router(router=history_router, prefix="/api")
     app.include_router(router=credits_profile_router, prefix="/api")
     app.include_router(router=profile_search_router, prefix="/api")
+    app.include_router(router=credits_email_router, prefix="/api")
     app.include_router(router=credits_admin_router, prefix="/api")
     app.include_router(router=truemail_router, prefix="/api")
     app.include_router(router=snov_router, prefix="/api")

@@ -31,7 +31,8 @@ async def phone_verification(request:PhoneRequest,user=Depends(fastapi_users.get
                 "callbackurl": API_CONFIG_GET_PHONE_VERIFICATION_CALLBACK_URL
             }
             async with httpx.AsyncClient() as client:
-                response = await client.get(url, params=payload)
+                timeout = httpx.Timeout(20.0)
+                response = await client.get(url, params=payload,timeout=timeout)
                 if response.status_code == 200:
                     data = json.loads(response.text)
                     data["phone"] = phone_number
