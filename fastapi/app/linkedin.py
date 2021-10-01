@@ -152,13 +152,16 @@ def query_url_builder_company(search_field_dict):
                         # kw += (f'{new_kw}' if kw else new_kw.strip(' '))
                     else:
                         print("In Else", k, '\n', v)
-                        link, new_kw = set_list_values(link, k, v)
-                        # kw += (f'{new_kw}' if kw else new_kw.strip(' '))
+                        if (k=="keywords1"):
+                            k="keywords"
+                            link, new_kw = set_list_values(link, k, v)
+                        else:
+                            link, new_kw = set_list_values(link, k, v)
                 else:
                     if link.endswith("?"):
                         if keyword1_value is not None:
                             for kw in keyword1_value:
-                                link += k + "=" + kw
+                                link += k + "=" + v
                         else:
                             link += k + "=" + v
                     else:
