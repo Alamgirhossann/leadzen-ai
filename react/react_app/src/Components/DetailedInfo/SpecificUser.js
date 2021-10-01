@@ -47,7 +47,6 @@ const SpecificUser = (props) => {
         }
     }
 
-
     useEffect(async () => {
         if (props.details.phones) {
             console.log("props specific>>>>>", props.details.phones);
@@ -138,13 +137,14 @@ const SpecificUser = (props) => {
                                                     alt=""
                                                 />
                                             </div>
+                                            {email.valid === 'valid'?
                                             <div className="d-flex align-items-center">
                                                 <img
                                                     className="ms-2"
                                                     src="assets/images/Vector.png"
                                                     alt=""
                                                 />
-                                            </div>
+                                            </div>:null}
                                         </div>
                                     ))
                                     : null}

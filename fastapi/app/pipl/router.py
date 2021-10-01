@@ -17,6 +17,7 @@ from app.config import (
     API_CONFIG_PIPL_BASE_URL,
     API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
     API_CONFIG_MAX_RESULTS_PER_CALL,
+    API_CONFIG_CHECK_EMAIL
 )
 from app.credits.admin import deduct_credit
 from app.database import database
@@ -32,6 +33,7 @@ from app.pipl.profile_url import (
 )
 from app.profile_search import get_profile_search, add_profile
 from app.users import fastapi_users, get_user
+import requests
 
 router = APIRouter(prefix="/pipl", tags=["PIPL"])
 
@@ -91,6 +93,7 @@ async def people_search(
                 logger.debug(f">>type response result>>{type(response.get('search_results'))}")
                 json_data = eval(response.get('search_results'))
                 logger.debug(f"{json_data=},>>>>>>>>>>>>{type(json_data)}")
+                
                 return json_data
             else:
                 logger.debug(f"Profile not found")
@@ -112,6 +115,7 @@ async def people_search(
                     search_type = "texAu"
                     pipl_res = await send_pipl_request(params)
                 logger.debug(f"{pipl_res=}, >> {type(pipl_res)}")
+                
                 if pipl_res:
                     logger.debug(f" in pipl res >>>>{user_response=}")
                     credit_res = await deduct_credit("PROFILE", user_response)
@@ -123,10 +127,17 @@ async def people_search(
                             pipl_res
 
                     }
+                    for res in pipl_res:
+                        for email_dict in res.get('emails'):
+                            email_result = email_dict['address']
+                            email_check_valid = requests.get(f"{API_CONFIG_CHECK_EMAIL}={email_result}")
+                            if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
+                                email_dict['valid'] = "valid"
+                            else:
+                                email_dict['valid'] = "Not Valid"
                     background_tasks.add_task(add_profile, request=request, user=user_response)
                     # add_profile_res = await add_profile(request, user_response)
                     # logger.debug(f"{add_profile_res=}")
-
                 return pipl_res
         else:
             logger.debug(f"Credit Not applied")

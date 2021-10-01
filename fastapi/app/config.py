@@ -297,6 +297,9 @@ API_CONFIG_MAX_RESULTS_PER_CALL = int(
 API_CONFIG_GET_USER_FROM_USER_ID_URL = os.getenv(
     "API_CONFIG_GET_USER_FROM_USER_ID_URL", "http://localhost:12005/api/users/"
 )
+API_CONFIG_CHECK_EMAIL = os.getenv(
+    "API_CONFIG_CHECK_EMAIL", "https://app.emaillistvalidation.com/api/verifEmail?secret=jtSxXvO1yLavEu8m4aLmd&email"
+)
 
 
 API_CONFIG_SENTRY_DSN = os.getenv(
