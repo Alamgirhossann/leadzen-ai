@@ -29,11 +29,11 @@ source venv/bin/activate
 echo "> Done"
 echo "..."
 
-echo "> ============================="
-echo "> Change owner for shared folder"
-echo "> ============================="
-sudo chown appuser:appuser /home/appuser/shared
-echo "> Done"
+# echo "> ============================="
+# echo "> Change owner for shared folder"
+# echo "> ============================="
+# sudo chown appuser:appuser /home/appuser/shared
+# echo "> Done"
 
 echo "..."
 echo "> ========================"

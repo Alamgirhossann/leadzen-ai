@@ -13,7 +13,7 @@ import Pagination from "../SharedComponent/Pagination";
 import SavedListButton from "../SearchResult/SavedListButton";
 import SpecificCompany from "./SpecificCompany";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import Loader from "../../companyLoader";
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
     name: null,
@@ -786,14 +786,13 @@ const SearchResultCompany = (props) => {
                   )}
                 </div>
                 <div className="d-flex justify-content-center">
-                  {loading===false?(
-                       <Pagination
-                    postsPerPage={10}
-                    totalPosts={searchedList ? searchedList.length : 1}
-                    paginate={paginate}
-                  />
-                  ):null
-                  }
+                  {loading === false ? (
+                    <Pagination
+                      postsPerPage={10}
+                      totalPosts={searchedList ? searchedList.length : 1}
+                      paginate={paginate}
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>

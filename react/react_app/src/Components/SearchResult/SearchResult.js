@@ -650,18 +650,18 @@ const SearchResult = (props) => {
                               </a>
                             </p>
 
-                            <a href="#" onClick={clickSelect}>
-                              <p className="search-close-btn">
-                                <img
-                                  src={
-                                    selected
-                                      ? "assets/images/Frame 543.png"
-                                      : "assets/images/Group 1863.png"
-                                  }
-                                  alt=""
-                                />
-                              </p>
-                            </a>
+                            {/*<a href="#" onClick={clickSelect}>*/}
+                            {/*  <p className="search-close-btn">*/}
+                            {/*    <img*/}
+                            {/*      src={*/}
+                            {/*        selected*/}
+                            {/*          ? "assets/images/Frame 543.png"*/}
+                            {/*          : "assets/images/Group 1863.png"*/}
+                            {/*      }*/}
+                            {/*      alt=""*/}
+                            {/*    />*/}
+                            {/*  </p>*/}
+                            {/*</a>*/}
                           </div>
                           <div
                             style={{

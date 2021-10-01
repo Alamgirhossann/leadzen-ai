@@ -1,2 +1,2 @@
 #!/bin/bash
-API_CONFIG_DATABASE_URL="postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_dev";uvicorn app.main:app --host 0.0.0.0 --port 12005 --reload
+API_CONFIG_DATABASE_URL="postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_priyanka";uvicorn app.main:app --host 0.0.0.0 --port 12008 --reload
