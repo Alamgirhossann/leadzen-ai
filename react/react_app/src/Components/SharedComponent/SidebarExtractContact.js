@@ -122,9 +122,11 @@ const SidebarExtractContact = (data) => {
         <form>
           <div className="mb-3">
             <input
+              id="sidebar-extract-contact-url-input"
               type="url"
               className="form-control"
               onBlur={handleUrlChange}
+              onInput={handleUrlChange}
               placeholder="Paste Social Media URL"
               disabled={data.data}
             />
@@ -136,7 +138,7 @@ const SidebarExtractContact = (data) => {
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              placeholder="Search Type"
+              placeholder={socialMediaData.type}
               disabled={data.data}
             />
 

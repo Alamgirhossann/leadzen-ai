@@ -59,4 +59,9 @@ fastapi/venv
 fastapi/linkedin_cookies.csv
 fastapi/proxy_auth_plugin.zip
 fastapi/bulk/outgoing
+fastapi/shared
+
 api/venv
+api/shared
+
+shared/

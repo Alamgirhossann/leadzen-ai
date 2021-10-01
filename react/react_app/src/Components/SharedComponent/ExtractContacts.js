@@ -125,6 +125,7 @@ const ExtractContacts = (data) => {
             type="url"
             className="form-control"
             onBlur={handleUrlChange}
+            onInput={handleUrlChange}
             placeholder="Paste Social Media URL"
             disabled={data.data}
           />
@@ -230,11 +231,11 @@ const ExtractContacts = (data) => {
         </span>{" "}
         Search
       </button>
-      <p className="m-0 mt-2">
-        <a href={data.data ? "" : "/userGuide"} className="learn-link">
-          Learn More{" "}
-        </a>
-      </p>
+      {/*<p className="m-0 mt-2">*/}
+      {/*  <a href={data.data ? "" : "/userGuide"} className="learn-link">*/}
+      {/*    Learn More{" "}*/}
+      {/*  </a>*/}
+      {/*</p>*/}
     </div>
   );
 };

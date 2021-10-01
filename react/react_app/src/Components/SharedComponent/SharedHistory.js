@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
-
+import dateFormat from "dateformat";
 const SharedHistory = () => {
-  const [searchText, setSearchText] = useState();
+  const [searchText, setSearchText] = useState("");
   const history = useHistory();
   const fetchData = async () => {
     // TODO:Create api calls to get user profile data from the backend
@@ -124,9 +124,11 @@ const SharedHistory = () => {
         <form action="#" className="search-form-sm">
           <div className="input-group">
             <input
+              id="shared-history-search-input"
               type="text"
               className="form-control"
               onBlur={handleSearch}
+              onInput={handleSearch}
               placeholder="Search"
             />
             <button
@@ -142,7 +144,16 @@ const SharedHistory = () => {
 
       <div className="accordion-body">
         {myLeads.length >= 0 ? (
-          myLeads.map((data) => (
+          myLeads.filter((data) =>{
+            if(searchText==="")
+            {
+              return data;
+            }
+            else if (data.search_term?.toLowerCase().includes(searchText?.toLowerCase()))
+            {
+              return data;
+            }
+          } ).map((data) => (
             <div className="container-style mt-3">
               <div className="history-container">
                 <p className="Profile text-danger">Profile:</p>
@@ -150,7 +161,7 @@ const SharedHistory = () => {
                 <div className="date">
                   <div>
                     <small className="d-block">Search Date</small>
-                    <small className="d-block">{data.created_on}</small>
+                    <small className="d-block">{dateFormat(data.created_on, "yyyy/mm/dd hh:MM")}</small>
                   </div>
                 </div>
                 <div className="credit">
@@ -178,11 +189,11 @@ const SharedHistory = () => {
                     View result
                   </a>
                 </p>
-                <a href="/history" onClick={(name) => handleDelete(data.name)}>
-                  <p className="close-btn">
-                    <img src="assets/images/close-user.png" alt="" />
-                  </p>
-                </a>
+                {/*<a href="/repeatedUser" onClick={(name) => handleDelete(data.name)}>*/}
+                {/*  <p className="close-btn">*/}
+                {/*    <img src="assets/images/close-user.png" alt="" />*/}
+                {/*  </p>*/}
+                {/*</a>*/}
               </div>
             </div>
           ))
