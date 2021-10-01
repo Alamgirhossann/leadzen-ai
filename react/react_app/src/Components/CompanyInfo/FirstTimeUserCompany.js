@@ -90,6 +90,7 @@ const FirstTimeUserCompany = (props) => {
           <div className="row">
             <div className="col-md-4 col-lg-3">
               <SpecificSearchBtn details={false} />
+
               <div className="sidebar-search-for sidebar-widget pt-4 my-3">
                 <h6 className="text-danger mb-3">Customize your search</h6>
                 <CompanyFilters />
@@ -99,9 +100,9 @@ const FirstTimeUserCompany = (props) => {
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
-              <div>
-                <AskJarvis />
-              </div>
+              {/*<div>*/}
+              {/*  <AskJarvis />*/}
+              {/*</div>*/}
               <ExtractContacts data={true} />
             </div>
           </div>
