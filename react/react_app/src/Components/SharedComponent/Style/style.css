@@ -107,3 +107,9 @@
     background: #FB3E3E;
     transition: left 0.4s 0.2s, right 0.5s,;
 }
+.disabled-link {
+    pointer-events: none;
+  }
+.disabled-link span{
+    color: gray;
+}
