@@ -60,7 +60,7 @@ fastapi/linkedin_cookies.csv
 fastapi/proxy_auth_plugin.zip
 fastapi/bulk/outgoing
 fastapi/shared
-
+/react/.idea/workspace.xml
 api/venv
 api/shared
 

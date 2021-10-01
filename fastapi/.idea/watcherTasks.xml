@@ -46,7 +46,6 @@
     <enabled-global>
       <option value="Prettier - JSX" />
       <option value="Prettier - HTML" />
-      <option value="Black" />
       <option value="Prettier - JS" />
     </enabled-global>
   </component>
