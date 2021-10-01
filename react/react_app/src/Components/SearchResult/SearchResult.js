@@ -12,7 +12,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import Loader from "../Loader/Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { digestMessage } from "./SearchResultTexAu";
 import { EventEmitter } from "events";

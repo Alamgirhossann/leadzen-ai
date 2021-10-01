@@ -11,7 +11,7 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import personLoader from "../Loader/personLoader"
 import SavedListButton from "./SavedListButton";
 import { EventEmitter } from "events";
 
@@ -816,21 +816,20 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
-  useEffect(() => {
-    if (searchText !== "") {
-      setSearchedList(
-        myLeads.filter((data) => {
-          return (
-            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            data.location.toLowerCase().includes(searchText.toLowerCase()) ||
-            data.job.toLowerCase().includes(searchText.toLowerCase())
-          );
-        })
-      );
-    } else {
-      setSearchedList(myLeads);
-    }
-  }, [searchText, myLeads]);
+  useEffect(()=> {
+   if(searchText!=""){
+     setSearchedList(myLeads.filter(data=>{
+       return (
+           data.name.toLowerCase().includes(searchText.toLowerCase())||
+               data.location.toLowerCase().includes(searchText.toLowerCase())||
+               data.job.toLowerCase().includes(searchText.toLowerCase())
+       )
+     }))
+   }
+   else {
+     setSearchedList(myLeads.filter(data=> !!data.name))
+   }
+  },[searchText,myLeads])
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -1145,7 +1144,7 @@ const SearchResult = (props) => {
                 ) : (
                   <div className="d-flex justify-content-center">
                     <div role="status" style={{ height: "400px" }}>
-                      <Lottie options={Loader} />
+                      <Lottie options={personLoader} />
                     </div>
                   </div>
                 )}
@@ -1159,7 +1158,7 @@ const SearchResult = (props) => {
                   />
                 ) : null}
               </div>
-              <AskJarvis />
+              {/*<AskJarvis />*/}
             </div>
           </div>
         </div>
