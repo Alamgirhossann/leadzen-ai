@@ -125,7 +125,7 @@ const Profile = () => {
                         <div class="col-sm-10 d-flex align-items-center" >
                           <div>
                             <input
-                              style={{ borderRadius:"10px" }}
+                              style={{ borderRadius:"10px",outline:"none" }}
                               type="password"
                               className=""
                               id="inputPassword"
@@ -142,7 +142,7 @@ const Profile = () => {
                           New Password
                         </label>
                         <div className="col-sm-10 d-flex align-items-center" >
-                          <input style={{ borderRadius:"10px" }} type="password" class="" id="inputPassword" />
+                          <input style={{ borderRadius:"10px",outline:"none"}} type="password" class="" id="inputPassword" />
                         </div>
                       </div>
                       <div class="mb-3 row text-right">
@@ -150,7 +150,7 @@ const Profile = () => {
                           Verify Password
                         </label>
                         <div class="col-sm-10 d-flex align-items-center">
-                          <input style={{ borderRadius:"10px" }} type="password" class="" id="inputPassword" />
+                          <input style={{ borderRadius:"10px",outline:"none" }} type="password" class="" id="inputPassword" />
                         </div>
                       </div>
                     </div>
