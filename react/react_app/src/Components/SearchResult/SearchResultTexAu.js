@@ -571,8 +571,8 @@ const SearchResult = (props) => {
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     function handleError(status) {
-    console.error(`Got HTTP Error ${status.statusText}`);
-  }
+      console.error(`Got HTTP Error ${status.statusText}`);
+    }
     try {
       let isDuplicate = false;
 
@@ -977,7 +977,7 @@ const SearchResult = (props) => {
                         data.name != "LinkedIn Member" ? (
                           <div>
                             <div
-                              className="user-container py-2"
+                              className="search-user-container py-2"
                               key={`${currentPage}${index}`}
                             >
                               <input
