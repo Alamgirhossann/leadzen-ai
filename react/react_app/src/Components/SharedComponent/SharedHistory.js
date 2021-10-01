@@ -180,11 +180,11 @@ const SharedHistory = () => {
                     View result
                   </a>
                 </p>
-                <a href="/repeatedUser" onClick={(name) => handleDelete(data.name)}>
-                  <p className="close-btn">
-                    <img src="assets/images/close-user.png" alt="" />
-                  </p>
-                </a>
+                {/*<a href="/repeatedUser" onClick={(name) => handleDelete(data.name)}>*/}
+                {/*  <p className="close-btn">*/}
+                {/*    <img src="assets/images/close-user.png" alt="" />*/}
+                {/*  </p>*/}
+                {/*</a>*/}
               </div>
             </div>
           ))
