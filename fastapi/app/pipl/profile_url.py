@@ -130,7 +130,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
         for items in pipl_search_results_found:
             items = tuple(items)
             logger.debug(f"{type(items)=}>>>>")
-            filtered_list.append(items[0])
+            filtered_list.append(items[1])
             print(len(items))
             # if len(items) <= 2:
             #     pipl_search_results_found.append(items[1])
