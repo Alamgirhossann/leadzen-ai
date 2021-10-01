@@ -13,7 +13,7 @@ import Pagination from "../SharedComponent/Pagination";
 import SavedListButton from "../SearchResult/SavedListButton";
 import SpecificCompany from "./SpecificCompany";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import Loader from "../../companyLoader";
 const SearchResultCompany = (props) => {
   const [customSearch, setCustomSearch] = useState({
     name: null,
@@ -584,25 +584,25 @@ const SearchResultCompany = (props) => {
                 <SidebarExtractContact data={true} />
               </div>
               <div className="col-md-8 col-lg-9">
-                {loading === false ? (
-                  <div className="search-form4 d-flex mb-3">
-                    <div className="input-group">
-                      <div
-                        className="input-placeholder"
-                        style={{ width: "1000px", height: "50px" }}
-                      >
-                        <input
-                          id="search-result-company-search-text-input"
-                          className="ps-3"
-                          required
-                          onChange={(e) => setSearchText(e.target.value)}
-                          onInput={(e) => setSearchText(e.target.value)}
-                        />
-                        <div className="placeholder">Search Here</div>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
+                {/*{loading === false ? (*/}
+                {/*  <div className="search-form4 d-flex mb-3">*/}
+                {/*    <div className="input-group">*/}
+                {/*      <div*/}
+                {/*        className="input-placeholder"*/}
+                {/*        style={{ width: "1000px", height: "50px" }}*/}
+                {/*      >*/}
+                {/*        <input*/}
+                {/*          id="search-result-company-search-text-input"*/}
+                {/*          className="ps-3"*/}
+                {/*          required*/}
+                {/*          onChange={(e) => setSearchText(e.target.value)}*/}
+                {/*          onInput={(e) => setSearchText(e.target.value)}*/}
+                {/*        />*/}
+                {/*        <div className="placeholder">Search Here</div>*/}
+                {/*      </div>*/}
+                {/*    </div>*/}
+                {/*  </div>*/}
+                {/*) : null}*/}
                 <div className="user-search-wrapper">
                   <div
                     className="detailed-search"
