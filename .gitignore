@@ -61,3 +61,6 @@ fastapi/proxy_auth_plugin.zip
 fastapi/bulk/outgoing
 api/venv
 shared/alembic
+fastapi/.idea/fastapi.iml
+fastapi/.idea/misc.xml
+fastapi/.idea/watcherTasks.xml
