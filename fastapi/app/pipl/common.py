@@ -82,20 +82,22 @@ async def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
 
     if "phones" in person:
         phones = jmespath.search("phones[*].display_international", person)
-        # verified_phone = []
-        # if phones:
-        #     print("phones", phones)
-        #     payload = {"phones": phones}
-        #     async with httpx.AsyncClient() as client:
-        #         phones_check_valid = await client.post('http://127.0.0.1:12005/api/phone/phone_verification', data=json.dumps(payload))
-        #         print("phones_check_valid", phones_check_valid.text)
-        #     temp_data = phones_check_valid.text
-        #     for x in temp_data:
-        #         if x["status"] == "Success":
-        #             verified_phone.append(x["phone"])
-        # print("verified_phone",verified_phone)
-        result["Phones"] = ", ".join(phones)
-        # result["Phones"] = verified_phone
+        verified_phone = []
+        if phones:
+            try:
+                print("phones", phones)
+                payload = {"phones": phones}
+                async with httpx.AsyncClient() as client:
+                    phones_check_valid = await client.post('http://127.0.0.1:12005/api/phone/phone_verification', data=json.dumps(payload))
+                temp_data = json.loads(phones_check_valid.text)
+                print(f"tempdata {temp_data}")
+                for x in temp_data:
+                    if x["status"] == "Success":
+                        verified_phone.append(x["phone"])
+                print(f"verified_phone {verified_phone}")
+                result["Phones"] = verified_phone
+            except Exception as e:
+                print(str(e))
 
     if "gender" in person:
         gender = jmespath.search("gender", person)
