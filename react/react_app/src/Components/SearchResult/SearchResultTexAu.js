@@ -11,8 +11,9 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import personLoader from "../Loader/personLoader"
 import SavedListButton from "./SavedListButton";
+import axios from "axios";
 import { EventEmitter } from "events";
 
 export async function digestMessage(message) {
@@ -59,10 +60,11 @@ const SearchResult = (props) => {
   const [searchedList, setSearchedList] = useState([]);
   const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
-
+  const [selectedLeadIndex, setSelectedLeadIndex] = useState([]);
   const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+    const postsPerPage = 10;
 
   let dd = String(today.getDate()).padStart(2, "0");
   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -380,7 +382,7 @@ const SearchResult = (props) => {
       }
       let url = [urls];
       console.log("url>>>", url);
-      let hash_key = await digestMessage(url);
+      let hash_key = await digestMessage(data.url);
       console.log("hash_key>>>>>>>>", hash_key);
       let requestForEmail = {
         url: url,
@@ -482,7 +484,7 @@ const SearchResult = (props) => {
   };
 
   useEffect(() => {
-    setShow(new Array(myLeads.length).fill().map((item) => false));
+    setShow(new Array(myLeads?.length).fill().map((item) => false));
   }, [currentLeads]);
 
   useEffect(() => {
@@ -714,26 +716,70 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
-  let tempJson = {};
-  const handleLeadSelectionChange = async (e) => {
+    const handleLeadSelectionChange = async (e, index) => {
+    console.log(
+      "selectedLeads.length === currentLeads.length>>>",
+      selectedLeads.length === currentLeads.length,
+      selectedLeadIndex.length,
+      currentLeads.length
+    );
+    if (selectedLeads.length === currentLeads.length) {
+      setIsCheckAll(!isCheckAll);
+    }
     const { id, checked } = e.target;
     let hash_key = null;
+    let tempJson = {};
+    let index_json = {};
+    console.log("id...", id,index);
     setSelectedLeads([...selectedLeads, id]);
     hash_key = await digestMessage(id);
 
     tempJson[id] = hash_key;
+    index_json[hash_key] = `${index}`;
     setSelectedLeadHashKey([...selectedLeadHashKey, tempJson]);
-    // setSelectedLeadHashKey(...selectedLeadHashKey, await digestMessage(id));
+    setSelectedLeadIndex([...selectedLeadIndex, index_json]);
     if (!checked) {
       setSelectedLeads(selectedLeads.filter((item) => item !== id));
+      setSelectedLeadHashKey(
+        selectedLeadHashKey.filter((item) => item[id] !== hash_key)
+      );
+      setSelectedLeadIndex(
+        selectedLeadIndex.filter((item) => item[hash_key] !== index)
+      );
     }
+    console.log(
+      "seleched hash key>>>>",
+      selectedLeadHashKey,
+      ">>>>",
+      selectedLeadIndex,
+      ">>>>>",
+      selectedLeads
+    );
   };
-  console.log("seleched hash key>>>>", selectedLeadHashKey);
-  const handleLeadSelectAll = (e) => {
+
+  const handleLeadSelectAll = async (e) => {
     setIsCheckAll(!isCheckAll);
-    setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
+    console.log("In select All", isCheckAll);
     if (isCheckAll) {
       setSelectedLeads([]);
+      setSelectedLeadHashKey([]);
+      setSelectedLeadIndex([]);
+    } else {
+      for (let i = 0; i < currentLeads.length; i++) {
+        console.log("in loop.....",currentLeads.length);
+        let hash_list_selected = {};
+        let index_list_selected = {};
+        let hash_key_i = await digestMessage(
+          JSON.stringify(currentLeads[i].url)
+        );
+        console.log("hash_key_i>>>>", hash_key_i);
+        hash_list_selected[currentLeads[i].url] = hash_key_i;
+        index_list_selected[hash_key_i] = `${currentPage}${i}`;
+        setSelectedLeadHashKey((prev) => [...prev, hash_list_selected]);
+        setSelectedLeadIndex((prev) => [...prev, index_list_selected]);
+      }
+
+      setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
     }
   };
 
@@ -759,6 +805,9 @@ const SearchResult = (props) => {
         const inputData = {
           profile_urls: selectedLeads,
           hash_key_list: selectedLeadHashKey,
+          search_id: searchId,
+          search_index: selectedLeadIndex,
+          export_type: "texAu",
         };
         console.log("reqJson input data 631 >>>", JSON.stringify(reqJson));
         console.log("input data >>>", JSON.stringify(inputData));
@@ -831,7 +880,7 @@ const SearchResult = (props) => {
       setSearchedList(myLeads);
     }
   }, [searchText, myLeads]);
-  
+
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -892,7 +941,7 @@ const SearchResult = (props) => {
           <div className="row">
             <div className="col-md-4 col-lg-3">
               <SpecificSearchBtn details={true} />
-              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3"  style={loading ?{'opacity':'0.4', 'pointerEvents':'none'}:{}}>
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
               </div>
@@ -900,24 +949,24 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
-              {loading === false ? (
-                <div className="search-form4 d-flex mb-3">
-                  <div className="input-group">
-                    <div
-                      className="input-placeholder"
-                      style={{ width: "1000px", height: "50px" }}
-                    >
-                      <input
-                        id="search-result-texau-search-input"
-                        className="ps-3"
-                        required
-                        onChange={(e) => setSearchText(e.target.value)}
-                      />
-                      <div className="placeholder">Search Here</div>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
+              {/*{loading === false ? (*/}
+              {/*  <div className="search-form4 d-flex mb-3">*/}
+              {/*    <div className="input-group">*/}
+              {/*      <div*/}
+              {/*        className="input-placeholder"*/}
+              {/*        style={{ width: "1000px", height: "50px" }}*/}
+              {/*      >*/}
+              {/*        <input*/}
+              {/*          id="search-result-texau-search-input"*/}
+              {/*          className="ps-3"*/}
+              {/*          required*/}
+              {/*          onChange={(e) => setSearchText(e.target.value)}*/}
+              {/*        />*/}
+              {/*        <div className="placeholder">Search Here</div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*) : null}*/}
               <div className="user-search-wrapper">
                 <div
                   className="detailed-search"
@@ -989,7 +1038,7 @@ const SearchResult = (props) => {
                         data.name != "LinkedIn Member" ? (
                           <div>
                             <div
-                              className="user-container py-2"
+                              className="search-user-container py-2"
                               key={`${currentPage}${index}`}
                             >
                               <input
@@ -1000,7 +1049,7 @@ const SearchResult = (props) => {
                                 checked={selectedLeads.includes(
                                   data.url || data.profileLink
                                 )}
-                                onChange={handleLeadSelectionChange}
+                                onChange={(e)=>handleLeadSelectionChange(e,`${currentPage}${index}`)}
                               />
                               <div className="search-author text-danger ">
                                 <img
@@ -1008,15 +1057,19 @@ const SearchResult = (props) => {
                                   src={
                                     data.profilePicture
                                       ? data.profilePicture
-                                      : "assets/images/author-image.png"
+                                      : data.image? data.image
+                                            :"assets/images/author-image.png"
                                   }
                                   alt=""
                                 />
                               </div>
                               <div className="search-user ps-3">
-                                <p>{data.length === 0 ? null : data.name}</p>
+                                <p>{data.length === 0 ? null :<React.Fragment>
+                                  {data.name?data.name :data.fullName}
+                               </React.Fragment>}</p>
+                                {/*<p>{data.length === 0 ? null : data.fullName}</p>*/}
                                 <small className="d-block">
-                                  Works at {data.length === 0 ? null : data.job}
+                                  Works at {data.length === 0 ? null : data.job?data.job:data.occupation}
                                 </small>
                                 <small className="d-block">
                                   {data.length === 0 ? null : data.location}
@@ -1024,7 +1077,7 @@ const SearchResult = (props) => {
                               </div>
                               <div className="linkedin-icon d-flex justify-content-end">
                                 <span>
-                                  <a href={data.url} target="_blank">
+                                  <a href={data.url?data.url:data.profileLink} target="_blank">
                                     <img
                                       src="assets/images/linkedin1.png"
                                       alt=""
@@ -1153,7 +1206,7 @@ const SearchResult = (props) => {
                 ) : (
                   <div className="d-flex justify-content-center">
                     <div role="status" style={{ height: "400px" }}>
-                      <Lottie options={Loader} />
+                      <Lottie options={personLoader} />
                     </div>
                   </div>
                 )}
@@ -1161,13 +1214,13 @@ const SearchResult = (props) => {
               <div className="d-flex justify-content-center">
                 {loading === false ? (
                   <Pagination
-                    postsPerPage={10}
+                    postsPerPage={postsPerPage}
                     totalPosts={searchedList ? searchedList.length : 1}
                     paginate={paginate}
                   />
                 ) : null}
               </div>
-              <AskJarvis />
+              {/*<AskJarvis />*/}
             </div>
           </div>
         </div>

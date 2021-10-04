@@ -36,13 +36,6 @@ except Exception as e:
     company_codes = {}
     logger.critical(str(e))
 
-try:
-    with open(API_CONFIG_LINKEDIN_COMPANY_SIZE_CODES_FILE) as json_file:
-        employee_count_codes = json.load(json_file)
-except Exception as e:
-    employee_count_codes = {}
-    logger.critical(str(e))
-
 
 def set_list_values(link, k, v, link_ends_with=""):
     kw = ""
@@ -61,7 +54,6 @@ def set_list_values(link, k, v, link_ends_with=""):
 
         if code_list:
             link += prefix + k + "=" + str(code_list)
-
 
     elif k == "geoUrn" or k == "companyHqGeo":
         code_list = []
@@ -86,12 +78,7 @@ def set_list_values(link, k, v, link_ends_with=""):
     elif k == "employeeCount":
         code_list = []
         for item in v:
-            code = employee_count_codes.get(item, None)
-            print("employee_count> code>>", code, employee_count_codes)
-            if code:
-                code_list.append(code)
-            else:
-                kw += f" {item}"
+            code_list.append(item)
         if code_list:
             link += prefix + "companySize" + "=" + str(code_list)
     else:
@@ -105,7 +92,6 @@ def query_url_builder(search_field_dict):
         key_value_pairs = search_field_dict
         key_value_pairs["geoUrn"] = key_value_pairs.pop("location")
         kw = key_value_pairs.get("keywords", "")
-
         link = linkedin_baseurl
 
         for k, v in key_value_pairs.items():
@@ -143,9 +129,13 @@ def query_url_builder(search_field_dict):
 def query_url_builder_company(search_field_dict):
     try:
         key_value_pairs1 = search_field_dict
+        key_value_pairs1["keywords1"] = key_value_pairs1.pop("keywords")
         key_value_pairs1["keywords"] = key_value_pairs1.pop("name")
         key_value_pairs1["companyHqGeo"] = key_value_pairs1.pop("location")
-
+        keyword1_value=key_value_pairs1.get("keywords1", "")
+        keyword = key_value_pairs1.get("keywords", "")
+        if keyword1_value=="":
+            keyword1_value=None
         # kw = key_value_pairs.get("keywords", "")
         print("key_value_pairs>>>>", key_value_pairs1)
 
@@ -163,13 +153,23 @@ def query_url_builder_company(search_field_dict):
                         # kw += (f'{new_kw}' if kw else new_kw.strip(' '))
                     else:
                         print("In Else", k, '\n', v)
-                        link, new_kw = set_list_values(link, k, v)
+                        if(k=="keywords1" and len(keyword)!=0):
+                            pass;
+                        elif(k=='keywords1'):
+                            k='keywords'
+                            link, new_kw = set_list_values(link, k, v)
+                        else:
+                            link, new_kw = set_list_values(link, k, v)
                         # kw += (f'{new_kw}' if kw else new_kw.strip(' '))
                 else:
                     if link.endswith("?"):
                         link += k + "=" + v
                     else:
-                        link += "&" + k + "=" + v
+                        if len(keyword1_value) !=0:
+                            for kw in keyword1_value:
+                                link += "&" + k + "=" + v + ","+kw
+                        else:
+                            link += "&" + k + "=" + v
         # if kw.strip(' '):
         #     if link.endswith('?'):
         #         link += f'keywords={kw}'

@@ -167,14 +167,25 @@ async def add_bulk_email_credit_history(
 
 
 @router.post("/email_search/add")
-async def add_email_search(request: EmailSearchAddRequest):
+async def add_email_search(request: EmailSearchAddRequest,
+                           user=Depends(fastapi_users.get_current_active_user), ):
+    try:
+        if request:
+            result = await add_email_search_rec(request.query_url, request.email_result, user)
+
+        return result
+    except Exception as e:
+        logger.critical(f"Exception Inserting to Database: {str(e)}")
+
+
+async def add_email_search_rec(query_url, email_result, user):
     try:
         email_search_id = str(uuid.uuid4())
         query = email_search.insert().values(
             id=email_search_id,
-            user_id=request.user_id,
-            query_url=request.query_url,
-            email_result=request.email_result,
+            user_id=user.id,
+            query_url=query_url,
+            email_result=email_result,
             created_on=datetime.utcnow(),
         )
         row_id = await database.execute(query)
@@ -182,10 +193,7 @@ async def add_email_search(request: EmailSearchAddRequest):
         return row_id
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Inserting to Database",
-        )
+        return None
 
 
 @router.post("/email_search/get")

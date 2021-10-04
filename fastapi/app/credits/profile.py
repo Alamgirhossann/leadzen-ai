@@ -148,20 +148,31 @@ async def add_bulk_profile_credit_history(
         user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{request=}, {user=}")
-
     try:
-        phone_numbers = list(set(request.phone_numbers))
+        result = await bulk_add_credit_profile(search_id=request.search_id, phone_numbers=request.phone_numbers,
+                                               search_index=request.search_index, user=user)
+        return result
+    except Exception as e:
+        logger.critical(f"Exception Inserting to Database: {str(e)}")
+
+        return None
+
+
+async def bulk_add_credit_profile(search_id, phone_numbers, search_index, user):
+    try:
+
+        phone_numbers = list(set(phone_numbers))
         phone_numbers = [x for x in phone_numbers if x]
         logger.debug(f"{phone_numbers}>>>{type(phone_numbers)}")
         # async with httpx.AsyncClient() as client:
         coroutines = [
 
             insert_one_profile(
-                search_id=request.search_id, phone_number=phone_numbers[int(p)], search_index=request.search_index,
+                search_id=search_id, phone_number=phone_numbers[int(p)], search_index=search_index,
                 user=user
 
             )
-            for p,v in enumerate(phone_numbers)
+            for p, v in enumerate(phone_numbers)
         ]
         results = await asyncio.gather(*coroutines)
 
@@ -175,11 +186,6 @@ async def add_bulk_profile_credit_history(
 
         return results
 
-
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
-
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Inserting to Database",
-        )
+        return None

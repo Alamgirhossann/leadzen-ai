@@ -34,6 +34,7 @@ class TexAuFindCompanyProfileRequest(BaseModel):
     industry: List[str] = []
     location: List[str] = []
     employeeCount: List[str] = []
+    keywords: List[str] = []
     cookie: Optional[str] = None
 
 

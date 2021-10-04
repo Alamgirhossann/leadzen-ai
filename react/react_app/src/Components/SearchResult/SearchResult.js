@@ -12,7 +12,7 @@ import BulkSearch from "../SharedComponent/BulkSearch";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import Loader from "../Loader/Loader";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import { digestMessage } from "./SearchResultTexAu";
 import { EventEmitter } from "events";
@@ -49,6 +49,12 @@ const SearchResult = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLeads, setCurrentLeads] = useState([]);
   const [myLeads, setMyLeads] = useState([]);
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
+  const [selectedLeadIndex, setSelectedLeadIndex] = useState([]);
+  const postsPerPage = 10;
+
   let today = new Date();
   const newEvent = new EventEmitter();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
@@ -60,13 +66,13 @@ const SearchResult = (props) => {
     setCurrentLeads([]);
     setCurrentPage(pageNumber);
 
-    setCurrentLeads(myLeads.slice(pageNumber * 10 - 10, pageNumber * 10));
+    setCurrentLeads(myLeads?.slice(pageNumber * 10 - 10, pageNumber * 10));
     console.log(
       "currentLeads>>>",
       currentLeads,
       pageNumber * 10 - 10,
       pageNumber * 10,
-      myLeads.slice(pageNumber * 10 - 10, pageNumber * 10)
+      myLeads?.slice(pageNumber * 10 - 10, pageNumber * 10)
     );
   };
   today = dd + "/" + mm + "/" + yyyy;
@@ -150,7 +156,7 @@ const SearchResult = (props) => {
   };
 
   useEffect(() => {
-    setShow(new Array(myLeads.length).fill().map((item) => false));
+    setShow(new Array(myLeads?.length).fill().map((item) => false));
   }, [currentLeads]);
 
   const clickSelect = (e) => {
@@ -378,6 +384,148 @@ const SearchResult = (props) => {
     // window.location.reload(false);
   };
 
+  const handleLeadSelectionChange = async (e, data, index) => {
+    console.log("in check changed state.....");
+    const { id, checked } = e.target;
+    let tempJson = {};
+    let index_json = {};
+    let hash_key = null;
+    console.log("ID$ ", id, index, data);
+    setSelectedLeads([...selectedLeads, id]);
+
+    hash_key = await digestMessage(JSON.stringify(data));
+    tempJson[JSON.stringify(data)] = hash_key;
+    console.log("In >> hash keys ", tempJson);
+    index_json[hash_key] = `${currentPage}${index}`;
+    setSelectedLeadHashKey([...selectedLeadHashKey, tempJson]);
+    setSelectedLeadIndex([...selectedLeadIndex, index_json]);
+    if (!checked) {
+      setSelectedLeads(selectedLeads.filter((item) => item !== id));
+      setSelectedLeadHashKey(
+        selectedLeadHashKey.filter(
+          (item) => item[JSON.stringify(data)] !== hash_key
+        )
+      );
+      setSelectedLeadIndex(
+        selectedLeadIndex.filter((item) => item[hash_key] !== id)
+      );
+    }
+    console.log("hash keys ", hash_key);
+  };
+
+  const handleLeadSelectAll = async (e) => {
+    console.log("in select all....", isCheckAll);
+    setIsCheckAll(!isCheckAll);
+    if (isCheckAll) {
+      setSelectedLeads([]);
+      setSelectedLeadHashKey([]);
+      setSelectedLeadIndex([]);
+    } else {
+      let indexList = [];
+
+      for (let i = 0; i < postsPerPage; i++) {
+        indexList.push(`${currentPage}${i}`);
+      }
+      for (let i = 0; i < currentLeads.length; i++) {
+        let hash_list_selected = {};
+        let index_list_selected = {};
+        let hash_key_i = await digestMessage(JSON.stringify(currentLeads[i]));
+        hash_list_selected[JSON.stringify(currentLeads[i])] = hash_key_i;
+        index_list_selected[hash_key_i] = `${currentPage}${i}`;
+
+        setSelectedLeadHashKey((prev) => [...prev, hash_list_selected]);
+        setSelectedLeadIndex((prev) => [...prev, index_list_selected]);
+      }
+      setSelectedLeads(indexList);
+    }
+  };
+
+  const handleLeadSelectionExportExcel = (e) => {
+    e.preventDefault();
+
+    const executeExport = async () => {
+      function handleError(response = null) {
+        console.error(`Error, Status Code: ${response?.status}`);
+        alert("Error Exporting File");
+      }
+
+      try {
+        let reqJson = {};
+
+        console.log(
+          ">>>>>>>>>>>",
+
+          ">>>> 625 ",
+          selectedLeadHashKey
+        );
+
+        const inputData = {
+          profile_urls: selectedLeads,
+          hash_key_list: selectedLeadHashKey,
+          export_type: "PIPL",
+          search_id: searchId,
+          search_index: selectedLeadIndex,
+        };
+        console.log("reqJson input data 631 >>>", JSON.stringify(reqJson));
+        console.log("input data >>>", JSON.stringify(inputData));
+
+        const response = await fetch(apiServer + "/bulk_upload/export/excel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${Cookies.get("user_token")}`,
+          },
+          body: JSON.stringify(inputData),
+        });
+        console.log("After fetch input data >>>", inputData);
+
+        async function handleSuccess(response) {
+          const data = await response.json();
+          if (!data) {
+            return handleError();
+          }
+          console.log(data);
+          alert(
+            "Exported excel file is sent to your email. Please check your spam filter if our email has" +
+              " not arrived in a reasonable time. Cheers!"
+          );
+        }
+
+        function handleUnAuthorized(response = null) {
+          console.log("User is UnAuthorized");
+          alert("Please Logout and LogIn Again");
+        }
+        function handleInsufficientBalance(response) {
+          console.error("Insufficient credits...", response);
+          alert("Insufficient Credits");
+        }
+
+        switch (response.status) {
+          case 200:
+            return await handleSuccess(response);
+          case 401:
+            return handleUnAuthorized(response);
+          case 402:
+            return handleInsufficientBalance(response);
+          default:
+            return handleError(response);
+        }
+      } catch (err) {
+        console.error("Error: ", err);
+        handleError();
+      }
+    };
+
+    if (!selectedLeads) {
+      console.warn("No Selected Leads");
+      return;
+    }
+
+    executeExport();
+  };
+
+
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -469,53 +617,56 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
-              <div className="user-search-wrapper">
-                <div className="user-search-wrapper">
-                  <div className="detailed-search">
-                    <div className="search-promote-content">
-                      <form className=" d-flex my-2 my-lg-0">
-                        <input
-                          id="search-result-search-input"
-                          className="form-control mr-sm-2"
-                          type="search"
-                          // onBlur={handleHeadSearch}
-                          placeholder="Search"
-                          aria-label="Search"
-                        />
-                        <button
-                          className="btn text-white w-auto d-flex ms-3"
-                          // onClick={handleHeadSearchSubmit}
-                          style={{ background: "#FB3E3E" }}
-                          type="submit"
-                        >
-                          <span className="pe-1">
-                            <FontAwesomeIcon icon={faSearch} />
-                          </span>{" "}
-                          Search
-                        </button>
-                      </form>
-                    </div>
-                    <div>
-                      <small>Last Updated: {today}</small>
-                    </div>
-                  </div>
-                </div>
-                {/* <div className="detailed-search">
-                  <div>
-                    <small>Last Updated: {today}</small>
-                  </div>
-                </div> */}
-              </div>
+              {/*<div className="user-search-wrapper">*/}
+              {/*  <div className="user-search-wrapper">*/}
+              {/*    <div className="detailed-search">*/}
+              {/*      <div className="search-promote-content">*/}
+              {/*        <form className=" d-flex my-2 my-lg-0">*/}
+              {/*          <input*/}
+              {/*            id="search-result-search-input"*/}
+              {/*            className="form-control mr-sm-2"*/}
+              {/*            type="search"*/}
+              {/*            // onBlur={handleHeadSearch}*/}
+              {/*            placeholder="Search"*/}
+              {/*            aria-label="Search"*/}
+              {/*          />*/}
+              {/*          <button*/}
+              {/*            className="btn text-white w-auto d-flex ms-3"*/}
+              {/*            // onClick={handleHeadSearchSubmit}*/}
+              {/*            style={{ background: "#FB3E3E" }}*/}
+              {/*            type="submit"*/}
+              {/*          >*/}
+              {/*            <span className="pe-1">*/}
+              {/*              <FontAwesomeIcon icon={faSearch} />*/}
+              {/*            </span>{" "}*/}
+              {/*            Search*/}
+              {/*          </button>*/}
+              {/*        </form>*/}
+              {/*      </div>*/}
+              {/*      <div>*/}
+              {/*        <small>Last Updated: {today}</small>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  /!* <div className="detailed-search">*/}
+              {/*    <div>*/}
+              {/*      <small>Last Updated: {today}</small>*/}
+              {/*    </div>*/}
+              {/*  </div> *!/*/}
+              {/*</div>*/}
               <div className="user-widget-box  my-3">
                 <div className="d-flex align-items-center justify-content-between py-3">
                   <div className="d-flex align-items-center ">
-                    <input
+                   <input
                       className="ms-3 me-3"
                       type="checkbox"
-                      id="checkbox"
+                      id="selectAll"
+                      name="selectAll"
+                      onChange={handleLeadSelectAll}
+                      checked={isCheckAll}
                     />
                     <small className="">
-                      <b>{currentLeads.length}</b> of{" "}
+                      <b>{currentLeads?.length}</b> of{" "}
                       <b>{myLeads ? myLeads.length : 0}</b> Searched profiles
                     </small>
                   </div>
@@ -536,14 +687,18 @@ const SearchResult = (props) => {
                         alt=""
                       />
                     </small>
-                    <small className="export-btn">
+                   <button
+                      onClick={handleLeadSelectionExportExcel}
+                      className="export-btn"
+                      disabled={selectedLeads.length === 0 ? true : false}
+                    >
                       Export
                       <img
                         className="ps-3"
                         src="assets/images/export.png"
                         alt=""
                       />
-                    </small>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -551,21 +706,28 @@ const SearchResult = (props) => {
               <div className="user-widget-box  my-3">
                 {loading === false ? (
                   <div className="search-container mb-2">
-                    {myLeads.length === 0 ? (
+                    {myLeads?.length === 0 ? (
                       <div>
                         <h5>Record Not Found</h5>
                       </div>
                     ) : currentLeads ? (
-                      currentLeads.map((data, index) => (
+                      currentLeads?.map((data, index) => (
                         <div>
                           <div
                             className="search-user-container py-2"
                             key={index}
                           >
-                            <input
+                             <input
                               className="box ms-3 me-3"
+                              id={`${currentPage}${index}`}
                               type="checkbox"
-                              id="checkbox"
+                              name={data.name}
+                              checked={selectedLeads.includes(
+                                `${currentPage}${index}`
+                              )}
+                              onChange={(e) =>
+                                handleLeadSelectionChange(e, data, index)
+                              }
                             />
                             <p className="search-author text-danger">
                               <img
@@ -704,8 +866,8 @@ const SearchResult = (props) => {
               </div>
               <div className="d-flex justify-content-center">
                 <Pagination
-                  postsPerPage={10}
-                  totalPosts={myLeads.length}
+                  postsPerPage={postsPerPage}
+                  totalPosts={myLeads?.length}
                   paginate={paginate}
                 />
               </div>
