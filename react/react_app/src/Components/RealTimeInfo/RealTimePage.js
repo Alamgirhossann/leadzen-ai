@@ -52,7 +52,7 @@ const RealTimePage = () => {
         subject: "Request_from_UserId",
       };
       try {
-        const response = await fetch(apiServer + "/email/send", {
+        const response = await fetch(apiServer + "/email/send_custom_email", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -75,6 +75,17 @@ const RealTimePage = () => {
       }
     }
   };
+  function changeColorRed(e) {
+    e.target.style.color = 'red';
+  }
+  function changeColorNormal(e) {
+    e.target.style.color = 'black';
+  }
+  const handleautoinput=async (val)=>{
+    setRequirement(val)
+    let text_val=document.getElementById("real-time-request")
+    text_val.value = val
+  }
   return (
     <div>
       <Header user={user} />
@@ -98,213 +109,213 @@ const RealTimePage = () => {
       <div className="trends container my-3">
         <div className="">
           <div className="marketing-trend">
-            <div className="mb-2 head-btn-style">
-              <div className="row">
-                <div className="col-8">
-                  <div className="">
-                    <h5 className="m-0">Marketing Trend</h5>
-                  </div>
-                </div>
-                <div className="col-3 d-flex justify-content-end">
-                  <form className="search-form-sm ">
-                    <div className="input-group">
-                      <input
-                        id="realtime-page-search-input"
-                        type="text"
-                        className="form-control"
-                        placeholder="Search"
-                      />
-                      <button className="btn btn-danger" type="submit">
-                        <img
-                          src="assets/images/small-search-icon.png"
-                          alt="title"
-                        />
-                      </button>
-                    </div>
-                  </form>
-                </div>
-                <div className="col-1 d-flex justify-content-end">
-                  <button
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapseOne"
-                  >
-                    <img src="assets/images/top-arrow.png" alt="" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/*<div className="mb-2 head-btn-style">*/}
+            {/*  <div className="row">*/}
+            {/*    <div className="col-8">*/}
+            {/*      <div className="">*/}
+            {/*        <h5 className="m-0">Marketing Trend</h5>*/}
+            {/*      </div>*/}
+            {/*    </div>*/}
+            {/*    <div className="col-3 d-flex justify-content-end">*/}
+            {/*      <form className="search-form-sm ">*/}
+            {/*        <div className="input-group">*/}
+            {/*          <input*/}
+            {/*            id="realtime-page-search-input"*/}
+            {/*            type="text"*/}
+            {/*            className="form-control"*/}
+            {/*            placeholder="Search"*/}
+            {/*          />*/}
+            {/*          <button className="btn btn-danger" type="submit">*/}
+            {/*            <img*/}
+            {/*              src="assets/images/small-search-icon.png"*/}
+            {/*              alt="title"*/}
+            {/*            />*/}
+            {/*          </button>*/}
+            {/*        </div>*/}
+            {/*      </form>*/}
+            {/*    </div>*/}
+            {/*    <div className="col-1 d-flex justify-content-end">*/}
+            {/*      <button*/}
+            {/*        type="button"*/}
+            {/*        data-bs-toggle="collapse"*/}
+            {/*        data-bs-target="#collapseOne"*/}
+            {/*      >*/}
+            {/*        <img src="assets/images/top-arrow.png" alt="" />*/}
+            {/*      </button>*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*</div>*/}
             <div className="container" id="collapseOne">
-              <div className="row">
-                <div className="col-md-4 py-3">
-                  <div className="item">
-                    <div className="lead-card">
-                      <div className="text-center">
-                        <p style={{ fontSize: "17px" }}>
-                          People wanted to switch jobs
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#00BA4A" }}>
-                          2 hours ago{" "}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            background: "#CCE1FF",
-                            margin: "0px 50px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <p>200 Leads</p>
-                        </div>
-                        <p style={{ fontSize: "16px" }}>
-                          Get Real Time Leads with <br /> 200 Credits{" "}
-                        </p>
-                        <button className="trends-btn">Grab Leads Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 py-3">
-                  <div className="item">
-                    <div className="lead-card">
-                      <div className="text-center">
-                        <p style={{ fontSize: "17px" }}>
-                          People wanted to switch jobs
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#00BA4A" }}>
-                          2 hours ago{" "}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            background: "#CCE1FF",
-                            margin: "0px 50px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <p>200 Leads</p>
-                        </div>
-                        <p style={{ fontSize: "16px" }}>
-                          Get Real Time Leads with <br /> 200 Credits{" "}
-                        </p>
-                        <button className="trends-btn">Grab Leads Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 py-3">
-                  <div className="item">
-                    <div className="lead-card">
-                      <div className="text-center">
-                        <p style={{ fontSize: "17px" }}>
-                          People wanted to switch jobs
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#00BA4A" }}>
-                          2 hours ago{" "}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            background: "#CCE1FF",
-                            margin: "0px 50px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <p>200 Leads</p>
-                        </div>
-                        <p style={{ fontSize: "16px" }}>
-                          Get Real Time Leads with <br /> 200 Credits{" "}
-                        </p>
-                        <button className="trends-btn">Grab Leads Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 py-3">
-                  <div className="item">
-                    <div className="lead-card">
-                      <div className="text-center">
-                        <p style={{ fontSize: "17px" }}>
-                          People wanted to switch jobs
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#00BA4A" }}>
-                          2 hours ago{" "}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            background: "#CCE1FF",
-                            margin: "0px 50px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <p>200 Leads</p>
-                        </div>
-                        <p style={{ fontSize: "16px" }}>
-                          Get Real Time Leads with <br /> 200 Credits{" "}
-                        </p>
-                        <button className="trends-btn">Grab Leads Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 py-3">
-                  <div className="item">
-                    <div className="lead-card">
-                      <div className="text-center">
-                        <p style={{ fontSize: "17px" }}>
-                          People wanted to switch jobs
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#00BA4A" }}>
-                          2 hours ago{" "}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            background: "#CCE1FF",
-                            margin: "0px 50px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <p>200 Leads</p>
-                        </div>
-                        <p style={{ fontSize: "16px" }}>
-                          Get Real Time Leads with <br /> 200 Credits{" "}
-                        </p>
-                        <button className="trends-btn">Grab Leads Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 py-3">
-                  <div className="item">
-                    <div className="lead-card">
-                      <div className="text-center">
-                        <p style={{ fontSize: "17px" }}>
-                          People wanted to switch jobs
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#00BA4A" }}>
-                          2 hours ago{" "}
-                        </p>
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            background: "#CCE1FF",
-                            margin: "0px 50px",
-                            borderRadius: "5px",
-                          }}
-                        >
-                          <p>200 Leads</p>
-                        </div>
-                        <p style={{ fontSize: "16px" }}>
-                          Get Real Time Leads with <br /> 200 Credits{" "}
-                        </p>
-                        <button className="trends-btn">Grab Leads Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {/*<div className="row">*/}
+              {/*  <div className="col-md-4 py-3">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="lead-card">*/}
+              {/*        <div className="text-center">*/}
+              {/*          <p style={{ fontSize: "17px" }}>*/}
+              {/*            People wanted to switch jobs*/}
+              {/*          </p>*/}
+              {/*          <p style={{ fontSize: "14px", color: "#00BA4A" }}>*/}
+              {/*            2 hours ago{" "}*/}
+              {/*          </p>*/}
+              {/*          <div*/}
+              {/*            style={{*/}
+              {/*              fontSize: "16px",*/}
+              {/*              background: "#CCE1FF",*/}
+              {/*              margin: "0px 50px",*/}
+              {/*              borderRadius: "5px",*/}
+              {/*            }}*/}
+              {/*          >*/}
+              {/*            <p>200 Leads</p>*/}
+              {/*          </div>*/}
+              {/*          <p style={{ fontSize: "16px" }}>*/}
+              {/*            Get Real Time Leads with <br /> 200 Credits{" "}*/}
+              {/*          </p>*/}
+              {/*          <button className="trends-btn">Grab Leads Now</button>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  <div className="col-md-4 py-3">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="lead-card">*/}
+              {/*        <div className="text-center">*/}
+              {/*          <p style={{ fontSize: "17px" }}>*/}
+              {/*            People wanted to switch jobs*/}
+              {/*          </p>*/}
+              {/*          <p style={{ fontSize: "14px", color: "#00BA4A" }}>*/}
+              {/*            2 hours ago{" "}*/}
+              {/*          </p>*/}
+              {/*          <div*/}
+              {/*            style={{*/}
+              {/*              fontSize: "16px",*/}
+              {/*              background: "#CCE1FF",*/}
+              {/*              margin: "0px 50px",*/}
+              {/*              borderRadius: "5px",*/}
+              {/*            }}*/}
+              {/*          >*/}
+              {/*            <p>200 Leads</p>*/}
+              {/*          </div>*/}
+              {/*          <p style={{ fontSize: "16px" }}>*/}
+              {/*            Get Real Time Leads with <br /> 200 Credits{" "}*/}
+              {/*          </p>*/}
+              {/*          <button className="trends-btn">Grab Leads Now</button>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  <div className="col-md-4 py-3">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="lead-card">*/}
+              {/*        <div className="text-center">*/}
+              {/*          <p style={{ fontSize: "17px" }}>*/}
+              {/*            People wanted to switch jobs*/}
+              {/*          </p>*/}
+              {/*          <p style={{ fontSize: "14px", color: "#00BA4A" }}>*/}
+              {/*            2 hours ago{" "}*/}
+              {/*          </p>*/}
+              {/*          <div*/}
+              {/*            style={{*/}
+              {/*              fontSize: "16px",*/}
+              {/*              background: "#CCE1FF",*/}
+              {/*              margin: "0px 50px",*/}
+              {/*              borderRadius: "5px",*/}
+              {/*            }}*/}
+              {/*          >*/}
+              {/*            <p>200 Leads</p>*/}
+              {/*          </div>*/}
+              {/*          <p style={{ fontSize: "16px" }}>*/}
+              {/*            Get Real Time Leads with <br /> 200 Credits{" "}*/}
+              {/*          </p>*/}
+              {/*          <button className="trends-btn">Grab Leads Now</button>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  <div className="col-md-4 py-3">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="lead-card">*/}
+              {/*        <div className="text-center">*/}
+              {/*          <p style={{ fontSize: "17px" }}>*/}
+              {/*            People wanted to switch jobs*/}
+              {/*          </p>*/}
+              {/*          <p style={{ fontSize: "14px", color: "#00BA4A" }}>*/}
+              {/*            2 hours ago{" "}*/}
+              {/*          </p>*/}
+              {/*          <div*/}
+              {/*            style={{*/}
+              {/*              fontSize: "16px",*/}
+              {/*              background: "#CCE1FF",*/}
+              {/*              margin: "0px 50px",*/}
+              {/*              borderRadius: "5px",*/}
+              {/*            }}*/}
+              {/*          >*/}
+              {/*            <p>200 Leads</p>*/}
+              {/*          </div>*/}
+              {/*          <p style={{ fontSize: "16px" }}>*/}
+              {/*            Get Real Time Leads with <br /> 200 Credits{" "}*/}
+              {/*          </p>*/}
+              {/*          <button className="trends-btn">Grab Leads Now</button>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  <div className="col-md-4 py-3">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="lead-card">*/}
+              {/*        <div className="text-center">*/}
+              {/*          <p style={{ fontSize: "17px" }}>*/}
+              {/*            People wanted to switch jobs*/}
+              {/*          </p>*/}
+              {/*          <p style={{ fontSize: "14px", color: "#00BA4A" }}>*/}
+              {/*            2 hours ago{" "}*/}
+              {/*          </p>*/}
+              {/*          <div*/}
+              {/*            style={{*/}
+              {/*              fontSize: "16px",*/}
+              {/*              background: "#CCE1FF",*/}
+              {/*              margin: "0px 50px",*/}
+              {/*              borderRadius: "5px",*/}
+              {/*            }}*/}
+              {/*          >*/}
+              {/*            <p>200 Leads</p>*/}
+              {/*          </div>*/}
+              {/*          <p style={{ fontSize: "16px" }}>*/}
+              {/*            Get Real Time Leads with <br /> 200 Credits{" "}*/}
+              {/*          </p>*/}
+              {/*          <button className="trends-btn">Grab Leads Now</button>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*  <div className="col-md-4 py-3">*/}
+              {/*    <div className="item">*/}
+              {/*      <div className="lead-card">*/}
+              {/*        <div className="text-center">*/}
+              {/*          <p style={{ fontSize: "17px" }}>*/}
+              {/*            People wanted to switch jobs*/}
+              {/*          </p>*/}
+              {/*          <p style={{ fontSize: "14px", color: "#00BA4A" }}>*/}
+              {/*            2 hours ago{" "}*/}
+              {/*          </p>*/}
+              {/*          <div*/}
+              {/*            style={{*/}
+              {/*              fontSize: "16px",*/}
+              {/*              background: "#CCE1FF",*/}
+              {/*              margin: "0px 50px",*/}
+              {/*              borderRadius: "5px",*/}
+              {/*            }}*/}
+              {/*          >*/}
+              {/*            <p>200 Leads</p>*/}
+              {/*          </div>*/}
+              {/*          <p style={{ fontSize: "16px" }}>*/}
+              {/*            Get Real Time Leads with <br /> 200 Credits{" "}*/}
+              {/*          </p>*/}
+              {/*          <button className="trends-btn">Grab Leads Now</button>*/}
+              {/*        </div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
               <div className="customize-lead container-fluid">
                 <div className="text-center pt-3 fs-5">
                   <p>Customise leads as per your requirement.</p>
@@ -336,54 +347,54 @@ const RealTimePage = () => {
                     Get a range of leads in real time such as:
                   </p>
                   <div className="row">
-                    <div className="col lead-card mx-1 my-3">
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Companies got funded today")} >
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
                         alt=""
                       />
-                      <p style={{ fontSize: "14px", textAlign: "center" }}>
-                        Companies looking for funding today
+                      <p style={{ fontSize: "14px", textAlign: "center" }} onMouseEnter={changeColorRed} onMouseLeave={changeColorNormal}>
+                        Companies got funded today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3">
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Companies got M&A today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
                         alt=""
                       />
-                      <p style={{ fontSize: "14px", textAlign: "center" }}>
-                        Companies looking for funding today
+                      <p style={{ fontSize: "14px", textAlign: "center" }} onMouseEnter={changeColorRed} onMouseLeave={changeColorNormal}>
+                        Companies got M&A today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3">
+                    <div className="col lead-card mx-1 my-3"onClick={(e)=>handleautoinput("Companies Posted jobs today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
                         alt=""
                       />
-                      <p style={{ fontSize: "14px", textAlign: "center" }}>
-                        Companies looking for funding today
+                      <p style={{ fontSize: "14px", textAlign: "center" }} onMouseEnter={changeColorRed} onMouseLeave={changeColorNormal}>
+                        Companies Posted jobs today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3">
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Investors who funded today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
                         alt=""
                       />
-                      <p style={{ fontSize: "14px", textAlign: "center" }}>
-                        Companies looking for funding today
+                      <p style={{ fontSize: "14px", textAlign: "center" }} onMouseEnter={changeColorRed} onMouseLeave={changeColorNormal}>
+                        Investors who funded today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3">
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Posted a Looking for a job today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
                         alt=""
                       />
-                      <p style={{ fontSize: "14px", textAlign: "center" }}>
-                        Companies looking for funding today
+                      <p style={{ fontSize: "14px", textAlign: "center" }} onMouseEnter={changeColorRed} onMouseLeave={changeColorNormal}>
+                        Posted a Looking for a job today
                       </p>
                     </div>
                   </div>
