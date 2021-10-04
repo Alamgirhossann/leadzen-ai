@@ -831,6 +831,7 @@ const SearchResult = (props) => {
       setSearchedList(myLeads);
     }
   }, [searchText, myLeads]);
+  
 
   useEffect(() => {
     const script = document.createElement("script");
