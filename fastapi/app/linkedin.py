@@ -120,7 +120,7 @@ def query_url_builder(search_field_dict):
                 link += '&' + f'keywords={kw}'
 
         encoded_link = urllib.parse.quote(link, safe="/:?=&")
-        # print(encoded_link)
+        print(encoded_link)
         return encoded_link
     except Exception as e:
         logger.critical(str(e))
@@ -133,6 +133,7 @@ def query_url_builder_company(search_field_dict):
         key_value_pairs1["keywords"] = key_value_pairs1.pop("name")
         key_value_pairs1["companyHqGeo"] = key_value_pairs1.pop("location")
         keyword1_value=key_value_pairs1.get("keywords1", "")
+        keyword = key_value_pairs1.get("keywords", "")
         if keyword1_value=="":
             keyword1_value=None
         # kw = key_value_pairs.get("keywords", "")
@@ -152,22 +153,21 @@ def query_url_builder_company(search_field_dict):
                         # kw += (f'{new_kw}' if kw else new_kw.strip(' '))
                     else:
                         print("In Else", k, '\n', v)
-                        if (k=="keywords1"):
-                            k="keywords"
+                        if(k=="keywords1" and len(keyword)!=0):
+                            pass;
+                        elif(k=='keywords1'):
+                            k='keywords'
                             link, new_kw = set_list_values(link, k, v)
                         else:
                             link, new_kw = set_list_values(link, k, v)
+                        # kw += (f'{new_kw}' if kw else new_kw.strip(' '))
                 else:
                     if link.endswith("?"):
-                        if keyword1_value is not None:
-                            for kw in keyword1_value:
-                                link += k + "=" + v
-                        else:
-                            link += k + "=" + v
+                        link += k + "=" + v
                     else:
-                        if keyword1_value is not None:
+                        if len(keyword1_value) !=0:
                             for kw in keyword1_value:
-                                link += "&" + k + "=" + v +","+kw
+                                link += "&" + k + "=" + v + ","+kw
                         else:
                             link += "&" + k + "=" + v
         # if kw.strip(' '):
