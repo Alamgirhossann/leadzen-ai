@@ -11,7 +11,7 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import Lottie from "react-lottie";
-import Loader from "../../Loader";
+import personLoader from "../Loader/personLoader"
 import SavedListButton from "./SavedListButton";
 import axios from "axios";
 import { EventEmitter } from "events";
@@ -38,11 +38,12 @@ const SearchResult = (props) => {
     csv_file: null,
   });
   const [specificUserDetails, setSpecificUserDetails] = useState([
-    { index: null, details: null },
+    { index: null, details: null, proxyCurl: null },
   ]);
   const [unlockEmailDetails, setUnlockEmailDetails] = useState([
     { index: null, details: null },
   ]);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [unlockplus, setUnlockPlus] = useState({});
   const [searchTerm, setSearchTerm] = useState();
   const [loading, setLoading] = useState(true);
@@ -54,15 +55,16 @@ const SearchResult = (props) => {
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedLeadHashKey, setSelectedLeadHashKey] = useState([]);
-  const [selectedSaveList, setSelectedSaveList] = useState([]);
+  // const [selectedSaveList, setSelectedSaveList] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedList, setSearchedList] = useState([]);
   const newEvent = new EventEmitter();
   const tempCookie = Cookies.get("user_linkedin_cookie");
-
+  const [selectedLeadIndex, setSelectedLeadIndex] = useState([]);
   const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
+    const postsPerPage = 10;
 
   let dd = String(today.getDate()).padStart(2, "0");
   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -380,7 +382,7 @@ const SearchResult = (props) => {
       }
       let url = [urls];
       console.log("url>>>", url);
-      let hash_key = await digestMessage(url);
+      let hash_key = await digestMessage(data.url);
       console.log("hash_key>>>>>>>>", hash_key);
       let requestForEmail = {
         url: url,
@@ -482,16 +484,16 @@ const SearchResult = (props) => {
   };
 
   useEffect(() => {
-    setShow(new Array(myLeads.length).fill().map((item) => false));
+    setShow(new Array(myLeads?.length).fill().map((item) => false));
   }, [currentLeads]);
 
   useEffect(() => {
     console.log("set>>>", selectedLeadHashKey);
   }, [selectedLeadHashKey]);
-  const clickSelect = (e) => {
-    e.preventDefault();
-    // if (!selected) setSelected(true);
-  };
+  // const clickSelect = (e) => {
+  //   e.preventDefault();
+  //   // if (!selected) setSelected(true);
+  // };
   const user = {
     name: "John Smith",
     email: "Johnsmith087@hexagon.in",
@@ -570,6 +572,9 @@ const SearchResult = (props) => {
       hash_key: hash_key,
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
+    function handleError(status) {
+    console.error(`Got HTTP Error ${status.statusText}`);
+  }
     try {
       let isDuplicate = false;
 
@@ -582,27 +587,51 @@ const SearchResult = (props) => {
       console.log("isDuplicate>>>>", isDuplicate);
       if (isDuplicate === false) {
         console.log("In Fetch......");
-        const response = await fetch(apiServer + "/pipl/search", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${Cookies.get("user_token")}`,
-          },
-          body: JSON.stringify(reqJsonPipl),
-        });
+        setLoadingProfile(true);
+        let proxyCurlJson = null;
+        const [response, proxyCurlResponse] = await Promise.all([
+          fetch(apiServer + "/pipl/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify(reqJsonPipl),
+          }),
+          fetch(apiServer + "/proxycurl/search", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${Cookies.get("user_token")}`,
+            },
+            body: JSON.stringify({ url: data.url }),
+          }),
+        ]);
+
+        setLoadingProfile(false);
+        if (proxyCurlResponse.status === 200) {
+          proxyCurlJson = await proxyCurlResponse.json();
+        }
 
         if (response.status === 402) {
           alert(
             "You have insufficient profile credit. Buy Credits to get details."
           );
         }
-        if (response.status === 500) {
-          console.log("Not able to get Details");
+        if (response.status === 500 || proxyCurlResponse.status === 500) {
+          handleError(response);
         }
         let json_res = null;
         if (response.status === 200) {
           json_res = await response.json();
+        }
+        if (response.status === 400 || proxyCurlResponse.status === 400) {
+          handleError(response);
+        }
+        if (response.status === 401 || proxyCurlResponse.status === 401) {
+          handleError(response);
         }
         console.log("json_res>>>>>", json_res);
         let phones = [];
@@ -646,7 +675,11 @@ const SearchResult = (props) => {
             }
             setSpecificUserDetails((prev) => [
               ...prev,
-              { index: `${currentPage}${index}`, details: json_res[0] },
+              {
+                index: `${currentPage}${index}`,
+                details: json_res[0],
+                proxyCurl: proxyCurlJson !== null ? proxyCurlJson : null,
+              },
             ]);
           }
           // else {
@@ -683,26 +716,70 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
-  let tempJson = {};
-  const handleLeadSelectionChange = async (e) => {
+    const handleLeadSelectionChange = async (e, index) => {
+    console.log(
+      "selectedLeads.length === currentLeads.length>>>",
+      selectedLeads.length === currentLeads.length,
+      selectedLeadIndex.length,
+      currentLeads.length
+    );
+    if (selectedLeads.length === currentLeads.length) {
+      setIsCheckAll(!isCheckAll);
+    }
     const { id, checked } = e.target;
     let hash_key = null;
+    let tempJson = {};
+    let index_json = {};
+    console.log("id...", id,index);
     setSelectedLeads([...selectedLeads, id]);
     hash_key = await digestMessage(id);
 
     tempJson[id] = hash_key;
+    index_json[hash_key] = `${index}`;
     setSelectedLeadHashKey([...selectedLeadHashKey, tempJson]);
-    // setSelectedLeadHashKey(...selectedLeadHashKey, await digestMessage(id));
+    setSelectedLeadIndex([...selectedLeadIndex, index_json]);
     if (!checked) {
       setSelectedLeads(selectedLeads.filter((item) => item !== id));
+      setSelectedLeadHashKey(
+        selectedLeadHashKey.filter((item) => item[id] !== hash_key)
+      );
+      setSelectedLeadIndex(
+        selectedLeadIndex.filter((item) => item[hash_key] !== index)
+      );
     }
+    console.log(
+      "seleched hash key>>>>",
+      selectedLeadHashKey,
+      ">>>>",
+      selectedLeadIndex,
+      ">>>>>",
+      selectedLeads
+    );
   };
-  console.log("seleched hash key>>>>", selectedLeadHashKey);
-  const handleLeadSelectAll = (e) => {
+
+  const handleLeadSelectAll = async (e) => {
     setIsCheckAll(!isCheckAll);
-    setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
+    console.log("In select All", isCheckAll);
     if (isCheckAll) {
       setSelectedLeads([]);
+      setSelectedLeadHashKey([]);
+      setSelectedLeadIndex([]);
+    } else {
+      for (let i = 0; i < currentLeads.length; i++) {
+        console.log("in loop.....",currentLeads.length);
+        let hash_list_selected = {};
+        let index_list_selected = {};
+        let hash_key_i = await digestMessage(
+          JSON.stringify(currentLeads[i].url)
+        );
+        console.log("hash_key_i>>>>", hash_key_i);
+        hash_list_selected[currentLeads[i].url] = hash_key_i;
+        index_list_selected[hash_key_i] = `${currentPage}${i}`;
+        setSelectedLeadHashKey((prev) => [...prev, hash_list_selected]);
+        setSelectedLeadIndex((prev) => [...prev, index_list_selected]);
+      }
+
+      setSelectedLeads(currentLeads.map((li) => li.url || li.profileLink));
     }
   };
 
@@ -728,6 +805,9 @@ const SearchResult = (props) => {
         const inputData = {
           profile_urls: selectedLeads,
           hash_key_list: selectedLeadHashKey,
+          search_id: searchId,
+          search_index: selectedLeadIndex,
+          export_type: "texAu",
         };
         console.log("reqJson input data 631 >>>", JSON.stringify(reqJson));
         console.log("input data >>>", JSON.stringify(inputData));
@@ -785,21 +865,20 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
-  useEffect(() => {
-    if (searchText !== "") {
-      setSearchedList(
-        myLeads.filter((data) => {
-          return (
-            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            data.location.toLowerCase().includes(searchText.toLowerCase()) ||
-            data.job.toLowerCase().includes(searchText.toLowerCase())
-          );
-        })
-      );
-    } else {
-      setSearchedList(myLeads);
-    }
-  }, [searchText, myLeads]);
+  useEffect(()=> {
+   if(searchText!=""){
+     setSearchedList(myLeads.filter(data=>{
+       return (
+           data.name.toLowerCase().includes(searchText.toLowerCase())||
+               data.location.toLowerCase().includes(searchText.toLowerCase())||
+               data.job.toLowerCase().includes(searchText.toLowerCase())
+       )
+     }))
+   }
+   else {
+     setSearchedList(myLeads.filter(data=> !!data.name))
+   }
+  },[searchText,myLeads])
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -849,7 +928,7 @@ const SearchResult = (props) => {
           <div className="row">
             <div className="col-md-4 col-lg-3">
               <SpecificSearchBtn details={true} />
-              <div className="sidebar-search-for sidebar-widget pt-4 my-3">
+              <div className="sidebar-search-for sidebar-widget pt-4 my-3"  style={loading ?{'opacity':'0.4', 'pointerEvents':'none'}:{}}>
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
               </div>
@@ -857,24 +936,24 @@ const SearchResult = (props) => {
               <SidebarExtractContact />
             </div>
             <div className="col-md-8 col-lg-9">
-              {loading === false ? (
-                <div className="search-form4 d-flex mb-3">
-                  <div className="input-group">
-                    <div
-                      className="input-placeholder"
-                      style={{ width: "1000px", height: "50px" }}
-                    >
-                      <input
-                        id="search-result-texau-search-input"
-                        className="ps-3"
-                        required
-                        onChange={(e) => setSearchText(e.target.value)}
-                      />
-                      <div className="placeholder">Search Here</div>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
+              {/*{loading === false ? (*/}
+              {/*  <div className="search-form4 d-flex mb-3">*/}
+              {/*    <div className="input-group">*/}
+              {/*      <div*/}
+              {/*        className="input-placeholder"*/}
+              {/*        style={{ width: "1000px", height: "50px" }}*/}
+              {/*      >*/}
+              {/*        <input*/}
+              {/*          id="search-result-texau-search-input"*/}
+              {/*          className="ps-3"*/}
+              {/*          required*/}
+              {/*          onChange={(e) => setSearchText(e.target.value)}*/}
+              {/*        />*/}
+              {/*        <div className="placeholder">Search Here</div>*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*  </div>*/}
+              {/*) : null}*/}
               <div className="user-search-wrapper">
                 <div
                   className="detailed-search"
@@ -957,7 +1036,7 @@ const SearchResult = (props) => {
                                 checked={selectedLeads.includes(
                                   data.url || data.profileLink
                                 )}
-                                onChange={handleLeadSelectionChange}
+                                onChange={(e)=>handleLeadSelectionChange(e,`${currentPage}${index}`)}
                               />
                               <div className="search-author text-danger ">
                                 <img
@@ -965,15 +1044,19 @@ const SearchResult = (props) => {
                                   src={
                                     data.profilePicture
                                       ? data.profilePicture
-                                      : "assets/images/author-image.png"
+                                      : data.image? data.image
+                                            :"assets/images/author-image.png"
                                   }
                                   alt=""
                                 />
                               </div>
                               <div className="search-user ps-3">
-                                <p>{data.length === 0 ? null : data.name}</p>
+                                <p>{data.length === 0 ? null :<React.Fragment>
+                                  {data.name?data.name :data.fullName}
+                               </React.Fragment>}</p>
+                                {/*<p>{data.length === 0 ? null : data.fullName}</p>*/}
                                 <small className="d-block">
-                                  Works at {data.length === 0 ? null : data.job}
+                                  Works at {data.length === 0 ? null : data.job?data.job:data.occupation}
                                 </small>
                                 <small className="d-block">
                                   {data.length === 0 ? null : data.location}
@@ -981,7 +1064,7 @@ const SearchResult = (props) => {
                               </div>
                               <div className="linkedin-icon d-flex justify-content-end">
                                 <span>
-                                  <a href={data.url} target="_blank">
+                                  <a href={data.url?data.url:data.profileLink} target="_blank">
                                     <img
                                       src="assets/images/linkedin1.png"
                                       alt=""
@@ -1049,26 +1132,26 @@ const SearchResult = (props) => {
                                   View Profile
                                 </a>
                               </p>
-                              <p>
-                                {unlockplus[`${currentPage}${index}`] ? (
-                                  <img
-                                    src="assets/images/Frame 543.png"
-                                    alt=""
-                                  />
-                                ) : (
-                                  <SavedListButton
-                                    data={data}
-                                    type="texau"
-                                    index={`${currentPage}${index}`}
-                                    changeindex={(saveindex) =>
-                                      setUnlockPlus((prev) => ({
-                                        ...prev,
-                                        [saveindex]: true,
-                                      }))
-                                    }
-                                  />
-                                )}
-                              </p>
+                              {/*<p>*/}
+                              {/*  {unlockplus[`${currentPage}${index}`] ? (*/}
+                              {/*    <img*/}
+                              {/*      src="assets/images/Frame 543.png"*/}
+                              {/*      alt=""*/}
+                              {/*    />*/}
+                              {/*  ) : (*/}
+                              {/*    <SavedListButton*/}
+                              {/*      data={data}*/}
+                              {/*      type="texau"*/}
+                              {/*      index={`${currentPage}${index}`}*/}
+                              {/*      changeindex={(saveindex) =>*/}
+                              {/*        setUnlockPlus((prev) => ({*/}
+                              {/*          ...prev,*/}
+                              {/*          [saveindex]: true,*/}
+                              {/*        }))*/}
+                              {/*      }*/}
+                              {/*    />*/}
+                              {/*  )}*/}
+                              {/*</p>*/}
                             </div>
                             <div
                               style={{
@@ -1083,15 +1166,30 @@ const SearchResult = (props) => {
                                   "collapseExample_" + `${currentPage}${index}`
                                 }
                               >
-                                {specificUserDetails?.map((spec) => (
-                                  <span>
-                                    {spec.index === `${currentPage}${index}` ? (
-                                      <span>
-                                        <SpecificUser details={spec.details} />
-                                      </span>
-                                    ) : null}
-                                  </span>
-                                ))}{" "}
+                                {!loadingProfile ? (
+                                  specificUserDetails?.map((spec) => (
+                                    <span>
+                                      {spec.index ===
+                                      `${currentPage}${index}` ? (
+                                        <span>
+                                          <SpecificUser
+                                            details={spec.details}
+                                            proxyData={spec.proxyCurl}
+                                          />
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <div>
+                                    <section
+                                      className="item-section"
+                                      style={{ textAlign: "center" }}
+                                    >
+                                      Please Wait..
+                                    </section>
+                                  </div>
+                                )}{" "}
                               </div>
                             </div>
                           </div>
@@ -1106,22 +1204,21 @@ const SearchResult = (props) => {
                 ) : (
                   <div className="d-flex justify-content-center">
                     <div role="status" style={{ height: "400px" }}>
-                      <Lottie options={Loader} />
+                      <Lottie options={personLoader} />
                     </div>
                   </div>
                 )}
               </div>
               <div className="d-flex justify-content-center">
-                {loading===false?(
-                      <Pagination
-                  postsPerPage={10}
-                  totalPosts={searchedList ? searchedList.length : 1}
-                  paginate={paginate}
-                />
-                ):null
-                }
+                {loading === false ? (
+                  <Pagination
+                    postsPerPage={postsPerPage}
+                    totalPosts={searchedList ? searchedList.length : 1}
+                    paginate={paginate}
+                  />
+                ) : null}
               </div>
-              <AskJarvis />
+              {/*<AskJarvis />*/}
             </div>
           </div>
         </div>

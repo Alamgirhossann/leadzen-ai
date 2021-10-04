@@ -7,6 +7,8 @@ const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
 
 const SpecificUser = (props) => {
     const [listPhones, setListPhones] = useState({})
+    console.log("props...",props.proxyData)
+    console.log("props_details,,,",props.details)
     let tempList = []
     function handleError(response = null) {
         console.error(`Error, Status Code: ${response?.status}`);
@@ -204,7 +206,7 @@ const SpecificUser = (props) => {
                                 <div className="ms-2 d-flex align-items-center mb-3">
                                     <small>
                                         {props.details.dob ? (
-                                            <span>props.details.dob._display Years</span>
+                                            <span>{props.details.dob.display}</span>
                                         ) : null}
                                     </small>
                                 </div>
@@ -220,60 +222,19 @@ const SpecificUser = (props) => {
                                     ))
                                     : null}
 
-                                <h6>Probable Social platforms Associated</h6>
+                                <h6>Location</h6>
                                 <div className="ms-2 mb-3">
                                     <div className="d-flex">
                                         <div className="col">
                                             <div className="d-flex">
                                                 <div className="me-2">
-                                                    <img
-                                                        style={{height: "32px", width: "32px"}}
-                                                        src="assets/images/social-facebook.png"
-                                                        alt=""
-                                                    />
+
+                                <div className="ms-2 d-flex align-items-center mb-3">
+                                    <small>
+                                        {props.proxyData&&props.proxyData.city?props.proxyData.city+",":null} {props.proxyData&&props.proxyData.state?props.proxyData.state+",":null} {props.proxyData&&props.proxyData.country_full_name?props.proxyData.country_full_name:null}
+                                    </small>
+                                </div>
                                                 </div>
-                                                <div className="me-2">
-                                                    <img
-                                                        style={{height: "32px", width: "32px"}}
-                                                        src="assets/images/social-twitter.png"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                                <div className="">
-                                                    <img
-                                                        style={{height: "32px", width: "32px"}}
-                                                        src="assets/images/social-instagram.png"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="d-flex mt-3">
-                                                <div className="me-2">
-                                                    <img
-                                                        style={{height: "32px", width: "32px"}}
-                                                        src="assets/images/social-linkedin.png"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                                <div className="me-2">
-                                                    <img
-                                                        style={{height: "32px", width: "32px"}}
-                                                        src="assets/images/social-printarest.png"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                                <div className="">
-                                                    <img
-                                                        style={{height: "32px", width: "32px"}}
-                                                        src="assets/images/social-mideum.png"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col d-flex justify-content-end align-items-end mt-5">
-                                            <div className="jarv-head">
-                                                <img src="assets/images/user-robot-icon.png" alt=""/>
                                             </div>
                                         </div>
                                     </div>
@@ -284,13 +245,13 @@ const SpecificUser = (props) => {
                     <section className="item-section">
                         <div style={{width: "900px"}}>
                             <h4>Associated Jobs and Companies</h4>
-                            {props.details.jobs
-                                ? props.details.jobs.map((comp) => (
+                            {props.proxyData && props.proxyData.experiences
+                                ? props.proxyData.experiences.map((comp) => (
                                     <div className="table-alignment container-fluid">
-                                        <td>{comp.organization}</td>
-                                        <td>{comp._display}</td>
+                                        <td>{comp.company}</td>
+                                        <td>{}</td>
                                         <td>
-                                            Since {comp.date_range ? comp.date_range.start : null}
+                                            {comp.starts_at ? `${comp.starts_at.day}-${comp.starts_at.month}-${comp.starts_at.year}` : null}{comp.ends_at ? ` to ${comp.ends_at.day}-${comp.ends_at.month}-${comp.ends_at.year}` : null}
                                         </td>
                                         <td>
                                             <div className="d-flex justify-content-between">
@@ -313,25 +274,11 @@ const SpecificUser = (props) => {
                     <section className="item-section">
                         <div style={{width: "900px"}}>
                             <h4>Probable Education Associated</h4>
-                            {props.details.educations
-                                ? props.details.educations.map((edu) => (
+                            {props.proxyData && props.proxyData.education
+                                ? props.proxyData.education.map((edu) => (
                                     <div className="table-alignment container-fluid">
-                                        <td>{edu.degree}</td>
-                                        {/*<td>{edu.date_range.start}</td>*/}
+                                        <td>{edu.degree_name||"--"}</td>
                                         <td>{edu.school}</td>
-                                        <td>
-                                            {/*<div className="d-flex justify-content-between">*/}
-                                            {/*  <p>{edu.url}</p>*/}
-                                            {/*  <a href={edu.url}>*/}
-                                            {/*    <img*/}
-                                            {/*      className="ms-2"*/}
-                                            {/*      style={{ height: "10px" }}*/}
-                                            {/*      src="assets/images/Union (1).png"*/}
-                                            {/*      alt=""*/}
-                                            {/*    />*/}
-                                            {/*  </a>*/}
-                                            {/*</div>*/}
-                                        </td>
                                     </div>
                                 ))
                                 : null}
@@ -363,24 +310,24 @@ const SpecificUser = (props) => {
                         </div>
                     </section>
                     <section>
-                        <div class="user-widget-box text-center p-4 my-3">
-                            <div class="user-promote-logo">
+                        <div className="user-widget-box text-center p-4 my-3">
+                            <div className="user-promote-logo">
                                 <img src="assets/images/user-company-brand.png" alt="title"/>
                             </div>
                             <h4 className="text-center">Probable People Associated</h4>
-                            <div class="user-promote-slider">
-                                {props.details.relationships
-                                    ? props.details.relationships.map((profile) => (
+                            <div className="user-promote-slider">
+                                {props.proxyData&&props.proxyData.people_also_viewed
+                                    ? props.proxyData.people_also_viewed.map((profile) => (
                                         <div>
                                             <div
-                                                // style={{
-                                                //   width: "100%",
-                                                //   height: "100%",
-                                                //   display: "flex",
-                                                //   justifyContent: "center",
-                                                // }}
+                                                style={{
+                                                  width: "100%",
+                                                  height: "100%",
+                                                  display: "flex",
+                                                  justifyContent: "center",
+                                                }}
                                             >
-                                                <a href={profile.url}>
+                                                <a href={profile.link}>
                                                     <img
                                                         className=""
                                                         src="assets/images/user-athor-pic.png"
@@ -389,6 +336,7 @@ const SpecificUser = (props) => {
                                                 </a>
                                             </div>
                                             <p className="d-block mt-3">{profile.name}</p>
+                                            <p className="d-block mt-3">{profile.summary} at {profile.location}</p>
                                         </div>
                                     ))
                                     : null}

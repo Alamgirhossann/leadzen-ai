@@ -138,7 +138,7 @@ const SidebarExtractContact = (data) => {
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              placeholder="Search Type"
+              placeholder={socialMediaData.type}
               disabled={data.data}
             />
 

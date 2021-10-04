@@ -191,14 +191,19 @@ async def add_search_history(
 ):
     logger.debug(f"{request=}, {user=}")
 
+    response = await add_history(request.search_type, request.search_term, request.search_results, user)
+    return SearchHistoryAddResponse(search_id=response)
+
+
+async def add_history(search_type, search_term, search_results, user):
     try:
         search_id = str(uuid.uuid4())
         query = search_history.insert().values(
             id=search_id,
             user_id=str(user.id),
-            search_type=request.search_type,
-            search_term=request.search_term,
-            search_results=str(json.dumps(request.search_results)),
+            search_type=search_type,
+            search_term=search_term,
+            search_results=str(json.dumps(search_results)),
             created_on=datetime.utcnow(),
         )
 
@@ -208,7 +213,7 @@ async def add_search_history(
 
         logger.debug(f"{row_id=}")
 
-        return SearchHistoryAddResponse(search_id=search_id)
+        return search_id
     except Exception as e:
         logger.critical(f"Exception Inserting to Database: {str(e)}")
         raise HTTPException(

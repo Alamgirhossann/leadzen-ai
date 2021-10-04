@@ -12,13 +12,22 @@ class BulkProfileUrlRequest(BulkRequest):
     urls: List[str]
     hash_key_list: Optional[List[Dict]] = None
     user: User
+    export_type: Optional[str] = None
+    search_id: Optional[str] = None
+    search_index: Optional[List[Dict]] = None
 
 
 async def handle_bulk_profile_urls(request: BulkProfileUrlRequest, ):
     print("in handle_bulk_profile_urls request>>",request)
     await execute_profile_task(
         request=PiplDetailsFromProfileUrlRequest(
-            profile_urls=request.urls,  filename=request.outgoing_filename, hash_key_list=request.hash_key_list, user=request.user
+            profile_urls=request.urls,
+            filename=request.outgoing_filename,
+            hash_key_list=request.hash_key_list,
+            user=request.user,
+            export_type=request.export_type,
+            search_id=request.search_id,
+            search_index=request.search_index
         )
     )
     user = request.user

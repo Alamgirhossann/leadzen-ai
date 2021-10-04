@@ -99,9 +99,9 @@ const FirstTimeUserCompany = (props) => {
             </div>
             <div className="col-md-8 col-lg-9">
               <UserSearch />
-              <div>
-                <AskJarvis />
-              </div>
+              {/*<div>*/}
+              {/*  <AskJarvis />*/}
+              {/*</div>*/}
               <ExtractContacts data={true} />
             </div>
           </div>
