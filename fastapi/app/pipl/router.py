@@ -145,18 +145,39 @@ async def people_search(
 
 
 async def verify_mail(result):
-    for res in result:
-        for email_dict in res.get('emails'):
-            email_result = email_dict['address']
-    
-            async with httpx.AsyncClient() as client:
-                email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email_result}")
-                if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
-                    email_dict['valid'] = "valid"
-                    return result
-                else:
-                    email_dict['valid'] = "Not Valid"
-                    return result
+    try:
+        for res in result:
+            for email_dict in res.get('emails'):
+                email_result = email_dict['address']
+        
+                async with httpx.AsyncClient() as client:
+                    email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email_result}")
+                    if email_check_valid.status_code == 200:
+                        if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
+                            email_dict['valid'] = "valid"
+                            return result
+                        else:
+                            email_dict['valid'] = "Not Valid"
+                            return result
+                    elif email_check_valid.status_code == 400:
+                        print("in 400")
+                        raise HTTPException(
+                            status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=str("Email Verification : Bad request"),
+                        )
+                    else:
+                        raise HTTPException(
+                            status_code=status.HTTP_404_NOT_FOUND,
+                            detail=str("Email Verification : Data not found"),
+                        )
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno)
+        logger.critical(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Getting data from View Profile - email verification",
+        )
                     
 
 async def send_pipl_request(params):

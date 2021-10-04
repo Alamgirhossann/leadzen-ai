@@ -161,7 +161,7 @@ async def get_emails_from_url(
                                 email_data = data["data"]["emails"]
                                 logger.debug(email_data)
                                 email = email_data[0]["email"]
-                                valid = verify_mail(email)
+                                valid = await verify_mail(email)
                                 logger.debug(email)
                                 logger.debug(valid)
                                 if valid == "valid" or valid == "unknown":
@@ -196,12 +196,33 @@ async def get_emails_from_url(
         )
 
 async def verify_mail(email):
-    async with httpx.AsyncClient() as client:
-        email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
-        if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
-            return "valid"
-        else:
-            return "Not Valid"
+    try:
+        async with httpx.AsyncClient() as client:
+            email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
+            if email_check_valid.status_code == 200:
+                if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
+                    return "valid"
+                else:
+                    return "Not Valid"
+            elif email_check_valid.status_code == 400:
+                print("in 400")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str("Email Verification : Bad request"),
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=str("Email Verification : Data not found"),
+                )
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno)
+        logger.critical(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Getting data from Unlock mail-email verification",
+        )
 
 @router.post("/emails_for_company")
 async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
