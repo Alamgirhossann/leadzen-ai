@@ -865,20 +865,33 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
-  useEffect(()=> {
-   if(searchText!=""){
-     setSearchedList(myLeads.filter(data=>{
-       return (
-           data.name.toLowerCase().includes(searchText.toLowerCase())||
-               data.location.toLowerCase().includes(searchText.toLowerCase())||
-               data.job.toLowerCase().includes(searchText.toLowerCase())
-       )
-     }))
-   }
-   else {
-     setSearchedList(myLeads.filter(data=> !!data.name))
-   }
-  },[searchText,myLeads])
+  useEffect(() => {
+    if (searchText !== "") {
+      setSearchedList(
+        myLeads.filter((data) => {
+          return (
+            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.location.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.job.toLowerCase().includes(searchText.toLowerCase())
+          );
+        })
+      );
+    } else {
+      setSearchedList(myLeads.filter(data=> !!data.name));
+    }
+  }, [searchText, myLeads]);
+
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "assets/js/app.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
