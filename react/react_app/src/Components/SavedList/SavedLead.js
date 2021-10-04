@@ -33,65 +33,28 @@ const SavedLead = () => {
               <div className="" aria-labelledby="">
                 <div className="dropdown-wraper">
                   <div className="radio-bg">
-                    <span>All</span>
+                    <span>My leads</span>
                     <input
                       type="checkbox"
                       id="All"
                       value="All"
-                      // onChange={handleType}
-                      // checked={socialMediaType.type.includes("All")}
                     />
                   </div>
                   <div className="radio-bg">
-                    <span>Follower</span>
+                    <span>Product designer leads</span>
                     <input
                       type="checkbox"
                       id="Follower"
                       value="Follower"
-                      // onChange={handleType}
-                      // checked={socialMediaType.type.includes("Follower")}
                     />
                   </div>
                   <div className="radio-bg">
-                    <span>Likers</span>
+                    <span>Product manager leads</span>
                     <input
                       type="checkbox"
                       id="Likers"
                       value="Likers"
                       name="inlineRadioOptions"
-                      // onChange={handleTypeChange}
-                      // checked={socialMediaData.type.includes("Likers")}
-                    />
-                  </div>
-                  <div className="radio-bg">
-                    <span>Commenters</span>
-                    <input
-                      type="checkbox"
-                      id="Commenters"
-                      value="Commenters"
-                      name="inlineRadioOptions"
-                      // onChange={handleTypeChange}
-                      // checked={socialMediaData.type.includes("Commenters")}
-                    />
-                  </div>
-                  <div className="radio-bg">
-                    <span>Job Seeker</span>
-                    <input
-                      type="checkbox"
-                      id="Job Seeker"
-                      value="Job Seeker"
-                      // onChange={handleType}
-                      // checked={socialMediaType.type.includes("Job Seeker")}
-                    />
-                  </div>
-                  <div className="radio-bg">
-                    <span>Group Members</span>
-                    <input
-                      type="checkbox"
-                      id="Group Members"
-                      value="Group Members"
-                      // onChange={handleType}
-                      // checked={socialMediaType.type.includes("Group Members")}
                     />
                   </div>
                 </div>
