@@ -81,7 +81,7 @@ const RealTimePage = () => {
   function changeColorNormal(e) {
     e.target.style.color = 'black';
   }
-  const handleautoinput=async (val)=>{
+  const handleAutoInput=async (val)=>{
     setRequirement(val)
     let text_val=document.getElementById("real-time-request")
     text_val.value = val
@@ -347,7 +347,7 @@ const RealTimePage = () => {
                     Get a range of leads in real time such as:
                   </p>
                   <div className="row">
-                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Companies got funded today")} >
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleAutoInput("Companies got funded today")} >
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
@@ -357,7 +357,7 @@ const RealTimePage = () => {
                         Companies got funded today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Companies got M&A today")}>
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleAutoInput("Companies got M&A today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
@@ -367,7 +367,7 @@ const RealTimePage = () => {
                         Companies got M&A today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3"onClick={(e)=>handleautoinput("Companies Posted jobs today")}>
+                    <div className="col lead-card mx-1 my-3"onClick={(e)=>handleAutoInput("Companies Posted jobs today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
@@ -377,7 +377,7 @@ const RealTimePage = () => {
                         Companies Posted jobs today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Investors who funded today")}>
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleAutoInput("Investors who funded today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
@@ -387,7 +387,7 @@ const RealTimePage = () => {
                         Investors who funded today
                       </p>
                     </div>
-                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleautoinput("Posted a Looking for a job today")}>
+                    <div className="col lead-card mx-1 my-3" onClick={(e)=>handleAutoInput("Posted a Looking for a job today")}>
                       <img
                         style={{ marginTop: "-40px" }}
                         src="assets/images/Group 2523.png"
