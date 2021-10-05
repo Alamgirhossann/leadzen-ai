@@ -1,19 +1,20 @@
 import json
-from typing import List, Optional, Dict
+from typing import List, Optional
 from app.users import fastapi_users
 import sys
-import time
 import httpx
 import requests
-from nameparser import HumanName
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, status
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
 from loguru import logger
 from pydantic import BaseModel, HttpUrl
 from starlette import status
-from app.credits.common import EmailSearchGetRequest, EmailSearchAddRequest
-from app.credits.email import add_email_search, get_email_search, get_email_by_hash_key
+from app.credits.common import EmailSearchAddRequest
+from app.credits.email import add_email_search, get_email_by_hash_key
 from app.credits.admin import deduct_credit
 from starlette.responses import JSONResponse
+from app.texau.spice import send_spice_request
+from app.texau.status import get_status_waiting
+from app.texau.common import TexAuCompanyRequest
 from app.users import get_user
 from app.config import (
     API_CONFIG_SNOV_GRANT_TYPE,
@@ -22,9 +23,6 @@ from app.config import (
     API_CONFIG_SNOV_ADD_URL_SEARCH,
     API_CONFIG_SNOV_GET_EMAIL,
     API_CONFIG_SNOV_OAUTH_ACESS_TOKEN,
-    API_CONFIG_TEXAU_URL,
-    API_CONFIG_TEXAU_EXECUTION_URL,
-    API_CONFIG_TEXAU_KEY,
     API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_FUNC_ID,
     API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_SPICE_ID,
     API_CONFIG_SNOV_GET_EMAIL_FROM_NAME,
@@ -36,11 +34,6 @@ router = APIRouter(prefix="/snov", tags=["Snov"])
 class SnovIoRequest(BaseModel):
     url: List[HttpUrl] = []
     hash_key: Optional[str] = None
-
-
-class TexAuCompanyRequest(BaseModel):
-    personName: str
-    companyName: Optional[str] = None
 
 
 async def add_email_into_database(user_id, query_url, email):
@@ -249,45 +242,6 @@ async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):
         )
 
 
-async def get_company_domain(company_name: Optional[str] = None) -> Optional[str]:
-    if not company_name:
-        logger.warning("Invalid company name")
-        return None
-    payload = {
-        "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_FUNC_ID,
-        "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_SPICE_ID,
-        "inputs": {"name": company_name},
-    }
-    headers = {
-        "Authorization": f"APIKey {API_CONFIG_TEXAU_KEY}",
-        "Content-Type": "application/json",
-    }
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                API_CONFIG_TEXAU_URL, headers=headers, json=payload
-            )
-
-            if response.status_code != 200:
-                logger.error(
-                    f"Invalid Status Code: {response.status_code=}, {response.text=}"
-                )
-                return None
-
-            if not (data := response.json()):
-                logger.error(f"Invalid Data")
-                return None
-            logger.debug("ExecutionId>>>>" + data.get("executionId"))
-            if not (task_id := data.get("executionId")):
-                logger.error(f"Invalid Data")
-                return None
-            logger.debug("task_id>>>>" + task_id)
-            return task_id
-    except Exception as e:
-        logger.critical(f"Exception sending to texau: {str(e)}")
-        return None
-
-
 @router.post("/email_from_person_details")
 async def search_company_email(request: TexAuCompanyRequest):
     logger.debug(f"{request=}")
@@ -298,16 +252,20 @@ async def search_company_email(request: TexAuCompanyRequest):
             status_code=404,
             detail=str("Company name not foundd"),
         )
-    person_name = request.personName
-    name = HumanName(person_name)
-    if not (name.first and name.last):
+    first_name = request.firstName
+    last_name = request.lastName
+    if not (first_name and last_name):
         logger.warning("First Name and Last Name required")
         raise HTTPException(
             status_code=404,
-            detail=str("Snov: First Name or Last Name not Found"),
+            detail=str("First Name or Last Name not Found"),
         )
-
-    execution_id = await get_company_domain(company_name)
+    payload = {
+        "funcName": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_FUNC_ID,
+        "spiceId": API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_SPICE_ID,
+        "inputs": {"name": company_name},
+    }
+    execution_id = await send_spice_request(payload)
     if not execution_id:
         logger.warning("Error from textau request")
         raise HTTPException(
@@ -315,33 +273,15 @@ async def search_company_email(request: TexAuCompanyRequest):
             detail="Error Getting task_id from textau",
         )
     try:
-        headers = {
-            "Authorization": f"APIKey {API_CONFIG_TEXAU_KEY}",
-            "Content-Type": "application/json",
-        }
-        async with httpx.AsyncClient() as client:
-            cnt = 0
-            while cnt < 3:
-                response = await client.get(
-                    f"{API_CONFIG_TEXAU_EXECUTION_URL}{execution_id}", headers=headers
-                )
-
-                if not response:
-                    return JSONResponse(
-                        status_code=404,
-                        content={"message": "No response from texau execution"},
-                    )
-                elif response.status_code != 200:
-                    return JSONResponse(
-                        status_code=response.status_code,
-                        content={"message": "Bad Response from texau"},
-                    )
-                data = response.json()
-                if data["execution"]["status"] == "completed":
-                    break
-                cnt += 1
-                time.sleep(10)
-        domain = data.get("execution", {}).get("output", {}).get("domain", "")
+        texau_result = await get_status_waiting(
+            execution_id=execution_id, max_timeout_counter=30
+        )
+        if not (texau_data := texau_result.data):
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error Getting result from textau",
+            )
+        domain = texau_data[0].get("domain", "")
         if not domain:
             return JSONResponse(
                 status_code=404,
@@ -351,9 +291,10 @@ async def search_company_email(request: TexAuCompanyRequest):
         payload = {
             "access_token": access_token,
             "domain": domain,
-            "firstName": name.first,
-            "lastName": name.last,
+            "firstName": first_name,
+            "lastName": last_name,
         }
+        logger.info(f"{payload=}")
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 API_CONFIG_SNOV_GET_EMAIL_FROM_NAME, data=payload

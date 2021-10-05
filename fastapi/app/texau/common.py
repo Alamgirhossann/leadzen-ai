@@ -24,3 +24,9 @@ TEXAU_PROXY = {
     "name": API_CONFIG_TEXAU_PROXY_USER,
     "password": API_CONFIG_TEXAU_PROXY_PASS,
 }
+
+
+class TexAuCompanyRequest(BaseModel):
+    firstName: str
+    lastName: str
+    companyName: Optional[str] = None
