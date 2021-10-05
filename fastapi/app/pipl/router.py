@@ -1,7 +1,9 @@
 import ast
+import asyncio
 import json
 import uuid
-from typing import Optional, List
+from collections import ChainMap
+from typing import Optional, List, Tuple, Dict
 from urllib.parse import urlencode
 import sys
 import httpx
@@ -17,7 +19,7 @@ from app.config import (
     API_CONFIG_PIPL_BASE_URL,
     API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
     API_CONFIG_MAX_RESULTS_PER_CALL,
-    API_CONFIG_CHECK_EMAIL
+    API_CONFIG_CHECK_EMAIL,
 )
 from app.credits.admin import deduct_credit
 from app.database import database
@@ -55,7 +57,9 @@ class PiplRequest(BaseModel):
 @router.post("/search")
 @cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def people_search(
-        app_request: PiplRequest, background_tasks: BackgroundTasks, user=Depends(fastapi_users.get_current_active_user)
+    app_request: PiplRequest,
+    background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{app_request=}, {user=},>>>>> {type(user)}")
 
@@ -90,32 +94,37 @@ async def people_search(
             logger.debug(f"is_credit_applied>>>{response=}, {user=}")
             if response:
 
-                logger.debug(f">>type response result>>{type(response.get('search_results'))}")
-                json_data = eval(response.get('search_results'))
+                logger.debug(
+                    f">>type response result>>{type(response.get('search_results'))}"
+                )
+                json_data = eval(response.get("search_results"))
                 logger.debug(f"{json_data=},>>>>>>>>>>>>{type(json_data)}")
-                
+
                 return json_data
             else:
                 logger.debug(f"Profile not found")
                 # breakpoint()
                 user_response = await get_user(user)
-                
+
                 logger.debug(f"{user_response=}, {type(user_response)}")
                 if user_response and user_response.profile_credit <= 0:
                     logger.warning("Insufficient Credits")
                     raise HTTPException(
-                        status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
+                        status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                        detail="Insufficient Credits",
                     )
-                search_type = ''
-                if app_request.type == 'PIPL_REC':
+                search_type = ""
+                if app_request.type == "PIPL_REC":
                     search_type = "PIPL"
                     pipl_res = app_request.result
-                    logger.debug(f" $$$$$$$$$$$$$$$$$$$$$$$$$in pipl res >>>>{pipl_res=}")
+                    logger.debug(
+                        f" $$$$$$$$$$$$$$$$$$$$$$$$$in pipl res >>>>{pipl_res=}"
+                    )
                 else:
                     search_type = "texAu"
                     pipl_res = await send_pipl_request(params)
                 logger.debug(f"{pipl_res=}, >> {type(pipl_res)}")
-                
+
                 if pipl_res:
                     logger.debug(f" in pipl res >>>>{user_response=}")
                     credit_res = await deduct_credit("PROFILE", user_response)
@@ -123,12 +132,12 @@ async def people_search(
                     request = {
                         "search_type": search_type,
                         "hash_key": app_request.hash_key,
-                        "search_results":
-                            pipl_res
-
+                        "search_results": pipl_res,
                     }
                     pipl_res = await verify_mail(pipl_res)
-                    background_tasks.add_task(add_profile, request=request, user=user_response)
+                    background_tasks.add_task(
+                        add_profile, request=request, user=user_response
+                    )
                     # add_profile_res = await add_profile(request, user_response)
                     # logger.debug(f"{add_profile_res=}")
                 return pipl_res
@@ -144,41 +153,91 @@ async def people_search(
         return None
 
 
-async def verify_mail(result):
-    try:
-        for res in result:
-            for email_dict in res.get('emails'):
-                email_result = email_dict['address']
-        
-                async with httpx.AsyncClient() as client:
-                    email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email_result}")
-                    if email_check_valid.status_code == 200:
-                        if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
-                            email_dict['valid'] = "valid"
-                            return result
-                        else:
-                            email_dict['valid'] = "Not Valid"
-                            return result
-                    elif email_check_valid.status_code == 400:
-                        print("in 400")
-                        raise HTTPException(
-                            status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=str("Email Verification : Bad request"),
-                        )
-                    else:
-                        raise HTTPException(
-                            status_code=status.HTTP_404_NOT_FOUND,
-                            detail=str("Email Verification : Data not found"),
-                        )
-    except Exception as e:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        print(exc_type, exc_tb.tb_lineno)
-        logger.critical(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Getting data from View Profile - email verification",
-        )
-                    
+async def verify_mail(email_verification_request):
+    emails = []
+
+    for res in email_verification_request:
+        for email_dict in res.get("emails"):
+            emails.append(email_dict["address"])
+
+    async def check_email_validity(
+        email: str, client: httpx.AsyncClient
+    ) -> Optional[Dict[str, str]]:
+        try:
+            if not (response := await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")):
+                logger.error(f"no response, {email=}")
+                return None
+
+            if response.status_code != 200:
+                logger.error(f"Invalid response {response.status_code=}, {email=}")
+                return None
+
+            if response.text == "ok" or response.text == "ok_for_all|ok_for_all":
+                return {email: "valid"}
+            else:
+                return {email: "Not Valid"}
+        except Exception as e:
+            logger.critical(f"Exception {email=}: {str(e)}")
+            return None
+
+    async with httpx.AsyncClient() as client:
+        coroutines = [check_email_validity(email=x, client=client) for x in emails]
+        results = asyncio.gather(coroutines)
+
+    results = [x for x in results if x]  # remove None's
+    email_validation_results = dict(
+        ChainMap(*results)
+    )  # convert list of dicts to one dict
+
+    if not email_validation_results:
+        logger.error("No email validation results")
+        return email_verification_request
+
+    for res in email_verification_request:
+        for email_dict in res.get("emails"):
+            email = email_dict["address"]
+            email_dict["valid"] = email_validation_results.get(email, "Not Valid")
+
+    return email_verification_request
+    # try:
+    #     for res in email_verification_request:
+    #         for email_dict in res.get("emails"):
+    #             email_result = email_dict["address"]
+    #
+    #             async with httpx.AsyncClient() as client:
+    #                 email_check_valid = await client.get(
+    #                     f"{API_CONFIG_CHECK_EMAIL}={email_result}"
+    #                 )
+    #                 if email_check_valid.status_code == 200:
+    #                     if (
+    #                         email_check_valid.text == "ok"
+    #                         or email_check_valid.text == "ok_for_all|ok_for_all"
+    #                     ):
+    #                         email_dict["valid"] = "valid"
+    #                         return email_verification_request
+    #                     else:
+    #                         email_dict["valid"] = "Not Valid"
+    #                         return email_verification_request
+    #                 elif email_check_valid.status_code == 400:
+    #                     print("in 400")
+    #                     raise HTTPException(
+    #                         status_code=status.HTTP_400_BAD_REQUEST,
+    #                         detail=str("Email Verification : Bad request"),
+    #                     )
+    #                 else:
+    #                     raise HTTPException(
+    #                         status_code=status.HTTP_404_NOT_FOUND,
+    #                         detail=str("Email Verification : Data not found"),
+    #                     )
+    # except Exception as e:
+    #     exc_type, exc_obj, exc_tb = sys.exc_info()
+    #     print(exc_type, exc_tb.tb_lineno)
+    #     logger.critical(str(e))
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail="Error Getting data from View Profile - email verification",
+    #     )
+
 
 async def send_pipl_request(params):
     url = f"{API_CONFIG_PIPL_BASE_URL}/?{urlencode(params)}"
@@ -205,8 +264,8 @@ async def send_pipl_request(params):
         elif data["@persons_count"] > 1 and data.get("possible_persons"):
             logger.success(f'found {data["@persons_count"]} persons')
             return [x for x in data.get("possible_persons") if x][
-                   :API_CONFIG_MAX_RESULTS_PER_CALL
-                   ]
+                :API_CONFIG_MAX_RESULTS_PER_CALL
+            ]
         else:
             logger.warning(f"Invalid Response")
             raise HTTPException(
@@ -218,9 +277,9 @@ async def send_pipl_request(params):
 @router.post("/bulk/email", response_model=PiplDetailsFromEmailResponse)
 @cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def bulk_find_details_for_email(
-        app_request: PiplDetailsFromEmailRequest,
-        background_tasks: BackgroundTasks,
-        user=Depends(fastapi_users.get_current_active_user),
+    app_request: PiplDetailsFromEmailRequest,
+    background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{app_request=}, {user=}")
 
@@ -242,9 +301,9 @@ async def bulk_find_details_for_email(
 )
 @cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
 async def bulk_find_details_for_profile_url(
-        app_request: PiplDetailsFromProfileUrlRequest,
-        background_tasks: BackgroundTasks,
-        user=Depends(fastapi_users.get_current_active_user),
+    app_request: PiplDetailsFromProfileUrlRequest,
+    background_tasks: BackgroundTasks,
+    user=Depends(fastapi_users.get_current_active_user),
 ):
     logger.debug(f"{app_request=}, {user=}")
 
