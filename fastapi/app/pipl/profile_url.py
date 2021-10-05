@@ -349,9 +349,9 @@ def add_excel_template_to_file(outgoing_filename, user):
                 for rows in leads_sheet.iter_rows(min_row=6, max_row=6, min_col=1):
                     for cell in rows:
                         cell.fill = PatternFill(fgColor="B4C9D9", patternType="solid")
-                no_of_record = index_sheet['J10']
-                requested_by = index_sheet['J12']
-                request_date = index_sheet['J14']
+                no_of_record = index_sheet['J8']
+                requested_by = index_sheet['J10']
+                request_date = index_sheet['J12']
                 no_of_record.value = data_sheet_row_count - 1
                 requested_by.value = user.username
                 today = date.today()
