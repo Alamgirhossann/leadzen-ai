@@ -708,22 +708,22 @@ const SavedList = (props) => {
       console.error(e);
     }
   }
-  const handleProfile = async (index, data,searchType) => {
-    var reqJsonPipl = null
-    if (searchType==="texAu"){
+  const handleProfile = async (index, data, searchType) => {
+    var reqJsonPipl = null;
+    if (searchType === "texAu") {
       reqJsonPipl = {
-      email: "",
-      name: { first_name: "", last_name: "" },
-      url: data.save_list_results.url,
-    };
-    }else {
+        email: "",
+        name: { first_name: "", last_name: "" },
+        url: data.save_list_results.url,
+      };
+    } else {
       let hash_key = await digestMessage(JSON.stringify(data));
-          console.log("hash_key>>>>>>>>>>", hash_key);
+      console.log("hash_key>>>>>>>>>>", hash_key);
       reqJsonPipl = {
         hash_key: hash_key,
-            type: "PIPL_REC",
-            result: [data],
-          };
+        type: "PIPL_REC",
+        result: [data],
+      };
     }
 
     try {
@@ -905,19 +905,28 @@ const SavedList = (props) => {
                               "assets/images/author-image.png"
                             }
                             alt=""
+                            style={{ borderRadius: "50%" }}
                           />
                         </p>
                         <p className="save-name">
-                          {data.search_type==="texAu"?data.save_list_results.name:data.save_list_results.names[0].display}
+                          {data.search_type === "texAu"
+                            ? data.save_list_results.name
+                            : data.save_list_results.names[0].display}
                         </p>
                         <div className="save-speaker">
                           <div>
                             <small className="d-block">
-                              Works at {data.search_type==="texAu"?data.save_list_results.job:<React.Fragment>
-                              {data.save_list_results.jobs === undefined ||
-                                data.save_list_results.jobs.length === 0
-                                  ? null
-                                  : data.save_list_results.jobs[0].display}</React.Fragment>}
+                              Works at{" "}
+                              {data.search_type === "texAu" ? (
+                                data.save_list_results.job
+                              ) : (
+                                <React.Fragment>
+                                  {data.save_list_results.jobs === undefined ||
+                                  data.save_list_results.jobs.length === 0
+                                    ? null
+                                    : data.save_list_results.jobs[0].display}
+                                </React.Fragment>
+                              )}
                             </small>
                             {/*<small className="d-block">*/}
                             {/*  Works at {data.comp}*/}
@@ -936,7 +945,8 @@ const SavedList = (props) => {
                         </div>
 
                         <p className="save-view-btn">
-                          {data.search_type==="texAu"?<a
+                          {data.search_type === "texAu" ? (
+                            <a
                               className="btn button"
                               data-toggle="collapse"
                               href={"#collapseExample_" + `${data.id}`}
@@ -944,10 +954,14 @@ const SavedList = (props) => {
                               role="button"
                               aria-expanded="false"
                               aria-controls="collapseExample"
-                              onClick={() => handleProfile(data.id, data, data.search_type)}
-                          >
-                            View Profile
-                          </a>:<a
+                              onClick={() =>
+                                handleProfile(data.id, data, data.search_type)
+                              }
+                            >
+                              View Profile
+                            </a>
+                          ) : (
+                            <a
                               className="btn button"
                               data-toggle="collapse"
                               href={"#collapseExample_" + `${data.id}`}
@@ -955,10 +969,17 @@ const SavedList = (props) => {
                               role="button"
                               aria-expanded="false"
                               aria-controls="collapseExample"
-                              onClick={() => handleProfile(data.id, data.save_list_results, data.search_type)}
-                          >
-                            View Profile
-                          </a>}
+                              onClick={() =>
+                                handleProfile(
+                                  data.id,
+                                  data.save_list_results,
+                                  data.search_type
+                                )
+                              }
+                            >
+                              View Profile
+                            </a>
+                          )}
                         </p>
                         <a
                           href="savedList"
