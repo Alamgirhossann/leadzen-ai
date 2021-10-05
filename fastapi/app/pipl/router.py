@@ -134,7 +134,7 @@ async def people_search(
                         "hash_key": app_request.hash_key,
                         "search_results": pipl_res,
                     }
-                    pipl_res = await verify_mail(pipl_res)
+                    pipl_res = await add_email_verification_data(pipl_res)
                     background_tasks.add_task(
                         add_profile, request=request, user=user_response
                     )
@@ -153,7 +153,7 @@ async def people_search(
         return None
 
 
-async def verify_mail(email_verification_request):
+async def add_email_verification_data(email_verification_request):
     emails = []
 
     for res in email_verification_request:
