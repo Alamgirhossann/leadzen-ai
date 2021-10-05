@@ -339,19 +339,19 @@ def add_excel_template_to_file(outgoing_filename, user):
                 wb_template = load_workbook(f'{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx')
                 index_sheet = wb_template.get_sheet_by_name('Index')
                 data = wb_orginal.get_sheet_by_name('Sheet1')
-                financial_advisor_sheet = wb_template.get_sheet_by_name('Financial Advisor')
+                leads_sheet = wb_template.get_sheet_by_name('Leads')
                 data_sheet_row_count = data.max_row
                 data_sheet_col_count = data.max_column
                 for row in range(1, data_sheet_row_count + 1):
                     for col in range(1, data_sheet_col_count + 1):
                         c = data.cell(row=row, column=col)
-                        financial_advisor_sheet.cell(row=row + 5, column=col).value = c.value
-                for rows in financial_advisor_sheet.iter_rows(min_row=6, max_row=6, min_col=1):
+                        leads_sheet.cell(row=row + 5, column=col).value = c.value
+                for rows in leads_sheet.iter_rows(min_row=6, max_row=6, min_col=1):
                     for cell in rows:
                         cell.fill = PatternFill(fgColor="B4C9D9", patternType="solid")
-                no_of_record = index_sheet['J18']
-                requested_by = index_sheet['J20']
-                request_date = index_sheet['J22']
+                no_of_record = index_sheet['J10']
+                requested_by = index_sheet['J12']
+                request_date = index_sheet['J14']
                 no_of_record.value = data_sheet_row_count - 1
                 requested_by.value = user.username
                 today = date.today()
