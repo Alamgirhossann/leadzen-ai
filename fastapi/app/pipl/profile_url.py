@@ -169,12 +169,12 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             pipl_search_results_res.append(items[0])
             filtered_list.append(items[1])
 
-        if not (profile_res_check := await check_result_exists_in_profile_search_history(
+        await check_result_exists_in_profile_search_history(
                 responses=pipl_search_results_res, urls=urls, user=request.user)
-        ):
-            await check_result_exists_in_email_search_history(
-                responses=filtered_list, urls=urls, user=request.user
-            )
+        # ):
+        #     await check_result_exists_in_email_search_history(
+        #         responses=filtered_list, urls=urls, user=request.user
+        #     )
 
     logger.debug(f"{type(filtered_list)=}>>>>>>{filtered_list=}")
 
@@ -280,23 +280,25 @@ async def check_result_exists_in_profile_search_history(
         url_split_temp = parsed.query.split("&")[0]
         split_url = url_split_temp.split("=")[1]
 
-        result_hash_key = await make_url_hash_key(url=urllib.parse.unquote(split_url))
+        url_hash_key = await make_url_hash_key(url=urllib.parse.unquote(split_url))
         # logger.debug(f"in after result {result=}")
-        # result_hash_key = make_result_hash_key(result=result)
+        result_hash_key = make_result_hash_key(result=result)
         logger.debug(f"{result_hash_key=}")
-        if not (exists_response := await check_hash_key_exists_in_profile_search_history(
+        if (exists_response := await check_hash_key_exists_in_profile_search_history(
                 result_hash=result_hash_key
         )):
-            logger.debug("profile not found>>>")
-            logger.debug(f"{exists_response=}")
-            await add_to_profile_search(
-                search_type="texAu",
-                hash_key=result_hash_key,
-                search_results=result, user=user
-            )
-            await deduct_user_profile_credit("PROFILE", user)
+            logger.debug("profile found by serach result hash key>>")
+            return None
+        logger.debug("profile not found>>>")
+        logger.debug(f"{exists_response=}")
+        await add_to_profile_search(
+            search_type="texAu",
+            hash_key=url_hash_key,
+            search_results=result, user=user
+        )
+        await deduct_user_profile_credit("PROFILE", user)
 
-            exists_response = result
+        exists_response = result
         logger.debug(f"{exists_response=}")
         return exists_response
 
