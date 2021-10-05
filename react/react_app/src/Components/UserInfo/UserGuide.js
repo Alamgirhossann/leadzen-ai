@@ -221,7 +221,7 @@ const UserGuide = () => {
                 />
               </div>
               <div>
-                <AskJarvis />
+                {/*<AskJarvis />*/}
               </div>
               <ExtractContacts />
             </div>

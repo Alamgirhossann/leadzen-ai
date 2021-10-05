@@ -405,7 +405,7 @@ const DetailedInfo = () => {
                 ))}
               </div>
               <div>
-                <AskJarvis />
+                {/*<AskJarvis />*/}
               </div>
             </div>
           </div>

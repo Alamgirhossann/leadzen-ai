@@ -56,13 +56,13 @@ async def upload_csv_file(
     # and then use it for pandas to read, and since both these files are temp files
     # they will vanish as soon as close as called, hence using the with context manager
 
-    def readfile(pandas_readfile):
+    async def readfile(pandas_readfile):
         with tempfile.TemporaryFile() as temp_file:
             lines = file.file.readlines()
             temp_file.writelines(lines)
             temp_file.seek(0)
 
-            df = pandas_readfile(temp_file)
+            df = pandas_readfile(temp_file,sep=' ', dtype={2:'str'})
             logger.debug(df.head())
             if df is None or df.empty:
                 logger.warning("No Data in uploaded file")
@@ -94,7 +94,15 @@ async def upload_csv_file(
             outgoing_filename = (
                 f"{API_CONFIG_BULK_OUTGOING_DIRECTORY}/{str(uuid.uuid4())}.csv"
             )
-            # TODO: check Credit if not sufficient send mail and exit else continue with scrapping
+            user_response = await get_user(user)
+
+            logger.debug(f"{user_response=}, {type(user_response)}")
+            if user_response and user_response.profile_credit < len(df) or user_response.email_credit < len(df):
+                logger.warning("Insufficient Credits")
+                raise HTTPException(
+                    status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
+                )
+
             background_tasks.add_task(
                 handle_bulk_profile_urls,
                 request=BulkProfileUrlRequest(
@@ -112,10 +120,10 @@ async def upload_csv_file(
             )
 
     if file.filename.endswith(".csv"):
-        data = readfile(pd.read_csv)
+        data = await readfile(pd.read_csv)
         return data
     elif file.filename.endswith(".xlsx"):
-        data = readfile(pd.read_excel)
+        data = await readfile(pd.read_excel)
         return data
     else:
         logger.warning(f"File format not excel or csv: {file.filename=}")
@@ -134,6 +142,9 @@ async def send_status_stream(filename: str, request: Request):
 class BulkExportToExcelRequest(BaseModel):
     profile_urls: List[str]
     hash_key_list: Optional[List[Dict]]
+    export_type: Optional[str] = None
+    search_id: Optional[str] = None
+    search_index: Optional[List[Dict]] = None
 
 
 @router.post("/export/excel", response_model=BulkUploadResponse)
@@ -146,7 +157,8 @@ async def export_excel_file(
     user_response = await get_user(user)
     logger.debug(f"{app_request=}>>>{len(app_request.profile_urls)=}")
     logger.debug(f"{user_response=}, {type(user_response)}")
-    if user_response and user_response.profile_credit < len(app_request.profile_urls):
+    if user_response and (user_response.profile_credit < len(app_request.profile_urls)
+                          or (user_response.email_credit < len(app_request.profile_urls))):
         logger.warning("Insufficient Credits")
         raise HTTPException(
             status_code=status.HTTP_402_PAYMENT_REQUIRED, detail="Insufficient Credits"
@@ -160,6 +172,9 @@ async def export_excel_file(
             hash_key_list=app_request.hash_key_list,
             outgoing_filename=outgoing_filename,
             user=user,
+            export_type=app_request.export_type,
+            search_id=app_request.search_id,
+            search_index=app_request.search_index
         )
     )
 
