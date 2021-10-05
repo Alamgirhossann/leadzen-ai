@@ -37,16 +37,16 @@ const SpecificSearchBtn = (details) => {
     // this opt will toggle the people to company
 
     <div>
-      <div className="btnn btn-1">
-        <input
-          type="checkbox"
-          name="switch"
-          id="switch"
-          checked={toggleCheck}
-          onClick={(e) => handleChange(e, e.target.checked)}
-        />
-        <label htmlFor="switch" />
-      </div>
+      {/*<div className="btnn btn-1">*/}
+      {/*  <input*/}
+      {/*    type="checkbox"*/}
+      {/*    name="switch"*/}
+      {/*    id="switch"*/}
+      {/*    checked={toggleCheck}*/}
+      {/*    onClick={(e) => handleChange(e, e.target.checked)}*/}
+      {/*  />*/}
+      {/*  <label htmlFor="switch" />*/}
+      {/*</div>*/}
     </div>
   );
 };
