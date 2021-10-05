@@ -57,7 +57,11 @@ const BulkSearch = (data) => {
             );
         }
 
-        function handleUnAuthorized(response = null) {}
+        function handleUnAuthorized(response = null) {
+           console.log("User is UnAuthorized");
+          alert("Please Logout and LogIn Again");
+
+        }
 
         switch (response.status) {
           case 200:
