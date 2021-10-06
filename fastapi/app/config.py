@@ -169,7 +169,8 @@ API_CONFIG_SELF_BASE_EXTERNAL_URL = os.getenv(
 API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6e34834273"  # Generated using: openssl rand -hex 32
 
 API_CONFIG_DATABASE_URL = os.getenv(
-    "API_CONFIG_DATABASE_URL", "postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_priyanka"
+    "API_CONFIG_DATABASE_URL",
+    "postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_pinaki2",
 )
 API_CONFIG_EMAIL_SEND_URL = (
     f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send"
@@ -268,7 +269,6 @@ API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_SOCIAL_MEDIA_SPICE_ID = os.getenv(
     "API_CONFIG_TEXAU_LINKEDIN_FIND_COMPANY_DOMAIN_SPICE_ID",
     "5d5b9ba058ad5ac0f87fc2cf",
 )
-
 API_CONFIG_PROXY_CURL_ENDPOINT = os.getenv(
     "API_PROXY_CURL_ENDPOINT", "https://nubela.co/proxycurl/api/v2/linkedin"
 )
@@ -292,6 +292,10 @@ API_CONFIG_SNOV_ADD_URL_SEARCH = os.getenv(
 )
 API_CONFIG_SNOV_GET_EMAIL = os.getenv(
     "API_CONFIG_SNOV_GET_EMAIL", "https://api.snov.io/v1/get-emails-from-url"
+)
+API_CONFIG_SNOV_GET_EMAIL_FROM_NAME = os.getenv(
+    "API_CONFIG_SNOV_GET_EMAIL_FROM_NAME",
+    "https://api.snov.io/v1/get-emails-from-names",
 )
 API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS = int(
     os.getenv("API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS", "30")

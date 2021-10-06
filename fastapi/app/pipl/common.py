@@ -4,7 +4,7 @@ import json
 import os
 import sys
 import urllib
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Union, Any, Tuple
 
 import httpx
 import jmespath
@@ -20,7 +20,8 @@ from fastapi.responses import JSONResponse
 
 from app.config import (
     API_CONFIG_PIPL_RATE_LIMIT_MAX_CALL_COUNT,
-    API_CONFIG_PIPL_RATE_LIMIT_DURATION_IN_SECONDS, API_CONFIG_CHECK_EMAIL,
+    API_CONFIG_PIPL_RATE_LIMIT_DURATION_IN_SECONDS,
+    API_CONFIG_CHECK_EMAIL,
 )
 from app.credits.admin import deduct_credit
 from app.credits.profile import bulk_add_credit_profile
@@ -52,7 +53,19 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
 
     if "emails" in person:
         emails = jmespath.search("emails[*].address", person)
-        result["Emails"] = ", ".join(emails)
+        email_list = []
+        for email in emails:
+            email_check_valid = requests.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
+            logger.debug(f"{email_check_valid.text=}")
+            if (
+                email_check_valid.text == "ok"
+                or email_check_valid.text == "ok_for_all|ok_for_all"
+            ):
+                email_list.append(email)
+
+        logger.debug(f"#######{email_list=}")
+
+        result["Emails"] = ", ".join(email_list)
 
     # if is_email_required and "professional_emails" in person:
     #     emails = jmespath.search("emails[*].address", person)
@@ -166,25 +179,27 @@ async def get_pipl_response(hash_key_list, url, user, client):
                         )
 
                 pipl_response = await client.get(url)
-                logger.debug(f"{pipl_response=}>>>{is_record_present=},{user_response=},>>>{user_response=}")
+                logger.debug(
+                    f"{pipl_response=}>>>{is_record_present=},{user_response=},>>>{user_response=}"
+                )
                 return pipl_response, is_record_present, user_response, hash_key
     except Exception as e:
         logger.critical(f"Exception in PIPL search: {str(e)}")
         exc_type, exc_obj, exc_tb = sys.exc_info()
         print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
+        print("Exception" + str(e))
         return None
 
 
 async def search_one_texAu(
-        url: str,
-        client: httpx.AsyncClient,
-        slug: str,
-        limiter: AsyncLimiter,
-        hash_key_list: List[Dict],
-        user,
-        search_id: str,
-        search_index: List[Dict],
+    url: str,
+    client: httpx.AsyncClient,
+    slug: str,
+    limiter: AsyncLimiter,
+    hash_key_list: List[Dict],
+    user,
+    search_id: str,
+    search_index: List[Dict],
 ) -> Optional[List[Dict]]:
     try:
         pipl_response = None
@@ -193,12 +208,19 @@ async def search_one_texAu(
         hash_key = None
         async with limiter:
             if hash_key_list:
-                pipl_response, is_record_present, user_response, hash_key = await get_pipl_response(hash_key_list, url,
-                                                                                                    user, client)
+                (
+                    pipl_response,
+                    is_record_present,
+                    user_response,
+                    hash_key,
+                ) = await get_pipl_response(hash_key_list, url, user, client)
 
                 if pipl_response and not pipl_response.status_code == 200:
                     logger.debug(f"not pipl_response.status_code == 200")
-                    if pipl_response.status_code == 403 or pipl_response.status_code == 429:
+                    if (
+                        pipl_response.status_code == 403
+                        or pipl_response.status_code == 429
+                    ):
                         # https://docs.pipl.com/reference/#rate-limiting-information
                         capture_message(
                             message=f"PIPL Rate Limit Hit, {url=}, {pipl_response.status_code =}"
@@ -217,11 +239,21 @@ async def search_one_texAu(
 
                 if data["@persons_count"] == 1 and data.get("person"):
                     logger.debug(
-                        f'In data["@persons_count"] == 1 and data.get("person"){data["@persons_count"] == 1 and data.get("person")=} ')
-                    result = filter_data(person=data.get("person"), slug=slug, is_email_required=False)
+                        f'In data["@persons_count"] == 1 and data.get("person"){data["@persons_count"] == 1 and data.get("person")=} '
+                    )
+                    result = filter_data(
+                        person=data.get("person"), slug=slug, is_email_required=False
+                    )
                     logger.debug(f"{is_record_present=}")
-                    await check_credit_deduct_and_add_profile(data, is_record_present, result, search_id, search_index,
-                                                              user_response, hash_key)
+                    await check_credit_deduct_and_add_profile(
+                        data,
+                        is_record_present,
+                        result,
+                        search_id,
+                        search_index,
+                        user_response,
+                        hash_key,
+                    )
 
                     return [result]
                 elif data["@persons_count"] > 1 and data.get("possible_persons"):
@@ -250,7 +282,7 @@ async def search_one_texAu(
 
 
 async def check_credit_deduct_and_add_profile(
-        data, is_record_present, result, search_id, search_index, user_response, hash_key
+    data, is_record_present, result, search_id, search_index, user_response, hash_key
 ):
     if result and not is_record_present:
         credit_res = await deduct_credit("PROFILE", user_response)
@@ -271,7 +303,7 @@ async def check_credit_deduct_and_add_profile(
 
 
 async def save_profile_credit(
-        result_set, search_id, search_index, user_response, hash_key
+    result_set, search_id, search_index, user_response, hash_key
 ):
     phones = result_set.get("phones")
     phone_list = []
@@ -331,14 +363,14 @@ async def get_pipl_response_for_pipl_export(key, key1, value, user):
 
 
 async def search_one_pipl(
-        index_of_rec: str,
-        client: httpx.AsyncClient,
-        slug: str,
-        limiter: AsyncLimiter,
-        hash_key_list: List[Dict],
-        user,
-        search_id: str,
-        search_index: List[Dict],
+    index_of_rec: str,
+    client: httpx.AsyncClient,
+    slug: str,
+    limiter: AsyncLimiter,
+    hash_key_list: List[Dict],
+    user,
+    search_id: str,
+    search_index: List[Dict],
 ) -> Optional[List[Dict]]:
     try:
 
@@ -360,7 +392,9 @@ async def search_one_pipl(
                                 if key1 == value:
                                     (
                                         pipl_response,
-                                        is_credit_applied, user_response, hash_key
+                                        is_credit_applied,
+                                        user_response,
+                                        hash_key,
                                     ) = await get_pipl_response_for_pipl_export(
                                         key, key1, value, user
                                     )
@@ -370,7 +404,9 @@ async def search_one_pipl(
                                         return None
                                     logger.debug(f"data 200>>>")
                                     logger.debug(data.keys())
-                                    result = filter_data(person=data, slug=slug, is_email_required=False )
+                                    result = filter_data(
+                                        person=data, slug=slug, is_email_required=False
+                                    )
                                     logger.debug(f"{is_credit_applied=}")
                                     if result and is_credit_applied:
                                         credit_res = await deduct_credit(
@@ -409,12 +445,12 @@ async def search_one_pipl(
 
 
 async def search_all_by_texAu(
-        urls: List[str],
-        slugs: List[str],
-        hash_key_list: List[Dict],
-        search_id: str,
-        search_index: List[Dict],
-        user,
+    urls: List[str],
+    slugs: List[str],
+    hash_key_list: List[Dict],
+    search_id: str,
+    search_index: List[Dict],
+    user,
 ) -> Optional[List[Dict]]:
     if len(urls) != len(slugs):
         logger.warning(f"{len(urls)=} is not equal to {len(slugs)=}")
@@ -457,12 +493,12 @@ async def search_all_by_texAu(
 
 
 async def search_all_by_pipl(
-        urls: List[str],
-        slugs: List[str],
-        hash_key_list: List[Dict],
-        search_id: str,
-        search_index: List[Dict],
-        user,
+    urls: List[str],
+    slugs: List[str],
+    hash_key_list: List[Dict],
+    search_id: str,
+    search_index: List[Dict],
+    user,
 ) -> Optional[List[Dict]]:
     if len(urls) != len(slugs):
         logger.warning(f"{len(urls)=} is not equal to {len(slugs)=}")
@@ -503,15 +539,14 @@ async def search_all_by_pipl(
         logger.critical(f"Exception Searching PIPL: {str(e)}")
         exc_type, exc_obj, exc_tb = sys.exc_info()
         print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
+        print("Exception" + str(e))
         return None
 
 
 async def search_one(
-        url: str, client: httpx.AsyncClient, slug: str, limiter: AsyncLimiter
-) -> Union[None, tuple[Any, dict], tuple[None, None]]:
+    url: str, client: httpx.AsyncClient, slug: str, limiter: AsyncLimiter
+) -> Union[None, Tuple[Any, dict], Tuple[None, None]]:
     try:
-
 
         async with limiter:
             if not url:
@@ -542,7 +577,9 @@ async def search_one(
                 split_url = url_split_temp.split("=")[1]
                 linkedin_url = urllib.parse.unquote(split_url)
                 logger.debug(f"{linkedin_url=}")
-                return data.get("person"), filter_data(person=data.get("person"), slug=linkedin_url, is_email_required=True)
+                return data.get("person"), filter_data(
+                    person=data.get("person"), slug=linkedin_url, is_email_required=True
+                )
                 # return [filter_data(person=data.get("person"), slug=slug)]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
                 # return [
@@ -558,7 +595,7 @@ async def search_one(
         logger.critical(f"Exception in PIPL search: {str(e)}")
         exc_type, exc_obj, exc_tb = sys.exc_info()
         print("line->" + str(exc_tb.tb_lineno))
-        print('Exception' + str(e))
+        print("Exception" + str(e))
         return None
 
 

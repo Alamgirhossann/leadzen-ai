@@ -11,9 +11,18 @@ from pydantic import BaseModel, HttpUrl
 
 from app.credits.email import get_email_by_hash_key
 from app.history import add_history
-from app.config import API_CONFIG_PIPL_BASE_URL, API_CONFIG_PIPL_API_KEY, API_CONFIG_EXCEL_FILE_PATH
+from app.config import (
+    API_CONFIG_PIPL_BASE_URL,
+    API_CONFIG_PIPL_API_KEY,
+    API_CONFIG_EXCEL_FILE_PATH,
+)
 from app.credits.admin import deduct_credit
-from app.pipl.common import write_to_file, search_all, search_all_by_pipl, search_all_by_texAu
+from app.pipl.common import (
+    write_to_file,
+    search_all,
+    search_all_by_pipl,
+    search_all_by_texAu,
+)
 from datetime import date
 import openpyxl
 from openpyxl import load_workbook
@@ -52,14 +61,14 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
         ]
 
         if not (
-                responses := await search_all_by_texAu(
-                    urls=urls,
-                    slugs=profile_urls,
-                    hash_key_list=request.hash_key_list,
-                    search_id=request.search_id,
-                    search_index=request.search_index,
-                    user=request.user,
-                )
+            responses := await search_all_by_texAu(
+                urls=urls,
+                slugs=profile_urls,
+                hash_key_list=request.hash_key_list,
+                search_id=request.search_id,
+                search_index=request.search_index,
+                user=request.user,
+            )
         ):
             logger.error("Error Getting Data")
             return
@@ -71,14 +80,14 @@ async def execute_task(request: PiplDetailsFromProfileUrlRequest):
     elif request.export_type == "PIPL":
         logger.debug(f"In PIPL")
         if not (
-                responses := await search_all_by_pipl(
-                    urls=request.profile_urls,
-                    slugs=request.profile_urls,
-                    hash_key_list=request.hash_key_list,
-                    search_id=request.search_id,
-                    search_index=request.search_index,
-                    user=request.user,
-                )
+            responses := await search_all_by_pipl(
+                urls=request.profile_urls,
+                slugs=request.profile_urls,
+                hash_key_list=request.hash_key_list,
+                search_id=request.search_id,
+                search_index=request.search_index,
+                user=request.user,
+            )
         ):
             logger.error("Error Getting Data")
             return
@@ -124,7 +133,9 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
     # logger.debug(f"%%%%%%{len(found_urls}")
     if found_urls:
         if not (
-                pipl_search_results_found := await search_all(urls=found_urls, slugs=found_urls)
+            pipl_search_results_found := await search_all(
+                urls=found_urls, slugs=found_urls
+            )
         ):
             logger.error("Error Getting Data")
             return
@@ -154,7 +165,9 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
         pipl_search_results = None
         if not_found_urls_only:
             if not (
-                    pipl_search_results := await search_all(urls=not_found_urls_only, slugs=not_found_urls_only)
+                pipl_search_results := await search_all(
+                    urls=not_found_urls_only, slugs=not_found_urls_only
+                )
             ):
                 logger.error("Error Getting Data")
                 return
@@ -170,7 +183,8 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             filtered_list.append(items[1])
 
         await check_result_exists_in_profile_search_history(
-                responses=pipl_search_results_res, urls=urls, user=request.user)
+            responses=pipl_search_results_res, urls=urls, user=request.user
+        )
         # ):
         #     await check_result_exists_in_email_search_history(
         #         responses=filtered_list, urls=urls, user=request.user
@@ -181,14 +195,19 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
     return await write_to_file(responses=filtered_list, filename=request.filename)
 
 
-async def search_in_history(urls: List[str], user: User) -> tuple[
-    Union[HTTPException, BaseException], Union[HTTPException, BaseException], Union[HTTPException, BaseException],
-    Union[HTTPException, BaseException], Union[
-        HTTPException, BaseException]]:
+async def search_in_history(
+    urls: List[str], user: User
+) -> tuple[
+    Union[HTTPException, BaseException],
+    Union[HTTPException, BaseException],
+    Union[HTTPException, BaseException],
+    Union[HTTPException, BaseException],
+    Union[HTTPException, BaseException],
+]:
     # coroutines_url_hash_key = [make_url_hash_key(url=x) for x in urls]
 
     async def check_hash_key_exists_in_profile_search_history(
-            url_hash: str, user: User
+        url_hash: str, user: User
     ) -> Optional[Dict]:
         # check for url hashes and respond with first result
         if not (response_profile_search := await get_profile_search(url_hash, user)):
@@ -203,11 +222,13 @@ async def search_in_history(urls: List[str], user: User) -> tuple[
 
         url_hash_key = await make_url_hash_key(url=url_hash_key_initial)
 
-        logger.debug(f">>>{ len(url_hash_key_initial)=}>>>{url_hash_key_initial=}>>>{url_hash_key=}")
+        logger.debug(
+            f">>>{ len(url_hash_key_initial)=}>>>{url_hash_key_initial=}>>>{url_hash_key=}"
+        )
         if not (
-                result := await check_hash_key_exists_in_profile_search_history(
-                    url_hash=url_hash_key, user=user
-                )
+            result := await check_hash_key_exists_in_profile_search_history(
+                url_hash=url_hash_key, user=user
+            )
         ):
             return None, url
 
@@ -229,7 +250,7 @@ async def make_url_hash_key(url: str) -> str:
 
 
 async def check_result_exists_in_profile_search_history(
-        responses: List[Dict], urls: List[str], user: User
+    responses: List[Dict], urls: List[str], user: User
 ):
     # def make_url_hash_key(url: str) -> str:
     #     pass
@@ -243,13 +264,11 @@ async def check_result_exists_in_profile_search_history(
     async def add_to_history(result: Dict, user):
 
         logger.debug(f"{result=}")
-        return await add_history('Bulk', 'Bulk', [result], user)
+        return await add_history("Bulk", "Bulk", [result], user)
 
     async def add_to_profile_credit(search_id, result, user):
         logger.debug(f"{search_id=}>>>{type(result)=}>>>{result}")
-        result = {
-            k: v for list_item in result for (k, v) in list_item.items()
-        }
+        result = {k: v for list_item in result for (k, v) in list_item.items()}
         phones = result.get("phones")
         phone_list = []
         for phone in phones:
@@ -259,14 +278,16 @@ async def check_result_exists_in_profile_search_history(
         #                         search_index=request.search_index, user=user)
 
     async def check_hash_key_exists_in_profile_search_history(
-            result_hash: str
+        result_hash: str,
     ) -> Optional[Dict]:
         if not (response_profile_search := await get_profile_search(result_hash, user)):
             return None
         logger.debug(f"{type(response_profile_search)}>>>>{response_profile_search=}")
         return response_profile_search
 
-    async def add_to_profile_search(search_type: str, hash_key: str, search_results: Dict, user):
+    async def add_to_profile_search(
+        search_type: str, hash_key: str, search_results: Dict, user
+    ):
         request_add_profile = {
             "search_type": search_type,
             "hash_key": hash_key,
@@ -284,17 +305,15 @@ async def check_result_exists_in_profile_search_history(
         # logger.debug(f"in after result {result=}")
         result_hash_key = make_result_hash_key(result=result)
         logger.debug(f"{result_hash_key=}")
-        if (exists_response := await check_hash_key_exists_in_profile_search_history(
-                result_hash=result_hash_key
-        )):
+        if exists_response := await check_hash_key_exists_in_profile_search_history(
+            result_hash=result_hash_key
+        ):
             logger.debug("profile found by serach result hash key>>")
             return None
         logger.debug("profile not found>>>")
         logger.debug(f"{exists_response=}")
         await add_to_profile_search(
-            search_type="texAu",
-            hash_key=url_hash_key,
-            search_results=result, user=user
+            search_type="texAu", hash_key=url_hash_key, search_results=result, user=user
         )
         await deduct_user_profile_credit("PROFILE", user)
 
@@ -329,24 +348,26 @@ async def deduct_user_profile_credit(credit_type, user):
 
 
 def add_excel_template_to_file(outgoing_filename, user):
-    if (outgoing_filename == ""):
+    if outgoing_filename == "":
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str("Excel file not found"),
         )
     else:
-        wb_orginal = load_workbook(f'{outgoing_filename}')
-        if (wb_orginal == ""):
+        wb_orginal = load_workbook(f"{outgoing_filename}")
+        if wb_orginal == "":
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=str("Error in Work book Loading"),
             )
         else:
             try:
-                wb_template = load_workbook(f'{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx')
-                index_sheet = wb_template.get_sheet_by_name('Index')
-                data = wb_orginal.get_sheet_by_name('Sheet1')
-                leads_sheet = wb_template.get_sheet_by_name('Leads')
+                wb_template = load_workbook(
+                    f"{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx"
+                )
+                index_sheet = wb_template.get_sheet_by_name("Index")
+                data = wb_orginal.get_sheet_by_name("Sheet1")
+                leads_sheet = wb_template.get_sheet_by_name("Leads")
                 data_sheet_row_count = data.max_row
                 data_sheet_col_count = data.max_column
                 for row in range(1, data_sheet_row_count + 1):
@@ -356,9 +377,9 @@ def add_excel_template_to_file(outgoing_filename, user):
                 for rows in leads_sheet.iter_rows(min_row=6, max_row=6, min_col=1):
                     for cell in rows:
                         cell.fill = PatternFill(fgColor="B4C9D9", patternType="solid")
-                no_of_record = index_sheet['J8']
-                requested_by = index_sheet['J10']
-                request_date = index_sheet['J12']
+                no_of_record = index_sheet["J8"]
+                requested_by = index_sheet["J10"]
+                request_date = index_sheet["J12"]
                 no_of_record.value = data_sheet_row_count - 1
                 requested_by.value = user.username
                 today = date.today()
@@ -370,7 +391,9 @@ def add_excel_template_to_file(outgoing_filename, user):
 
 
 async def check_result_exists_in_email_search_history(responses, urls, user):
-    logger.debug(f"check_result_exists_in_email_search_history{type(responses)=}>>>>{responses=}>>>>{urls=}>>>>{user}")
+    logger.debug(
+        f"check_result_exists_in_email_search_history{type(responses)=}>>>>{responses=}>>>>{urls=}>>>>{user}"
+    )
 
     async def check_hash_key_exists_in_email_search_history(url_hash, user):
         if url_hash and user:
@@ -388,11 +411,13 @@ async def check_result_exists_in_email_search_history(responses, urls, user):
 
         url_hash_key = await make_url_hash_key(url=url_hash_key_initial)
 
-        logger.debug(f">>>{ len(url_hash_key_initial)=}>>>{url_hash_key_initial=}>>>{url_hash_key=}")
+        logger.debug(
+            f">>>{ len(url_hash_key_initial)=}>>>{url_hash_key_initial=}>>>{url_hash_key=}"
+        )
         if not (
-                result := await check_hash_key_exists_in_email_search_history(
-                    url_hash=url_hash_key, user=user
-                )
+            result := await check_hash_key_exists_in_email_search_history(
+                url_hash=url_hash_key, user=user
+            )
         ):
             return None, url
 
