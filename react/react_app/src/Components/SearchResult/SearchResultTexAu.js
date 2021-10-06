@@ -1094,7 +1094,18 @@ const SearchResult = (props) => {
                                   {unlockEmailDetails?.map((spec) => (
                                     <span>
                                       {spec.index === `${currentPage}${index}`
-                                        ? spec.details.email
+                                        ? spec.details.email === null || spec.details.email==="Not Found"?
+                                        spec.details.email
+                                        :
+                                        (
+                                          <div className="d-flex align-items-center">
+                                          <small className="ms-2">{spec.details.email}</small>
+                                          <img
+                                              className="ms-2"
+                                              src="assets/images/Vector.png"
+                                              alt=""
+                                          />
+                                          </div>)
                                         : null}
                                     </span>
                                   ))}
