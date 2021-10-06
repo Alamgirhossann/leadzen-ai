@@ -181,8 +181,8 @@ async def add_email_verification_data(email_verification_request):
             return None
 
     async with httpx.AsyncClient() as client:
-        coroutines = [check_email_validity(email=x, client=client) for x in emails]
-        results = asyncio.gather(coroutines)
+        coroutines = [await check_email_validity(email=x, client=client) for x in emails]
+        results = coroutines
 
     results = [x for x in results if x]  # remove None's
     email_validation_results = dict(
