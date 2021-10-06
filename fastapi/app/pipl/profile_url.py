@@ -1,7 +1,7 @@
 import asyncio
 import hashlib
 import urllib
-from typing import Optional, List, Dict, Union, Tuple
+from typing import Optional, List, Dict, Union
 from urllib.parse import urlparse, urlunparse, urlencode
 from fastapi import HTTPException
 from starlette import status
@@ -183,7 +183,8 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             filtered_list.append(items[1])
 
         await check_result_exists_in_profile_search_history(
-                responses=pipl_search_results_res, urls=urls, user=request.user)
+            responses=pipl_search_results_res, urls=urls, user=request.user
+        )
         # ):
         #     await check_result_exists_in_email_search_history(
         #         responses=filtered_list, urls=urls, user=request.user
@@ -196,7 +197,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
 
 async def search_in_history(
     urls: List[str], user: User
-) -> Tuple[
+) -> tuple[
     Union[HTTPException, BaseException],
     Union[HTTPException, BaseException],
     Union[HTTPException, BaseException],
@@ -304,17 +305,15 @@ async def check_result_exists_in_profile_search_history(
         # logger.debug(f"in after result {result=}")
         result_hash_key = make_result_hash_key(result=result)
         logger.debug(f"{result_hash_key=}")
-        if (exists_response := await check_hash_key_exists_in_profile_search_history(
-                result_hash=result_hash_key
-        )):
+        if exists_response := await check_hash_key_exists_in_profile_search_history(
+            result_hash=result_hash_key
+        ):
             logger.debug("profile found by serach result hash key>>")
             return None
         logger.debug("profile not found>>>")
         logger.debug(f"{exists_response=}")
         await add_to_profile_search(
-            search_type="texAu",
-            hash_key=url_hash_key,
-            search_results=result, user=user
+            search_type="texAu", hash_key=url_hash_key, search_results=result, user=user
         )
         await deduct_user_profile_credit("PROFILE", user)
 
@@ -363,10 +362,12 @@ def add_excel_template_to_file(outgoing_filename, user):
             )
         else:
             try:
-                wb_template = load_workbook(f'{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx')
-                index_sheet = wb_template.get_sheet_by_name('Index')
-                data = wb_orginal.get_sheet_by_name('Sheet1')
-                leads_sheet = wb_template.get_sheet_by_name('Leads')
+                wb_template = load_workbook(
+                    f"{API_CONFIG_EXCEL_FILE_PATH}/LeadZen_template.xlsx"
+                )
+                index_sheet = wb_template.get_sheet_by_name("Index")
+                data = wb_orginal.get_sheet_by_name("Sheet1")
+                leads_sheet = wb_template.get_sheet_by_name("Leads")
                 data_sheet_row_count = data.max_row
                 data_sheet_col_count = data.max_column
                 for row in range(1, data_sheet_row_count + 1):
@@ -376,9 +377,9 @@ def add_excel_template_to_file(outgoing_filename, user):
                 for rows in leads_sheet.iter_rows(min_row=6, max_row=6, min_col=1):
                     for cell in rows:
                         cell.fill = PatternFill(fgColor="B4C9D9", patternType="solid")
-                no_of_record = index_sheet['J8']
-                requested_by = index_sheet['J10']
-                request_date = index_sheet['J12']
+                no_of_record = index_sheet["J8"]
+                requested_by = index_sheet["J10"]
+                request_date = index_sheet["J12"]
                 no_of_record.value = data_sheet_row_count - 1
                 requested_by.value = user.username
                 today = date.today()

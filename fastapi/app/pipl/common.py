@@ -66,7 +66,6 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
         logger.debug(f"#######{email_list=}")
 
         result["Emails"] = ", ".join(email_list)
-        
 
     # if is_email_required and "professional_emails" in person:
     #     emails = jmespath.search("emails[*].address", person)

@@ -818,65 +818,66 @@ const SearchResult = (props) => {
                                                                 ))}
                                                             </small>
 
-                              <a
-                                href="#"
-                                onClick={(e) =>
-                                  handleUnlockEmail(e, index, data)
-                                }
-                              >
-                                <small className="d-block text-danger">
-                                  Unlock Email
-                                </small>
-                              </a>
-                            </div>
-                            <p className="search-view-btn ">
-                              <a
-                                className="btn button"
-                                data-toggle="collapse"
-                                href={
-                                  "#collapseExample_" + `${currentPage}${index}`
-                                }
-                                data-target={
-                                  "#collapseExample_" + `${currentPage}${index}`
-                                }
-                                role="button"
-                                aria-expanded="false"
-                                aria-controls="collapseExample"
-                                onClick={() => handleProfile(index, data)}
-                              >
-                                View Profile
-                              </a>
-                            </p>
+                                                            <a
+                                                                href="#"
+                                                                id={index}
+                                                                onClick={(e) =>
+                                                                    handleUnlockEmail(e, index, data)
+                                                                }
+                                                            >
+                                                                <small className="d-block text-danger">
+                                                                    Unlock Email
+                                                                </small>
+                                                            </a>
+                                                        </div>
+                                                        <p className="search-view-btn ">
+                                                            <a
+                                                                className="btn button"
+                                                                data-toggle="collapse"
+                                                                href={
+                                                                    "#collapseExample_" + `${currentPage}${index}`
+                                                                }
+                                                                data-target={
+                                                                    "#collapseExample_" + `${currentPage}${index}`
+                                                                }
+                                                                role="button"
+                                                                aria-expanded="false"
+                                                                aria-controls="collapseExample"
+                                                                onClick={() => handleProfile(index, data)}
+                                                            >
+                                                                View Profile
+                                                            </a>
+                                                        </p>
 
-                            {/*<a href="#" onClick={clickSelect}>*/}
-                            {/*  <p className="search-close-btn">*/}
-                            {/*    <img*/}
-                            {/*      src={*/}
-                            {/*        selected*/}
-                            {/*          ? "assets/images/Frame 543.png"*/}
-                            {/*          : "assets/images/Group 1863.png"*/}
-                            {/*      }*/}
-                            {/*      alt=""*/}
-                            {/*    />*/}
-                            {/*  </p>*/}
-                            {/*</a>*/}
-                          </div>
-                          <div
-                            style={{
-                              background: "white",
-                              borderRadius: "20px",
-                              padding: "20px",
-                            }}
-                          >
-                            <div
-                              className="panel-collapse collapse in"
-                              id={"collapseExample_" + `${currentPage}${index}`}
-                            >
-                              {/* <div className="card card-body"> */}
-                              {/*<SpecificUser details={data} />*/}
-                              {/* </div> */}
-                              {specificUserDetails?.map((spec) => (
-                                <span>
+                                                        {/*<a href="#" onClick={clickSelect}>*/}
+                                                        {/*  <p className="search-close-btn">*/}
+                                                        {/*    <img*/}
+                                                        {/*      src={*/}
+                                                        {/*        selected*/}
+                                                        {/*          ? "assets/images/Frame 543.png"*/}
+                                                        {/*          : "assets/images/Group 1863.png"*/}
+                                                        {/*      }*/}
+                                                        {/*      alt=""*/}
+                                                        {/*    />*/}
+                                                        {/*  </p>*/}
+                                                        {/*</a>*/}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            background: "white",
+                                                            borderRadius: "20px",
+                                                            padding: "20px",
+                                                        }}
+                                                    >
+                                                        <div
+                                                            className="panel-collapse collapse in"
+                                                            id={"collapseExample_" + `${currentPage}${index}`}
+                                                        >
+                                                            {/* <div className="card card-body"> */}
+                                                            {/*<SpecificUser details={data} />*/}
+                                                            {/* </div> */}
+                                                            {specificUserDetails?.map((spec) => (
+                                                                <span>
                                   {spec.index === `${currentPage}${index}` ? (
                                       <span>
                                       <SpecificUser details={spec.details}/>
