@@ -84,12 +84,12 @@ const NavBar = (props) => {
               </NavLink>
             </li>
 
-            <li className="nav-item me-md-4 me-3">
-              <NavLink exact activeClassName=" active-class" to="/savedList">
-                <img src="assets/images/menu-saved-list.png" alt="saved here" />
-                <span className="ps-2">Saved lists</span>
-              </NavLink>
-            </li>
+            {/*<li className="nav-item me-md-4 me-3">*/}
+            {/*  <NavLink exact activeClassName=" active-class" to="/savedList">*/}
+            {/*    <img src="assets/images/menu-saved-list.png" alt="saved here" />*/}
+            {/*    <span className="ps-2">Saved lists</span>*/}
+            {/*  </NavLink>*/}
+            {/*</li>*/}
 
             <li className="nav-item me-md-4 me-3">
               <NavLink exact activeClassName=" active-class" to="/history">
