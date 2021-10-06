@@ -892,6 +892,8 @@ const SearchResult = (props) => {
     };
   }, []);
 
+  console.log("PRinting email",unlockEmailDetails)
+
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
