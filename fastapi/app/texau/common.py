@@ -29,4 +29,4 @@ TEXAU_PROXY = {
 class TexAuCompanyRequest(BaseModel):
     firstName: str
     lastName: str
-    companyName: Optional[str] = None
+    companyName: str

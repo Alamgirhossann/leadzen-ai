@@ -274,7 +274,7 @@ async def search_company_email(request: TexAuCompanyRequest):
         )
     try:
         texau_result = await get_status_waiting(
-            execution_id=execution_id, max_timeout_counter=30
+            execution_id=execution_id, max_timeout_counter=20
         )
         if not (texau_data := texau_result.data):
             raise HTTPException(
