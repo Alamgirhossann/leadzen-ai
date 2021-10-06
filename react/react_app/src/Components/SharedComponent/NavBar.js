@@ -176,7 +176,7 @@ const NavBar = (props) => {
                         />
                       </div>
 
-                      <span className="small">Limit resets in 5 days</span>
+                      {/*<span className="small">Limit resets in 5 days</span>*/}
                     </div>
                   </li>
                 </ul>
