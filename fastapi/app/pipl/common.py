@@ -51,7 +51,7 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
         names = jmespath.search("names[*].display", person)
         result["Names"] = ", ".join(names)
 
-    if is_email_required and "emails" in person:
+    if "emails" in person:
         emails = jmespath.search("emails[*].address", person)
         email_list = []
         for email in emails:
@@ -66,6 +66,20 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
         logger.debug(f"#######{email_list=}")
 
         result["Emails"] = ", ".join(email_list)
+        
+
+    # if is_email_required and "professional_emails" in person:
+    #     emails = jmespath.search("emails[*].address", person)
+    #     email_list = []
+    #     for email in emails:
+    #         email_check_valid = requests.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
+    #         logger.debug(f"{email_check_valid.text=}")
+    #         if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all':
+    #             email_list.append(email)
+    #
+    #     logger.debug(f"#######{email_list=}")
+    #
+    #     result["Emails"] = ", ".join(email_list)
 
     if "phones" in person:
         phones = jmespath.search("phones[*].display_international", person)
