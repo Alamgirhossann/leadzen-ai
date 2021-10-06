@@ -23,6 +23,7 @@ from app.config import (
     API_CONFIG_SNOV_OAUTH_ACESS_TOKEN,
     API_CONFIG_DATABASE_GET_EMAIL,
     API_CONFIG_DATABASE_ADD_EMAIL,
+    API_CONFIG_CHECK_EMAIL
 )
 
 router = APIRouter(prefix="/snov", tags=["Snov"])
@@ -146,6 +147,7 @@ async def get_emails_from_url(
             async with httpx.AsyncClient() as client:
                 res = await client.post(API_CONFIG_SNOV_GET_EMAIL, data=params)
                 logger.debug(f"snov result>>{res.text=}")
+                #logger.debug(f"email result>>{res.text['data']['emails']=}")
                 if res.status_code == 200 and not 'false' in res.text:
                     if not (data := res.json()):
                         raise HTTPException(
@@ -157,13 +159,17 @@ async def get_emails_from_url(
                         if data['success']:
                             if len(data["data"]["emails"]) > 0:
                                 email_data = data["data"]["emails"]
+                                logger.debug(email_data)
                                 email = email_data[0]["email"]
-                                valid = email_data[0]["status"]
+                                valid = await verify_mail(email)
+                                logger.debug(email)
+                                logger.debug(valid)
                                 if valid == "valid" or valid == "unknown":
                                     background_tasks.add_task(
                                         add_email_into_database, str(user.id), request.hash_key, email
                                     )
                                     background_tasks.add_task(deduct_credit, "EMAIL", user)
+                                    logger.debug("Printing email",email)
                                     return email
                             return None
                         raise HTTPException(
@@ -189,6 +195,34 @@ async def get_emails_from_url(
             detail="Error Getting data from snov",
         )
 
+async def verify_mail(email):
+    try:
+        async with httpx.AsyncClient() as client:
+            email_check_valid = await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")
+            if email_check_valid.status_code == 200:
+                if email_check_valid.text == 'ok' or email_check_valid.text == 'ok_for_all|ok_for_all' :
+                    return "valid"
+                else:
+                    return "Not Valid"
+            elif email_check_valid.status_code == 400:
+                print("in 400")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str("Email Verification : Bad request"),
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=str("Email Verification : Data not found"),
+                )
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print(exc_type, exc_tb.tb_lineno)
+        logger.critical(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error Getting data from Unlock mail-email verification",
+        )
 
 @router.post("/emails_for_company")
 async def get_emails_from_domain(request: TexAuFindLinkedInCompanyRequest):

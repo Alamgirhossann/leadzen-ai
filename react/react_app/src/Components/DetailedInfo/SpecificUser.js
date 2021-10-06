@@ -71,195 +71,191 @@ const SpecificUser = (props) => {
   }, []);
 
   return (
-    <div>
-      {" "}
-      {props.details === "Record Not Found" ||
-      props.details === "Item not found" ||
-      !props.details ||
-      !props.details.phones ? (
         <div>
-          {" "}
-          <section className="item-section" style={{ textAlign: "center" }}>
-            Record Not found
-          </section>
-        </div>
-      ) : (
-        <div>
-          <section className="item-section">
-            <div className="phone-child-div">
-              <div className="">
-                {listPhones.length > 0 ? (
-                  <h6>Associated Phone Numbers</h6>
-                ) : null}
-                {listPhones.length > 0
-                  ? listPhones.map((item, index) => (
-                      <div className="ms-2 d-flex align-items-center mb-3">
-                        <div className="d-flex align-items-center">
-                          <img src="assets/images/Group 1338.png" alt="" />
-                          <small className="ms-2" key={index}>
-                            {item.phone}
-                          </small>
-                        </div>
-                        <div className="d-flex align-items-center">
-                          <a
-                            className="me-2 ms-2"
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigator.clipboard.writeText(item.number);
-                              alert("Phone Number Copied!");
-                            }}
-                          >
-                            <img
-                              style={{ height: "10px" }}
-                              src="assets/images/Union.png"
-                              alt=""
-                            />
-                          </a>
-                        </div>
-                        {item.status === "Success" ? (
-                          <div className="d-flex align-items-center">
-                            <img
-                              className="ms-2"
-                              src="assets/images/Vector.png"
-                              alt=""
-                            />
-                          </div>
-                        ) : null}
-                      </div>
-                    ))
-                  : null}
-              </div>
-              <div>
-                {props.details.emails !== undefined &&
-                props.details.emails.length !== 0 ? (
-                  <h6>Associated Email Addresses</h6>
-                ) : null}
-                {props.details.emails
-                  ? props.details.emails.map((email) => (
-                      <div
-                        className="ms-2 d-flex align-items-center mb-3"
-                        align="left"
-                      >
-                        <div className="d-flex align-items-center">
-                          <small className="ms-2">{email.address}</small>
-                          <img
-                            className="ms-2"
-                            style={{ height: "10px" }}
-                            src="assets/images/Union.png"
-                            alt=""
-                          />
-                        </div>
-                        <div className="d-flex align-items-center">
-                          <img
-                            className="ms-2"
-                            src="assets/images/Vector.png"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                    ))
-                  : null}
-
-                {props.details.usernames !== undefined &&
-                props.details.usernames.length !== 0 ? (
-                  <h6>Associated Usernames</h6>
-                ) : null}
-                {props.details.usernames
-                  ? props.details.usernames.map((data) => (
-                      <div
-                        className="ms-2 d-flex align-items-center mb-3"
-                        align="left"
-                      >
-                        <div className="d-flex align-items-center">
-                          <small className="ms-2">{data.content}</small>
-                          <small className="me-2 ms-2">
-                            {data.valid_since ? (
-                              <span>Since {data.valid_since}</span>
-                            ) : null}
-                          </small>
-                        </div>
-                      </div>
-                    ))
-                  : null}
-
-                {props.details.urls !== undefined &&
-                props.details.urls.length !== 0 ? (
-                  <h6>Probable URLs Associated</h6>
-                ) : null}
-                {props.details.urls
-                  ? props.details.urls.map((url) => (
-                      <div className="ms-2 d-flex align-items-center mb-3">
-                        <div className="d-flex align-items-center">
-                          <small className="ms-2">{url.url}</small>
-                          <a href={url.url} target="_blank">
-                            <img
-                              className="ms-2"
-                              style={{ height: "10px" }}
-                              src="assets/images/Union (1).png"
-                              alt=""
-                            />
-                          </a>
-                        </div>
-                      </div>
-                    ))
-                  : null}
-              </div>
-              <div>
-                {props.details.gender ? <h6>Gender</h6> : null}
-                <div className="ms-2 d-flex align-items-center mb-3">
-                  <small>
-                    {props.details.gender ? props.details.gender.content : null}
-                  </small>
+            {" "}
+            {props.details === "Record Not Found" ||
+            props.details === "Item not found" ||
+            !props.details ||
+            !props.details.phones ? (
+                <div>
+                    {" "}
+                    <section className="item-section" style={{textAlign: "center"}}>
+                        Record Not found
+                    </section>
                 </div>
-                {props.details.dob ? <h6>Age</h6> : null}
-                <div className="ms-2 d-flex align-items-center mb-3">
-                  <small>
-                    {props.details.dob ? (
-                      <span>{props.details.dob.display}</span>
-                    ) : null}
-                  </small>
-                </div>
-                {props.details.languages !== undefined &&
-                props.details.languages.length !== 0 ? (
-                  <h6>Languages Known</h6>
-                ) : null}
-                {props.details.languages
-                  ? props.details.languages.map((language) => (
-                      <div className="ms-2 d-flex align-items-center mb-3">
-                        <small>{language._display}</small>
-                      </div>
-                    ))
-                  : null}
+            ) : (
+                <div>
+                    <section className="item-section">
+                        <div className="phone-child-div">
+                            <div className="">
+                                {listPhones.length > 0 ? (
+                                    <h6>Associated Phone Numbers</h6>
+                                ) : null}
+                                {listPhones.length > 0 ?
+                                    listPhones.map((item, index) => (
+                                        <div className="ms-2 d-flex align-items-center mb-3">
+                                            <div className="d-flex align-items-center">
+                                                <img src="assets/images/Group 1338.png" alt=""/>
+                                                <small className="ms-2" key={index}>{item.phone}</small>
+                                            </div>
+                                            <div className="d-flex align-items-center">
+                                                <a className="me-2 ms-2" href="#"
+                                                   onClick={(e) => {
+                                                        e.preventDefault();
+                                                        navigator.clipboard.writeText(item.number);
+                                                        alert("Phone Number Copied!");
+                                                    }}
+                                                >
+                                                    <img
+                                                        style={{height: "10px"}}
+                                                        src="assets/images/Union.png"
+                                                        alt=""
+                                                    />
+                                                </a>
+                                            </div>
+                                            {item.status==="Success"?
+                                                <div className="d-flex align-items-center">
+                                                <img
+                                                    className="ms-2"
+                                                    src="assets/images/Vector.png"
+                                                    alt=""
+                                                />
+                                            </div>
+                                                :null}
+                                        </div>
+                                    )) : null}
+                            </div>
+                            <div>
+                                {props.details.emails !== undefined &&
+                                props.details.emails.length !== 0 ? (
+                                    <h6>Associated Email Addresses</h6>
+                                ) : null}
+                                {props.details.emails
+                                    ? props.details.emails.map((email) => (
+                                        <div
+                                            className="ms-2 d-flex align-items-center mb-3"
+                                            align="left"
+                                        >
+                                            <div className="d-flex align-items-center">
+                                                <small className="ms-2">{email.address}</small>
+                                                <img
+                                                    className="ms-2"
+                                                    style={{height: "10px"}}
+                                                    src="assets/images/Union.png"
+                                                    alt=""
+                                                />
+                                            </div>
+                                            {email.valid === 'valid'?
+                                            <div className="d-flex align-items-center">
+                                                <img
+                                                    className="ms-2"
+                                                    src="assets/images/Vector.png"
+                                                    alt=""
+                                                />
+                                            </div>:null}
+                                        </div>
+                                    ))
+                                    : null}
 
-                <h6>Location</h6>
-                <div className="ms-2 mb-3">
-                  <div className="d-flex">
-                    <div className="col">
-                      <div className="d-flex">
-                        <div className="me-2">
+                              {props.details.usernames !== undefined &&
+                              props.details.usernames.length !== 0 ? (
+                                <h6>Associated Usernames</h6>
+                              ) : null}
+                              {props.details.usernames
+                                ? props.details.usernames.map((data) => (
+                                    <div
+                                      className="ms-2 d-flex align-items-center mb-3"
+                                      align="left"
+                                    >
+                                      <div className="d-flex align-items-center">
+                                        <small className="ms-2">{data.content}</small>
+                                        <small className="me-2 ms-2">
+                                          {data.valid_since ? (
+                                            <span>Since {data.valid_since}</span>
+                                          ) : null}
+                                        </small>
+                                      </div>
+                                    </div>
+                                  ))
+                                : null}
+
+                              {props.details.urls !== undefined &&
+                              props.details.urls.length !== 0 ? (
+                                <h6>Probable URLs Associated</h6>
+                              ) : null}
+                              {props.details.urls
+                                ? props.details.urls.map((url) => (
+                                    <div className="ms-2 d-flex align-items-center mb-3">
+                                      <div className="d-flex align-items-center">
+                                        <small className="ms-2">{url.url}</small>
+                                        <a href={url.url} target="_blank">
+                                          <img
+                                            className="ms-2"
+                                            style={{ height: "10px" }}
+                                            src="assets/images/Union (1).png"
+                                            alt=""
+                                          />
+                                        </a>
+                                      </div>
+                                    </div>
+                                  ))
+                                : null}
+                            </div>
+                        <div>
+                          {props.details.gender ? <h6>Gender</h6> : null}
                           <div className="ms-2 d-flex align-items-center mb-3">
                             <small>
-                              {props.proxyData && props.proxyData.city
-                                ? props.proxyData.city + ","
-                                : null}{" "}
-                              {props.proxyData && props.proxyData.state
-                                ? props.proxyData.state + ","
-                                : null}{" "}
-                              {props.proxyData &&
-                              props.proxyData.country_full_name
-                                ? props.proxyData.country_full_name
-                                : null}
+                              {props.details.gender ? props.details.gender.content : null}
                             </small>
+                          </div>
+                          {props.details.dob ? <h6>Age</h6> : null}
+                          <div className="ms-2 d-flex align-items-center mb-3">
+                            <small>
+                              {props.details.dob ? (
+                                <span>{props.details.dob.display}</span>
+                              ) : null}
+                            </small>
+                          </div>
+                          {props.details.languages !== undefined &&
+                          props.details.languages.length !== 0 ? (
+                            <h6>Languages Known</h6>
+                          ) : null}
+                          {props.details.languages
+                            ? props.details.languages.map((language) => (
+                                <div className="ms-2 d-flex align-items-center mb-3">
+                                  <small>{language._display}</small>
+                                </div>
+                              ))
+                            : null}
+
+                          <h6>Location</h6>
+                          <div className="ms-2 mb-3">
+                            <div className="d-flex">
+                              <div className="col">
+                                <div className="d-flex">
+                                  <div className="me-2">
+                                    <div className="ms-2 d-flex align-items-center mb-3">
+                                      <small>
+                                        {props.proxyData && props.proxyData.city
+                                          ? props.proxyData.city + ","
+                                          : null}{" "}
+                                        {props.proxyData && props.proxyData.state
+                                          ? props.proxyData.state + ","
+                                          : null}{" "}
+                                        {props.proxyData &&
+                                        props.proxyData.country_full_name
+                                          ? props.proxyData.country_full_name
+                                          : null}
+                                      </small>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+                    </section>
           <section className="item-section">
             <div style={{ width: "900px" }}>
               <h4>Associated Jobs and Companies</h4>

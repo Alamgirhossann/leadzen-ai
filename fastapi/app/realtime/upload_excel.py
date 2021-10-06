@@ -30,7 +30,7 @@ async def upload_excel_file(
     current_user=Depends(fastapi_users.get_current_active_user),
 ):
     if current_user.is_superuser:
-        query = f"SELECT * FROM user WHERE id = :user_id"
+        query = f"SELECT * FROM public.user WHERE id = :user_id"
         row = await database.fetch_one(query=query, values={"user_id": str(user_id)})
         user = {}
         if row:
