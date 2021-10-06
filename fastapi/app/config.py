@@ -174,6 +174,11 @@ API_CONFIG_DATABASE_URL = os.getenv(
 API_CONFIG_EMAIL_SEND_URL = (
     f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send"
 )
+
+API_CONFIG_EMAIL_SEND_CUSTOM_URL = (
+    f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send_custom_email"
+)
+
 API_CONFIG_BULK_MAX_ROWS_IN_CSV = int(
     os.getenv("API_CONFIG_BULK_MAX_ROWS_IN_CSV", "50")
 )

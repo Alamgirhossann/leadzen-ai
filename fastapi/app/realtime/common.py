@@ -10,9 +10,9 @@ from pydantic import BaseModel
 from app.config import (
     API_CONFIG_DEFAULT_STATUS_CHECK_INTERVAL,
     API_CONFIG_SELF_BASE_EXTERNAL_URL,
-    API_CONFIG_EMAIL_SEND_URL,
+    API_CONFIG_EMAIL_SEND_CUSTOM_URL,
 )
-from app.email import UserEmailSendRequest
+from app.email import UserEmailSendCustomRequest
 
 
 class RealTimeRequest(BaseModel):
@@ -90,8 +90,8 @@ async def send_success_email(user, filename: str):
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                API_CONFIG_EMAIL_SEND_URL,
-                json=UserEmailSendRequest(
+                API_CONFIG_EMAIL_SEND_CUSTOM_URL,
+                json=UserEmailSendCustomRequest(
                     email=user["email"],
                     message=message,
                     subject=subject,
@@ -123,8 +123,8 @@ async def send_failure_email(user, filename: str):
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                API_CONFIG_EMAIL_SEND_URL,
-                json=UserEmailSendRequest(
+                API_CONFIG_EMAIL_SEND_CUSTOM_URL,
+                json=UserEmailSendCustomRequest(
                     email=user["email"],
                     message=message,
                     subject=f"Request for {user['requirement']} Failed",
