@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="88222715-6300-4a45-9d53-a6fd76ad5dcc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../fastapi/app/bulk/profile_url.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/bulk/profile_url.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fastapi/app/bulk/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/bulk/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fastapi/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fastapi/app/credits/email.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/credits/email.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fastapi/app/pipl/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/pipl/common.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fastapi/app/pipl/profile_url.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/pipl/profile_url.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fastapi/scripts/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/scripts/run.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +19,34 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
-  <component name="RunManager" selected="npm.Build" />
+  <component name="PropertiesComponent">
+    <property name="NewWatcherDialog.advanced.open" value="true" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="watcher.settings" />
+  </component>
+  <component name="RunManager" selected="npm.Build">
+    <list>
+      <item itemvalue="npm.Build" />
+      <item itemvalue="npm.Run" />
+      <item itemvalue="Shell Script.Deploy" />
+    </list>
+  </component>
   <component name="TaskManager">
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="YamllintSettings">
+    <option name="binPath" value="yamllint" />
   </component>
 </project>

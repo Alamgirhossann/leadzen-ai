@@ -1165,6 +1165,9 @@ const SearchResult = (props) => {
                               {/*    />*/}
                               {/*  )}*/}
                               {/*</p>*/}
+                               <p>
+                              <SavedListButton data={data} searchType="texAu" />
+                            </p>
                             </div>
                             <div
                               style={{
