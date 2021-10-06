@@ -157,11 +157,6 @@ const SpecificUser = (props) => {
                                     ))
                                     : null}
 
-                                
-                            
-                            
-                                
-
                               {props.details.usernames !== undefined &&
                               props.details.usernames.length !== 0 ? (
                                 <h6>Associated Usernames</h6>
