@@ -4,18 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fc75215c-696b-45ea-bfd0-e75464c0801b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../api/app/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/../api/app/database.py" afterDir="false" />
+    <list default="true" id="88222715-6300-4a45-9d53-a6fd76ad5dcc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/CompanySharedComponent/CompanyFilters.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/CompanySharedComponent/CompanyFilters.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/DetailedInfo/SpecificUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/DetailedInfo/SpecificUser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/LogIn/LogIn.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/LogIn/LogIn.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/Profile/Profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/Profile/Profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SavedListButton.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SavedListButton.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SharedComponent/BulkSearch.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SharedComponent/BulkSearch.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SharedComponent/NavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SharedComponent/NavBar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SharedComponent/SharedHistory.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SharedComponent/SharedHistory.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,54 +16,23 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1yrBwBHY3vzpL0yXYreiayt6eya" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectViewState">
-    <option name="autoscrollFromSource" value="true" />
-    <option name="autoscrollToSource" value="true" />
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="false" />
-    <option name="showLibraryContents" value="true" />
-    <option name="showMembers" value="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="PropertiesComponent">
-    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="NewWatcherDialog.advanced.open" value="true" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="nodejs_package_manager_path" value="yarn" />
-    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/react_app/node_modules/prettier" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
   </component>
-  <component name="RunManager" selected="npm.Run">
+  <component name="RunManager" selected="npm.Build">
     <list>
-      <item itemvalue="npm.Run" />
       <item itemvalue="npm.Build" />
+      <item itemvalue="npm.Run" />
       <item itemvalue="Shell Script.Deploy" />
     </list>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="fc75215c-696b-45ea-bfd0-e75464c0801b" name="Changes" comment="" />
-      <created>1633000063113</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1633000063113</updated>
-      <workItem from="1633000065066" duration="856000" />
-      <workItem from="1633536323273" duration="1316000" />
-    </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -85,10 +45,6 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
   <component name="YamllintSettings">
     <option name="binPath" value="yamllint" />

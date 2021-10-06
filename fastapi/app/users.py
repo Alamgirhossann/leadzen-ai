@@ -38,7 +38,7 @@ class UserCreate(models.BaseUserCreate):
 
 
 class UserUpdate(User, models.BaseUserUpdate):
-    username: str
+    username: Optional[str]
     onboarded: bool = False
     profile_credit: Optional[int] = 5
     email_credit: Optional[int] = 5
