@@ -136,7 +136,7 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             filtered_list.append(items[1])
             print(len(items))
 
-    if (not_founds := history_search_result_1.get("not_found")):
+    if not_founds := history_search_result_1.get("not_found"):
 
         logger.debug(f"{not_founds=}>>{type(not_founds)=}>>>{found_urls=}")
         not_found_urls = None
@@ -170,12 +170,11 @@ async def handle_bulk_search(request: PiplDetailsFromProfileUrlRequest):
             filtered_list.append(items[1])
 
         await check_result_exists_in_profile_search_history(
-            responses=pipl_search_results_res, urls=urls, user=request.user
-        )
-
-    await check_result_exists_in_email_search_history(
-        responses=filtered_list, urls=urls, user=request.user
-    )
+                responses=pipl_search_results_res, urls=urls, user=request.user)
+        # ):
+        #     await check_result_exists_in_email_search_history(
+        #         responses=filtered_list, urls=urls, user=request.user
+        #     )
 
     logger.debug(f"{type(filtered_list)=}>>>>>>{filtered_list=}")
 
@@ -223,6 +222,7 @@ async def search_in_history(urls: List[str], user: User) -> tuple[
 
 
 async def make_url_hash_key(url: str) -> str:
+    logger.debug(f" In make_url_hash_key : {url=}")
     encoded = url.encode()
     result = hashlib.sha256(encoded)
     return result.hexdigest()
@@ -275,23 +275,30 @@ async def check_result_exists_in_profile_search_history(
         return await add_profile(request_add_profile, user)
 
     async def check_one_result(url: str, result: Dict):
-        # url_hash_key = make_url_hash_key(url=url)
-        logger.debug(f"in after result {result=}")
+        logger.debug(f"{url=}")
+        parsed = urlparse(url)
+        url_split_temp = parsed.query.split("&")[0]
+        split_url = url_split_temp.split("=")[1]
+
+        url_hash_key = await make_url_hash_key(url=urllib.parse.unquote(split_url))
+        # logger.debug(f"in after result {result=}")
         result_hash_key = make_result_hash_key(result=result)
         logger.debug(f"{result_hash_key=}")
-        if not (exists_response := await check_hash_key_exists_in_profile_search_history(
+        if (exists_response := await check_hash_key_exists_in_profile_search_history(
                 result_hash=result_hash_key
         )):
-            logger.debug("profile not found>>>")
-            logger.debug(f"{exists_response=}")
-            await add_to_profile_search(
-                search_type="PIPL",
-                hash_key=result_hash_key,
-                search_results=result, user=user
-            )
-            await deduct_user_profile_credit("PROFILE", user)
+            logger.debug("profile found by serach result hash key>>")
+            return None
+        logger.debug("profile not found>>>")
+        logger.debug(f"{exists_response=}")
+        await add_to_profile_search(
+            search_type="texAu",
+            hash_key=url_hash_key,
+            search_results=result, user=user
+        )
+        await deduct_user_profile_credit("PROFILE", user)
 
-            exists_response = result
+        exists_response = result
         logger.debug(f"{exists_response=}")
         return exists_response
 
@@ -371,7 +378,6 @@ async def check_result_exists_in_email_search_history(responses, urls, user):
 
             if not email_response:
                 await deduct_credit("EMAIL", user)
-
 
     async def check_one_result(url, result):
         logger.debug(f"{url=}>>>{result=}")
