@@ -36,10 +36,10 @@ def sendinblue_email_send(templates_id, name, email_to, link):
 
     try:
         api_response = api_instance.send_transac_email(send_smtp_email)
-        logger.success(f"Verification Email Sent, {api_response=}")
+        logger.success(f"Email Sent Using SendInBlue, {api_response=}")
     except ApiException as e:
         logger.critical("Error>>>" + str(e))
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="BadRequest for email verification",
+            detail="BadRequest for email Sending",
         )
