@@ -68,7 +68,7 @@ const SignUp = () => {
                 <Link to="/login" className="text-danger">
                   logging in
                 </Link>{" "}
-                in instead
+                 instead
               </p>
             ) : (
               <p className="fw-bold">
