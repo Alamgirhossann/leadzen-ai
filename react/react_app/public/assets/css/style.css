@@ -14878,6 +14878,12 @@ a:hover {
     color: #FB3E3E;
     text-decoration: none;
 }
+.lead-container{
+  width: 320px;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
 
 
 

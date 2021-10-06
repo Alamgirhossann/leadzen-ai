@@ -1109,7 +1109,7 @@ const SearchResult = (props) => {
                                     }
                                   >
                                     <small className="d-block text-danger">
-                                      Unlock
+                                      Unlock Email
                                     </small>
                                   </a>
                                 )}
