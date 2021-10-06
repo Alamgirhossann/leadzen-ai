@@ -222,7 +222,7 @@ const SearchResult = (props) => {
         console.log("in handle unlock>>>>", data);
         // try {
         const targetId = e.currentTarget.id
-        document.getElementById(e.currentTarget.id).innerHTML = "Loading..."
+        document.getElementById(targetId).innerHTML = "please wait..."
         let isDuplicate = false;
         let email = ""
         unlockEmailDetails.map((spec) => {
