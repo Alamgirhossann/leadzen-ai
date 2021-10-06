@@ -3,6 +3,10 @@
   <component name="ProjectTasksOptions">
     <enabled-global>
       <option value="Prettier JS" />
+      <option value="Prettier JSX" />
+      <option value="Prettier CSS" />
+      <option value="Prettier HTML" />
+      <option value="Python Black" />
     </enabled-global>
   </component>
 </project>
