@@ -573,8 +573,8 @@ const SearchResult = (props) => {
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
     function handleError(status) {
-    console.error(`Got HTTP Error ${status.statusText}`);
-  }
+      console.error(`Got HTTP Error ${status.statusText}`);
+    }
     try {
       let isDuplicate = false;
 
@@ -865,20 +865,33 @@ const SearchResult = (props) => {
 
   console.log("isCheck....", selectedLeads);
 
-  useEffect(()=> {
-   if(searchText!=""){
-     setSearchedList(myLeads.filter(data=>{
-       return (
-           data.name.toLowerCase().includes(searchText.toLowerCase())||
-               data.location.toLowerCase().includes(searchText.toLowerCase())||
-               data.job.toLowerCase().includes(searchText.toLowerCase())
-       )
-     }))
-   }
-   else {
-     setSearchedList(myLeads.filter(data=> !!data.name))
-   }
-  },[searchText,myLeads])
+  useEffect(() => {
+    if (searchText !== "") {
+      setSearchedList(
+        myLeads.filter((data) => {
+          return (
+            data.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.location.toLowerCase().includes(searchText.toLowerCase()) ||
+            data.job.toLowerCase().includes(searchText.toLowerCase())
+          );
+        })
+      );
+    } else {
+      setSearchedList(myLeads.filter(data=> !!data.name));
+    }
+  }, [searchText, myLeads]);
+
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "assets/js/app.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div>
       <Header user={user} newEvent={newEvent} />
@@ -1025,7 +1038,7 @@ const SearchResult = (props) => {
                         data.name != "LinkedIn Member" ? (
                           <div>
                             <div
-                              className="user-container py-2"
+                              className="search-user-container py-2"
                               key={`${currentPage}${index}`}
                             >
                               <input
@@ -1107,7 +1120,7 @@ const SearchResult = (props) => {
                                     }
                                   >
                                     <small className="d-block text-danger">
-                                      Unlock
+                                      Unlock Email
                                     </small>
                                   </a>
                                 )}

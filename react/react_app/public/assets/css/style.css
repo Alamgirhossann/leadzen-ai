@@ -14368,9 +14368,9 @@ a:hover {
     }
 }
 
-@media only screen and (max-width: 1124px) {
+@media only screen and (max-width: 1126px) {
     .history-container {
-        width: 800px;
+        width: 950px;
     }
 
     .container-style {
@@ -14379,13 +14379,10 @@ a:hover {
 }
 
 @media only screen and (max-width: 1024px) {
-    .save-list-container, .history-container {
+    .save-list-container  {
         width: 800px;
     }
 
-    .container-style {
-        overflow-x: scroll;
-    }
 }
 
 /* ============================================== 
@@ -14719,7 +14716,7 @@ a:hover {
 .history-container {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-areas: "p n n n d d c c v v v b";
+    grid-template-areas: "p n n n n d d c c v v b";
     align-items: center;
 }
 .profile {
@@ -14880,6 +14877,12 @@ a {
 a:hover {
     color: #FB3E3E;
     text-decoration: none;
+}
+.lead-container{
+  width: 320px;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
 }
 
 

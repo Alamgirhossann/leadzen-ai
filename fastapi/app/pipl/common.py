@@ -61,7 +61,7 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
 
         logger.debug(f"#######{email_list=}")
 
-        result["Emails"] = email_list
+        result["Emails"] = ", ".join(email_list)
 
     if "phones" in person:
         phones = jmespath.search("phones[*].display_international", person)
@@ -105,7 +105,7 @@ def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
 async def write_to_file(responses: List[Dict], filename: str):
     try:
         logger.debug(f"writing {responses=} responses")
-        # logger.debug(f"{responses=}")
+        logger.debug(f"{type(responses)=}>>>>>>{responses=}")
         df = pd.DataFrame([x for x in responses if x])
         logger.debug(df.head())
 
@@ -505,7 +505,7 @@ async def search_all_by_pipl(
 
 async def search_one(
         url: str, client: httpx.AsyncClient, slug: str, limiter: AsyncLimiter
-) -> Union[None, tuple[Any, list[dict]], tuple[None, None]]:
+) -> Union[None, tuple[Any, dict], tuple[None, None]]:
     try:
 
 
@@ -533,7 +533,12 @@ async def search_one(
             # logger.debug(data.keys())
 
             if data["@persons_count"] == 1 and data.get("person"):
-                return data.get("person"), [filter_data(person=data.get("person"), slug=slug, is_email_required=True)]
+                parsed = urlparse(url)
+                url_split_temp = parsed.query.split("&")[0]
+                split_url = url_split_temp.split("=")[1]
+                linkedin_url = urllib.parse.unquote(split_url)
+                logger.debug(f"{linkedin_url=}")
+                return data.get("person"), filter_data(person=data.get("person"), slug=linkedin_url, is_email_required=True)
                 # return [filter_data(person=data.get("person"), slug=slug)]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
                 # return [

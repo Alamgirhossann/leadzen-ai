@@ -45,6 +45,12 @@ class UserEmailSendRequest(BaseModel):
     link: str
 
 
+class UserEmailSendCustomRequest(BaseModel):
+    email: EmailStr
+    message: str
+    subject: str
+
+
 @router.post("/send", response_model=bool)
 async def send_email(request: UserEmailSendRequest, background_tasks: BackgroundTasks):
     logger.debug(f"{request=}")
@@ -55,6 +61,25 @@ async def send_email(request: UserEmailSendRequest, background_tasks: Background
         email_to=request.email,
         link=request.link,
     )
+    logger.success(f"Email Sent, {request.email=}")
+    return True
+
+
+@router.post("/send_custom_email", response_model=bool)
+async def send_email(
+    request: UserEmailSendCustomRequest, background_tasks: BackgroundTasks
+):
+    logger.debug(f"{request=}")
+    message = MessageSchema(
+        subject=request.subject,
+        recipients=[request.email],
+        body=request.message,
+    )
+    fast_mail = FastMail(conf)
+    background_tasks.add_task(fast_mail.send_message, message)
+    logger.success(f"Email Sent, {request.email=}")
+
+    return True
     logger.success(f"Email Sent, {request.email=}")
     return True
 
