@@ -357,11 +357,19 @@ const SearchResult = (props) => {
   const [show, setShow] = useState(false);
   // const [selected, setSelected] = useState(false);
 
-  const handleUnlockEmail = async (e, index, data) => {
+  const handleUnlockEmail = async (e, index, data, props) => {
     setWait(`${currentPage}${index}`);
     e.preventDefault();
     console.log("in handle unlock>>>>", data);
     // try {
+     let linkedin_url=null
+    if (props.location.pathname.includes("/social_url_search")) {
+      linkedin_url=data.profileLink
+    }
+    else{
+      linkedin_url=data.url
+    }
+
     let isDuplicate = false;
 
     unlockEmailDetails.map((spec) => {
@@ -373,13 +381,16 @@ const SearchResult = (props) => {
     console.log("isDuplicate>>>>", isDuplicate);
     if (isDuplicate === false) {
       let urls = "";
+      if (props.location.pathname.includes("/social_url_search")){
+        urls=data.profileLink
+      }else{
       for (let i = 0; i < data.url.length; i++) {
         if (data.url[i] === "?") {
           break;
         } else {
           urls = urls + data.url[i];
         }
-      }
+      }}
       let url = [urls];
       console.log("url>>>", url);
       let hash_key = await digestMessage(data.url);
@@ -562,13 +573,21 @@ const SearchResult = (props) => {
     }
   };
 
-  const handleProfile = async (index, data) => {
-    let hash_key = await digestMessage(data.url);
+  const handleProfile = async (index, data, props) => {
+    let linkedin_url=null
+    if (props.location.pathname.includes("/social_url_search")) {
+      linkedin_url=data.profileLink
+    }
+    else{
+      linkedin_url=data.url
+    }
+
+    let hash_key = await digestMessage(linkedin_url);
     console.log("hash_key>>>>>>>>>>", hash_key);
     let reqJsonPipl = {
       email: "",
       name: { first_name: "", last_name: "" },
-      url: data.url,
+      url: linkedin_url,
       hash_key: hash_key,
     };
     console.log("in Handle profile...", `${currentPage}${index}`, data);
@@ -606,7 +625,7 @@ const SearchResult = (props) => {
               Accept: "application/json",
               Authorization: `Bearer ${Cookies.get("user_token")}`,
             },
-            body: JSON.stringify({ url: data.url }),
+            body: JSON.stringify({ url: linkedin_url }),
           }),
         ]);
 
@@ -877,7 +896,7 @@ const SearchResult = (props) => {
         })
       );
     } else {
-      setSearchedList(myLeads.filter(data=> !!data.name));
+      setSearchedList(myLeads?.filter(data=> !!data.name));
     }
   }, [searchText, myLeads]);
 
@@ -1116,7 +1135,7 @@ const SearchResult = (props) => {
                                   <a
                                     href="#"
                                     onClick={(e) =>
-                                      handleUnlockEmail(e, index, data)
+                                      handleUnlockEmail(e, index, data, props)
                                     }
                                   >
                                     <small className="d-block text-danger">
@@ -1140,7 +1159,7 @@ const SearchResult = (props) => {
                                   role="button"
                                   aria-expanded="false"
                                   aria-controls="collapseExample"
-                                  onClick={() => handleProfile(index, data)}
+                                  onClick={() => handleProfile(index, data, props)}
                                 >
                                   View Profile
                                 </a>
