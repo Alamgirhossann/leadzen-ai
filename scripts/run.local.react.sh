@@ -3,6 +3,19 @@ echo "> ----------------------"
 echo "> Building Docker Images"
 echo "> ----------------------"
 
+echo "> -----------------------------------"
+echo "> Pulling Latest Python Docker Images"
+echo "> -----------------------------------"
+sudo docker pull python:3.9-slim-buster
+if [ $? != 0 ]; then
+    echo ">>> Unable to Pull Latest Python Docker Image"
+    cd ..
+    exit 1
+fi
+echo "> Done"
+echo "..."
+
+
 echo "> -----------------------------"
 echo "> Building FastAPI Docker Image"
 echo "> -----------------------------"

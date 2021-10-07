@@ -224,7 +224,7 @@ const SidebarExtractContact = (data) => {
           </button>
 
           <p className="m-0">
-            <a href={data.data ? "" : "/userGuide"} className="learn-link">
+            <a href={data.data ? "" : "/userGuide"} className="learn-link disabled-link">
               Learn More
             </a>
           </p>

@@ -169,7 +169,7 @@ const ExtractContacts = () => {
         Search
       </button>
       <p className="m-0 mt-2">
-        <a href="#" className="text-danger">
+        <a href="#" className="disabled-link">
           Learn More{" "}
         </a>
       </p>

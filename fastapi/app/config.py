@@ -170,14 +170,18 @@ API_CONFIG_JWT_SECRET = "aaf00868db8310a63b1ee2053b0a458bd4c10272bd47495461ac8d6
 
 API_CONFIG_DATABASE_URL = os.getenv(
     "API_CONFIG_DATABASE_URL",
-    "postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_pinaki2",
+    "postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_priyanka",
 )
 API_CONFIG_EMAIL_SEND_URL = (
-    f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send"
+    f"http://localhost:{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send"
 )
 
 API_CONFIG_EMAIL_SEND_CUSTOM_URL = (
-    f"http://localhost:" f"{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send_custom_email"
+    f"http://localhost:{API_CONFIG_PORT_NUM_INTERNAL}/api/email/send_custom_email"
+)
+
+API_CONFIG_VERIFY_PHONE_URL = (
+    f"http://localhost:{API_CONFIG_PORT_NUM_INTERNAL}/api/phone/phone_verification"
 )
 
 API_CONFIG_BULK_MAX_ROWS_IN_CSV = int(
@@ -307,7 +311,8 @@ API_CONFIG_GET_USER_FROM_USER_ID_URL = os.getenv(
     "API_CONFIG_GET_USER_FROM_USER_ID_URL", "http://localhost:12005/api/users/"
 )
 API_CONFIG_CHECK_EMAIL = os.getenv(
-    "API_CONFIG_CHECK_EMAIL", "https://app.emaillistvalidation.com/api/verifEmail?secret=jtSxXvO1yLavEu8m4aLmd&email"
+    "API_CONFIG_CHECK_EMAIL",
+    "https://app.emaillistvalidation.com/api/verifEmail?secret=jtSxXvO1yLavEu8m4aLmd&email",
 )
 
 
@@ -386,4 +391,8 @@ API_CONFIG_SENDINBLUE_REPLY_MAIL = os.getenv(
 
 API_CONFIG_SENDINBLUE_REPLY_NAME = os.getenv(
     "API_CONFIG_SENDINBLUE_REPLY_NAME", "LeadZen.ai"
+)
+
+API_CONFIG_HTTP_CALL_TIMEOUT_IN_SECONDS = float(
+    os.getenv("API_CONFIG_HTTP_CALL_TIMEOUT_IN_SECONDS", "20.0")
 )
