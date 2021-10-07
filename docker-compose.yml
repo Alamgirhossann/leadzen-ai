@@ -56,6 +56,10 @@ services:
       - API_CONFIG_REACT_LOGIN_PAGE=https://leadzen-dev.analystt.ai/login
       - API_CONFIG_REACT_SIGNUP_PAGE=https://leadzen-dev.analystt.ai/signUp
       - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_dev2
+      - API_CONFIG_TEXAU_PROXY_NAME=ProxySellerIndia
+      - API_CONFIG_TEXAU_PROXY_HOST=http://103.199.185.171:45785
+      - API_CONFIG_TEXAU_PROXY_USER=Selmalharlakdawala
+      - API_CONFIG_TEXAU_PROXY_PASS=V7x5DcU
     depends_on:
       - selenium
 
