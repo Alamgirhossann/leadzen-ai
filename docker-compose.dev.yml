@@ -26,18 +26,18 @@ services:
     volumes:
       - ./shared/database/postgres:/var/lib/postgresql/data
 
-#  pgadmin:
-#    image: "dpage/pgadmin4"
-#    container_name: "pgadmin"
-#    ports:
-#      - "12005:80"
-#    environment:
-#      - PGADMIN_DEFAULT_EMAIL=leadzen@analystt.ai
-#      - PGADMIN_DEFAULT_PASSWORD=leadzen
-#    volumes:
-#      - ./shared/database/pgadmin:/var/lib/pgadmin
-#    depends_on:
-#      - postgres
+  #  pgadmin:
+  #    image: "dpage/pgadmin4"
+  #    container_name: "pgadmin"
+  #    ports:
+  #      - "12005:80"
+  #    environment:
+  #      - PGADMIN_DEFAULT_EMAIL=leadzen@analystt.ai
+  #      - PGADMIN_DEFAULT_PASSWORD=leadzen
+  #    volumes:
+  #      - ./shared/database/pgadmin:/var/lib/pgadmin
+  #    depends_on:
+  #      - postgres
 
   person_fastapi:
     image: "analystt/person_fastapi:latest"
@@ -55,9 +55,13 @@ services:
       - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12004/signUp
       - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
       - API_CONFIG_WAIT_FOR_DATABASE=1
+      - API_CONFIG_TEXAU_PROXY_NAME=ProxySellerIndia
+      - API_CONFIG_TEXAU_PROXY_HOST=http://103.199.185.171:45785
+      - API_CONFIG_TEXAU_PROXY_USER=Selmalharlakdawala
+      - API_CONFIG_TEXAU_PROXY_PASS=V7x5DcU
     depends_on:
       - selenium
-#      - pgadmin
+      #      - pgadmin
       - postgres
 
   person_fastapi_external:
@@ -74,7 +78,7 @@ services:
     depends_on:
       - person_fastapi
       - redis
-#      - pgadmin
+      #      - pgadmin
       - postgres
 
   person_react:
