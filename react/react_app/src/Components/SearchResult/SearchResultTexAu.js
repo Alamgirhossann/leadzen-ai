@@ -682,15 +682,16 @@ const SearchResult = (props) => {
               },
             ]);
           }
-          // else {
-          //   setSpecificUserDetails((prev) => [
-          //     ...prev,
-          //     {
-          //       index: `${currentPage}${index}`,
-          //       details: "Record Not Found",
-          //     },
-          //   ]);
-          // }
+          else {
+            setSpecificUserDetails((prev) => [
+              ...prev,
+              {
+                index: `${currentPage}${index}`,
+                details:  json_res[0],
+                proxyCurl: proxyCurlJson !== null ? proxyCurlJson : null,
+              },
+            ]);
+          }
         } else {
           console.log("In setSpecificUserDetails else");
           setSpecificUserDetails((prev) => [
