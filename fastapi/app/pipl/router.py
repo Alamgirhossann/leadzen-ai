@@ -81,7 +81,7 @@ async def people_search(
 
         if app_request.hash_key:
             is_credit_applied = True
-        params["match_requirements"] = "phones"
+        # params["match_requirements"] = "phones"
 
         if not params:
             logger.warning("No Valid Request Parameters")
@@ -124,17 +124,18 @@ async def people_search(
                     search_type = "texAu"
                     pipl_res = await send_pipl_request(params)
                 logger.debug(f"{pipl_res=}, >> {type(pipl_res)}")
-
+                print("phones....", pipl_res)
                 if pipl_res:
                     logger.debug(f" in pipl res >>>>{user_response=}")
-                    credit_res = await deduct_credit("PROFILE", user_response)
-                    logger.debug(f"{credit_res=}")
+                    if pipl_res[0].get("phones"):
+                        credit_res = await deduct_credit("PROFILE", user_response)
+                        logger.debug(f"{credit_res=}")
                     request = {
                         "search_type": search_type,
                         "hash_key": app_request.hash_key,
                         "search_results": pipl_res,
                     }
-                    pipl_res = await add_email_verification_data(pipl_res)
+                    # pipl_res = await add_email_verification_data(pipl_res)
                     background_tasks.add_task(
                         add_profile, request=request, user=user_response
                     )
@@ -259,6 +260,7 @@ async def send_pipl_request(params):
                 detail="Empty Response",
             )
         logger.debug(data.keys())
+        print("data    ",data)
         if data["@persons_count"] == 1 and data.get("person"):
             logger.success("found 1 person")
             return [data.get("person")]
