@@ -75,7 +75,7 @@ const UserSearch = () => {
               <span className="text-danger">company name, company website URL</span> or{" "}
               <br /> state your requirement above
             </p>
-            <a href="/userGuide" className="text-danger">
+            <a href="/userGuide" className="disabled-link">
               Learn more
             </a>
           </div>
