@@ -4,7 +4,7 @@ import json
 import os
 import sys
 import urllib
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Union, Any, Coroutine
 
 import httpx
 import jmespath
@@ -574,7 +574,6 @@ async def search_one(
 ) -> Union[None, tuple[Any, dict], tuple[None, None]]:
     try:
 
-
         async with limiter:
             if not url:
                 return None
@@ -608,13 +607,9 @@ async def search_one(
                 split_url = url_split_temp.split("=")[1]
                 linkedin_url = urllib.parse.unquote(split_url)
                 logger.debug(f"{linkedin_url=}")
-                return data.get("person"), [
-                    await filter_data(
-                        person=data.get("person"),
-                        slug=linkedin_url,
-                        is_email_required=True,
-                    )
-                ]
+                return data.get("person"), await filter_data(person=data.get("person"), slug=linkedin_url,
+                                                             is_email_required=True)
+
                 # return [filter_data(person=data.get("person"), slug=slug)]
             elif data["@persons_count"] > 1 and data.get("possible_persons"):
                 # return [
