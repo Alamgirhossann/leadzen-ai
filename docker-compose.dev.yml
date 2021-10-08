@@ -64,8 +64,6 @@ services:
     container_name: "person_fastapi_external"
     ports:
       - "8001:5000"
-    # volumes:
-    #   - ./shared:/home/appuser/shared
     environment:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
