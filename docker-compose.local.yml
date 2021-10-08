@@ -26,6 +26,19 @@ services:
     volumes:
       - ./shared/database/postgres:/var/lib/postgresql/data
 
+  #  pgadmin:
+  #    image: "dpage/pgadmin4"
+  #    container_name: "pgadmin"
+  #    ports:
+  #      - "12005:80"
+  #    environment:
+  #      - PGADMIN_DEFAULT_EMAIL=leadzen@analystt.ai
+  #      - PGADMIN_DEFAULT_PASSWORD=leadzen
+  #    volumes:
+  #      - ./shared/database/pgadmin:/var/lib/pgadmin
+  #    depends_on:
+  #      - postgres
+
   person_fastapi:
     image: "analystt/person_fastapi:latest"
     container_name: "person_fastapi"
@@ -44,6 +57,7 @@ services:
       - API_CONFIG_WAIT_FOR_DATABASE=1
     depends_on:
       - selenium
+      #      - pgadmin
       - postgres
 
   person_fastapi_external:
@@ -55,9 +69,12 @@ services:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
       - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
+    # volumes:
+    #   - ./shared:/home/appuser/shared
     depends_on:
       - person_fastapi
       - redis
+      #      - pgadmin
       - postgres
 
   person_react:
