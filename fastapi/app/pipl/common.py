@@ -63,10 +63,10 @@ async def verify_phones(phones: List[Dict]):
         logger.critical(f"Exception Verifying Phones: {e}")
         return None
 
+
 async def add_email_verification_data(email_verification_request):
-    
     async def check_email_validity(
-        email, client
+            email, client
     ):
         try:
             if not (response := await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")):
@@ -85,16 +85,13 @@ async def add_email_verification_data(email_verification_request):
             logger.critical(f"Exception {email=}: {str(e)}")
             return None
 
-    
     async with httpx.AsyncClient() as client:
-            coroutines = [await check_email_validity(email=x, client=client) for x in email_verification_request]
-            results = coroutines
+        coroutines = [await check_email_validity(email=x, client=client) for x in email_verification_request]
+        results = coroutines
     if results:
         results = [x for x in results if x]  # remove None's
-        
+
         return results
-    
-    
 
 
 async def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
@@ -125,13 +122,11 @@ async def filter_data(person: Dict, slug: str, is_email_required: bool) -> Dict:
                 logger.debug(verified_email)
                 result["Emails"] = verified_email
 
-
     if "phones" in person:
         phones = jmespath.search("phones[*].display_international", person)
         if phones:
             if verified_phones := await verify_phones(phones=phones):
                 result["Phones"] = verified_phones
-            
 
     if "gender" in person:
         gender = jmespath.search("gender", person)
