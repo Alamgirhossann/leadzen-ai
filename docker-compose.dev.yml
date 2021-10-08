@@ -1,11 +1,37 @@
 version: "3.3"
 
 services:
+  traefik:
+    image: "traefik:latest"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      # - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=raveen.b@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
   selenium:
     image: "selenium/standalone-chrome:latest"
     container_name: "selenium"
     ports:
-      - "4445:4444"
+      - "4444:4444"
     volumes:
       - /dev/shm:/dev/shm
 
@@ -13,78 +39,57 @@ services:
     image: "redis:alpine"
     container_name: "redis"
     ports:
-      - "6380:6379"
-
-  postgres:
-    image: "postgres:alpine"
-    container_name: "postgres"
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - ./shared/database/postgres:/var/lib/postgresql/data
-
-  #  pgadmin:
-  #    image: "dpage/pgadmin4"
-  #    container_name: "pgadmin"
-  #    ports:
-  #      - "12005:80"
-  #    environment:
-  #      - PGADMIN_DEFAULT_EMAIL=leadzen@analystt.ai
-  #      - PGADMIN_DEFAULT_PASSWORD=leadzen
-  #    volumes:
-  #      - ./shared/database/pgadmin:/var/lib/pgadmin
-  #    depends_on:
-  #      - postgres
+      - "6379:6379"
 
   person_fastapi:
-    image: "analystt/person_fastapi:latest"
+    image: "${CONTAINER_REGISTRY}/analystt/person_fastapi:latest"
     container_name: "person_fastapi"
+    ports:
+      - "8000:5000"
     volumes:
       - ./shared:/home/appuser/shared
-    ports:
-      - 12001:5000
     environment:
       - APP_CONFIG_SELENIUM_SERVER_URL=http://selenium:4444/wd/hub
       - API_CONFIG_PORT_NUM_INTERNAL=5000
       - API_CONFIG_SELF_BASE_URL=http://localhost:5000
-      - API_CONFIG_SELF_BASE_EXTERNAL_URL=http://localhost:12004
-      - API_CONFIG_REACT_LOGIN_PAGE=http://localhost:12004/login
-      - API_CONFIG_REACT_SIGNUP_PAGE=http://localhost:12004/signUp
-      - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-      - API_CONFIG_WAIT_FOR_DATABASE=1
-      - API_CONFIG_TEXAU_PROXY_NAME=ProxySellerIndia
-      - API_CONFIG_TEXAU_PROXY_HOST=http://103.199.185.171:45785
-      - API_CONFIG_TEXAU_PROXY_USER=Selmalharlakdawala
-      - API_CONFIG_TEXAU_PROXY_PASS=V7x5DcU
+      - API_CONFIG_SELF_BASE_EXTERNAL_URL=https://leadzen-dev.analystt.ai
+      - API_CONFIG_REACT_LOGIN_PAGE=https://leadzen-dev.analystt.ai/login
+      - API_CONFIG_REACT_SIGNUP_PAGE=https://leadzen-dev.analystt.ai/signUp
+      - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_dev2
     depends_on:
       - selenium
-      #      - pgadmin
-      - postgres
 
   person_fastapi_external:
-    image: "analystt/person_fastapi_external:latest"
+    image: "${CONTAINER_REGISTRY}/analystt/person_fastapi_external:latest"
     container_name: "person_fastapi_external"
     ports:
-      - 12003:5000
+      - "8001:5000"
     environment:
       - API_CONFIG_INTERNAL_URL=http://person_fastapi:5000
       - API_CONFIG_REDIS_URL=redis://redis
-      - API_CONFIG_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-    # volumes:
-    #   - ./shared:/home/appuser/shared
+      - API_CONFIG_DATABASE_URL=postgresql://munifadmin:plena-code-TORPEDO-etc@peopledb.c1h7mjd0doow.ap-south-1.rds.amazonaws.com:6442/person_dev2
     depends_on:
       - person_fastapi
       - redis
-      #      - pgadmin
-      - postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=5000"
+      - "traefik.http.routers.api.rule=Host(`leadzen-dev-api.analystt.ai`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
 
   person_react:
-    image: "analystt/person_react:latest"
+    image: "${CONTAINER_REGISTRY}/analystt/person_react:latest"
     container_name: "person_react"
     ports:
-      - 12004:80
+      - "8002:80"
     depends_on:
       - person_fastapi
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.http.routers.react.rule=Host(`leadzen-dev.analystt.ai`)"
+      - "traefik.http.routers.react.entrypoints=websecure"
+      - "traefik.http.routers.react.tls=true"
+      - "traefik.http.routers.react.tls.certresolver=myresolver"

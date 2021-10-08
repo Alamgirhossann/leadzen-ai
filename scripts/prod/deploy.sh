@@ -1,9 +1,13 @@
 #!/bin/bash
 
-REMOTE_SERVER="ubuntu@3.109.59.177"
+REMOTE_SERVER="ubuntu@3.7.37.62"
 PEM_FILE="linux2-pinaki.pem"
 CONTAINER_REGISTRY="480068984177.dkr.ecr.ap-south-1.amazonaws.com"
 CONTAINER_REPOSITORY="analystt"
+
+echo "------------------------------"
+echo "--- Prod Deployment Script ---"
+echo "------------------------------"
 
 # -----------------------------------------------------------------------------------------------------------
 # React - START -> build image -> push image to ecr ->  pull image from ecr to aws instance 
@@ -307,7 +311,7 @@ echo "--------------------------------------------------"
 echo "*** Copying Docker-Compose to Remote Server: $REMOTE_SERVER"
 echo "--------------------------------------------------"
 # shellcheck disable=SC2086
-scp -i "$PEM_FILE" docker-compose.yml "$REMOTE_SERVER":/home/ubuntu/docker-compose.yml
+scp -i "$PEM_FILE" docker-compose.prod.yml "$REMOTE_SERVER":/home/ubuntu/docker-compose.yml
 # shellcheck disable=SC2181
 if [ $? != 0 ]; then
     echo ">>> Docker-Compose File Upload Error <<<"

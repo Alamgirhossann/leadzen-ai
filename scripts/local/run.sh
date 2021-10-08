@@ -1,4 +1,10 @@
 # !/bin/bash
+
+echo "-----------------"
+echo "--- Local Run ---"
+echo "-----------------"
+
+
 echo "> ----------------------"
 echo "> Building Docker Images"
 echo "> ----------------------"
@@ -111,4 +117,6 @@ echo "..."
 echo "> -------------------------"
 echo "> Running Docker Containers"
 echo "> -------------------------"
-sudo docker-compose -f docker-compose.dev.yml up --remove-orphans
+sudo docker-compose -f docker-compose.local.yml up --remove-orphans
+echo "> Done"
+echo "..."
