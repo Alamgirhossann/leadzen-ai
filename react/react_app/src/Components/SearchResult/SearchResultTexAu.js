@@ -896,6 +896,7 @@ const SearchResult = (props) => {
         })
       );
     } else {
+      if (myLeads)
       setSearchedList(myLeads?.filter(data=> !!data.name));
     }
   }, [searchText, myLeads]);
