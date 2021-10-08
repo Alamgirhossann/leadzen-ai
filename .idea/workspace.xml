@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="046db024-b92e-4924-a394-307da9776169" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/docker-compose.dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi/app/pipl/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/app/pipl/common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react/react_app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react/react_app/src/Components/DetailedInfo/SpecificUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/src/Components/DetailedInfo/SpecificUser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react/react_app/src/Components/SharedComponent/NavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/src/Components/SharedComponent/NavBar.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="origin/master" />
+    <option name="OPTIONS">
+      <set>
+        <option value="NO_COMMIT" />
+      </set>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/docker-compose.dev.yml" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectId" id="1ynvDG9mxFWjPKdwx9QJsATzIxz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="yarn" />
+  </component>
+  <component name="RunManager" selected="Shell Script.Run" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="046db024-b92e-4924-a394-307da9776169" name="Changes" comment="" />
+      <created>1632900045115</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1632900045115</updated>
+      <workItem from="1632900046504" duration="912000" />
+      <workItem from="1632983487288" duration="2225000" />
+      <workItem from="1633348581695" duration="3709000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
