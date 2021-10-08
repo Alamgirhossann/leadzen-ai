@@ -61,34 +61,37 @@ async def people_search(
     background_tasks: BackgroundTasks,
     user=Depends(fastapi_users.get_current_active_user),
 ):
-    logger.debug(f"{app_request=}, {user=},>>>>> {type(user)}")
+    logger.debug(f" {user=},>>>>> {type(user)}")
 
     try:
 
         params = {}
         is_credit_applied = False
-        if app_request.email:
-            params["email"] = app_request.email
+        if app_request.type != 'PIPL_REC':
+            if app_request.email:
+                params["email"] = app_request.email
 
-        if app_request.name:
-            if app_request.name.first_name:
-                params["first_name"] = app_request.name.first_name
-            if app_request.name.last_name:
-                params["last_name"] = app_request.name.last_name
+            if app_request.name:
+                if app_request.name.first_name:
+                    params["first_name"] = app_request.name.first_name
+                if app_request.name.last_name:
+                    params["last_name"] = app_request.name.last_name
 
-        if app_request.url:
-            params["url"] = app_request.url
+            if app_request.url:
+                params["url"] = app_request.url
+
+            if not params:
+                logger.warning("No Valid Request Parameters")
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
+                )
+            params["key"] = API_CONFIG_PIPL_API_KEY
 
         if app_request.hash_key:
             is_credit_applied = True
         # params["match_requirements"] = "phones"
+        logger.debug(f"{params=}")
 
-        if not params:
-            logger.warning("No Valid Request Parameters")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Request"
-            )
-        params["key"] = API_CONFIG_PIPL_API_KEY
         if is_credit_applied:
             response = await get_profile_search(app_request.hash_key, user)
             logger.debug(f"is_credit_applied>>>{response=}, {user=}")
