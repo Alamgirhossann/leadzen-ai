@@ -135,7 +135,7 @@ async def people_search(
                         "hash_key": app_request.hash_key,
                         "search_results": pipl_res,
                     }
-                    # pipl_res = await add_email_verification_data(pipl_res)
+                    pipl_res = await add_email_verification_data(pipl_res)
                     background_tasks.add_task(
                         add_profile, request=request, user=user_response
                     )
@@ -158,86 +158,53 @@ async def add_email_verification_data(email_verification_request):
     emails = []
 
     for res in email_verification_request:
-        for email_dict in res.get("emails"):
-            emails.append(email_dict["address"])
+        if res.get("emails"):
+            for email_dict in res.get("emails"):
+                emails.append(email_dict["address"])
 
-    async def check_email_validity(
-        email: str, client: httpx.AsyncClient
-    ) -> Optional[Dict[str, str]]:
-        try:
-            if not (response := await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")):
-                logger.error(f"no response, {email=}")
+    if len(emails) != 0:
+        async def check_email_validity(
+                email: str, client: httpx.AsyncClient
+        ) -> Optional[Dict[str, str]]:
+            try:
+                if not (response := await client.get(f"{API_CONFIG_CHECK_EMAIL}={email}")):
+                    logger.error(f"no response, {email=}")
+                    return None
+
+                if response.status_code != 200:
+                    logger.error(f"Invalid response {response.status_code=}, {email=}")
+                    return None
+
+                if response.text == "ok" or response.text == "ok_for_all|ok_for_all":
+                    return {email: "valid"}
+                else:
+                    return {email: "Not Valid"}
+            except Exception as e:
+                logger.critical(f"Exception {email=}: {str(e)}")
                 return None
 
-            if response.status_code != 200:
-                logger.error(f"Invalid response {response.status_code=}, {email=}")
-                return None
+        async with httpx.AsyncClient() as client:
+            coroutines = [await check_email_validity(email=x, client=client) for x in emails]
+            results = coroutines
 
-            if response.text == "ok" or response.text == "ok_for_all|ok_for_all":
-                return {email: "valid"}
-            else:
-                return {email: "Not Valid"}
-        except Exception as e:
-            logger.critical(f"Exception {email=}: {str(e)}")
-            return None
+        results = [x for x in results if x]  # remove None's
+        email_validation_results = dict(
+            ChainMap(*results)
+        )  # convert list of dicts to one dict
 
-    async with httpx.AsyncClient() as client:
-        coroutines = [await check_email_validity(email=x, client=client) for x in emails]
-        results = coroutines
+        if not email_validation_results:
+            logger.error("No email validation results")
+            return email_verification_request
 
-    results = [x for x in results if x]  # remove None's
-    email_validation_results = dict(
-        ChainMap(*results)
-    )  # convert list of dicts to one dict
+        for res in email_verification_request:
+            for email_dict in res.get("emails"):
+                email = email_dict["address"]
+                email_dict["valid"] = email_validation_results.get(email, "Not Valid")
 
-    if not email_validation_results:
-        logger.error("No email validation results")
+        return email_verification_request
+    else:
         return email_verification_request
 
-    for res in email_verification_request:
-        for email_dict in res.get("emails"):
-            email = email_dict["address"]
-            email_dict["valid"] = email_validation_results.get(email, "Not Valid")
-
-    return email_verification_request
-    # try:
-    #     for res in email_verification_request:
-    #         for email_dict in res.get("emails"):
-    #             email_result = email_dict["address"]
-    #
-    #             async with httpx.AsyncClient() as client:
-    #                 email_check_valid = await client.get(
-    #                     f"{API_CONFIG_CHECK_EMAIL}={email_result}"
-    #                 )
-    #                 if email_check_valid.status_code == 200:
-    #                     if (
-    #                         email_check_valid.text == "ok"
-    #                         or email_check_valid.text == "ok_for_all|ok_for_all"
-    #                     ):
-    #                         email_dict["valid"] = "valid"
-    #                         return email_verification_request
-    #                     else:
-    #                         email_dict["valid"] = "Not Valid"
-    #                         return email_verification_request
-    #                 elif email_check_valid.status_code == 400:
-    #                     print("in 400")
-    #                     raise HTTPException(
-    #                         status_code=status.HTTP_400_BAD_REQUEST,
-    #                         detail=str("Email Verification : Bad request"),
-    #                     )
-    #                 else:
-    #                     raise HTTPException(
-    #                         status_code=status.HTTP_404_NOT_FOUND,
-    #                         detail=str("Email Verification : Data not found"),
-    #                     )
-    # except Exception as e:
-    #     exc_type, exc_obj, exc_tb = sys.exc_info()
-    #     print(exc_type, exc_tb.tb_lineno)
-    #     logger.critical(str(e))
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail="Error Getting data from View Profile - email verification",
-    #     )
 
 
 async def send_pipl_request(params):
