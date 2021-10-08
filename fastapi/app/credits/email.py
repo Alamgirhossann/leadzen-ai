@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, APIRouter
 from loguru import logger
 from starlette import status
 
+from app.credits.admin import deduct_credit
 from app.credits.common import (
     EmailCreditResponse,
     EmailCreditAddResponse,
@@ -17,7 +18,7 @@ from app.credits.common import (
     EmailSearchAddRequest,
 )
 from app.database import database, email_credit_history, email_search
-from app.users import fastapi_users
+from app.users import fastapi_users, get_user
 
 router = APIRouter(prefix="/credits", tags=["Credits"])
 
@@ -124,6 +125,19 @@ async def add_email_credit_history(
         )
 
 
+async def check_email(user_id: int, search_id: str, search_index: int):
+    query = (
+        f"SELECT * FROM email_credit_history WHERE search_id = :search_id AND search_index=:search_index AND user_id = :user_id"
+    )
+    if not (
+            row := await database.fetch_one(
+                query=query, values={"search_id": search_id, "user_id": str(user_id), "search_index": search_index}
+            )
+    ):
+        return None
+    return dict(row)
+
+
 @router.post("/email/bulk_add", response_model=EmailCreditBulkAddResponse)
 async def add_bulk_email_credit_history(
         request: EmailCreditBulkAddRequest,
@@ -151,6 +165,11 @@ async def add_bulk_email_credit_history(
         logger.debug(f"{email_credit_ids=}")
         query = email_credit_history.insert().values(values)
         logger.debug(f"{query=}")
+        user_response = await get_user(user)
+        if not (get_mail := await check_email(user_id=user_response.id, search_id=request.search_id,
+                                              search_index=request.search_index)):
+            await deduct_credit("EMAIL", user_response)
+        logger.info(f"{get_mail=}")
         if not (row_id := await database.execute(query)):
             logger.warning(f"Invalid Request>>{row_id=}")
             return None

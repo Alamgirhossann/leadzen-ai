@@ -69,7 +69,7 @@ class UserCreditRequest(BaseModel):
 
 
 class UserCreditResponse(BaseModel):
-    row_updated: int
+    row_updated: Optional[int]
 
 
 class EmailSearchAddRequest(BaseModel):

@@ -217,7 +217,30 @@ const SearchResult = (props) => {
             console.error("Exception>>", e);
         }
     };
+    const addBukEmail = async (emailIds, index) => {
+        let requestForSaveEmailCredit = {
+            search_id: searchId,
+            email_addresses: emailIds,
+            search_index: parseInt(`${currentPage}${index}`),
+        };
+        try {
+            const response = await fetch(apiServer + "/credits/email/bulk_add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${Cookies.get("user_token")}`,
+                },
+                body: JSON.stringify(requestForSaveEmailCredit),
+            });
 
+            const result = response.json();
+
+            console.log("response from saveResult>>>", result, result.search_id);
+        } catch (e) {
+            console.error("Exception>>", e);
+        }
+    }
     const handleUnlockEmail = async (e, index, data) => {
         e.preventDefault();
         console.log("in handle unlock>>>>", data);
@@ -234,28 +257,6 @@ const SearchResult = (props) => {
         });
         console.log("isDuplicate>>>>", isDuplicate);
         if (isDuplicate === false) {
-            let requestForSaveEmailCredit = {
-                search_id: searchId,
-                email_addresses: ["sff", "ddsg"],
-                search_index: parseInt(`${currentPage}${index}`),
-            };
-            try {
-                const response = await fetch(apiServer + "/credits/email/bulk_add", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                        Authorization: `Bearer ${Cookies.get("user_token")}`,
-                    },
-                    body: JSON.stringify(requestForSaveEmailCredit),
-                });
-
-                const result = response.json();
-
-                console.log("response from saveResult>>>", result, result.search_id);
-            } catch (e) {
-                console.error("Exception>>", e);
-            }
             const organization = data.jobs ? data.jobs[0].organization : ""
             const firstName = data.names ? data.names[0].first : ""
             const lastName = data.names ? data.names[0].last : ""
@@ -277,9 +278,14 @@ const SearchResult = (props) => {
 
                 if (response.ok) {
                     const result = await response.json()
-
-                    email = result.emails.length > 0 ? result.emails[0].email : "No email found"
-
+                    if (result.emails.length > 0) {
+                        email = result.emails[0].email
+                        const emails = result.emails.map(emails => emails.email)
+                        await addBukEmail(emails, index)
+                        newEvent.emit("updateCredit", true);
+                    } else {
+                        email = "No email found"
+                    }
                 } else {
                     console.log("bad response", response)
                     email = "No email found"
