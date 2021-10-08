@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
@@ -13,7 +13,10 @@ const SidebarExtractContact = (data) => {
   const history = useHistory();
   const allowedDomains = ["linkedin.com"];
   const tempCookie = Cookies.get("user_linkedin_cookie");
-  console.log("data>>>>", data, data.data);
+  useEffect(()=>{
+     console.log("data>>>>", data, data.data);
+  })
+
   const handleTypeChange = (e) => {
     setSocialMediaData({ ...socialMediaData, type: e.target.value });
   };

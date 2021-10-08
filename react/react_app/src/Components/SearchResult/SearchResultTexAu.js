@@ -11,7 +11,7 @@ import AskJarvis from "../SharedComponent/AskJarvis";
 import SpecificSearchBtn from "../SharedComponent/SpecificSearchBtn";
 import Cookies from "js-cookie";
 import Lottie from "react-lottie";
-import personLoader from "../Loader/personLoader"
+import personLoader from "../Loader/personLoader";
 import SavedListButton from "./SavedListButton";
 import axios from "axios";
 import { EventEmitter } from "events";
@@ -64,14 +64,15 @@ const SearchResult = (props) => {
   const [searchId, setSearchId] = useState();
   let today = new Date();
   const apiServer = `${process.env.REACT_APP_CONFIG_API_SERVER}`;
-    const postsPerPage = 10;
+  const postsPerPage = 10;
 
   let dd = String(today.getDate()).padStart(2, "0");
   let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   let yyyy = today.getFullYear();
 
   const paginate = (pageNumber) => {
-    setCurrentLeads([]);
+    console.log("In paginate..........");
+    // setCurrentLeads([]);
     setCurrentPage(pageNumber);
     setCurrentLeads(
       searchedList && Array.isArray(searchedList)
@@ -362,12 +363,11 @@ const SearchResult = (props) => {
     e.preventDefault();
     console.log("in handle unlock>>>>", data);
     // try {
-     let linkedin_url=null
-    if (props.location.pathname.includes("/social_url_search")) {
-      linkedin_url=data.profileLink
-    }
-    else{
-      linkedin_url=data.url
+    let linkedin_url = null;
+    if (data?.profileLink) {
+      linkedin_url = data.profileLink;
+    } else {
+      linkedin_url = data.url;
     }
 
     let isDuplicate = false;
@@ -381,16 +381,20 @@ const SearchResult = (props) => {
     console.log("isDuplicate>>>>", isDuplicate);
     if (isDuplicate === false) {
       let urls = "";
-      if (props.location.pathname.includes("/social_url_search")){
-        urls=data.profileLink
-      }else{
-      for (let i = 0; i < data.url.length; i++) {
-        if (data.url[i] === "?") {
-          break;
-        } else {
-          urls = urls + data.url[i];
+      if (data?.profileLink) {
+        urls = linkedin_url;
+      } else {
+        if (data?.url) {
+          for (let i = 0; i < data.url.length; i++) {
+            if (data.url[i] === "?") {
+              break;
+            } else {
+              urls = urls + data.url[i];
+            }
+          }
         }
-      }}
+      }
+      console.log("URLS......", urls);
       let url = [urls];
       console.log("url>>>", url);
       let hash_key = await digestMessage(data.url);
@@ -477,7 +481,8 @@ const SearchResult = (props) => {
           ]);
         }
         if (responseEmail.status === 500) {
-          alert("Error getting data from server.Please try again.");
+          console.warn("Error getting data");
+          // alert("Error getting data from server.Please try again.");
         }
       } catch (err) {
         console.error("Error: ", err);
@@ -541,7 +546,11 @@ const SearchResult = (props) => {
       }
     }
     if (props.location.pathname.includes("/social_url_search")) {
-      search_term = props.location.state.data;
+      console.log(
+        "In social_url_search props.location.state.data-----",
+        props.location.state.data
+      );
+      search_term = props.location.state.data.url;
     }
     let requestForSaveSearch = {
       search_type: searchType,
@@ -574,14 +583,17 @@ const SearchResult = (props) => {
   };
 
   const handleProfile = async (index, data, props) => {
-    let linkedin_url=null
-    if (props.location.pathname.includes("/social_url_search")) {
-      linkedin_url=data.profileLink
-    }
-    else{
-      linkedin_url=data.url
-    }
+    let linkedin_url = null;
+    console.log("In handle profile....", data?.profileLink);
 
+    if (data?.profileLink) {
+      console.log("in If social_url_search............", data);
+      linkedin_url = data.profileLink;
+      console.log("in If linkedin_url............", linkedin_url);
+    } else {
+      linkedin_url = data.url;
+    }
+    console.log("in If linkedin_url............", linkedin_url);
     let hash_key = await digestMessage(linkedin_url);
     console.log("hash_key>>>>>>>>>>", hash_key);
     let reqJsonPipl = {
@@ -735,7 +747,7 @@ const SearchResult = (props) => {
       console.error("Error: ", err);
     }
   };
-    const handleLeadSelectionChange = async (e, index) => {
+  const handleLeadSelectionChange = async (e, index) => {
     console.log(
       "selectedLeads.length === currentLeads.length>>>",
       selectedLeads.length === currentLeads.length,
@@ -749,7 +761,7 @@ const SearchResult = (props) => {
     let hash_key = null;
     let tempJson = {};
     let index_json = {};
-    console.log("id...", id,index);
+    console.log("id...", id, index);
     setSelectedLeads([...selectedLeads, id]);
     hash_key = await digestMessage(id);
 
@@ -785,7 +797,7 @@ const SearchResult = (props) => {
       setSelectedLeadIndex([]);
     } else {
       for (let i = 0; i < currentLeads.length; i++) {
-        console.log("in loop.....",currentLeads.length);
+        console.log("in loop.....", currentLeads.length);
         let hash_list_selected = {};
         let index_list_selected = {};
         let hash_key_i = await digestMessage(
@@ -885,6 +897,7 @@ const SearchResult = (props) => {
   console.log("isCheck....", selectedLeads);
 
   useEffect(() => {
+    console.log("in searchText, myLeads useEffect");
     if (searchText !== "") {
       setSearchedList(
         myLeads.filter((data) => {
@@ -897,10 +910,11 @@ const SearchResult = (props) => {
       );
     } else {
       if (myLeads)
-      setSearchedList(myLeads?.filter(data=> !!data.name));
+        setSearchedList(
+          myLeads?.filter((data) => !!data.name || data.fullName)
+        );
     }
   }, [searchText, myLeads]);
-
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -961,7 +975,10 @@ const SearchResult = (props) => {
           <div className="row">
             <div className="col-md-4 col-lg-3">
               <SpecificSearchBtn details={true} />
-              <div className="sidebar-search-for sidebar-widget pt-4 my-3"  style={loading ?{'opacity':'0.4', 'pointerEvents':'none'}:{}}>
+              <div
+                className="sidebar-search-for sidebar-widget pt-4 my-3"
+                style={loading ? { opacity: "0.4", pointerEvents: "none" } : {}}
+              >
                 <h6 className="text-danger mb-3">Customize your search </h6>
                 <Filters customSearch={customSearch} />
               </div>
@@ -1051,11 +1068,11 @@ const SearchResult = (props) => {
                   <div className="search-container mb-2">
                     {currentLeads && currentLeads.length === 0 ? (
                       <div>
-                        <h5>Records Not Found</h5>
+                        <h5>Records Not Found </h5>
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) =>
-                        data.name != "LinkedIn Member" ? (
+                        data.name !== "LinkedIn Member" ? (
                           <div>
                             <div
                               className="search-user-container py-2"
@@ -1069,7 +1086,12 @@ const SearchResult = (props) => {
                                 checked={selectedLeads.includes(
                                   data.url || data.profileLink
                                 )}
-                                onChange={(e)=>handleLeadSelectionChange(e,`${currentPage}${index}`)}
+                                onChange={(e) =>
+                                  handleLeadSelectionChange(
+                                    e,
+                                    `${currentPage}${index}`
+                                  )
+                                }
                               />
                               <div className="search-author text-danger ">
                                 <img
@@ -1077,19 +1099,29 @@ const SearchResult = (props) => {
                                   src={
                                     data.profilePicture
                                       ? data.profilePicture
-                                      : data.image? data.image
-                                            :"assets/images/author-image.png"
+                                      : data.image
+                                      ? data.image
+                                      : "assets/images/author-image.png"
                                   }
                                   alt=""
                                 />
                               </div>
                               <div className="search-user ps-3">
-                                <p>{data.length === 0 ? null :<React.Fragment>
-                                  {data.name?data.name :data.fullName}
-                               </React.Fragment>}</p>
+                                <p>
+                                  {data.length === 0 ? null : (
+                                    <React.Fragment>
+                                      {data.name ? data.name : data.fullName}
+                                    </React.Fragment>
+                                  )}
+                                </p>
                                 {/*<p>{data.length === 0 ? null : data.fullName}</p>*/}
                                 <small className="d-block">
-                                  Works at {data.length === 0 ? null : data.job?data.job:data.occupation}
+                                  Works at{" "}
+                                  {data.length === 0
+                                    ? null
+                                    : data.job
+                                    ? data.job
+                                    : data.occupation}
                                 </small>
                                 <small className="d-block">
                                   {data.length === 0 ? null : data.location}
@@ -1097,7 +1129,12 @@ const SearchResult = (props) => {
                               </div>
                               <div className="linkedin-icon d-flex justify-content-end">
                                 <span>
-                                  <a href={data.url?data.url:data.profileLink} target="_blank">
+                                  <a
+                                    href={
+                                      data.url ? data.url : data.profileLink
+                                    }
+                                    target="_blank"
+                                  >
                                     <img
                                       src="assets/images/linkedin1.png"
                                       alt=""
@@ -1113,20 +1150,24 @@ const SearchResult = (props) => {
                                 >
                                   {unlockEmailDetails?.map((spec) => (
                                     <span>
-                                      {spec.index === `${currentPage}${index}`
-                                        ? spec.details.email === null || spec.details.email==="Not Found"?
-                                        spec.details.email
-                                        :
-                                        (
+                                      {spec.index ===
+                                      `${currentPage}${index}` ? (
+                                        spec.details.email === null ||
+                                        spec.details.email === "Not Found" ? (
+                                          spec.details.email
+                                        ) : (
                                           <div className="d-flex align-items-center">
-                                          <small className="ms-2">{spec.details.email}</small>
-                                          <img
+                                            <small className="ms-2">
+                                              {spec.details.email}
+                                            </small>
+                                            <img
                                               className="ms-2"
                                               src="assets/images/Vector.png"
                                               alt=""
-                                          />
-                                          </div>)
-                                        : null}
+                                            />
+                                          </div>
+                                        )
+                                      ) : null}
                                     </span>
                                   ))}
                                 </small>
@@ -1160,7 +1201,9 @@ const SearchResult = (props) => {
                                   role="button"
                                   aria-expanded="false"
                                   aria-controls="collapseExample"
-                                  onClick={() => handleProfile(index, data, props)}
+                                  onClick={() =>
+                                    handleProfile(index, data, props)
+                                  }
                                 >
                                   View Profile
                                 </a>
@@ -1185,9 +1228,12 @@ const SearchResult = (props) => {
                               {/*    />*/}
                               {/*  )}*/}
                               {/*</p>*/}
-                               <p>
-                              <SavedListButton data={data} searchType="texAu" />
-                            </p>
+                              <p>
+                                <SavedListButton
+                                  data={data}
+                                  searchType="texAu"
+                                />
+                              </p>
                             </div>
                             <div
                               style={{
