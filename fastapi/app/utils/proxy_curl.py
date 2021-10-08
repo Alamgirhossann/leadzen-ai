@@ -1,5 +1,5 @@
 import httpx
-from fastapi import APIRouter, HTTPException,Depends
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi_cache.decorator import cache
 from loguru import logger
 from pydantic import BaseModel, HttpUrl
@@ -9,6 +9,7 @@ from app.config import (
     API_CONFIG_PROXY_CURL_ENDPOINT,
     API_CONFIG_PROXY_CURL_API_KEY,
     API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS,
+    API_CONFIG_HTTP_CALL_TIMEOUT_IN_SECONDS
 )
 from app.users import fastapi_users, get_user
 
@@ -25,10 +26,10 @@ class ProxyCurlRequest(BaseModel):
 
 @router.post("/search")
 # @cache(expire=API_CONFIG_DEFAULT_CACHING_DURATION_IN_SECONDS)
-async def search(request: ProxyCurlRequest,user=Depends(fastapi_users.get_current_active_user),):
+async def search(request: ProxyCurlRequest, user=Depends(fastapi_users.get_current_active_user), ):
     logger.info(f"{request=}")
     try:
-        print("jbhhggvh",request.url)
+        print("jbhhggvh", request.url)
         url = API_CONFIG_PROXY_CURL_ENDPOINT
         headers = {"Authorization": f"Bearer {API_CONFIG_PROXY_CURL_API_KEY}"}
         params = {
@@ -37,7 +38,8 @@ async def search(request: ProxyCurlRequest,user=Depends(fastapi_users.get_curren
         }
 
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params, headers=headers)
+            response = await client.get(url, params=params, headers=headers,
+                                        timeout=API_CONFIG_HTTP_CALL_TIMEOUT_IN_SECONDS * 6)
 
             if response.status_code != 200:
                 logger.warning(
@@ -61,5 +63,5 @@ async def search(request: ProxyCurlRequest,user=Depends(fastapi_users.get_curren
         logger.critical(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error Getting data from TexAu",
+            detail="Error Getting data from proxyCurl",
         )
