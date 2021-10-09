@@ -42,8 +42,8 @@ echo "*** Adding, Committing, Tagging and Pushing Code to Git"
 echo "-------------------------------------------------------"
 # shellcheck disable=SC2035
 git add *
-git commit -am "Pre Deploy Checkin for $DOCKER_IMAGE_NAME-$VERSION"
-git tag -a "v-$DOCKER_IMAGE_NAME-$VERSION" -m "Pre Deploy Tagging for $DOCKER_IMAGE_NAME"
+git commit -am "Pre Dev-Deploy Checkin for $DOCKER_IMAGE_NAME-$VERSION"
+git tag -a "v-$DOCKER_IMAGE_NAME-$VERSION" -m "Pre Dev-Deploy Tagging for $DOCKER_IMAGE_NAME"
 echo  "--- Done Committing and Tagging ---"
 
 
