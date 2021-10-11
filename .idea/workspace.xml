@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="046db024-b92e-4924-a394-307da9776169" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/docker-compose.dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fastapi/app/pipl/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/app/pipl/common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi/.idea/fastapi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/.idea/fastapi.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi/.idea/watcherTasks.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/.idea/watcherTasks.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fastapi/app/texau/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/fastapi/app/texau/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/react/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/react/react_app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react/react_app/src/Components/DetailedInfo/SpecificUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/src/Components/DetailedInfo/SpecificUser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react/react_app/src/Components/SharedComponent/NavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/src/Components/SharedComponent/NavBar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react/react_app/src/Components/SearchResult/SearchResultTexAu.js" beforeDir="false" afterPath="$PROJECT_DIR$/react/react_app/src/Components/SearchResult/SearchResultTexAu.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +37,7 @@
     <setting file="file://$PROJECT_DIR$/docker-compose.dev.yml" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1ynvDG9mxFWjPKdwx9QJsATzIxz" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -62,5 +66,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

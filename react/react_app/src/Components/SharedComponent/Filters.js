@@ -43,6 +43,17 @@ const Filters = (props) => {
   };
   const handleCustomSubmit = (e) => {
     console.log(">>>>>>>>>>>>", customSearch, customSearch.location);
+    if (
+      !customSearch.location &&
+      !customSearch.job_title &&
+      !customSearch.education &&
+      !customSearch.industry &&
+      !customSearch.company_name &&
+      !customSearch.keywords
+    ) {
+      alert("Please enter the details!!");
+      return;
+    }
     history.push({
       pathname: "/advanceSearch",
       state: { customSearch },

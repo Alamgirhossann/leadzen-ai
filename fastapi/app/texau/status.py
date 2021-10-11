@@ -41,15 +41,23 @@ async def get_status_once(execution_id: str) -> TexAuResult:
                 )
 
             if (
-                data["execution"]["status"] == "completed"
-                and data["execution"].get("output") is not None
+                    data["execution"]["status"] == "completed"
+                    and data["execution"].get("output") is not None
             ):
-                logger.success(f"Got Task Results: {data.keys()=}, {execution_id=}")
-
+                logger.success(
+                    f'Got Task Results: {data.keys()=}, {execution_id=}, {type(data["execution"]["output"])}')
+                res_list = []
                 if not isinstance(data["execution"]["output"], list):
-                    return TexAuResult(data=[data["execution"]["output"]])
+                    res_list = [data["execution"]["output"]]
+                else:
+                    res_list = data["execution"]["output"]
+                logger.debug(f"{res_list=}")
+                filtered_list = []
+                for x in res_list:
+                    if ('name' in x and x.get('name') != "LinkedIn Member") or ('fullName' in x and x.get('fullName') != "LinkedIn Member"):
 
-                return TexAuResult(data=data["execution"]["output"])
+                        filtered_list.append(x)
+                return TexAuResult(data=filtered_list)
             elif data["execution"]["status"] == "cookieError":
                 logger.error(f"Cookie Error, Cannot Proceed, {execution_id=}")
                 raise HTTPException(

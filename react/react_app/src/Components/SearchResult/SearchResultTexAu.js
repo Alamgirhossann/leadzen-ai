@@ -138,8 +138,8 @@ const SearchResult = (props) => {
           "from advance.customSearch filters .....",
           props.location.state.customSearch
         );
-        if (props.location.state.customSearch.search_type)
-          if (props.location.state.customSearch.keywords) isKeyword = true;
+        // if (props.location.state.customSearch.search_type)
+        if (props.location.state.customSearch.keywords) isKeyword = true;
         if (props.location.state.customSearch.education) isEducation = true;
         if (isKeyword && isEducation)
           keyword =
@@ -267,7 +267,7 @@ const SearchResult = (props) => {
     } catch (err) {
       console.error(`Exception Getting Data from ${endpoint}`);
       console.error(err);
-      handleError(500);
+      // handleError();
     }
   };
 
@@ -1073,7 +1073,7 @@ const SearchResult = (props) => {
                       </div>
                     ) : currentLeads ? (
                       currentLeads.map((data, index) =>
-                        data.name !== "LinkedIn Member" ? (
+                   //     data.name !== "LinkedIn Member" ? (
                           <div>
                             <div
                               className="search-user-container py-2"
@@ -1276,9 +1276,9 @@ const SearchResult = (props) => {
                               </div>
                             </div>
                           </div>
-                        ) : (
-                          console.log("not valid name")
-                        )
+                     //   ) : (
+                         // console.log("not valid name")
+                      //  )
                       )
                     ) : (
                       <h5>Record Not Found</h5>
