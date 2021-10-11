@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88222715-6300-4a45-9d53-a6fd76ad5dcc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fastapi/.idea/fastapi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/.idea/fastapi.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fastapi/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fastapi/.idea/watcherTasks.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/.idea/watcherTasks.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fastapi/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fastapi/app/texau/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/../fastapi/app/texau/status.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react_app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" beforeDir="false" afterPath="$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,23 +23,58 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SharedComponent/SidebarExtractContact.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SharedComponent/ExtractContacts.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SharedComponent/NavBar.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SharedComponent/Filters.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/DetailedInfo/SpecificUser.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SharedComponent/BulkSearch.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResultTexAu.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/react_app/src/Components/SearchResult/SearchResult.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/.env" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectId" id="1zLTRz3XmypsYOm57fiyY4w8dpS" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="NewWatcherDialog.advanced.open" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="watcher.settings" />
   </component>
-  <component name="RunManager" selected="npm.Build">
+  <component name="RunManager" selected="npm.Run">
     <list>
-      <item itemvalue="npm.Build" />
       <item itemvalue="npm.Run" />
+      <item itemvalue="npm.Build" />
       <item itemvalue="Shell Script.Deploy" />
     </list>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="88222715-6300-4a45-9d53-a6fd76ad5dcc" name="Changes" comment="" />
+      <created>1633926363348</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1633926363348</updated>
+      <workItem from="1633926364513" duration="2555000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
