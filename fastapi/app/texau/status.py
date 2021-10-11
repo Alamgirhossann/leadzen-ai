@@ -54,7 +54,7 @@ async def get_status_once(execution_id: str) -> TexAuResult:
                 logger.debug(f"{res_list=}")
                 filtered_list = []
                 for x in res_list:
-                    if 'name' in x and x.get('name') != "LinkedIn Member":
+                    if ('name' in x and x.get('name') != "LinkedIn Member") or ('fullName' in x and x.get('fullName') != "LinkedIn Member"):
 
                         filtered_list.append(x)
                 return TexAuResult(data=filtered_list)
